@@ -1,13 +1,11 @@
 package de.tum.markusbudeus;
 
 import com.opencsv.exceptions.CsvException;
-import com.opencsv.exceptions.CsvValidationException;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
-import java.util.function.Supplier;
 
 public class CSVReader implements AutoCloseable {
 
@@ -17,7 +15,7 @@ public class CSVReader implements AutoCloseable {
 		this.reader = reader;
 	}
 
-	static CSVReader open(Path path) throws IOException {
+	public static CSVReader open(Path path) throws IOException {
 		return new CSVReader(new com.opencsv.CSVReader(Files.newBufferedReader(path)));
 	}
 

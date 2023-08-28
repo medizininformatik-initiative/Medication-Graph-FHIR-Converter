@@ -7,10 +7,6 @@ import static org.neo4j.driver.Values.parameters;
 
 public class Main {
 
-	public static final String CODING_SYSTEM_LABEL = "Code";
-	public static final String CODE_REFERENCE_RELATIONSHIP_NAME = "REFERENCES";
-
-
 	public static void main(String[] args) {
 		try (DatabaseConnection connection = new DatabaseConnection();
 		     Session session = connection.createSession()) {
