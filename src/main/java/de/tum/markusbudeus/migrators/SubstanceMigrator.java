@@ -3,8 +3,7 @@ package de.tum.markusbudeus.migrators;
 import de.tum.markusbudeus.CSVReader;
 import org.neo4j.driver.Query;
 import org.neo4j.driver.Session;
-
-import java.io.IOException;
+import org.neo4j.driver.TransactionConfig;
 
 import static de.tum.markusbudeus.DatabaseDefinitions.*;
 import static org.neo4j.driver.Values.parameters;
@@ -36,16 +35,12 @@ public class SubstanceMigrator extends Migrator {
 	}
 
 	void addNode(String name, int id, String ask, String cas) {
-		session.executeWrite(tx -> {
-			var query = new Query(
-					"CREATE (s:" + SUBSTANCE_LABEL + " {name: $name, mmi_id: $mmi_id}) " +
-							"MERGE (a:" + ASK_LABEL + ":" + CODING_SYSTEM_LABEL + " {code: $ask}) " +
-							"MERGE (c:" + CAS_LABEL + ":" + CODING_SYSTEM_LABEL + " {code: $cas}) " +
-							"CREATE (a)-[ra:" + CODE_REFERENCE_RELATIONSHIP_NAME + "]->(s) " +
-							"CREATE (c)-[rc:" + CODE_REFERENCE_RELATIONSHIP_NAME + "]->(s)",
-					parameters("name", name, "mmi_id", id, "ask", ask, "cas", cas));
-			var result = tx.run(query);
-			return "";
-		});
+		session.run(new Query(
+				"CREATE (s:" + SUBSTANCE_LABEL + " {name: $name, mmi_id: $mmi_id}) " +
+						"MERGE (a:" + ASK_LABEL + ":" + CODING_SYSTEM_LABEL + " {code: $ask}) " +
+						"MERGE (c:" + CAS_LABEL + ":" + CODING_SYSTEM_LABEL + " {code: $cas}) " +
+						"CREATE (a)-[ra:" + CODE_REFERENCE_RELATIONSHIP_NAME + "]->(s) " +
+						"CREATE (c)-[rc:" + CODE_REFERENCE_RELATIONSHIP_NAME + "]->(s)",
+				parameters("name", name, "mmi_id", id, "ask", ask, "cas", cas)));
 	}
 }

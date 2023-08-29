@@ -5,14 +5,12 @@ import de.tum.markusbudeus.DatabaseConnection;
 import org.neo4j.driver.Query;
 import org.neo4j.driver.Session;
 
-import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Path;
 
 import static de.tum.markusbudeus.DatabaseDefinitions.*;
-import static de.tum.markusbudeus.DatabaseDefinitions.CODE_REFERENCE_RELATIONSHIP_NAME;
 import static org.neo4j.driver.Values.parameters;
 
 /**
@@ -84,15 +82,11 @@ public class InnMigrator extends Migrator {
 	}
 
 	private void addNodes(String inn, String cas) {
-		session.executeWrite(tx -> {
-			var query = new Query(
-					"CREATE (i:" + INN_LABEL + ":" + CODING_SYSTEM_LABEL + " {code: $inn}) " +
-							"MERGE (c:" + CAS_LABEL + ":" + CODING_SYSTEM_LABEL + " {code: $cas}) " +
-							"CREATE (i)-[rc:" + CODE_REFERENCE_RELATIONSHIP_NAME + "]->(c)",
-					parameters("inn", inn, "cas", cas));
-			var result = tx.run(query);
-			return "";
-		});
+		session.run(new Query(
+				"CREATE (i:" + INN_LABEL + ":" + CODING_SYSTEM_LABEL + " {code: $inn}) " +
+						"MERGE (c:" + CAS_LABEL + ":" + CODING_SYSTEM_LABEL + " {code: $cas}) " +
+						"CREATE (i)-[rc:" + CODE_REFERENCE_RELATIONSHIP_NAME + "]->(c)",
+				parameters("inn", inn, "cas", cas)));
 	}
 
 }

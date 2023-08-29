@@ -21,10 +21,18 @@ public abstract class Migrator implements AutoCloseable {
 	}
 
 	public void migrate() throws IOException {
+		int lineNo = 0;
 		String[] line;
 		while ((line = reader.readNext()) != null) {
-			migrateLine(line);
+			lineNo++;
+			try {
+				migrateLine(line);
+			} catch (RuntimeException e) {
+				System.err.println("Failed to migrate line " + lineNo + "! Exception below.");
+				e.printStackTrace();
+			}
 		}
+		System.out.println(getClass().getSimpleName() + ": Migrated " + lineNo + " lines.");
 	}
 
 	public abstract void migrateLine(String[] line);
