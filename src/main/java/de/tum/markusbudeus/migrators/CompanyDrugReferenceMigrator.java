@@ -20,7 +20,7 @@ public class CompanyDrugReferenceMigrator extends Migrator {
 
 	public CompanyDrugReferenceMigrator(Path directory, Session session)
 	throws IOException {
-		super(directory, "PRODUCT_COMPANY.csv", session);
+		super(directory, "PRODUCT_COMPANY.CSV", session);
 	}
 
 	@Override
@@ -34,7 +34,7 @@ public class CompanyDrugReferenceMigrator extends Migrator {
 	private void createReference(int productId, int companyId) {
 		session.run(new Query(
 				"MATCH (c:" + COMPANY_LABEL + " {mmi_id: $company_id}) " +
-						"MATCH (d:" + DRUG_LABEL + " {mmi_id: $drug_id}) " +
+						"MATCH (d:" + PRODUCT_LABEL + " {mmi_id: $drug_id}) " +
 						"CREATE (c)-[r:" + MANUFACTURES_LABEL + "]->(d)",
 				parameters("company_id", companyId, "drug_id", productId)
 		)).consume();

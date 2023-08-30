@@ -5,6 +5,7 @@ public class DatabaseDefinitions {
 	public static final String CODING_SYSTEM_LABEL = "Code";
 	public static final String CODE_REFERENCE_RELATIONSHIP_NAME = "REFERENCES";
 	public static final String SUBSTANCE_LABEL = "Substance";
+	public static final String PRODUCT_LABEL = "Product";
 	public static final String DRUG_LABEL = "Drug";
 	public static final String ASK_LABEL = "ASK";
 	public static final String CAS_LABEL = "CAS";

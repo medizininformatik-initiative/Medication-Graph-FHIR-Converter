@@ -54,7 +54,7 @@ public class InnMigrator extends Migrator {
 		return path;
 	}
 
-	protected InnMigrator(Session session) throws IOException {
+	public InnMigrator(Session session) throws IOException {
 		super(CSVReader.open(resolveFilePath()), session);
 	}
 

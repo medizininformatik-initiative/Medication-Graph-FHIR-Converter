@@ -11,7 +11,7 @@ public abstract class Migrator implements AutoCloseable {
 	protected final CSVReader reader;
 	protected final Session session;
 
-	protected Migrator(Path directory, String filename, Session session) throws IOException {
+	public Migrator(Path directory, String filename, Session session) throws IOException {
 		this(CSVReader.open(directory.resolve(filename)), session);
 	}
 

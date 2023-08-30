@@ -19,9 +19,9 @@ public class CompanyMigrator extends Migrator {
 	private static final int NAME_INDEX = 4;
 	private static final int SHORT_NAME_INDEX = 3;
 
-	protected CompanyMigrator(Path directory, Session session)
+	public CompanyMigrator(Path directory, Session session)
 	throws IOException {
-		super(directory, "COMPANY.csv", session);
+		super(directory, "COMPANY.CSV", session);
 	}
 
 	@Override

@@ -1,5 +1,6 @@
 package de.tum.markusbudeus.migrators;
 
+import de.tum.markusbudeus.CSVReader;
 import de.tum.markusbudeus.DatabaseConnection;
 import org.junit.jupiter.api.Test;
 
@@ -8,7 +9,7 @@ class SubstanceMigratorExecutor {
 	@Test
 	public void runExample() {
 		DatabaseConnection.runSession(session -> {
-			SubstanceMigrator migrator = new SubstanceMigrator(null, session);
+			SubstanceMigrator migrator = new SubstanceMigrator((CSVReader) null, session);
 
 			migrator.addNode("Adrenaline", 1, "ASK1", "CAS1");
 			migrator.addNode("Morphine", 2, "ASK1", "CAS2");

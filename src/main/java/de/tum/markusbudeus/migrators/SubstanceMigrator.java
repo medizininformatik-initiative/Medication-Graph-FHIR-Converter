@@ -3,7 +3,9 @@ package de.tum.markusbudeus.migrators;
 import de.tum.markusbudeus.CSVReader;
 import org.neo4j.driver.Query;
 import org.neo4j.driver.Session;
-import org.neo4j.driver.TransactionConfig;
+
+import java.io.IOException;
+import java.nio.file.Path;
 
 import static de.tum.markusbudeus.DatabaseDefinitions.*;
 import static org.neo4j.driver.Values.parameters;
@@ -18,7 +20,12 @@ public class SubstanceMigrator extends Migrator {
 	private static final int ID_INDEX = 0;
 	private static final int NAME_INDEX = 2;
 	private static final int ASK_INDEX = 18;
+
 	private static final int CAS_INDEX = 19;
+
+	public SubstanceMigrator(Path directory, Session session) throws IOException {
+		super(directory, "MOLECULE.CSV", session);
+	}
 
 	protected SubstanceMigrator(CSVReader reader, Session session) {
 		super(reader, session);

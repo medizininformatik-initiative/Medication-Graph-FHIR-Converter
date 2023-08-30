@@ -6,7 +6,7 @@ import org.neo4j.driver.Session;
 import java.io.IOException;
 import java.nio.file.Path;
 
-import static de.tum.markusbudeus.DatabaseDefinitions.DRUG_LABEL;
+import static de.tum.markusbudeus.DatabaseDefinitions.PRODUCT_LABEL;
 import static org.neo4j.driver.Values.parameters;
 
 /**
@@ -28,7 +28,7 @@ public class DrugMigrator extends Migrator {
 
 	void addNode(int id, String name) {
 		session.run(new Query(
-				"CREATE (d:" + DRUG_LABEL + " {name: $name, mmi_id: $mmi_id})",
+				"CREATE (d:" + PRODUCT_LABEL + " {name: $name, mmi_id: $mmi_id})",
 				parameters("name", name, "mmi_id", id)
 		)).consume();
 	}
