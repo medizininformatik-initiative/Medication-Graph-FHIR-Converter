@@ -28,14 +28,14 @@ public class Main {
 		     Session session = connection.createSession()) {
 
 			SubstanceMigrator substanceMigrator = new SubstanceMigrator(baseDir, session);
-			DrugMigrator drugMigrator = new DrugMigrator(baseDir, session);
+			ProductMigrator productMigrator = new ProductMigrator(baseDir, session);
 			InnMigrator innMigrator = new InnMigrator(session);
 			CompanyMigrator companyMigrator = new CompanyMigrator(baseDir, session);
 			CompanyDrugReferenceMigrator companyDrugReferenceMigrator = new CompanyDrugReferenceMigrator(baseDir,
 					session);
 
 			substanceMigrator.migrate();
-			drugMigrator.migrate();
+			productMigrator.migrate();
 			innMigrator.migrate();
 			companyMigrator.migrate();
 			companyDrugReferenceMigrator.migrate();

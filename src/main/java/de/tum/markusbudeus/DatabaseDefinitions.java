@@ -14,6 +14,7 @@ public class DatabaseDefinitions {
 	public static final String PZN_LABEL = "PZN";
 	public static final String COMPANY_LABEL = "Manufacturer";
 	public static final String MANUFACTURES_LABEL = "MANUFACTURES";
+	public static final String PRODUCT_CONTAINS_DRUG_LABEL = "CONTAINS";
 
 
 }
