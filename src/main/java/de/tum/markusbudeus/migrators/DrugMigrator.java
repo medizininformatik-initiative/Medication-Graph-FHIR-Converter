@@ -42,15 +42,9 @@ public class DrugMigrator extends Migrator {
 				parameters("mmi_id", id, "product_id", productId)));
 
 		// Verify only one relation has been created
-
-		if (!result.hasNext()) {
-			System.err.println("Warning: No product to which the item " + id + " belongs has been found.");
-		}
-		result.next();
-		if (result.hasNext()) {
-			System.err.println("Warning: The item " + id + " has been matched to more than one product!");
-		}
-		result.consume();
+		assertSingleRow(result,
+				"Warning: No product to which the item " + id + " belongs has been found.",
+				"Warning: The item " + id + " has been matched to more than one product!");
 	}
 
 }

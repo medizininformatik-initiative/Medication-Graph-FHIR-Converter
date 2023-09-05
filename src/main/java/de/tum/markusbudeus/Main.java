@@ -6,6 +6,8 @@ import org.neo4j.driver.Session;
 
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.neo4j.driver.Values.parameters;
 
@@ -27,18 +29,19 @@ public class Main {
 		try (DatabaseConnection connection = new DatabaseConnection();
 		     Session session = connection.createSession()) {
 
-			SubstanceMigrator substanceMigrator = new SubstanceMigrator(baseDir, session);
-			ProductMigrator productMigrator = new ProductMigrator(baseDir, session);
-			InnMigrator innMigrator = new InnMigrator(session);
-			CompanyMigrator companyMigrator = new CompanyMigrator(baseDir, session);
-			CompanyDrugReferenceMigrator companyDrugReferenceMigrator = new CompanyDrugReferenceMigrator(baseDir,
-					session);
+			List<Migrator> migrators = new ArrayList<>();
 
-			substanceMigrator.migrate();
-			productMigrator.migrate();
-			innMigrator.migrate();
-			companyMigrator.migrate();
-			companyDrugReferenceMigrator.migrate();
+			migrators.add(new SubstanceMigrator(baseDir, session));
+			migrators.add(new ProductMigrator(baseDir, session));
+			migrators.add(new InnMigrator(session));
+			migrators.add(new CompanyMigrator(baseDir, session));
+			migrators.add(new CompanyDrugReferenceMigrator(baseDir, session));
+			migrators.add(new DrugMigrator(baseDir, session));
+			migrators.add(new IngredientMigrator(baseDir, session));
+
+			for (Migrator migrator : migrators) {
+				migrator.migrate();
+			}
 
 		}
 	}

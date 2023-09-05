@@ -1,6 +1,7 @@
 package de.tum.markusbudeus.migrators;
 
 import de.tum.markusbudeus.CSVReader;
+import org.neo4j.driver.Result;
 import org.neo4j.driver.Session;
 
 import java.io.IOException;
@@ -36,6 +37,23 @@ public abstract class Migrator implements AutoCloseable {
 	}
 
 	public abstract void migrateLine(String[] line);
+
+	/**
+	 * Verifies the given result contains exactly one row. This consumes the result.
+	 * @param result the result to check
+	 * @param errorNone the error message to print if the result is empty
+	 * @param errorMultiple the error message to print if the result contains multiple entries
+	 */
+	protected void assertSingleRow(Result result, String errorNone, String errorMultiple) {
+		if (!result.hasNext()) {
+			System.err.println(errorNone);
+		}
+		result.next();
+		if (result.hasNext()) {
+			System.err.println(errorMultiple);
+		}
+		result.consume();
+	}
 
 	@Override
 	public void close() throws IOException {
