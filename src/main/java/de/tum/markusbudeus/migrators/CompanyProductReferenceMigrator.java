@@ -10,15 +10,15 @@ import static de.tum.markusbudeus.DatabaseDefinitions.*;
 import static org.neo4j.driver.Values.parameters;
 
 /**
- * Uses the PRODUCT_COMPANY table from the MMI PharmIndex to create references between drug and manufacturer nodes.
- * Requires the drug and manufacturer nodes to already exist.
+ * Uses the PRODUCT_COMPANY table from the MMI PharmIndex to create references between Product and Manufacturer nodes.
+ * Requires the Product and Manufacturer nodes to already exist.
  */
-public class CompanyDrugReferenceMigrator extends Migrator {
+public class CompanyProductReferenceMigrator extends Migrator {
 
 	private static final int PRODUCT_ID_INDEX = 0;
 	private static final int COMPANY_ID_INDEX = 1;
 
-	public CompanyDrugReferenceMigrator(Path directory, Session session)
+	public CompanyProductReferenceMigrator(Path directory, Session session)
 	throws IOException {
 		super(directory, "PRODUCT_COMPANY.CSV", session);
 	}

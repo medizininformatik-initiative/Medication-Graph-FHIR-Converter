@@ -31,13 +31,22 @@ public class Main {
 
 			List<Migrator> migrators = new ArrayList<>();
 
+			// Substance nodes, ASK nodes and CAS nodes and their relations
 			migrators.add(new SubstanceMigrator(baseDir, session));
+			// Product nodes
 			migrators.add(new ProductMigrator(baseDir, session));
+			// INN nodes and relations to CAS nodes
 			migrators.add(new InnMigrator(session));
+			// Manufacturer nodes
 			migrators.add(new CompanyMigrator(baseDir, session));
-			migrators.add(new CompanyDrugReferenceMigrator(baseDir, session));
+			// Relation between Manufacturer nodes and their product nodes
+			migrators.add(new CompanyProductReferenceMigrator(baseDir, session));
+			// Drug nodes and relations to Product nodes
 			migrators.add(new DrugMigrator(baseDir, session));
+			// Ingredient nodes and relations to Substance nodes
 			migrators.add(new IngredientMigrator(baseDir, session));
+			// Relations between Ingredient nodes and Drug nodes
+			migrators.add(new DrugIngredientConnectionMigrator(baseDir, session));
 
 			for (Migrator migrator : migrators) {
 				migrator.migrate();
