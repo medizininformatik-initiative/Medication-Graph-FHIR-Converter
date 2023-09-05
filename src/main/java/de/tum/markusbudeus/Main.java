@@ -35,6 +35,8 @@ public class Main {
 			migrators.add(new SubstanceMigrator(baseDir, session));
 			// Product nodes
 			migrators.add(new ProductMigrator(baseDir, session));
+			// PZN nodes and their relations with Product nodes
+			migrators.add(new PznMigrator(baseDir, session));
 			// INN nodes and relations to CAS nodes
 			migrators.add(new InnMigrator(session));
 			// Manufacturer nodes
