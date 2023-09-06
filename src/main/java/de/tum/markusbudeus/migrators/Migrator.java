@@ -32,7 +32,7 @@ public abstract class Migrator implements AutoCloseable {
 
 		while ((line = reader.readNext()) != null) {
 			if (lineNo % 10 == 0) {
-				System.out.print("Executing " + getClass().getSimpleName() + ": " + lineNo + " lines complete\r");
+				System.out.print("Executing " + getClass().getSimpleName() + ": " + lineNo + " entries complete\r");
 				System.out.flush();
 				throwIfInterrupted();
 			}
@@ -49,7 +49,7 @@ public abstract class Migrator implements AutoCloseable {
 				e.printStackTrace();
 			}
 		}
-		System.out.println(getClass().getSimpleName() + ": Migrated " + lineNo + " lines.");
+		System.out.println(getClass().getSimpleName() + ": Migrated " + lineNo + " entries.");
 	}
 
 	private void throwIfInterrupted() throws InterruptedException {
