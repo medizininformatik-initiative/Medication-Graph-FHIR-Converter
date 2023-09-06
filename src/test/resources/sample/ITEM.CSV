@@ -1,0 +1,4 @@
+# Id; Name; ProductId; XX; XX; MoleculeUnitCatalogId; MoleculeUnitCode; PharmFormCatalogId; PharmFormCode
+0;Midazolam 5mg;1;XX;XX;1;mg;2;iv
+1;Midazolam 15mg;0;XX;XX;1;mg;2;iv
+2;Beloc mite;2;XX;XX;1;mg;2;tablet

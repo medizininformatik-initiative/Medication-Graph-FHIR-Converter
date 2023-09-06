@@ -25,7 +25,7 @@ public class Main {
 		}
 	}
 
-	public static void runMigrators(Path baseDir) throws IOException {
+	public static void runMigrators(Path baseDir, boolean includeInn) throws IOException, InterruptedException {
 		try (DatabaseConnection connection = new DatabaseConnection();
 		     Session session = connection.createSession()) {
 
@@ -37,8 +37,10 @@ public class Main {
 			migrators.add(new ProductMigrator(baseDir, session));
 			// PZN nodes and their relations with Product nodes
 			migrators.add(new PznMigrator(baseDir, session));
-			// INN nodes and relations to CAS nodes
-			migrators.add(new InnMigrator(session));
+			if (includeInn) {
+				// INN nodes and relations to CAS nodes
+				migrators.add(new InnMigrator(session));
+			}
 			// Manufacturer nodes
 			migrators.add(new CompanyMigrator(baseDir, session));
 			// Relation between Manufacturer nodes and their product nodes

@@ -1,6 +1,5 @@
 package de.tum.markusbudeus.migrators;
 
-import de.tum.markusbudeus.CSVReader;
 import de.tum.markusbudeus.DatabaseConnection;
 import org.neo4j.driver.Query;
 import org.neo4j.driver.Session;
@@ -36,7 +35,7 @@ public class InnMigrator extends Migrator {
 		DatabaseConnection.runSession(session -> {
 			try {
 				new InnMigrator(session).migrate();
-			} catch (IOException e) {
+			} catch (IOException | InterruptedException e) {
 				throw new RuntimeException(e);
 			}
 		});
@@ -55,11 +54,11 @@ public class InnMigrator extends Migrator {
 	}
 
 	public InnMigrator(Session session) throws IOException {
-		super(CSVReader.open(resolveFilePath()), session);
+		super(resolveFilePath(), session);
 	}
 
 	@Override
-	public void migrate() throws IOException {
+	public void migrate() throws IOException, InterruptedException {
 		unmentioned_cas = 0;
 		super.migrate();
 		System.out.println("INN Migration complete. " +
@@ -86,7 +85,7 @@ public class InnMigrator extends Migrator {
 				"CREATE (i:" + INN_LABEL + ":" + CODING_SYSTEM_LABEL + " {code: $inn}) " +
 						"MERGE (c:" + CAS_LABEL + ":" + CODING_SYSTEM_LABEL + " {code: $cas}) " +
 						"CREATE (i)-[rc:" + CODE_REFERENCE_RELATIONSHIP_NAME + "]->(c)",
-				parameters("inn", inn, "cas", cas)));
+				parameters("inn", inn, "cas", cas))).consume();
 	}
 
 }

@@ -18,7 +18,7 @@ public class ProductMigrator extends Migrator {
 	private static final int NAME_INDEX = 2;
 
 	public ProductMigrator(Path directory, Session session) throws IOException {
-		super(directory, "PRODUCT.csv", session);
+		super(directory, "PRODUCT.CSV", session);
 	}
 
 	@Override

@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.nio.file.Path;
 
 import static de.tum.markusbudeus.DatabaseDefinitions.*;
+import static org.neo4j.driver.Values.parameters;
 
 /**
  * This migrator reads the ITEM_COMPOSITIONELEMENT table and uses it to connect existing Ingredient and Drug nodes.
@@ -35,7 +36,8 @@ public class DrugIngredientConnectionMigrator extends Migrator {
 				"MATCH (d:" + DRUG_LABEL + " {mmi_id: $drug_id}) " +
 						"MATCH (i:" + INGREDIENT_LABEL + " {mmi_id: $ingredient_id}) " +
 						"CREATE (d)-[r:" + DRUG_CONTAINS_INGREDIENT_LABEL + "]->(i) " +
-						"RETURN r"
+						"RETURN r",
+				parameters("drug_id", drugId, "ingredient_id", ingredientId)
 		));
 
 		assertSingleRow(result,

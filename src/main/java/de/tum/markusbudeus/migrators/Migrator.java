@@ -13,7 +13,11 @@ public abstract class Migrator implements AutoCloseable {
 	protected final Session session;
 
 	public Migrator(Path directory, String filename, Session session) throws IOException {
-		this(CSVReader.open(directory.resolve(filename)), session);
+		this(directory.resolve(filename), session);
+	}
+
+	public Migrator(Path path, Session session) throws IOException {
+		this(CSVReader.open(path), session);
 	}
 
 	protected Migrator(CSVReader reader, Session session) {
@@ -21,10 +25,22 @@ public abstract class Migrator implements AutoCloseable {
 		this.session = session;
 	}
 
-	public void migrate() throws IOException {
+	public void migrate() throws IOException, InterruptedException {
 		int lineNo = 0;
+		boolean firstLine = true;
 		String[] line;
+
 		while ((line = reader.readNext()) != null) {
+			if (lineNo % 10 == 0) {
+				System.out.print("Executing " + getClass().getSimpleName() + ": " + lineNo + " lines complete\r");
+				System.out.flush();
+				throwIfInterrupted();
+			}
+			if (firstLine) {
+				// Skip header line
+				firstLine = false;
+				continue;
+			}
 			lineNo++;
 			try {
 				migrateLine(line);
@@ -36,12 +52,18 @@ public abstract class Migrator implements AutoCloseable {
 		System.out.println(getClass().getSimpleName() + ": Migrated " + lineNo + " lines.");
 	}
 
+	private void throwIfInterrupted() throws InterruptedException {
+		if (Thread.interrupted())
+			throw new InterruptedException("Migration interrupted!");
+	}
+
 	public abstract void migrateLine(String[] line);
 
 	/**
 	 * Verifies the given result contains exactly one row. This consumes the result.
-	 * @param result the result to check
-	 * @param errorNone the error message to print if the result is empty
+	 *
+	 * @param result        the result to check
+	 * @param errorNone     the error message to print if the result is empty
 	 * @param errorMultiple the error message to print if the result contains multiple entries
 	 */
 	protected void assertSingleRow(Result result, String errorNone, String errorMultiple) {

@@ -31,7 +31,7 @@ public class PznMigrator extends Migrator {
 
 	private void addNode(String pzn, long productId) {
 		session.run(new Query(
-				"MERGE (p:" + PZN_LABEL + ":" + CODING_SYSTEM_LABEL + " {code: $code} " +
+				"MERGE (p:" + PZN_LABEL + ":" + CODING_SYSTEM_LABEL + " {code: $code}) " +
 						"WITH p " +
 						"MATCH (i:" + PRODUCT_LABEL + " {mmi_id: $product_id})" +
 						"MERGE (p)-[r:" + CODE_REFERENCE_RELATIONSHIP_NAME + "]->(i)",
