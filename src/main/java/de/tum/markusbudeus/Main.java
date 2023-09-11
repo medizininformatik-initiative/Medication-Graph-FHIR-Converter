@@ -56,6 +56,8 @@ public class Main {
 				migrator.migrate();
 			}
 
+			new UcumUnitCreator(session).createUnits();
+
 		}
 	}
 
