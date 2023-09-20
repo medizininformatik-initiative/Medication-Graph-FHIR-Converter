@@ -1,4 +1,4 @@
-package de.tum.markusbudeus.migrators;
+package de.tum.med.aiim.markusbudeus.graphdbpopulator.migrators;
 
 import org.neo4j.driver.Query;
 import org.neo4j.driver.Session;
@@ -6,7 +6,7 @@ import org.neo4j.driver.Session;
 import java.io.IOException;
 import java.nio.file.Path;
 
-import static de.tum.markusbudeus.DatabaseDefinitions.*;
+import static de.tum.med.aiim.markusbudeus.graphdbpopulator.DatabaseDefinitions.*;
 import static org.neo4j.driver.Values.parameters;
 
 /**

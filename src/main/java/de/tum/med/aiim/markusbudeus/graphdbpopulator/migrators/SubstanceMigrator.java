@@ -1,13 +1,13 @@
-package de.tum.markusbudeus.migrators;
+package de.tum.med.aiim.markusbudeus.graphdbpopulator.migrators;
 
-import de.tum.markusbudeus.CSVReader;
+import de.tum.med.aiim.markusbudeus.graphdbpopulator.CSVReader;
 import org.neo4j.driver.Query;
 import org.neo4j.driver.Session;
 
 import java.io.IOException;
 import java.nio.file.Path;
 
-import static de.tum.markusbudeus.DatabaseDefinitions.*;
+import static de.tum.med.aiim.markusbudeus.graphdbpopulator.DatabaseDefinitions.*;
 import static org.neo4j.driver.Values.parameters;
 
 /**
@@ -20,7 +20,6 @@ public class SubstanceMigrator extends Migrator {
 	private static final int ID_INDEX = 0;
 	private static final int NAME_INDEX = 2;
 	private static final int ASK_INDEX = 18;
-
 	private static final int CAS_INDEX = 19;
 
 	public SubstanceMigrator(Path directory, Session session) throws IOException {

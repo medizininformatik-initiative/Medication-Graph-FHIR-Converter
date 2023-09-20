@@ -1,7 +1,7 @@
-package de.tum.markusbudeus.migrators;
+package de.tum.med.aiim.markusbudeus.graphdbpopulator.migrators;
 
-import de.tum.markusbudeus.CSVReader;
-import de.tum.markusbudeus.DatabaseConnection;
+import de.tum.med.aiim.markusbudeus.graphdbpopulator.CSVReader;
+import de.tum.med.aiim.markusbudeus.graphdbpopulator.DatabaseConnection;
 import org.junit.jupiter.api.Test;
 
 class SubstanceMigratorExecutor {

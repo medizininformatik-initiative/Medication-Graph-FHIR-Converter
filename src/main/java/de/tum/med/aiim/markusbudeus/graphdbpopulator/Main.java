@@ -1,6 +1,8 @@
-package de.tum.markusbudeus;
+package de.tum.med.aiim.markusbudeus.graphdbpopulator;
 
 import de.tum.markusbudeus.migrators.*;
+import de.tum.med.aiim.markusbudeus.graphdbpopulator.migrators.*;
+import de.tum.med.aiim.markusbudeus.migrators.*;
 import org.neo4j.driver.Query;
 import org.neo4j.driver.Session;
 

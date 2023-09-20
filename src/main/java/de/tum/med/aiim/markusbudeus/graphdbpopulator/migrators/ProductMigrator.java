@@ -1,12 +1,12 @@
-package de.tum.markusbudeus.migrators;
+package de.tum.med.aiim.markusbudeus.graphdbpopulator.migrators;
 
+import de.tum.med.aiim.markusbudeus.graphdbpopulator.DatabaseDefinitions;
 import org.neo4j.driver.Query;
 import org.neo4j.driver.Session;
 
 import java.io.IOException;
 import java.nio.file.Path;
 
-import static de.tum.markusbudeus.DatabaseDefinitions.PRODUCT_LABEL;
 import static org.neo4j.driver.Values.parameters;
 
 /**
@@ -28,7 +28,7 @@ public class ProductMigrator extends Migrator {
 
 	void addNode(int id, String name) {
 		session.run(new Query(
-				"CREATE (d:" + PRODUCT_LABEL + " {name: $name, mmi_id: $mmi_id})",
+				"CREATE (d:" + DatabaseDefinitions.PRODUCT_LABEL + " {name: $name, mmi_id: $mmi_id})",
 				parameters("name", name, "mmi_id", id)
 		)).consume();
 	}

@@ -1,5 +1,6 @@
-package de.tum.markusbudeus.migrators;
+package de.tum.med.aiim.markusbudeus.graphdbpopulator.migrators;
 
+import de.tum.med.aiim.markusbudeus.graphdbpopulator.DatabaseDefinitions;
 import org.neo4j.driver.Query;
 import org.neo4j.driver.Result;
 import org.neo4j.driver.Session;
@@ -7,7 +8,6 @@ import org.neo4j.driver.Session;
 import java.io.IOException;
 import java.nio.file.Path;
 
-import static de.tum.markusbudeus.DatabaseDefinitions.*;
 import static org.neo4j.driver.Values.parameters;
 
 /**
@@ -33,9 +33,9 @@ public class DrugIngredientConnectionMigrator extends Migrator {
 
 	private void addRelation(long drugId, long ingredientId) {
 		Result result = session.run(new Query(
-				"MATCH (d:" + DRUG_LABEL + " {mmi_id: $drug_id}) " +
-						"MATCH (i:" + INGREDIENT_LABEL + " {mmi_id: $ingredient_id}) " +
-						"CREATE (d)-[r:" + DRUG_CONTAINS_INGREDIENT_LABEL + "]->(i) " +
+				"MATCH (d:" + DatabaseDefinitions.DRUG_LABEL + " {mmi_id: $drug_id}) " +
+						"MATCH (i:" + DatabaseDefinitions.INGREDIENT_LABEL + " {mmi_id: $ingredient_id}) " +
+						"CREATE (d)-[r:" + DatabaseDefinitions.DRUG_CONTAINS_INGREDIENT_LABEL + "]->(i) " +
 						"RETURN r",
 				parameters("drug_id", drugId, "ingredient_id", ingredientId)
 		));

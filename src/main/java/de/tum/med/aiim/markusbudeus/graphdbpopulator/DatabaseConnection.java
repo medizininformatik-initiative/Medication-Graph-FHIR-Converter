@@ -1,4 +1,4 @@
-package de.tum.markusbudeus;
+package de.tum.med.aiim.markusbudeus.graphdbpopulator;
 
 import org.neo4j.driver.Driver;
 import org.neo4j.driver.GraphDatabase;

@@ -1,6 +1,6 @@
-package de.tum.markusbudeus.migrators;
+package de.tum.med.aiim.markusbudeus.graphdbpopulator.migrators;
 
-import de.tum.markusbudeus.DatabaseConnection;
+import de.tum.med.aiim.markusbudeus.graphdbpopulator.DatabaseConnection;
 import org.neo4j.driver.Query;
 import org.neo4j.driver.Session;
 
@@ -9,7 +9,7 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Path;
 
-import static de.tum.markusbudeus.DatabaseDefinitions.*;
+import static de.tum.med.aiim.markusbudeus.graphdbpopulator.DatabaseDefinitions.*;
 import static org.neo4j.driver.Values.parameters;
 
 /**
@@ -30,6 +30,7 @@ public class InnMigrator extends Migrator {
 
 	// Data is taken from
 	// https://www.wcoomd.org/en/topics/nomenclature/instrument-and-tools/tools-to-assist-with-the-classification-in-the-hs/hs_classification-decisions/inn-table.aspx
+	// (28.08.2023, migrated to CSV with slight adaptations)
 
 	public static void main(String[] args) {
 		DatabaseConnection.runSession(session -> {

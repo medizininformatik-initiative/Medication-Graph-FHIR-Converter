@@ -1,4 +1,4 @@
-package de.tum.markusbudeus;
+package de.tum.med.aiim.markusbudeus.graphdbpopulator;
 
 public class DatabaseDefinitions {
 

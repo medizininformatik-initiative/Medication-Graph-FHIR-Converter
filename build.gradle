@@ -2,7 +2,7 @@ plugins {
     id 'java'
 }
 
-group 'de.tum.markusbudeus'
+group 'de.tum.med.aiim.markusbudeus'
 version '1.0-SNAPSHOT'
 
 repositories {

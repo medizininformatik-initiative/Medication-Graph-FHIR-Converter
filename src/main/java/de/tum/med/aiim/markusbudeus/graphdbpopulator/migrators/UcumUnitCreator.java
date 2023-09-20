@@ -1,9 +1,9 @@
-package de.tum.markusbudeus.migrators;
+package de.tum.med.aiim.markusbudeus.graphdbpopulator.migrators;
 
+import de.tum.med.aiim.markusbudeus.graphdbpopulator.DatabaseDefinitions;
 import org.neo4j.driver.Query;
 import org.neo4j.driver.Session;
 
-import static de.tum.markusbudeus.DatabaseDefinitions.UCUM_LABEL;
 import static org.neo4j.driver.Values.parameters;
 
 /**
@@ -31,7 +31,7 @@ public class UcumUnitCreator {
 
 	private void createUnit(String unit, String caseInsensitiveUnit, String displayUnit) {
 		session.run(new Query(
-				"CREATE (u:" + UCUM_LABEL + " {unit: $unit, unit_ci: $unit_ci, display: $display})",
+				"CREATE (u:" + DatabaseDefinitions.UCUM_LABEL + " {unit: $unit, unit_ci: $unit_ci, display: $display})",
 				parameters("unit", unit, "unit_ci", caseInsensitiveUnit, "display", displayUnit)
 		));
 	}
