@@ -9,6 +9,7 @@ import static org.neo4j.driver.Values.parameters;
 /**
  * Creates a few hardcoded UCUM unit codes.
  */
+@Deprecated
 public class UcumUnitCreator {
 
 	private final Session session;
@@ -31,7 +32,7 @@ public class UcumUnitCreator {
 
 	private void createUnit(String unit, String caseInsensitiveUnit, String displayUnit) {
 		session.run(new Query(
-				"CREATE (u:" + DatabaseDefinitions.UCUM_LABEL + " {unit: $unit, unit_ci: $unit_ci, display: $display})",
+				"CREATE (u:" + DatabaseDefinitions.UNIT_LABEL + " {unit: $unit, unit_ci: $unit_ci, display: $display})",
 				parameters("unit", unit, "unit_ci", caseInsensitiveUnit, "display", displayUnit)
 		));
 	}

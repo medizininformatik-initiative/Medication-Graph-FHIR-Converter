@@ -1,8 +1,6 @@
 package de.tum.med.aiim.markusbudeus.graphdbpopulator;
 
-import de.tum.markusbudeus.migrators.*;
 import de.tum.med.aiim.markusbudeus.graphdbpopulator.migrators.*;
-import de.tum.med.aiim.markusbudeus.migrators.*;
 import org.neo4j.driver.Query;
 import org.neo4j.driver.Session;
 
@@ -33,6 +31,8 @@ public class Main {
 
 			List<Migrator> migrators = new ArrayList<>();
 
+			// Unit nodes
+			migrators.add(new UnitMigrator(baseDir, session));
 			// Substance nodes, ASK nodes and CAS nodes and their relations
 			migrators.add(new SubstanceMigrator(baseDir, session));
 			// Product nodes
