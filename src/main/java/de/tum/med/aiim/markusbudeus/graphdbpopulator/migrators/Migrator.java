@@ -27,12 +27,13 @@ public abstract class Migrator implements AutoCloseable {
 
 	public void migrate() throws IOException, InterruptedException {
 		int lineNo = 0;
+		int migratedLines = 0;
 		boolean firstLine = true;
 		String[] line;
 
 		while ((line = reader.readNext()) != null) {
 			if (lineNo % 10 == 0) {
-				System.out.print("Executing " + getClass().getSimpleName() + ": " + lineNo + " entries complete\r");
+				System.out.print("Executing " + getClass().getSimpleName() + ": " + lineNo + " lines complete\r");
 				System.out.flush();
 				throwIfInterrupted();
 			}
@@ -43,18 +44,25 @@ public abstract class Migrator implements AutoCloseable {
 			}
 			lineNo++;
 			try {
-				migrateLine(line);
+				if (considerMigrateLine(line)) {
+					migratedLines++;
+				}
 			} catch (RuntimeException e) {
 				System.err.println("Failed to migrate line " + lineNo + "! Exception below.");
 				e.printStackTrace();
 			}
 		}
-		System.out.println(getClass().getSimpleName() + ": Migrated " + lineNo + " entries.");
+		System.out.println(getClass().getSimpleName() + ": Migrated " + migratedLines + " entries.");
 	}
 
 	private void throwIfInterrupted() throws InterruptedException {
 		if (Thread.interrupted())
 			throw new InterruptedException("Migration interrupted!");
+	}
+
+	public boolean considerMigrateLine(String[] line) {
+		migrateLine(line);
+		return true;
 	}
 
 	public abstract void migrateLine(String[] line);

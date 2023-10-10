@@ -13,16 +13,8 @@ import static org.neo4j.driver.Values.parameters;
 
 public class Main {
 
-	public static void main(String[] args) {
-		try (DatabaseConnection connection = new DatabaseConnection();
-		     Session session = connection.createSession()) {
-			session.executeWrite(tx -> {
-				var query = new Query("CREATE (m:SUBSTANCE {name: $name, mmi_id: $mmi_id})",
-						parameters("name", "Adrenaline", "mmi_id", 1));
-				var result = tx.run(query);
-				return "";
-			});
-		}
+	public static void main(String[] args) throws IOException, InterruptedException {
+		runMigrators(Path.of("").resolve("../mmi_pharmindex"), false);
 	}
 
 	public static void runMigrators(Path baseDir, boolean includeInn) throws IOException, InterruptedException {
@@ -57,8 +49,6 @@ public class Main {
 			for (Migrator migrator : migrators) {
 				migrator.migrate();
 			}
-
-			new UcumUnitCreator(session).createUnits();
 
 		}
 	}

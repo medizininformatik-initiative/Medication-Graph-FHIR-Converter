@@ -20,5 +20,6 @@ public class DatabaseDefinitions {
 	public static final String INGREDIENT_IS_SUBSTANCE_LABEL = "IS_SUBSTANCE";
 
 	public static final String UNIT_LABEL = "Unit";
+	public static final String UCUM_LABEL = "UCUM";
 
 }

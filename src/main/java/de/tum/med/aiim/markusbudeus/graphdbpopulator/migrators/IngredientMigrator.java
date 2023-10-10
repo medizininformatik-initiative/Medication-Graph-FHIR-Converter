@@ -12,7 +12,7 @@ import static org.neo4j.driver.Values.parameters;
 
 /**
  * Creates ingredient nodes using the COMPOSITIONELEMENT table from the MMI PharmIndex.
- * Also links them to corresponding substance nodes. Requires the substance nodes to already exist.
+ * Also links them to corresponding substance and unit nodes. Requires the substance and unit nodes to already exist.
  * <p>
  * Includes the ID, MASSFROM, MASSTO, MOLECULEUNITCATALOGID and MOLECULEUNITCODE as node attributes, named
  * mmi_id, mass_from, mass_to, molecule_unit_catalog_id and molecule_unit_code, respectively.
@@ -44,18 +44,24 @@ public class IngredientMigrator extends Migrator {
 	}
 
 	private void addNode(long id, String massFrom, String massTo, long unitCatalogId, String unitCode, long substanceId) {
+		if (unitCatalogId != 107L) {
+			throw new IllegalArgumentException("Unexpected unit catalog id! Expected 107, but was "+unitCatalogId);
+		}
 		Result result = session.run(new Query(
-				"CREATE (i:"+INGREDIENT_LABEL+" {mmi_id: $mmi_id, mass_from: $mass_from, mass_to: $mass_to, molecule_unit_catalog_id: $unit_catalog_id, molecule_unit_code: $unit_code}) " +
+				"CREATE (i:"+INGREDIENT_LABEL+" {mmi_id: $mmi_id, mass_from: $mass_from, mass_to: $mass_to}) " +
 						"WITH i " +
 						"MATCH (s:"+SUBSTANCE_LABEL+" {mmi_id: $substance_id}) " +
 						"CREATE (i)-[r:"+INGREDIENT_IS_SUBSTANCE_LABEL+"]->(s) " +
-						"RETURN s, r, i",
-				parameters("mmi_id", id, "mass_from", massFrom, "mass_to", massTo, "unit_catalog_id", unitCatalogId, "unit_code", unitCode, "substance_id", substanceId)
+						"WITH i, r, s " +
+						"MATCH (u:"+UNIT_LABEL+" {mmi_code: $unit_code}) " +
+						"CREATE (i)-[ur:HAS_UNIT]->(u) " +
+						"RETURN s, r, i, ur, u",
+				parameters("mmi_id", id, "mass_from", massFrom, "mass_to", massTo, "unit_code", unitCode, "substance_id", substanceId)
 		));
 
 		assertSingleRow(result,
-				"Warning: The ingredient "+id+" could not be matched to a substance!",
-				"Warning: The ingredient "+id+" was matched to multiple substances!");
+				"Warning: The ingredient "+id+" could not be matched to a substance or unit!",
+				"Warning: The ingredient "+id+" was matched to multiple substances or units!");
 	}
 
 }

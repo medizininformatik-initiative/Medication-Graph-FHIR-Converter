@@ -32,69 +32,57 @@ public class UnitMigrator extends Migrator {
 	}
 
 	public void addUnitNode(String mmiCode, String mmiName) {
-		session.run(new Query(
-				"CREATE (u:" + DatabaseDefinitions.UNIT_LABEL + " {mmi_code: $mmi_code, mmi_name: $mmi_name})",
-				parameters("$mmi_code", mmiCode, "$mmi_name", mmiName)
-		));
+		UCUMDefinition ucumDefinition = resolveUcumUnit(mmiCode);
+		if (ucumDefinition == null) {
+			session.run(new Query(
+					"CREATE (u:" + DatabaseDefinitions.UNIT_LABEL +
+							" {mmi_code: $mmi_code, mmi_name: $mmi_name})",
+					parameters("mmi_code", mmiCode, "mmi_name", mmiName)
+			));
+		} else {
+			session.run(new Query(
+					"CREATE (u:" + DatabaseDefinitions.UNIT_LABEL + ":" + DatabaseDefinitions.UCUM_LABEL +
+							" {mmi_code: $mmi_code, mmi_name: $mmi_name," +
+							"ucum_cs: $ucum_cs, ucum_ci: $ucum_ci, print: $print})",
+					parameters("mmi_code", mmiCode, "mmi_name", mmiName,
+							"ucum_cs", ucumDefinition.caseSensitiveUnit, "ucum_ci", ucumDefinition.caseInsensitiveUnit,
+							"print", ucumDefinition.printUnit)
+			));
+		}
 	}
 
 	private UCUMDefinition resolveUcumUnit(String mmiCode) {
-		// TODO Complete this
-		switch (mmiCode) {
-			case "CM2":
-				return new UCUMDefinition("", "", "");
-			case "G":
-				return new UCUMDefinition("", "", "");
-			case "GEWPERC":
-				return new UCUMDefinition("", "", "");
-			case "KEIME":
-				return new UCUMDefinition("", "", "");
-			case "KJ":
-				return new UCUMDefinition("", "", "");
-			case "L":
-				return new UCUMDefinition("", "", "");
-			case "MCG":
-				return new UCUMDefinition("", "", "");
-			case "MCGH":
-				return new UCUMDefinition("", "", "");
-			case "MCL":
-				return new UCUMDefinition("", "", "");
-			case "MCMOL":
-				return new UCUMDefinition("", "", "");
-			case "MG":
-				return new UCUMDefinition("", "", "");
-			case "MGCM":
-				return new UCUMDefinition("", "", "");
-			case "MGD":
-				return new UCUMDefinition("", "", "");
-			case "MGH":
-				return new UCUMDefinition("", "", "");
-			case "MIOKEIME":
-				return new UCUMDefinition("", "", "");
-			case "MIOZELLEN":
-				return new UCUMDefinition("", "", "");
-			case "MIO.ZELLEN/KG KG":
-				return new UCUMDefinition("", "", "");
-			case "MIOZELLEN/ML":
-				return new UCUMDefinition("", "", "");
-			case "ML":
-				return new UCUMDefinition("", "", "");
-			case "MMOL":
-				return new UCUMDefinition("", "", "");
-			case "MMOLL":
-				return new UCUMDefinition("", "", "");
-			case "MRDKEIME":
-				return new UCUMDefinition("", "", "");
-			case "NG":
-				return new UCUMDefinition("", "", "");
-			case "NL":
-				return new UCUMDefinition("", "", "");
-			case "STK":
-				return new UCUMDefinition("", "", "");
-			case "VOLPERC":
-				return new UCUMDefinition("", "", "");
-		}
-		return null;
+		return switch (mmiCode) {
+			case "CM2" -> new UCUMDefinition("cm", "CM", "cm");
+			case "G" -> new UCUMDefinition("g", "G", "g");
+			case "GEWPERC" -> new UCUMDefinition("%{m/m}", "%{M/M}", "% (m/m)");
+			case "KEIME" -> new UCUMDefinition("{Keime}", "{KEIME}", "Keime");
+			case "KJ" -> new UCUMDefinition("kJ", "KJ", "kJ");
+			case "L" -> new UCUMDefinition("l", "L", "l");
+			case "MCG" -> new UCUMDefinition("ug", "UG", "μg");
+			case "MCGH" -> new UCUMDefinition("ug/h", "UG/HR", "μg/h");
+			case "MCL" -> new UCUMDefinition("ul", "UL", "μl");
+			case "MCMOL" -> new UCUMDefinition("umol", "UMOL", "μmol");
+			case "MG" -> new UCUMDefinition("mg", "MG", "mg");
+			case "MGCM" -> new UCUMDefinition("mg/cm2", "MG/CM2", "mg/cm2");
+			case "MGD" -> new UCUMDefinition("mg/d", "MG/D", "mg/d");
+			case "MGH" -> new UCUMDefinition("mg/(24.h)", "MG/(24.HR)", "mg/24h");
+			case "MIOKEIME" -> new UCUMDefinition("10^6{Keime}", "10^6{KEIME}", "Mio. Keime");
+			case "MIOZELLEN" -> new UCUMDefinition("10^6{Zellen}", "10^6{ZELLEN}", "Mio. Zellen");
+			case "MIO.ZELLEN/KG KG" ->
+					new UCUMDefinition("10^6{Zellen}/kg{KG}", "10^6{ZELLEN}/KG{KG}", "Mio. Zellen/kg KG");
+			case "MIOZELLEN/ML" -> new UCUMDefinition("10^6{Zellen}/ml", "10^6{ZELLEN}/ML", "Mio. Zellen/ml");
+			case "ML" -> new UCUMDefinition("ml", "ML", "ml");
+			case "MMOL" -> new UCUMDefinition("mmol", "MMOL", "mmol");
+			case "MMOLL" -> new UCUMDefinition("mmol/l", "MMOL/L", "mmol/l");
+			case "MRDKEIME" -> new UCUMDefinition("10^9{Keime}", "10^9{KEIME}", "Mrd. Keime");
+			case "NG" -> new UCUMDefinition("ng", "NG", "ng");
+			case "PERC" -> new UCUMDefinition("%", "%", "%");
+			case "NL" -> new UCUMDefinition("nl", "NL", "nl");
+			case "STK" -> new UCUMDefinition("{Stk.}", "{STK.}", "Stk.");
+			case "VOLPERC" -> new UCUMDefinition("%{Vol.}", "%{VOL.}", "Vol.-%");
+			default -> null;
+		};
 	}
 
 	private static class UCUMDefinition {

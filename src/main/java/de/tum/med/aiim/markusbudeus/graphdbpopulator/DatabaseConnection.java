@@ -21,10 +21,16 @@ public class DatabaseConnection implements AutoCloseable {
 	}
 
 	public DatabaseConnection() {
+//		this(
+//				"neo4j+s://c6991061.databases.neo4j.io",
+//				"neo4j",
+//				"Qh1OSIk-aiX_x_Bi7MknMZ4raGOiKximLZH4A4YwyN8".toCharArray()
+//		);
+
 		this(
-				"neo4j+s://c6991061.databases.neo4j.io",
+				"neo4j://localhost:7687",
 				"neo4j",
-				"Qh1OSIk-aiX_x_Bi7MknMZ4raGOiKximLZH4A4YwyN8".toCharArray()
+				"aiim-experimentation".toCharArray()
 		);
 	}
 
