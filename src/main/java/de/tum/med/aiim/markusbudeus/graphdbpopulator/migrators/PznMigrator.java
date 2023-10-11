@@ -12,6 +12,7 @@ import static org.neo4j.driver.Values.parameters;
 /**
  * This migrator uses the PACKAGE table to create PZN nodes and make them point to the corresponding product nodes.
  */
+ @Deprecated
 public class PznMigrator extends Migrator {
 
 	private static final int PRODUCT_ID_INDEX = 1;

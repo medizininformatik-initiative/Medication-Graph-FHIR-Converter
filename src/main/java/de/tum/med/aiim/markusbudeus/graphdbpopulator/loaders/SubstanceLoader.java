@@ -7,6 +7,11 @@ import java.io.IOException;
 
 import static de.tum.med.aiim.markusbudeus.graphdbpopulator.DatabaseDefinitions.*;
 
+/**
+ * Reads the MMI PharmIndex MOLECULE table and writes the data as new nodes into the Neo4j database.
+ * <p>
+ * Creates Substance nodes, ASK nodes and CAS nodes.
+ */
 public class SubstanceLoader extends Loader {
 
 	private static final String ID = "ID";
@@ -21,16 +26,31 @@ public class SubstanceLoader extends Loader {
 
 	@Override
 	protected void executeLoad() {
-		session.run(new Query(constructLoadStatement(
-				"CREATE (s:" + SUBSTANCE_LABEL + " {name: " + row(NAME) + ", mmi_id: " + row(ID) + "}) " +
+		session.run(new Query(
+				"CREATE CONSTRAINT substanceMmiIdConstraint IF NOT EXISTS FOR (s:" + SUBSTANCE_LABEL + ") REQUIRE s.mmiId IS UNIQUE"
+		));
+		session.run(new Query(
+				"CREATE CONSTRAINT casCodeConstraint IF NOT EXISTS FOR (c:" + CAS_LABEL + ") REQUIRE c.code IS UNIQUE"
+		));
+		session.run(new Query(
+				"CREATE CONSTRAINT askCodeConstraint IF NOT EXISTS FOR (a:" + ASK_LABEL + ") REQUIRE a.code IS UNIQUE"
+		));
+		session.run(new Query(withLoadStatement(
+				"CREATE (s:" + SUBSTANCE_LABEL + " {name: " + row(NAME) + ", mmiId: " + intRow(ID) + "}) " +
+						"WITH * " +
+						"CALL {" +
+						"WITH row, s " +
+						"WITH * WHERE NOT " + nullIfBlank(row(ASK)) + " IS null " +
 						"MERGE (a:" + ASK_LABEL + ":" + CODING_SYSTEM_LABEL + " {code: " + row(ASK) + "}) " +
-						"MERGE (c:" + CAS_LABEL + ":" + CODING_SYSTEM_LABEL + " {code: " + row(CAS) + "}) " +
 						"CREATE (a)-[ra:" + CODE_REFERENCE_RELATIONSHIP_NAME + "]->(s) " +
-						"CREATE (c)-[rc:" + CODE_REFERENCE_RELATIONSHIP_NAME + "]->(s)"
+						"}" +
+						"CALL {" +
+						"WITH row, s " +
+						"WITH * WHERE NOT " + nullIfBlank(row(CAS)) + " IS null " +
+						"MERGE (c:" + CAS_LABEL + ":" + CODING_SYSTEM_LABEL + " {code: " + row(CAS) + "}) " +
+						"CREATE (c)-[rc:" + CODE_REFERENCE_RELATIONSHIP_NAME + "]->(s)" +
+						"}"
 		)));
-		// Delete ASK and CAS nodes with empty code, since they represent the value being unknown
-		session.run(new Query("MATCH (c: " + CAS_LABEL + "{ code: '' }) DETACH DELETE c"));
-		session.run(new Query("MATCH (c: " + ASK_LABEL + "{ code: '' }) DETACH DELETE c"));
 	}
 
 }

@@ -12,6 +12,7 @@ import static org.neo4j.driver.Values.parameters;
 /**
  * This class creates the Product nodes in the database using the PRODUCT table from the MMI PharmIndex.
  */
+@Deprecated
 public class ProductMigrator extends Migrator {
 
 	private static final int ID_INDEX = 0;

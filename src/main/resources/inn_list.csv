@@ -1,4 +1,4 @@
-# Headline
+PRODUCT_EN;PRODUCT_FR;CLASS_2022;HSC_REPORT;SESSION;YEAR;LIST;CAS;OTHER
 abacavir;abacavir;2933.59;42.100 Ann. O (V);HSC/21;1998;76;136470-78-5;
 abafungin;abafungine;2941.90;42.100 Ann. O (III);HSC/21;1998;74;129639-79-8;
 abagovomab;abagovomab;3002.13;NC2116B1b Ann. S/2;HSC/55;2015;95;792921-10-9;HSC/39 (3002.10)
@@ -48,7 +48,7 @@ aclerastide;aclérastide;2933.29;NC2116B1b Ann. R/4;HSC/55;2015;110;227803-63-6;
 aclidinium bromide;bromure d'aclidinium;2934.99;NC1178B1c Ann. O/5;HSC/39;2007;95;320345-99-1;
 aclimostat;aclimostat;2934.99;NC2803Bc Ann. T/2;HSC/67;2021;120;2082752-83-6;
 Acloproxalap;Acloproxalap;2933.49;NC3086Bc Ann. O/8;HSC/71;2023;127;1824609-67-7;
-acmucabtagene autoleucel;acmucabtagène autoleucel;3002.51;NC2930Bc Ann. P/27;HSC/69;2022;125;no mention;
+acmucabtagene autoleucel;acmucabtagène autoleucel;3002.51;NC2930Bc Ann. P/27;HSC/69;2022;125;;
 acolbifene;acolbifène;2934.99;NC0730B2 Ann. M/6;HSC/31;2003;86;182167-02-8;
 Acoltremon;Acoltrémon;2924.29;NC3086Bc Ann. O/8;HSC/71;2023;127;68489-09-8;
 acorafloxacin;acorafloxacine;2933.49;NC2004B1b Ann. O/5;HSC/53;2014;111;878592-87-1;
@@ -86,7 +86,7 @@ adelmidrol;adelmidrol;2924.19;NC2004B1b Ann. O/6;HSC/53;2014;70;1675-66-7;HSC/18
 aderbasib;aderbasib;2933.59;NC1443B1b Ann. P/6;HSC/43;2009;99;791828-58-5;
 adezmapimod;adezmapimod;2933.39;NC2930Bc Ann. P/25;HSC/69;2022;124;152121-47-6;
 adibendan;adibendan;2933.79;38.100 Ann. Q (No. 126);HSC/11;1993;57;100510-33-6;
-adimlecleucel;adimlecleucel;3002.51;NC2803Bc Ann. T/4;HSC/67;2021;117;no mention;HSC/61 (3002.90)
+adimlecleucel;adimlecleucel;3002.51;NC2803Bc Ann. T/4;HSC/67;2021;117;;HSC/61 (3002.90)
 adintrevimab;adintrévimab;3002.13;NC2930Bc Ann. P/27;HSC/69;2022;125;2516243-54-0;
 adipiplon;adipiplon;2933.59;NC1443B1b Ann. P/5;HSC/43;2009;98;840486-93-3;
 adlinacogene civaparvovec;adlinacogène civaparvovec;3002.49;NC2930Bc Ann. P/33;HSC/69;2022;120;2143579-02-4;HSC/67 (3002.90)
@@ -101,7 +101,7 @@ aducanumab;aducanumab;3002.13;NC2237B1b Ann. T/13;HSC/57;2016;110;1384260-65-4;H
 afabicin;afabicine;2934.99;NC2373B1b Ann. O/7;HSC/59;2017;115;1518800-35-5;
 afacifenacin;afacifénacine;2933.59;NC1604B1b Ann. N/5;HSC/46;2010;101;877606-63-8;
 afamelanotide;afamélanotide;2937.19;NC1553B1b Ann. O/7;HSC/45;2010;100;75921-69-6;
-afamitresgene autoleucel;afamitresgène autoleucel;3002.51 ;NC2803Bc Ann. T/6;HSC/67;2021;122;no mention;
+afamitresgene autoleucel;afamitresgène autoleucel;3002.51 ;NC2803Bc Ann. T/6;HSC/67;2021;122;;
 afasevikumab;afasévikumab;3002.13;NC2237B1b Ann. T/11;HSC/57;2016;113;1589503-30-9;HSC/57 (3002.10) (S/9)
 afatinib;afatinib;2934.99;NC1604B1b Ann. N/6;HSC/46;2010;102;850140-72-6;
 afegostat;afégostat;2933.39;NC1604B1b Ann. N/5;HSC/46;2010;101;169105-89-9;
@@ -279,7 +279,7 @@ anatibant;anatibant;2935.90;NC2116B1b Ann. S/1;HSC/55;2015;88;209733-45-9;HSC/33
 anatumomab mafenatox;anatumomab mafénatox;3002.13;NC2116B1b Ann. S/2;HSC/55;2015;79;0-00-0;HSC/23 (3002.10)
 anaxirone;anaxirone;2934.99;NC2004B1b Ann. O/6;HSC/53;2014;52;77658-97-0;HSC/11 (2934.90)
 anazocine;anazocine;2933.39;38.100 Ann. Q (No. 151);HSC/11;1993;30;15378-99-1;
-Anbalcabtagene autoleucel;Anbalcabtagène autoleucel;3002.51;NC3086Bc Ann. O/8;HSC/71;2023;127;no mention;
+Anbalcabtagene autoleucel;Anbalcabtagène autoleucel;3002.51;NC3086Bc Ann. O/8;HSC/71;2023;127;;
 anbenitamab;anbénitamab;3002.13;NC2930Bc Ann. P/25;HSC/69;2022;124;2367012-88-0;
 ancestim;ancestim;3002.13;NC2373B1b Ann. O/8;HSC/59;2017;79;163545-26-4;HSC/23 (3002.10)
 ancremonam;ancrémonam;2941.90 ;NC2803Bc Ann. T/7;HSC/67;2021;123;1810051-96-7;
@@ -420,7 +420,7 @@ atezolizumab;atézolizumab;3002.13;NC2237B1b Ann. T/10;HSC/57;2016;112;1380723-4
 atibeprone;atibéprone;2934.99;NC2004B1b Ann. O/6;HSC/53;2014;72;153420-96-3;HSC/18 (2934.90)
 atibuclimab;atibuclimab;3002.13 ;NC2803Bc Ann. T/11;HSC/67;2021;124 COVID-19;2417175-94-9;
 aticaprant;aticaprant;2933.99;NC2626B1b Ann. O/6;HSC/63;2019;119;1174130-61-0;
-atidarsagene autotemcel;atidarsagène autotemcel;3002.51 ;NC2803Bc Ann. T/7;HSC/67;2021;123;no mention;
+atidarsagene autotemcel;atidarsagène autotemcel;3002.51 ;NC2803Bc Ann. T/7;HSC/67;2021;123;;
 atidortoxumab;atidortoxumab;3002.13;NC2501B1b Ann. M/6;HSC/61;2018;117;1939108-95-8;
 atigliflozin;atigliflozine;2940.00;NC1553B1b Ann. O/7;HSC/45;2010;100;647834-15-9;
 atilmotin;atilmotine;2933.99;NC1059B2b Ann. O/4;HSC/37;2006;92;533927-56-9;
@@ -431,7 +431,7 @@ atiprosin;atiprosine;2933.59;38.100 Ann. Q (No. 166);HSC/11;1993;54;89303-63-9;
 atiratecan;atiratécan;2939.79;NC2237B1b Ann. T/12;HSC/57;2016;101;867063-97-6;HSC/47 (2939.99)
 Atisnolerbart;Atisnolerbart;3002.13;NC3086Bc Ann. O/8;HSC/71;2023;127;2456308-79-3;
 atizoram;atizoram;2933.59;42.100 Ann. O (III);HSC/21;1998;74;135637-46-6;
-atleradstrocel;atléradstrocel;3002.51;NC2803Bc Ann. T/3;HSC/67;2021;121;no mention;
+atleradstrocel;atléradstrocel;3002.51;NC2803Bc Ann. T/3;HSC/67;2021;121;;
 atliprofen;atliprofène;2934.99;NC2004B1b Ann. O/6;HSC/53;2014;77;108912-17-0;HSC/21 (2934.90)
 atocalcitol;atocalcitol;2909.49;NC0938B2b Ann. O/1;HSC/35;2005;88;302904-82-1;
 atogepant;atogépant;2933.79;NC2501B1b Ann. M/5;HSC/61;2018;116;1374248-81-3;
@@ -447,7 +447,7 @@ atuliflapon;atuliflapon;2933.59;NC2930Bc Ann. P/27;HSC/69;2022;125;2041075-86-7;
 atuveciclib ;atuvéciclib;2933.69;NC2373B1b Ann. O/7;HSC/59;2017;115;1414943-94-4;
 atuzabrutinib;atuzabrutinib;2933.59;NC2930Bc Ann. P/27;HSC/69;2022;125;1581714-49-9;
 atuzaginstat;atuzaginstat;2924.29;NC2930Bc Ann. P/25;HSC/69;2022;124;2211981-76-7;
-audencel;audencel;3002.51;NC2803Bc Ann. T/4;HSC/67;2021;115;no mention;HSC/61 (3002.90)
+audencel;audencel;3002.51;NC2803Bc Ann. T/4;HSC/67;2021;115;;HSC/61 (3002.90)
 aumolertinib;aumolertinib;2933.59;NC2930Bc Ann. P/25;HSC/69;2022;124;1899-21-05-1;
 auriclosene;auriclosène;2929.90;NC1874B1b Ann. O/2;HSC/51;2013;107;846056-87-9;
 autogene cevumeran;autogène cévuméran;3002.41;NC2930Bc Ann. P/28;HSC/69;2022;122;2365453-34-3;
@@ -472,23 +472,23 @@ aviptadil;aviptadil;2933.29;42.750 Ann. O;HSC/22;1998;78;40077-57-4;
 aviscumine;aviscumine;3002.49;NC2803Bc Ann. T/9;HSC/67;2021;84;223577-45-5;HSC/31 (3002.90)
 avitriptan;avitriptan;2935.90;NC2116B1b Ann. S/1;HSC/55;2015;76;151140-96-4;HSC/21 (2935.00)
 avizakimab;avizakimab;3002.13;NC2803Bc Ann. T/3;HSC/67;2021;121;2229685-51-0;
-avoplacel;avoplacel;3002.51;NC2803Bc Ann. T/4;HSC/67;2021;119;no mention;HSC/63 (3002.90)
+avoplacel;avoplacel;3002.51;NC2803Bc Ann. T/4;HSC/67;2021;119;;HSC/63 (3002.90)
 avoralstat;avoralstat;2933.39;NC2237B1b Ann. S/8;HSC/57;2016;112;918407-35-9;
 avorelin;avoréline;2937.19;NC2004B1b Ann. O/6;HSC/53;2014;74;140703-49-7;HSC/21 (2937.99)
 avosentan;avosentan;2935.90;NC2116B1b Ann. S/1;HSC/55;2015;93;290815-26-8;HSC/37 (2935.00)
 avotaciclib;avotaciclib;2933.59 ;NC2803Bc Ann. T/7;HSC/67;2021;123;1983983-41-0;
 avotermin;avotermine;2934.99;NC1649B3b Ann. R/10;HSC/47;2011;77;182212-66-4;
 avutometinib ;avutométinib;2934.99;NC3086Bc Ann. O/7;HSC/71;2023;126;946128-88-7;
-axalimogene filolisbac;axalimogén filolisbac ;3002.49;NC2930Bc Ann. P/33;HSC/69;2022;112;no mention;HSC/57 (3002.90)
+axalimogene filolisbac;axalimogén filolisbac ;3002.49;NC2930Bc Ann. P/33;HSC/69;2022;112;;HSC/57 (3002.90)
 axatilimab;axatilimab;3002.13;NC2803Bc Ann. T/3;HSC/67;2021;121;2155851-88-8;
 axelopran;axélopran;2933.39;NC2004B1b Ann. O/5;HSC/53;2014;109;949904-48-7;
-axicabtagene ciloleucel;axicabtagène ciloleucel;3002.51;NC2803Bc Ann. T/4;HSC/67;2021;117;no mention;HSC/61 (3002.90)
+axicabtagene ciloleucel;axicabtagène ciloleucel;3002.51;NC2803Bc Ann. T/4;HSC/67;2021;117;;HSC/61 (3002.90)
 axitinib;axitinib;2933.39;NC1178B1c Ann. O/3;HSC/39;2007;94;319460-85-0;
 axitirome;axitirome;2924.29;NC0430B2 Ann. Q/1 (I);HSC/27;2001;82;156740-57-7;
 axomadol;axomadol;2922.50;NC0730B2 Ann. M/7;HSC/31;2003;87;187219-95-0;
 azabon;azabon;2935.90;NC2116B1b Ann. S/1;HSC/55;2015;16;1150-20-5;HSC/11 (2935.00)
 azalanstat;azalanstat;2934.99;NC2004B1b Ann. O/6;HSC/53;2014;73;143393-27-5;HSC/18 (2934.90)
-azamidugene autotemcel;azamidugène autotemcel;3002.51;NC2930Bc Ann. P/27;HSC/69;2022;125;no mention;
+azamidugene autotemcel;azamidugène autotemcel;3002.51;NC2930Bc Ann. P/27;HSC/69;2022;125;;
 azatadine;azatadine;2933.39;38.100 Ann. Q (No. 170);HSC/11;1993;18;3964-81-6;
 azathioprine;azathioprine;2933.59;38.100 Ann. Q (No. 171);HSC/11;1993;12;446-86-6;
 azelaprag;azélaprag;2935.90;NC2626B1b Ann. O/6;HSC/63;2019;119;2049980-18-7;
@@ -496,7 +496,7 @@ azeliragon;azéliragon;2933.29;NC2116B1b Ann. R/5;HSC/55;2015;111;603148-36-3;
 azeloprazole;azéloprazole;2934.99;NC2501B1b Ann. M/5;HSC/61;2018;116;955095-45-1;
 azemiglitazone;azémiglitazone;2934.10 ;NC2803Bc Ann. T/6;HSC/67;2021;122;1133819-87-0;
 Azenosertib;Azénosertib;2933.59;NC3086Bc Ann. O/8;HSC/71;2023;127;2376146-48-2;
-azercabtagene zapreleucel;azercabtagène zapréleucel;3002.51 ;NC2803Bc Ann. T/7;HSC/67;2021;123;no mention;
+azercabtagene zapreleucel;azercabtagène zapréleucel;3002.51 ;NC2803Bc Ann. T/7;HSC/67;2021;123;;
 azetirelin;azétiréline;2937.19;NC2004B1b Ann. O/6;HSC/53;2014;60;95729-65-0;HSC/11 (2937.99)
 azilsartan;azilsartan;2934.99;NC1178B1c Ann. O/5;HSC/39;2007;95;147403-03-0;
 azilsartan medoxomil;azilsartan médoxomil;2934.99;NC1310B1b Ann. N/4;HSC/41;2008;97;863031-21-4;
@@ -524,7 +524,7 @@ baloramotide;baloramotide;3002.41;NC2803Bc Ann. T/2;HSC/67;2021;120;2207581-19-7
 balovaptan;balovaptan;2933.39;NC2501B1b Ann. M/5;HSC/61;2018;116;1228088-30-9;
 baloxavir marboxil;baloxavir marboxil;2934.99;NC2501B1b Ann. M/5;HSC/61;2018;116;1985606-14-1;
 balstilimab;balstilimab;3002.13;NC2803Bc Ann. T/2;HSC/67;2021;120;2148321-77-9;
-baltaleucel;baltaleucel;3002.51;NC2803Bc Ann. T/4;HSC/67;2021;116;no mention;HSC/61 (3002.90)
+baltaleucel;baltaleucel;3002.51;NC2803Bc Ann. T/4;HSC/67;2021;116;;HSC/61 (3002.90)
 balugrastim;balugrastim;3002.13;NC2116B1b Ann. S/2;HSC/55;2015;107;527698-09-5;HSC/51 (3002.10)
 bamadutide;bamadutide;2937.19;NC2626B1b Ann. O/6;HSC/63;2019;119;1596343-09-7;
 bamaquimast;bamaquimast;2933.99;NC2004B1b Ann. O/6;HSC/53;2014;76;135779-82-7;HSC/21 (2933.90)
@@ -601,7 +601,7 @@ belzupacap sarotalocan;belzupacap sarotalocan;3204.90 ;NC2803Bc Ann. T/6;HSC/67;
 belzutifan;belzutifan;2930.90 ;NC2803Bc Ann. T/6;HSC/67;2021;122;1672668-24-4;
 bemarituzumab;bémarituzumab;3002.13;NC2501B1b Ann. M/6;HSC/61;2018;117;1952272-74-0;
 bemcentinib;bemcentinib;2933.99;NC2501B1b Ann. M/6;HSC/61;2018;117;1037624-75-1;
-Bemdaneprocel;Bemdanéprocel;3002.51;NC3086Bc Ann. O/8;HSC/71;2023;127;no mention;
+Bemdaneprocel;Bemdanéprocel;3002.51;NC3086Bc Ann. O/8;HSC/71;2023;127;;
 beminafil;béminafil;2934.99;NC0938B2b Ann. O/3 (I);HSC/35;2005;90;566906-50-1;
 bemiparin sodium;bémiparine sodique;3001.90;NC1553B1b Ann. O/5;HSC/45;2010;75;9041-08-1;
 bemnifosbuvir ;bemnifosbuvir;2934.99;NC2930Bc Ann. P/27;HSC/69;2022;125;1998705-64-8;
@@ -659,7 +659,7 @@ betaprodine;bétaprodine;2933.39;E.N. Chap. 29 - List I-I (Narcotic drugs);HSC/2
 betasizofiran;bétasizofiran;3913.90;"40.600 Ann. D, par. 6";HSC/18;1996;72;39464-87-4;
 betaxolol;bétaxolol;2922.19;40.260 Ann. L/2 (No. 44);HSC/17;1996;40;63659-18-7;
 betiatide;bétiatide;2930.90;38.100 Ann. Q (No. 179);HSC/11;1993;58;103725-47-9;
-betibeglogene autotemcel;bétibéglogène autotemcel;3002.51;NC2803Bc Ann. T/3;HSC/67;2021;121;no mention;
+betibeglogene autotemcel;bétibéglogène autotemcel;3002.51;NC2803Bc Ann. T/3;HSC/67;2021;121;;
 betibeglogene darolentivec;bétibéglogène darolentivec;3002.49;NC2930Bc Ann. P/33;HSC/69;2022;116;1905394-85-5;HSC/61 (3002.90)
 betifisolimab ;bétifisolimab;3002.13;NC3086Bc Ann. O/7;HSC/71;2023;126;2460539-60-8;
 betoxycaine;bétoxycaïne;2922.50;40.260 Ann. L/2 (No. 9);HSC/17;1996;13;3818-62-0;
@@ -758,7 +758,7 @@ brentuximab vedotin;brentuximab védotine;3002.13;NC2116B1b Ann. S/2;HSC/55;2015
 brepocitinib;brépocitinib;2933.59;NC2803Bc Ann. T/3;HSC/67;2021;121;1883299-62-4;
 brexanolone;brexanolone;2914.40;NC2501B1b Ann. M/6;HSC/61;2018;117;516-54-1;
 brexpiprazole;brexpiprazole;2934.99;NC1874B1b Ann. O/1;HSC/51;2013;106;913611-97-9;
-brexucabtagene autoleucel;bréxucabtagène autoleucel;3002.51;NC2930Bc Ann. P/27;HSC/69;2022;125;no mention;
+brexucabtagene autoleucel;bréxucabtagène autoleucel;3002.51;NC2930Bc Ann. P/27;HSC/69;2022;125;;
 briakinumab;briakinumab;3002.13;NC2116B1b Ann. S/2;HSC/55;2015;101;339308-60-0;HSC/46 (3002.10)
 briciclib;briciclib;2930.90;NC2116B1b Ann. R/5;HSC/55;2015;111;865783-99-9;
 brifentanil;brifentanil;2933.34;NC2803Bc Ann. T/4;HSC/67;2021;63;101345-71-5;HSC/11 (2933.39)
@@ -852,7 +852,7 @@ camoteskimab;camoteskimab;3002.13;NC3086Bc Ann. O/7;HSC/71;2023;126;2492472-82-7
 camrelizumab ;camrélizumab;3002.13;NC2373B1b Ann. O/7;HSC/59;2017;115;1798286-48-2;
 camsirubicin;camsirubicine;2941.90;NC2626B1b Ann. O/6;HSC/63;2019;119;236095-26-4;
 canagliflozin;canagliflozine;2934.99;NC1604B1b Ann. N/6;HSC/46;2010;102;842133-18-0;
-canakinumab;canakinumab;3002.13;NC2116B1b Ann. S/2;HSC/55;2015;97;402710-27-4 (light chain) 402710-25-2 (heavy chain);HSC/41 (3002.10)
+canakinumab;canakinumab;3002.13;NC2116B1b Ann. S/2;HSC/55;2015;97;;HSC/41 (3002.10)
 candesartan;candésartan;2933.99;NC2004B1b Ann. O/6;HSC/53;2014;71;139481-59-7;HSC/18 (2933.90)
 candocuronium iodide;iodure de candocuronium;2933.99;NC2004B1b Ann. O/6;HSC/53;2014;70;54278-85-2;HSC/18 (2933.90)
 canerpaturev;canerpaturev;3002.49;NC2930Bc Ann. P/33;HSC/69;2022;117;1662666-66-1;HSC/61 (3002.90)
@@ -949,12 +949,12 @@ cenersen;cénersen;2934.99;NC1310B1b Ann. N/4;HSC/41;2008;97;872847-66-0;
 cenicriviroc;cénicriviroc;2933.29;NC1649B3b Ann. R/14;HSC/47;2011;103;497223-25-3;
 cenisertib;cénisertib;2933.59;NC1760B1b Ann. N/7;HSC/49;2012;104;871357-89-0;
 cenobamate;cénobamate;2933.99;NC2237B1b Ann. S/9;HSC/57;2016;113;913088-80-9;
-cenplacel;cenplacel;3002.51;NC2803Bc Ann. T/4;HSC/67;2021;115;no mention;HSC/61 (3002.90)
+cenplacel;cenplacel;3002.51;NC2803Bc Ann. T/4;HSC/67;2021;115;;HSC/61 (3002.90)
 censavudine;censavudine;2934.99;NC2116B1b Ann. R/4;HSC/55;2015;110;634907-30-5;
 centanafadine;centanafadine;2933.99;NC2237B1b Ann. S/8;HSC/57;2016;112;924012-43-1;
 centhaquine;centhaquine;2933.59;NC2803Bc Ann. T/3;HSC/67;2021;121;57961-90-7;
 cenupatide;cénupatide;2925.29;NC2626B1b Ann. O/6;HSC/63;2019;119;1006388-38-0;
-Cenzileucel;Cenzileucel;3002.51;NC3086Bc Ann. O/8;HSC/71;2023;127;no mention;
+Cenzileucel;Cenzileucel;3002.51;NC3086Bc Ann. O/8;HSC/71;2023;127;;
 cepeginterferon alfa-2b;cépeginterféron alfa-2b;3002.13;NC2116B1b Ann. S/2;HSC/55;2015;105;1192706-52-7;HSC/49 (3002.10)
 ceralasertib;céralasertib;2934.99;NC2626B1b Ann. O/6;HSC/63;2019;119;1352226-88-0;
 ceralifimod;céralifimod;2933.99;NC2004B1b Ann. O/5;HSC/53;2014;109;891859-12-4;
@@ -1004,7 +1004,7 @@ cilobradine;cilobradine;2933.79;38.100 Ann. Q (No. 214);HSC/11;1993;66;109859-78
 cilofexor;cilofexor;2934.99;NC2626B1b Ann. O/5;HSC/63;2019;118;1418274-28-8;
 cilofungin;cilofungine;2941.90;38.100 Ann. Q (No. 215);HSC/11;1993;60;79404-91-4;
 cilomilast;cilomilast;2926.90;NC0430B2 Ann. Q/1 (I);HSC/27;2001;82;153259-65-5;
-ciltacabtagene autoleucel;ciltacabtagène autoleucel;3002.51 ;NC2803Bc Ann. T/6;HSC/67;2021;122;no mention;
+ciltacabtagene autoleucel;ciltacabtagène autoleucel;3002.51 ;NC2803Bc Ann. T/6;HSC/67;2021;122;;
 ciluprevir;ciluprévir;2934.10;NC0938B2b Ann. O/3 (I);HSC/35;2005;90;300832-84-2;
 cimaglermin alfa;cimaglermine alfa;2934.99;NC2116B1b Ann. R/4;HSC/55;2015;110;1350717-96-2;
 cimdelirsen ;cimdélirsen;2934.99;NC2930Bc Ann. P/27;HSC/69;2022;125;2131025-82-4;
@@ -1166,7 +1166,7 @@ dalosirvat;dalosirvat;2932.99 ;NC2803Bc Ann. T/7;HSC/67;2021;123;1360540-81-3;
 dalotuzumab;dalotuzumab;3002.13;NC2116B1b Ann. S/2;HSC/55;2015;102;1005389-60-5;HSC/46 (3002.10)
 dalpiciclib;dalpiciclib;2933.79 ;NC2803Bc Ann. T/7;HSC/67;2021;123;1637781-04-4;
 dalteparin sodium;daltéparine sodique;3001.90;NC1553B1b Ann. O/5;HSC/45;2010;64;9041-08-1;
-dalucabtagene autoleucel;dalucabtagène autoleucel;3002.51;NC3086Bc Ann. O/7;HSC/71;2023;126;no mention;
+dalucabtagene autoleucel;dalucabtagène autoleucel;3002.51;NC3086Bc Ann. O/7;HSC/71;2023;126;;
 dalutrafusp alfa;dalutrafusp alfa;3002.13;NC2930Bc Ann. P/27;HSC/69;2022;125;2419918-89-9;
 Dalzanemdor;Dalzanemdor;2906.13;NC3086Bc Ann. O/8;HSC/71;2023;127;1629853-48-0;
 damoctocog alfa pegol;damoctocog alfa pégol;3002.12;NC2116B1b Ann. S/2;HSC/55;2015;109;1363853-26-2;HSC/53 (3002.10)
@@ -1188,7 +1188,7 @@ dapabutan;dapabutan;2922.49;"40.600 Ann. D, par. 6";HSC/18;1996;70;6582-31-6;
 dapaconazole;dapaconazole;2933.29;NC2116B1b Ann. R/5;HSC/55;2015;111;1269726-67-1;
 dapagliflozin;dapagliflozine;2932.99;NC1310B1b Ann. N/4;HSC/41;2008;97;461432-26-8;
 dapansutrile;dapansutrile;2930.90;NC2373B1b Ann. O/6;HSC/59;2017;114;54863-37-5;
-dapatifagene navolactibac;dapatifagène navolactibac;3002.49 ;NC2930Bc Ann. P/33;HSC/69;2022;122;no mention;HSC/67 (3002.90)
+dapatifagene navolactibac;dapatifagène navolactibac;3002.49 ;NC2930Bc Ann. P/33;HSC/69;2022;122;;HSC/67 (3002.90)
 dapiclermin;dapiclermine;2933.29;NC1059B2b Ann. O/5;HSC/37;2006;93;444069-80-1;
 dapiglutide;dapiglutide;2937.19 ;NC2803Bc Ann. T/7;HSC/67;2021;123;2296814-85-0;
 dapirolizumab pegol;dapirolizumab pégol;3002.13;NC2237B1b Ann. T/13;HSC/57;2016;110;1416147-64-2;HSC/55 (3002.10)
@@ -1214,7 +1214,7 @@ darovasertib;darovasertib;2933.39 ;NC2803Bc Ann. T/7;HSC/67;2021;123;1874276-76-
 darsidormine;darsidomine;2934.99;NC2004B1b Ann. O/6;HSC/53;2014;74;137500-42-6;HSC/18 (2934.90)
 darunavir;darunavir;2935.90;NC2116B1b Ann. S/1;HSC/55;2015;88;206361-99-1;HSC/33 (2935.00)
 darusentan;darusentan;2933.59;NC0430B2 Ann. Q/1 (I);HSC/27;2001;82;171714-84-4;
-darvadstrocel;darvadstrocel;3002.51;NC2803Bc Ann. T/4;HSC/67;2021;117;no mention;HSC/63 (3002.90)
+darvadstrocel;darvadstrocel;3002.51;NC2803Bc Ann. T/4;HSC/67;2021;117;;HSC/63 (3002.90)
 dasabuvir;dasabuvir;2935.90;NC2116B1b Ann. S/1;HSC/55;2015;109;1132935-63-7;HSC/53 (2935.00)
 dasantafil;dasantafil;2933.59;NC0938B2b Ann. O/3 (II);HSC/35;2005;91;569351-91-3;
 dasatinib;dasatinib;2934.10;NC1178B1c Ann. O/3;HSC/39;2007;94;302962-49-8;
@@ -1371,7 +1371,7 @@ dianicline;dianicline;2934.99;NC1059B2b Ann. O/5;HSC/37;2006;93;292634-27-6;
 diaplasinin;diaplasinine;2933.99;NC1123B1b Ann. N/1;HSC/38;2006;94;481631-45-2;
 diazepam;diazépam;2933.91;E.N. Chap. 29 - List I-II (Psychotropic);HSC/25;2000;12;439-14-5;
 dibotermin alfa;dibotermine alfa;2933.29;NC0938B2b Ann. O/2;HSC/35;2005;89;246539-15-1;
-dibunate;dibunate;2904.10;38.100 Ann. Q (No. 69);HSC/11;1993;48;no mention;
+dibunate;dibunate;2904.10;38.100 Ann. Q (No. 69);HSC/11;1993;48;;
 dichlorisone;dichlorisone;2937.22;38.100 Ann. Q (No. 242);HSC/11;1993;10;7008-26-6;
 diciferron;diciferron;2931.90;NC2373B1b Ann. O/12;HSC/59;2017;44;65606-61-3;HSC/11 (2931.00)
 dicirenone;dicirénone;2937.29;NC2004B1b Ann. O/6;HSC/53;2014;50;41020-79-5;HSC/11 (2937.99)
@@ -1391,7 +1391,7 @@ difeterol;difétérol;2922.19;40.260 Ann. L/2 (No. 61);HSC/17;1996;36;14587-50-9
 diflomotecan;diflomotécan;2934.99;NC2237B1b Ann. S/11;HSC/57;2016;84;220997-97-7;"HSC/31 (2939,99)"
 difluprednate;difluprednate;2937.22;38.100 Ann. Q (No. 250);HSC/11;1993;21;23674-86-4;
 dihydrocodeine;dihydrocodéine;2939.11;E.N. Chap. 29 - List I-I (Narcotic drugs);HSC/25;2000;8;125-28-0;
-dilanubicel;dilanubicel;3002.51;NC2803Bc Ann. T/4;HSC/67;2021;119;no mention;HSC/63 (3002.90)
+dilanubicel;dilanubicel;3002.51;NC2803Bc Ann. T/4;HSC/67;2021;119;;HSC/63 (3002.90)
 dilmapimod;dilmapimod;2933.79;NC1649B3b Ann. R/13;HSC/47;2011;102;444606-18-2;
 dilopetine;dilopétine;2934.99;NC1123B1b Ann. N/1;HSC/38;2006;94;247046-52-2;
 dilpacimab;dilpacimab;3002.13;NC2626B1b Ann. O/6;HSC/63;2019;119;1791420-09-1;
@@ -1598,7 +1598,7 @@ elafibranor;élafibranor;2930.90;NC2237B1b Ann. S/8;HSC/57;2016;112;824932-88-9;
 elagolix;élagolix;2937.90;NC1443B1b Ann. P/6;HSC/43;2009;99;834153-87-6;
 elamipretide;élamiprétide;2925.29;NC2237B1b Ann. S/9;HSC/57;2016;113;736992-21-5;
 elapegademase ;élapégadémase;3507.90;NC2373B1b Ann. O/7;HSC/59;2017;115;1709806-75-6;
-elapomestrocel;élapomestrocel;3002.51;NC3086Bc Ann. O/7;HSC/71;2023;126;no mention;
+elapomestrocel;élapomestrocel;3002.51;NC3086Bc Ann. O/7;HSC/71;2023;126;;
 elarekibep;élarékibep;2934.99;NC3086Bc Ann. O/7;HSC/71;2023;126;2485020-60-6;
 elarofiban;elarofiban;2933.39;NC0430B2 Ann. Q/1 (II);HSC/27;2001;83;198958-88-2;
 elasomeran;élasoméran;3002.41;NC2930Bc Ann. P/27;HSC/69;2022;125-COVID;2430046-03-8;
@@ -1628,7 +1628,7 @@ elipovimab;élipovimab;3002.13;NC2803Bc Ann. T/2;HSC/67;2021;120;2101210-43-7;
 elisartan;élisartan;2933.29;"40.600 Ann. D, par. 6";HSC/18;1996;72;158682-68-9;
 elisidepsin;élisidepsine;2934.99;NC1649B3b Ann. R/12;HSC/47;2011;101;681272-30-0;
 elismetrep;élismétrep;2935.90;NC2626B1b Ann. O/5;HSC/63;2019;118;1400699-64-0;
-elivaldogene autotemcel;élivaldogène autotemcel;3002.51;NC2803Bc Ann. T/3;HSC/67;2021;121;no mention;
+elivaldogene autotemcel;élivaldogène autotemcel;3002.51;NC2803Bc Ann. T/3;HSC/67;2021;121;;
 elivaldogene tavalentivec ;élivaldogène tavalentivec;3002.49;NC2930Bc Ann. P/33;HSC/69;2022;115;1905397-73-0;HSC/59 (3002.90)
 elliptinium acetate;acétate d'elliptinium;2939.79;NC2116B1b Ann. S/1;HSC/55;2015;43;58337-35-2;HSC/11 (2939.90)   HSC/53 (2939.99)
 elobixibat;élobixibat;2934.99;NC1760B1b Ann. N/7;HSC/49;2012;104;439087-18-0;
@@ -1648,7 +1648,7 @@ elsiglutide;elsiglutide;2937.19;NC1760B1b Ann. N/7;HSC/49;2012;104;914009-84-0;
 elsubrutinib;elsubrutinib;2933.39;NC2803Bc Ann. T/3;HSC/67;2021;121;1643570-24-4;
 elsulfavirine;elsulfavirine;2935.90;NC2501B1b Ann. M/6;HSC/61;2018;117;868046-19-9;
 eltanexor;eltanexor;2933.59;NC2501B1b Ann. M/5;HSC/61;2018;116;1642300-52-4;
-eltrapuldencel;eltrapuldencel;3002.51;NC2803Bc Ann. T/4;HSC/67;2021;115;no mention;HSC/61 (3002.90)
+eltrapuldencel;eltrapuldencel;3002.51;NC2803Bc Ann. T/4;HSC/67;2021;115;;HSC/61 (3002.90)
 eltrombopag;eltrombopag;2933.19;NC1178B1c Ann. O/3;HSC/39;2007;94;496775-61-2;
 elubrixin;élubrixine;2935.90;NC2116B1b Ann. S/1;HSC/55;2015;107;688763-64-6;HSC/51 (2935.00)
 eluforsen;éluforsen;2934.99;NC2626B1b Ann. O/6;HSC/63;2019;119;2101868-82-8;
@@ -1673,8 +1673,8 @@ emibetuzumab;émibetuzumab;3002.13;NC2237B1b Ann. T/13;HSC/57;2016;111;1365287-9
 emicerfont;emicerfont;2933.29;NC1649B3b Ann. R/13;HSC/47;2011;102;786701-13-1;
 emicizumab;émicizumab;3002.13;NC2237B1b Ann. T/11;HSC/57;2016;113;1610943-06-0;HSC/57 (3002.10) (S/9)
 emideltide;émideltide;2933.99;NC2004B1b Ann. O/6;HSC/53;2014;70;62568-57-4;HSC/18 (2933.90)
-emilimogene sigulactibac;émilimogène sigulactibac;3002.49;NC3086Bc Ann. O/7;HSC/71;2023;126;no mention;
-emiplacel;émiplacel;3002.51;NC2803Bc Ann. T/4;HSC/67;2021;117;no mention;HSC/63 (3002.90)
+emilimogene sigulactibac;émilimogène sigulactibac;3002.49;NC3086Bc Ann. O/7;HSC/71;2023;126;;
+emiplacel;émiplacel;3002.51;NC2803Bc Ann. T/4;HSC/67;2021;117;;HSC/63 (3002.90)
 emirodatamab;émirodatamab;3002.13;NC3086Bc Ann. O/7;HSC/71;2023;126;2449199-61-3;
 emivirine;émivirine;2933.59;NC0430B2 Ann. Q/1 (I);HSC/27;2001;82;149950-60-7;
 emixustat;émixustat;2922.50;NC2004B1b Ann. O/4;HSC/53;2014;108;1141777-14-1;
@@ -1807,7 +1807,7 @@ eptaplatin;eptaplatine;2843.90;NC0430B2 Ann. Q/1 (II);HSC/27;2001;83;146665-77-2
 eptifibatide;eptifibatide;2934.99;NC2004B1b Ann. O/6;HSC/53;2014;78;148031-34-9;HSC/22 (2934.90)
 eptinezumab ;eptinezumab;3002.13;NC2373B1b Ann. O/7;HSC/59;2017;115;1644539-04-7;
 eptotermin alfa;eptotermine alfa;2933.29;NC0938B2b Ann. O/2;HSC/35;2005;89;129805-33-0;
-Equecabtagene autoleucel ;Equécabtagène autoleucel ;3002.51;NC3086Bc Ann. O/8;HSC/71;2023;127;no mention;
+Equecabtagene autoleucel ;Equécabtagène autoleucel ;3002.51;NC3086Bc Ann. O/8;HSC/71;2023;127;;
 eragidomide;éragidomide;2933.79;NC2930Bc Ann. P/27;HSC/69;2022;125;1860875-51-9;
 eramkafusp alfa;éramkafusp alfa;3002.13;NC2930Bc Ann. P/25;HSC/69;2022;124;2388499-82-7;
 eravacycline;éravacycline;2941.30;NC2004B1b Ann. O/4;HSC/53;2014;108;1207283-85-9;
@@ -1825,7 +1825,7 @@ eritoran;eritoran;2932.99;NC1178B1c Ann. O/2;HSC/39;2007;92;185955-34-4;
 eritrityl tetranitrate;tétranitrate d'éritrityle;2920.90;38.100 Ann. Q (No. 298);HSC/11;1993;13;7297-25-8;
 erlizumab;erlizumab;3002.13;NC2116B1b Ann. S/2;HSC/55;2015;84;211323-03-4;HSC/29 (3002.10)
 erlotinib;erlotinib;2933.59;NC0590B2 Ann. L/15;HSC/29;2002;85;183321-74-6;
-ersemadromcel ;ersémadromcel;3002.51;NC2930Bc Ann. P/27;HSC/69;2022;125;no mention;
+ersemadromcel ;ersémadromcel;3002.51;NC2930Bc Ann. P/27;HSC/69;2022;125;;
 ersentilide;ersentilide;2935.90;NC2116B1b Ann. S/1;HSC/55;2015;72;125279-79-0;HSC/18 (2935.00)
 ertapenem;ertapénem;2941.90;NC0590B2 Ann. L/15;HSC/29;2002;84;153832-46-3;
 erteberel;ertébérel;2932.99;NC1760B1b Ann. N/7;HSC/49;2012;104;533884-09-2;
@@ -1904,15 +1904,15 @@ Etrinabdione;Etrinabdione;2922.50;NC3086Bc Ann. O/8;HSC/71;2023;127;1818428-24-8
 etripamil;étripamil;2926.90;NC2237B1b Ann. S/9;HSC/57;2016;113;1593673-23-4;
 etrolizumab;étrolizumab;3002.13;NC2116B1b Ann. S/2;HSC/55;2015;104;1044758-60-2;HSC/49 (3002.10)
 etrumadenant;étrumadénant;2933.59;NC2930Bc Ann. P/25;HSC/69;2022;124;2239273-34-6;
-etuvetidigene autotemcel ;étuvétidigène autotemcel;3002.51;NC2930Bc Ann. P/27;HSC/69;2022;125;no mention;
-eufauserase;eufausérase;3507.90;NC0590B2 Ann. L/15;HSC/29;2002;84;no mention;
+etuvetidigene autotemcel ;étuvétidigène autotemcel;3002.51;NC2930Bc Ann. P/27;HSC/69;2022;125;;
+eufauserase;eufausérase;3507.90;NC0590B2 Ann. L/15;HSC/29;2002;84;;
 evacetrapib;évacétrapib;2933.99;NC1760B1b Ann. N/8;HSC/49;2012;105;1186486-62-3;
-evagenretcel;évagenretcel;3002.51;NC2803Bc Ann. T/4;HSC/67;2021;116;no mention;HSC/63 (3002.90)
+evagenretcel;évagenretcel;3002.51;NC2803Bc Ann. T/4;HSC/67;2021;116;;HSC/63 (3002.90)
 evandamine;évandamine;2934.20;38.100 Ann. Q (No. 307);HSC/11;1993;56;100035-75-4;
 evatanepag;évatanépag;2935.90;NC2116B1b Ann. S/1;HSC/55;2015;101;223488-57-1;HSC/46 (2935.00)
 Evazarsen;Evazarsen;2934.99;NC3086Bc Ann. O/8;HSC/71;2023;127;2589926-22-5;
 evenamide;événamide;2924.29;NC2237B1b Ann. S/9;HSC/57;2016;113;1092977-61-1;
-evencaleucel;évencaleucel;3002.51;NC3086Bc Ann. O/7;HSC/71;2023;126;no mention;
+evencaleucel;évencaleucel;3002.51;NC3086Bc Ann. O/7;HSC/71;2023;126;;
 evernimicin;evernimicine;2941.90;NC0590B2 Ann. L/10;HSC/29;2002;82;109545-84-8;
 everolimus;évérolimus;2934.99;NC1874B1b Ann. O/5;HSC/51;2013;82;159351-69-6;
 evexomostat ;évexomostat;3906.90;NC2930Bc Ann. P/27;HSC/69;2022;125;2416263-67-5;
@@ -1925,10 +1925,10 @@ evodenoson;évodénoson;2934.99;NC2004B1b Ann. O/4;HSC/53;2014;108;844873-47-8;
 evofosfamide;évofosfamide;2933.29;NC2116B1b Ann. R/5;HSC/55;2015;111;918633-87-1;
 evogliptin;évogliptin;2933.59;NC1874B1b Ann. O/2;HSC/51;2013;107;1222102-29-5;
 evolocumab;évolocumab;3002.13;NC2116B1b Ann. S/2;HSC/55;2015;108;1256937-27-5;HSC/53 (3002.10)
-evoncabtagene pazurgedleucel ;évoncabtagène pazurgedleucel;3002.51;NC2930Bc Ann. P/27;HSC/69;2022;125;no mention;
+evoncabtagene pazurgedleucel ;évoncabtagène pazurgedleucel;3002.51;NC2930Bc Ann. P/27;HSC/69;2022;125;;
 evorpacept;évorpacept;3002.13;NC3086Bc Ann. O/7;HSC/71;2023;126;2484949-51-9;
 Evunzekibart;Evunzékibart;3002.13;NC3086Bc Ann. O/8;HSC/71;2023;127;2639688-77-8;
-exagamglogene autotemcel;exagamglogène autotemcel;3002.51;NC2930Bc Ann. P/25;HSC/69;2022;124;no mention;
+exagamglogene autotemcel;exagamglogène autotemcel;3002.51;NC2930Bc Ann. P/25;HSC/69;2022;124;;
 exaluren;exalurène;2932.19 ;NC2803Bc Ann. T/6;HSC/67;2021;122;1375073-93-0;
 exametazime;examétazime;2928.00;38.100 Ann. Q (No. 308);HSC/11;1993;57;105613-48-7;
 examorelin;examoréline;2937.19;NC2004B1b Ann. O/6;HSC/53;2014;72;140703-51-1;"HSC/53 (2937.19)
@@ -1936,7 +1936,7 @@ HSC/18 (2937.99)"
 exaprolol;exaprolol;2922.19;40.260 Ann. L/2 (No. 70);HSC/17;1996;32;55837-19-9;
 Exarafenib;Exarafénib;2934.99;NC3086Bc Ann. O/8;HSC/71;2023;127;2639957-39-2;
 exatecan;exatécan;2939.79;NC2116B1b Ann. S/1;HSC/55;2015;81;171335-80-1;HSC/27 (2939.90)    HSC/53 (2939.99)
-exatecan alideximer;exatécan alideximer;2939.79;NC2237B1b Ann. T/12;HSC/57;2016;89;no mention;HSC/37 (2939.99)
+exatecan alideximer;exatécan alideximer;2939.79;NC2237B1b Ann. T/12;HSC/57;2016;89;;HSC/37 (2939.99)
 exbivirumab;exbivirumab;3002.13;NC2116B1b Ann. S/2;HSC/55;2015;91;569658-80-6;HSC/35 (3002.10)
 exebacase;exébacase;3507.90;NC2501B1b Ann. M/6;HSC/61;2018;117;1404122-92-4;
 exenatide;exenatide;2937.19;NC1760B1b Ann. N/3;HSC/49;2012;89;141758-74-9;
@@ -1965,7 +1965,7 @@ famiraprinium chloride;chlorure de famiraprinium;2933.99;NC2004B1b Ann. O/6;HSC/
 famitinib ;famitinib;2933.79;NC2930Bc Ann. P/27;HSC/69;2022;125;1044040-56-3;
 fampridine;fampridine;2933.39;"40.600 Ann. D, par. 6";HSC/18;1996;72;504-24-5;
 fampronil;fampronil;2933.29;NC0938B2b Ann. O/3 (II);HSC/35;2005;91;134183-95-2;
-Famzeretcel;Famzéretcel;3002.51;NC3086Bc Ann. O/8;HSC/71;2023;127;no mention;
+Famzeretcel;Famzéretcel;3002.51;NC3086Bc Ann. O/8;HSC/71;2023;127;;
 fanapanel;fanapanel;2934.99;NC2004B1b Ann. O/6;HSC/53;2014;80;161605-73-8;HSC/23 (2934.90)
 fandofloxacin;fandofloxacine;2933.59;42.750 Ann. O;HSC/22;1998;78;164150-99-6;
 fandosentan;fandosentan;2934.99;NC0730B2 Ann. M/7;HSC/31;2003;87;221241-63-0;
@@ -2066,14 +2066,14 @@ firategrast;firatégrast;2924.29;NC1310B1b Ann. N/10;HSC/41;2008;96;402567-16-2;
 firazorexton;firazorexton;2935.90 ;NC2803Bc Ann. T/7;HSC/67;2021;123;2274802-95-6;
 firibastat;firibastat;2930.90;NC2501B1b Ann. M/6;HSC/61;2018;117;648927-86-0;
 firivumab;firivumab;3002.13;NC2237B1b Ann. T/13;HSC/57;2016;111;1443004-15-6;HSC/55 (3002.10)
-firolimogene autotemcel ;firolimogène autotemcel;3002.51;NC2930Bc Ann. P/27;HSC/69;2022;125;no mention;
+firolimogene autotemcel ;firolimogène autotemcel;3002.51;NC2930Bc Ann. P/27;HSC/69;2022;125;;
 firsocostat;firsocostat;2934.99;NC2626B1b Ann. O/5;HSC/63;2019;118;1434635-54-7;
 firtecan peglumer;firtécan péglumère;2939.79;NC2373B1b Ann. O/12;HSC/59;2017;108;1204768-03-5;"HSC/53 (2933.99) 
 HSC/57 (2939.99)"
 firtecan pegol;firtécan pégol;2939.79;NC2116B1b Ann. S/1;HSC/55;2015;107;946062-05-1;HSC/51 (2939.99)
 firuglipel;firuglipel;2934.99;NC2501B1b Ann. M/5;HSC/61;2018;116;1371591-51-3;
 firzacorvir;firzacorvir;2934.10;NC2930Bc Ann. P/25;HSC/69;2022;124;2243747-96-6;
-firzotemcel;firzotemcel;3002.51;NC2803Bc Ann. T/3;HSC/67;2021;121;no mention;
+firzotemcel;firzotemcel;3002.51;NC2803Bc Ann. T/3;HSC/67;2021;121;;
 fisogatinib;fisogatinib;2934.99;NC2803Bc Ann. T/2;HSC/67;2021;120;1707289-21-1;
 fispemifene;fispémifène;2909.49;NC0938B2b Ann. O/2;HSC/35;2005;89;341524-89-8;
 fitusiran;fitusiran;2934.99;NC2237B1b Ann. S/9;HSC/57;2016;113;1499251-18-1;
@@ -2197,7 +2197,7 @@ frunevetmab;frunévetmab;3002.13;NC2501B1b Ann. M/5;HSC/61;2018;116;1708936-80-4
 fruquintinib;fruquintinib;2934.99;NC2501B1b Ann. M/5;HSC/61;2018;116;1194506-26-7;
 fudosteine;fudostéine;2930.90;42.100 Ann. O (VI);HSC/21;1998;77;13189-98-5;
 fulacimstat;fulacimstat;2934.99;NC2501B1b Ann. M/6;HSC/61;2018;117;1488354-15-9;
-fuladectin;fuladectine;3003.90;"40.600 Ann. D, par. 6";HSC/18;1996;71;Component A4 : 150702-32-2 / Component A3 : 150702-33-3;
+fuladectin;fuladectine;3003.90;"40.600 Ann. D, par. 6";HSC/18;1996;71;;
 Fulimetibant;Fulimétibant;2933.19;NC3086Bc Ann. O/8;HSC/71;2023;127;2231142-90-6;
 fulranumab;fulranumab;3002.13;NC2116B1b Ann. S/2;HSC/55;2015;104;902141-80-4;HSC/49 (3002.10)
 fulvestrant;fulvestrant;2937.23;NC2116B1b Ann. R/7;HSC/55;2015;78;129453-61-8;HSC/22 (2930.90)
@@ -2258,14 +2258,14 @@ garnocestim;garnocestim;3002.13;NC2116B1b Ann. S/2;HSC/55;2015;85;246861-96-1;HS
 garsorasib;garsorasib;2933.59;NC3086Bc Ann. O/7;HSC/71;2023;126;2559761-14-5;
 gartisertib ;gartisertib;2934.99;NC2930Bc Ann. P/27;HSC/69;2022;125;1613191-99-3;
 garvagliptin;garvagliptine;2935.90;NC2501B1b Ann. M/6;HSC/61;2018;117;1601479-87-1;
-garveleucel;garvéleucel;3002.51 ;NC2803Bc Ann. T/7;HSC/67;2021;123;no mention;
+garveleucel;garvéleucel;3002.51 ;NC2803Bc Ann. T/7;HSC/67;2021;123;;
 gataparsen;gataparsen;2934.99;NC1649B3b Ann. R/14;HSC/47;2011;103;1065019-70-6;
 gatifloxacin;gatifloxacine;2933.59;42.100 Ann. O (III);HSC/21;1998;74;160738-57-8;
 gatipotuzumab;gatipotuzumab;3002.13;NC2501B1b Ann. M/5;HSC/61;2018;116;1264737-26-9;
 gatralimab;gatralimab;3002.13;NC2803Bc Ann. T/3;HSC/67;2021;121;1826020-80-7;
 gavestinel;gavestinel;2933.99;NC2004B1b Ann. O/6;HSC/53;2014;77;153436-22-7;HSC/21 (2933.90)
 gavilimomab;gavilimomab;3002.13;NC2116B1b Ann. S/2;HSC/55;2015;84;244096-20-6;HSC/29 (3002.10)
-gavocabtagene autoleucel;gavocabtagène autoleucel;3002.51 ;NC2803Bc Ann. T/7;HSC/67;2021;123;no mention;
+gavocabtagene autoleucel;gavocabtagène autoleucel;3002.51 ;NC2803Bc Ann. T/7;HSC/67;2021;123;;
 gaxilose;gaxilose;2940.00;NC1760B1b Ann. N/7;HSC/49;2012;104;14087-31-1;
 gebasaxturev;gébasaxturev;3002.49;NC3086Bc Ann. O/7;HSC/71;2023;126;2122169-83-7;
 geclosporin;géclosporine;2933.79;"40.600 Ann. D, par. 6";HSC/18;1996;70;74436-00-3;
@@ -2369,7 +2369,7 @@ haloxazolam;haloxazolam;2934.91;E.N. Chap. 29 - List I-II (Psychotropic);HSC/25;
 hemoglobin betafumaril (bovine) ;hémoglobine bêtafumaril (bovine);3002.12;NC2373B1b Ann. O/7;HSC/59;2017;115;1797415-38-3;
 hemoglobin crosfumaril;hémoglobine crosfumaril;3002.12;NC2116B1b Ann. S/2;HSC/55;2015;76;142261-03-8;HSC/21 (3002.10)
 hemoglobin crosfumaril (bovine);hémoglobine crosfumaril (bovine);3002.12;NC2116B1b Ann. S/2;HSC/55;2015;108;1360741-07-6;HSC/53 (3002.10)
-hemoglobin glutamer;hémoglobine glutamère;3002.12;NC2116B1b Ann. S/2;HSC/55;2015;80;no mention;HSC/25 (3002.10)
+hemoglobin glutamer;hémoglobine glutamère;3002.12;NC2116B1b Ann. S/2;HSC/55;2015;80;;HSC/25 (3002.10)
 hemoglobin raffimer;hémoglobine raffimère;3002.12;NC2116B1b Ann. S/2;HSC/55;2015;89;197462-97-8;HSC/37 (3002.10)
 hemoglobin sucistil (bovine);hémoglobine sucistil (bovine);3002.12;NC3086Bc Ann. O/7;HSC/71;2023;126;2427417-84-1;
 hepcidin;hepcidine;2937.19 ;NC2803Bc Ann. T/7;HSC/67;2021;123;1356390-47-0;
@@ -2430,7 +2430,7 @@ idalopirdine;idalopirdine;2933.99;NC2116B1b Ann. R/4;HSC/55;2015;110;467459-31-0
 idarubicin;idarubicine;2941.90;38.100 Ann. Q (No. 347);HSC/11;1993;47;58957-92-9;
 idarucizumab;idarucizumab;3002.13;NC2116B1b Ann. S/2;HSC/55;2015;109;1362509-93-0;HSC/53 (3002.10)
 idasanutlin;idasanutline;2933.99;NC2116B1b Ann. R/5;HSC/55;2015;111;1229705-06-9;
-idecabtagene vicleucel;idécabtagène vicleucel;3002.51;NC2803Bc Ann. T/4;HSC/67;2021;119;no mention;HSC/63 (3002.90)
+idecabtagene vicleucel;idécabtagène vicleucel;3002.51;NC2803Bc Ann. T/4;HSC/67;2021;119;;HSC/63 (3002.90)
 idelalisib;idélalisib;2933.59;NC1874B1b Ann. O/2;HSC/51;2013;107;870281-82-6;
 idestopoetin alfa;idestopoétine alfa; 3002.12;NC2930Bc Ann. P/27;HSC/69;2022;125;2370888-96-1;
 idetrexed;idétrexed;2933.59 ;NC2803Bc Ann. T/6;HSC/67;2021;122;501332-69-0;
@@ -2464,7 +2464,7 @@ ilepatril;ilépatril;2933.79;NC1178B1c Ann. O/5;HSC/39;2007;95;473289-62-2;
 ilepcimide;ilepcimide;2939.79;NC2803Bc Ann. T/10;HSC/67;2021;70;82857-82-7;"HSC/18 (2934.90)
 HSC/53 (2934.99)"
 ilginatinib;ilginatinib;2933.39;NC2626B1b Ann. O/6;HSC/63;2019;119;1239358-86-1;
-ilixadencel;ilixadencel;3002.51;NC2803Bc Ann. T/4;HSC/67;2021;116;no mention;HSC/61 (3002.90)
+ilixadencel;ilixadencel;3002.51;NC2803Bc Ann. T/4;HSC/67;2021;116;;HSC/61 (3002.90)
 ilmetropium iodide ;iodure d'ilmétropium;2939.79;NC2373B1b Ann. O/7;HSC/59;2017;115;129109-88-2;
 ilodecakin;ilodécakine;3002.13;NC2116B1b Ann. S/2;HSC/55;2015;81;149824-15-7;HSC/25 (3002.10)
 ilofotase alfa;ilofotase alfa;3507.90;NC2930Bc Ann. P/25;HSC/69;2022;124;2387636-92-0;
@@ -2472,7 +2472,7 @@ ilomastat;ilomastat;2933.99;NC2004B1b Ann. O/6;HSC/53;2014;73;142880-36-2;HSC/18
 ilonidap;ilonidap;2934.99;NC2004B1b Ann. O/6;HSC/53;2014;70;135202-79-8;HSC/18 (2934.90)
 iloprost;iloprost;2918.19;38.100 Ann. Q (No. 351);HSC/11;1993;48;73873-87-7;
 ilorasertib;ilorasertib;2934.99;NC2004B1b Ann. O/4;HSC/53;2014;108;1227939-82-3;
-iltamiocel;iltamiocel;3002.51;NC2930Bc Ann. P/25;HSC/69;2022;124;no mention;
+iltamiocel;iltamiocel;3002.51;NC2930Bc Ann. P/25;HSC/69;2022;124;;
 ilunocitinib ;ilunocitinib;2935.90;NC2930Bc Ann. P/27;HSC/69;2022;125;1187594-14-4;
 imagabalin;imagabaline;2922.49;NC1604B1b Ann. N/5;HSC/46;2010;101;610300-07-7;
 imalumab;imalumab;3002.13;NC2237B1b Ann. T/13;HSC/57;2016;111;1430205-07-4;HSC/55 (3002.10)
@@ -2502,7 +2502,7 @@ implitapide;implitapide;2933.99;NC2004B1b Ann. O/6;HSC/53;2014;82;177469-96-4;HS
 imsidolimab;imsidolimab;3002.13;NC2930Bc Ann. P/25;HSC/69;2022;124;2102543-86-0;
 imvotamab;imvotamab;3002.13;NC3086Bc Ann. O/7;HSC/71;2023;126;2573121-53-4;
 inakalant;inakalant;2934.99;NC1178B1c Ann. O/5;HSC/39;2007;95;335619-18-6;
-Inaleucel;Inaleucel;3002.51;NC3086Bc Ann. O/8;HSC/71;2023;127;no mention;
+Inaleucel;Inaleucel;3002.51;NC3086Bc Ann. O/8;HSC/71;2023;127;;
 inarigivir soproxil;inarigivir soproxil;2934.99;NC2501B1b Ann. M/5;HSC/61;2018;116;942123-43-5;
 inavolisib;inavolisib;2934.99 ;NC2803Bc Ann. T/6;HSC/67;2021;122;2060571-02-8;
 inaxaplin;inaxapline;2933.79;NC2930Bc Ann. P/27;HSC/69;2022;125;2446816-88-0;
@@ -2570,7 +2570,7 @@ interferon alfacon-1;interféron alfacon-1;3002.13;NC2116B1b Ann. S/2;HSC/55;201
 intetumumab;intétumumab;3002.13;NC2116B1b Ann. S/2;HSC/55;2015;101;725735-28-4;HSC/46 (3002.10)
 intiquinatine;intiquinatine;2933.49;NC1310B1b Ann. N/4;HSC/41;2008;99;445041-75-8;
 inupadenant;inupadénant;2934.99 ;NC2803Bc Ann. T/7;HSC/67;2021;123;2246607-08-7;
-invimestrocel;invimestrocel;3002.51 ;NC2803Bc Ann. T/7;HSC/67;2021;123;no mention;
+invimestrocel;invimestrocel;3002.51 ;NC2803Bc Ann. T/7;HSC/67;2021;123;;
 iocanlidic acid (123I);acide iocanlidique (123I);2844.43;NC2803Bc Ann. T/4;HSC/67;2021;77;74855-17-7;HSC/21 (2844.40)
 iodine (124I) evuzamitide;iodine (124I) évuzamitide;2844.43;NC2930Bc Ann. P/27;HSC/69;2022;125;2420475-06-3;
 iodine (124I) girentuximab;girentuximab iodé (124I);2844.43;NC2803Bc Ann. T/4;HSC/67;2021;101;1011710-99-8;HSC/46 (2844.40)
@@ -2653,7 +2653,7 @@ itacnosertib;itacnosertib;2933.59 ;NC2803Bc Ann. T/6;HSC/67;2021;122;1628870-27-
 itameline;itaméline;2933.39;"40.600 Ann. D, par. 6";HSC/18;1996;71;121750-57-0;
 itanapraced;itanapraced;2916.39;NC2501B1b Ann. M/5;HSC/61;2018;116;749269-83-8;
 itepekimab;itépékimab;3002.13 ;NC2803Bc Ann. T/6;HSC/67;2021;122;2226742-52-3;
-itezocabtagene autoleucel ;itézocabtagène autoleucel;3002.51;NC2930Bc Ann. P/27;HSC/69;2022;125;no mention;
+itezocabtagene autoleucel ;itézocabtagène autoleucel;3002.51;NC2930Bc Ann. P/27;HSC/69;2022;125;;
 itolizumab;itolizumab;3002.13;NC2116B1b Ann. S/2;HSC/55;2015;103;1116433-11-4;HSC/47 (3002.10)
 itriglumide;itriglumide;2933.39;NC0430B2 Ann. Q/1 (I);HSC/27;2001;82;201605-51-8;
 itrocainide;itrocaïnide;2933.49;NC2004B1b Ann. O/6;HSC/53;2014;54;90828-99-2;HSC/11 (2933.40)
@@ -2782,7 +2782,7 @@ lazucirnon;lazucirnon;2933.79 ;NC2803Bc Ann. T/7;HSC/67;2021;123;1251528-23-0;
 lazuvapagon;lazuvapagon;2933.19 ;NC2803Bc Ann. T/6;HSC/67;2021;122;2379889-71-9;
 lebrikizumab;lébrikizumab;3002.13;NC2116B1b Ann. S/2;HSC/55;2015;101;953400-68-5;HSC/46 (3002.10)
 lecanemab;lécanémab;3002.13 ;NC2803Bc Ann. T/6;HSC/67;2021;122;1260393-98-3;
-lecilimogene autotemcel;lécilimogène autotemcel;3002.51;NC3086Bc Ann. O/7;HSC/71;2023;126;no mention;
+lecilimogene autotemcel;lécilimogène autotemcel;3002.51;NC3086Bc Ann. O/7;HSC/71;2023;126;;
 lecimibide;lécimibide;2933.29;"40.600 Ann. D, par. 6";HSC/18;1996;70;130804-35-2;
 leconotide;léconotide;2934.99;NC0730B2 Ann. M/6;HSC/31;2003;86;247207-64-3;
 lecozotan;lecozotan;2934.99;NC1059B2b Ann. O/5;HSC/37;2006;93;434283-16-6;
@@ -2801,7 +2801,7 @@ lefradafiban;léfradafiban;2933.79;42.100 Ann. O (IV);HSC/21;1998;75;149503-79-7
 lemalesomab;lémalésomab;3002.13;NC2116B1b Ann. S/2;HSC/55;2015;84;250242-54-7;HSC/29 (3002.10)
 lemborexant;lemborexant;2933.59;NC2116B1b Ann. R/5;HSC/55;2015;111;1369764-02-2;
 lemidosul;lémidosul;2930.90;38.100 Ann. Q (No. 400);HSC/11;1993;52;88041-40-1;
-lemoxinol;lémoxinol;3824.99;NC2116B1b Ann. S/1;HSC/55;2015;70;no mention;HSC/18 (3824.90)
+lemoxinol;lémoxinol;3824.99;NC2116B1b Ann. S/1;HSC/55;2015;70;;HSC/18 (3824.90)
 lemuteporfin;lémutéporfine;2933.99;NC0938B2b Ann. O/3 (II);HSC/35;2005;91;215808-49-4;
 lemzoparlimab;lemzoparlimab;3002.13;NC2930Bc Ann. P/25;HSC/69;2022;124;2377483-71-9;
 lenabasum;lénabasum;2932.99;NC2626B1b Ann. O/5;HSC/63;2019;118;137945-48-3;
@@ -2818,7 +2818,7 @@ lensiprazine;lensiprazine;2934.99;NC1443B1b Ann. P/6;HSC/43;2009;99;327026-93-7;
 lenvatinib;lenvatinib;2933.49;NC1760B1b Ann. N/7;HSC/49;2012;104;417716-92-8;
 lenvervimab;lenvervimab;3002.13;NC2626B1b Ann. O/5;HSC/63;2019;118;2055006-79-4;
 lenzilumab;lenzilumab;3002.13;NC2237B1b Ann. T/13;HSC/57;2016;111;1229575-09-0;HSC/55 (3002.10)
-lenzumestrocel;lenzumestrocel;3002.51;NC2803Bc Ann. T/4;HSC/67;2021;119;no mention;HSC/63 (3002.90)
+lenzumestrocel;lenzumestrocel;3002.51;NC2803Bc Ann. T/4;HSC/67;2021;119;;HSC/63 (3002.90)
 lepirudin;lépirudine;2934.99;NC2004B1b Ann. O/6;HSC/53;2014;73;138068-37-8;HSC/18 (2934.90)
 lepunafusp alfa ;lépunafusp alfa;3002.13;NC2930Bc Ann. P/27;HSC/69;2022;125;2396411-71-3;
 lerapolturev;lérapolturev;3002.49;NC2930Bc Ann. P/27;HSC/69;2022;125;2430048-02-3;
@@ -2841,7 +2841,7 @@ letaplimab;létaplimab;3002.13 ;NC2803Bc Ann. T/7;HSC/67;2021;123;2283356-07-8;
 letaxaban;létaxaban;2933.59;NC1760B1b Ann. N/7;HSC/49;2012;104;870262-90-1;
 leteprinim;létéprinim;2933.59;NC0090B2 Ann. M/5;HSC/23;1999;80;138117-50-7;
 letermovir;létermovir;2933.59;NC1760B1b Ann. N/7;HSC/49;2012;104;917389-32-3;
-letetresgene autoleucel;letetresgéne autoleucel;3002.51;NC2803Bc Ann. T/3;HSC/67;2021;121;no mention;
+letetresgene autoleucel;letetresgéne autoleucel;3002.51;NC2803Bc Ann. T/3;HSC/67;2021;121;;
 letolizumab;létolizumab;3002.13;NC2501B1b Ann. M/5;HSC/61;2018;116;1450981-87-9;
 letrozole;létrozole;2933.99;NC2004B1b Ann. O/6;HSC/53;2014;70;112809-51-5;HSC/18 (2933.90)
 leuprorelin;leuproréline;2937.19;NC2004B1b Ann. O/6;HSC/53;2014;47;53714-56-0;HSC/11 (2937.99)
@@ -2903,7 +2903,7 @@ lidorestat;lidorestat;2934.20;NC0730B2 Ann. M/7;HSC/31;2003;87;245116-90-9;
 lifastuzumab vedotin;lifastuzumab védotine;3002.13;NC2237B1b Ann. T/13;HSC/57;2016;110;1401812-88-1;HSC/55 (3002.10)
 lifibrol;lifibrol;2918.99;NC2373B1b Ann. O/12;HSC/59;2017;62;96609-16-4;HSC/11 (2918.90)
 lificiguat;lificiguat;2934.99;NC1178B1c Ann. O/5;HSC/39;2007;95;170632-47-0;
-lifileucel;lifileucel;3002.51;NC2803Bc Ann. T/4;HSC/67;2021;118;no mention;HSC/63 (3002.90)
+lifileucel;lifileucel;3002.51;NC2803Bc Ann. T/4;HSC/67;2021;118;;HSC/63 (3002.90)
 lifirafenib;lifirafénib;2934.99;NC2501B1b Ann. M/6;HSC/61;2018;117;1446090-79-4;
 lifitegrast;lifitegrast;2934.99;NC1874B1b Ann. O/2;HSC/51;2013;107;1025967-78-5;
 ligelizumab;ligelizumab;3002.13;NC2116B1b Ann. S/2;HSC/55;2015;107;1322627-61-1;HSC/51 (3002.10)
@@ -2944,14 +2944,14 @@ lisadimate;lisadimate;2922.49;40.260 Ann. L/2 (No. 87);HSC/17;1996;63;136-44-7;
 lisaftoclax;lisaftoclax;2935.90;NC2930Bc Ann. P/27;HSC/69;2022;125;2180923-05-9;
 lisavanbulin ;lisavanbuline;2934.99;NC2373B1b Ann. O/7;HSC/59;2017;115;1263384-43-5;
 lisdexamfetamine;lisdexamphétamine;2924.29;NC1178B1c Ann. O/3;HSC/39;2007;94;608137-32-2;
-lisocabtagene maraleucel;lisocabtagène maraleucel;3002.51;NC2803Bc Ann. T/4;HSC/67;2021;119;no mention;HSC/63 (3002.90)
+lisocabtagene maraleucel;lisocabtagène maraleucel;3002.51;NC2803Bc Ann. T/4;HSC/67;2021;119;;HSC/63 (3002.90)
 lisofylline;lisofylline;2939.59;NC2004B1b Ann. O/6;HSC/53;2014;72;100324-81-0;HSC/18 (2939.50)
 lisuride;lisuride;2939.69;NC2004B1b Ann. O/6;HSC/53;2014;25;18016-80-3;HSC/11 (2939.60)
 litenimod;liténimod;2934.99;NC1310B1b Ann. N/10;HSC/41;2008;96;852313-25-8;
 litifilimab;litifilimab;3002.13;NC3086Bc Ann. O/7;HSC/71;2023;126;2407378-48-5;
 litomeglovir;litoméglovir;2935.90;NC2116B1b Ann. S/1;HSC/55;2015;84;321915-31-5;HSC/29 (2935.00)
 litronesib;litronésib;2935.90;NC2116B1b Ann. S/1;HSC/55;2015;101;910634-41-2;HSC/46 (2935.00)
-livaraparin calcium;livaraparin calcium;3001.90;NC1553B1b Ann. O/5;HSC/45;2010;85;no mention;
+livaraparin calcium;livaraparin calcium;3001.90;NC1553B1b Ann. O/5;HSC/45;2010;85;;
 lividomycin;lividomycine;2941.90;38.100 Ann. Q (No. 419);HSC/11;1993;32;36441-41-5;
 livmoniplimab;livmoniplimab;3002.13;NC2930Bc Ann. P/27;HSC/69;2022;125;2412004-88-5;
 livoletide;livolétide;2937.19;NC2626B1b Ann. O/5;HSC/63;2019;118;1088543-62-7;
@@ -3013,12 +3013,12 @@ losigamone;losigamone;2932.20;NC2004B1b Ann. O/6;HSC/53;2014;61;112856-44-7;HSC/
 losmapimod;losmapimod;2933.39;NC1604B1b Ann. N/5;HSC/46;2010;101;585543-15-3;
 losmiprofen;losmiprofène;2918.99;NC2373B1b Ann. O/12;HSC/59;2017;61;74168-08-4;HSC/11 (2918.90)
 lotamilast;lotamilast;2933.59;NC2626B1b Ann. O/5;HSC/63;2019;118;947620-48-6;
-lotazadromcel;lotazadromcel;3002.51;NC2930Bc Ann. P/27;HSC/69;2022;125;no mention;
+lotazadromcel;lotazadromcel;3002.51;NC2930Bc Ann. P/27;HSC/69;2022;125;;
 lotilaner;lotilaner;2934.99;NC2116B1b Ann. R/4;HSC/55;2015;110;1369852-71-0;
 lotilibcin;lotilibcine;2941.90;NC1553B1b Ann. O/7;HSC/45;2010;100;169148-84-9;
 lotrafiban;lotrafiban;2933.39;42.750 Ann. O;HSC/22;1998;78;171049-14-2;
 loviride;loviride;2924.29;"40.600 Ann. D, par. 6";HSC/18;1996;70;147362-57-0;
-lovotibeglogene autotemcel;lovotibéglogène autotemcel;3002.51;NC2930Bc Ann. P/27;HSC/69;2022;125;no mention;
+lovotibeglogene autotemcel;lovotibéglogène autotemcel;3002.51;NC2930Bc Ann. P/27;HSC/69;2022;125;;
 loxicodegol;loxicodégol;2939.19;NC2501B1b Ann. M/6;HSC/61;2018;117;1211231-76-3;
 loxoprofen;loxoprofène;2918.30;38.100 Ann. Q (No. 435);HSC/11;1993;50;68767-14-6;
 lozilurea;lozilurée;2924.21;38.100 Ann. Q (No. 436);HSC/11;1993;44;71475-35-9;
@@ -3078,7 +3078,7 @@ lysergide;lysergide;2939.69;E.N. Chap. 29 - List I-II (Psychotropic);HSC/25;2000
 macimorelin;macimoréline;2937.90;NC1874B1b Ann. O/3;HSC/51;2013;100;381231-18-1;HSC/45 (2937.40)
 macitentan;macitentan;2933.59;NC1443B1b Ann. P/6;HSC/43;2009;99;441798-33-0;
 macozinone;macozinone;2934.99;NC2626B1b Ann. O/5;HSC/63;2019;118;1377239-83-2;
-macrogol ester;ester de macrogol;3402.42;NC2803Bc Ann. T/4;HSC/67;2021;34;no mention;HSC/25 (3402.13)
+macrogol ester;ester de macrogol;3402.42;NC2803Bc Ann. T/4;HSC/67;2021;34;;HSC/25 (3402.13)
 macrosalb (131I);macrosalb (131I);2844.43;NC2803Bc Ann. T/4;HSC/67;2021;33;54182-63-7;HSC/11 (2844.40)
 macrosalb (99mTc);macrosalb (99mTc);2844.43;NC2803Bc Ann. T/4;HSC/67;2021;33;54277-47-3;HSC/11 (2844.40)
 maduramicin;maduramicine;2941.90;38.100 Ann. Q (No. 446);HSC/11;1993;55;84878-61-5;
@@ -3114,7 +3114,7 @@ maridomycin;maridomycine;2941.90;38.100 Ann. Q (No. 455);HSC/11;1993;32;35775-82
 marimastat;marimastat;2928.00;42.100 Ann. O (IV);HSC/21;1998;75;154039-60-8;
 mariptiline;mariptiline;2928.00;38.100 Ann. Q (No. 456);HSC/11;1993;44;60070-14-6;
 marizomib;marizomib;2934.99;NC1604B1b Ann. N/6;HSC/46;2010;102;437742-34-2;
-marnetegragene autotemcel ;marnétégragène autotemcel;3002.51;NC2930Bc Ann. P/27;HSC/69;2022;125;no mention;
+marnetegragene autotemcel ;marnétégragène autotemcel;3002.51;NC2930Bc Ann. P/27;HSC/69;2022;125;;
 maropitant;maropitant;2933.39;NC0938B2b Ann. O/3 (I);HSC/35;2005;90;147116-67-4;
 marstacimab;marstacimab;3002.13;NC2626B1b Ann. O/6;HSC/63;2019;119;1985638-39-8;
 marzeptacog alfa (activated);marzeptacog alfa (activé);3002.13;NC2237B1b Ann. T/11;HSC/57;2016;113;160049-21-4;HSC/57 (3002.10) (S/9)
@@ -3318,7 +3318,7 @@ minzasolmin;minzasolmine;2934.10;NC3086Bc Ann. O/7;HSC/71;2023;126;1802518-92-8;
 mipasetamab;mipasétamab;3002.13 ;NC2803Bc Ann. T/7;HSC/67;2021;123;2361055-48-1;
 mipasetamab uzoptirine;mipasétamab uzoptirine;3002.13 ;NC2803Bc Ann. T/7;HSC/67;2021;123;2304799-73-1;
 mipeginterferon alfa-2b;mipèginterféron alfa-2b;3002.13;NC2373B1b Ann. O/6;HSC/59;2017;114;1619970-39-6;
-mipetresgene autoleucel;mipetresgène autoleucel;3002.51;NC2803Bc Ann. T/3;HSC/67;2021;121;no mention;
+mipetresgene autoleucel;mipetresgène autoleucel;3002.51;NC2803Bc Ann. T/3;HSC/67;2021;121;;
 mipicoledine;mipicolédine;2933.39;NC2930Bc Ann. P/25;HSC/69;2022;124;942149-56-6;
 mipitroban;mipitroban;2933.99;NC2004B1b Ann. O/6;HSC/53;2014;73;136122-46-8;HSC/18 (2933.90)
 mipomersen;mipomersen;2934.99;NC1443B1b Ann. P/6;HSC/43;2009;99;1000120-98-8;
@@ -3326,7 +3326,7 @@ miproxifene;miproxifène;2922.19;42.100 Ann. O (III);HSC/21;1998;74;129612-87-9;
 mipsagargin;mipsagargine;2932.20;NC2116B1b Ann. R/4;HSC/55;2015;110;1245732-48-2;
 miptenalimab;mipténalimab;3002.13 ;NC2803Bc Ann. T/6;HSC/67;2021;122;2249882-55-9;
 mirabegron;mirabégron;2934.10;NC1443B1b Ann. P/5;HSC/43;2009;98;223673-61-8;
-miralimogene ensolisbac;miralimogène ensolisbac;3002.49;NC2930Bc Ann. P/33;HSC/69;2022;117;no mention;HSC/61 (3002.90)
+miralimogene ensolisbac;miralimogène ensolisbac;3002.49;NC2930Bc Ann. P/33;HSC/69;2022;117;;HSC/61 (3002.90)
 miransertib;miransertib;2933.39;NC2501B1b Ann. M/5;HSC/61;2018;116;1313881-70-7;
 miravirsen;miravirsen;2934.99;NC1604B1b Ann. N/5;HSC/46;2010;101;1072874-90-8;
 mirdametinib;mirdamétinib;2928.00 ;NC2803Bc Ann. T/6;HSC/67;2021;122;391210-10-9;
@@ -3365,7 +3365,7 @@ Mizacorat;Mizacorat;2933.79;NC3086Bc Ann. O/8;HSC/71;2023;127;1893415-00-3;
 mizagliflozin;mizagliflozine;2940.00;NC2373B1b Ann. O/6;HSC/59;2017;114;666843-10-3;
 mobenakin;mobénakine;3002.13;NC2116B1b Ann. S/2;HSC/55;2015;72;124146-64-1;HSC/18 (3002.10)
 mobocertinib;mobocertinib;2933.59;NC2803Bc Ann. T/3;HSC/67;2021;121;1847461-43-1;
-mocemestrocel;mocémestrocel;3002.51;NC2803Bc Ann. T/2;HSC/67;2021;120;no mention;
+mocemestrocel;mocémestrocel;3002.51;NC2803Bc Ann. T/2;HSC/67;2021;120;;
 mocetinostat;mocétinostat;2933.59;NC1604B1b Ann. N/5;HSC/46;2010;101;726169-73-9;
 mocimycin;mocimycine;2941.90;38.100 Ann. Q (No. 548);HSC/11;1993;28;50935-71-2;
 mocravimod;mocravimod;2930.90;NC2501B1b Ann. M/5;HSC/61;2018;116;509092-16-4;
@@ -3392,7 +3392,7 @@ monophosphothiamine;monophosphothiamine;2936.22;38.100 Ann. Q (No. 553);HSC/11;1
 monteplase;montéplase;3507.90;"40.600 Ann. D, par. 6";HSC/18;1996;71;156616-23-8;
 moprolol;moprolol;2922.19;40.260 Ann. L/2 (No. 94);HSC/17;1996;36;5741-22-0;
 moracizine;moracizine;2934.30;38.100 Ann. Q (No. 554);HSC/11;1993;25;31883-05-3;
-moroctocog alfa;moroctocog alfa;3002.12;NC2116B1b Ann. S/2;HSC/55;2015;72;no mention;HSC/18 (3002.10)
+moroctocog alfa;moroctocog alfa;3002.12;NC2116B1b Ann. S/2;HSC/55;2015;72;;HSC/18 (3002.10)
 morolimumab;morolimumab;3002.13;NC2116B1b Ann. S/2;HSC/55;2015;79;202833-07-6;HSC/23 (3002.10)
 morpheridine;morphéridine;2934.99;E.N. Chap. 29 - List I-I (Narcotic drugs);HSC/25;2000;6;469-81-8;
 morphine glucuronide;glucuroconjugué de morphine;2939.19;NC1059B2b Ann. O/4;HSC/37;2006;92;20290-10-2;
@@ -3400,7 +3400,7 @@ morponidazole;morponidazole;2934.99;NC2930Bc Ann. P/27;HSC/69;2022;125;92478-27-
 mosedipimod;mosédipimod;2916.15;NC2626B1b Ann. O/5;HSC/63;2019;118;221139-79-3;
 mosliciguat;mosliciguat;2933.49 ;NC2803Bc Ann. T/7;HSC/67;2021;123;2231749-54-3;
 mosunetuzumab;mosunétuzumab;3002.13;NC2501B1b Ann. M/6;HSC/61;2018;117;1905409-39-3;
-motacabtagene lurevgedleucel ;motacabtagène lurévgedleucel;3002.51;NC2930Bc Ann. P/27;HSC/69;2022;125;no mention;
+motacabtagene lurevgedleucel ;motacabtagène lurévgedleucel;3002.51;NC2930Bc Ann. P/27;HSC/69;2022;125;;
 motavizumab;motavizumab;3002.13;NC2116B1b Ann. S/2;HSC/55;2015;95;677010-34-3;HSC/39 (3002.10)
 motesanib;motésanib;2933.39;NC1310B1b Ann. N/4;HSC/41;2008;97;453562-69-1;
 motexafin;motéxafine;2933.99;NC2004B1b Ann. O/6;HSC/53;2014;82;189752-49-6;HSC/27 (2933.90)
@@ -3414,7 +3414,7 @@ moxidectin;moxidectine;2932.20;NC2004B1b Ann. O/6;HSC/53;2014;64;113507-06-5;HSC
 moxifloxacin;moxifloxacine;2933.49;NC2004B1b Ann. O/6;HSC/53;2014;78;151096-09-2;HSC/22 (2933.40)
 moxilubant;moxilubant;2925.29;NC2004B1b Ann. O/6;HSC/53;2014;78;146978-48-5;HSC/22 (2925.20)
 moxisylyte;moxisylyte;2922.19;40.260 Ann. L/2 (No. 95);HSC/17;1996;14;54-32-0;
-mozafancogene autotemcel ;mozafancogène autotemcel;3002.51;NC2930Bc Ann. P/27;HSC/69;2022;125;no mention;
+mozafancogene autotemcel ;mozafancogène autotemcel;3002.51;NC2930Bc Ann. P/27;HSC/69;2022;125;;
 mozavaptan;mozavaptan;2933.99;NC0845B2 Ann. M/1 (II);HSC/33;2004;87;137975-06-5;
 mozenavir;mozénavir;2933.99;NC0590B2 Ann. L/15;HSC/29;2002;84;174391-92-5;
 mubritinib;mubritinib;2934.99;NC0938B2b Ann. O/3 (I);HSC/35;2005;90;366017-09-6;
@@ -3439,12 +3439,12 @@ nadecnemab;nadecnémab;3002.13;NC2930Bc Ann. P/25;HSC/69;2022;124;2377679-19-9;
 nadofaragene firadenovec;nadofaragène firadénovec;3002.49;NC2930Bc Ann. P/33;HSC/69;2022;117;1823059-12-6;HSC/61 (3002.90)
 nadolol;nadolol;2922.19;40.260 Ann. L/2 (No. 96);HSC/17;1996;34;42200-33-9;
 nadorameran;nadoraméran;3002.41;NC2803Bc Ann. T/4;HSC/67;2021;113;1613055-09-6;HSC/57 (3002.20)
-Nadravaleucel;Nadravaleucel;3002.51;NC3086Bc Ann. O/8;HSC/71;2023;127;no mention;
-nadroparin calcium;nadroparine calcique;3001.90;NC1553B1b Ann. O/5;HSC/45;2010;64;no mention ;
+Nadravaleucel;Nadravaleucel;3002.51;NC3086Bc Ann. O/8;HSC/71;2023;127;;
+nadroparin calcium;nadroparine calcique;3001.90;NC1553B1b Ann. O/5;HSC/45;2010;64;;
 nafamostat;nafamostat;2925.29;NC2004B1b Ann. O/6;HSC/53;2014;53;81525-10-2;HSC/11 (2925.20)
 nafarelin;nafaréline;2937.19;NC2004B1b Ann. O/6;HSC/53;2014;50;76932-56-4;HSC/11 (2937.99)
 nafetolol;nafétolol;2922.19;40.260 Ann. L/2 (No. 97);HSC/17;1996;39;42050-23-7;
-nafimestrocel ;nafimestrocel;3002.51;NC2930Bc Ann. P/27;HSC/69;2022;125;no mention;
+nafimestrocel ;nafimestrocel;3002.51;NC2930Bc Ann. P/27;HSC/69;2022;125;;
 nafithromycin;nafithromycine;2941.90;NC2373B1b Ann. O/6;HSC/59;2017;114;1691240-78-4;
 naflocort;naflocort;2937.22;38.100 Ann. Q (No. 564);HSC/11;1993;50;59497-39-1;
 naftalofos;naftalofos;2929.90;"38.760 Ann. D, par. 29";HSC/13;1994;16;1491-41-4;
@@ -3456,7 +3456,7 @@ nalfurafine;nalfurafine;2939.19;NC0845B2 Ann. M/1 (II);HSC/33;2004;87;152657-84-
 nalmefene;nalméfène;2939.19;NC2004B1b Ann. O/6;HSC/53;2014;49;55096-26-9;HSC/11 (2939.10)
 nalmexone;nalmexone;2939.19;NC2004B1b Ann. O/6;HSC/53;2014;19;16676-26-9;HSC/11 (2939.10)
 nalorphine;nalorphine;2939.19;NC2004B1b Ann. O/6;HSC/53;2014;1;62-67-9;HSC/11 (2939.10)
-nalotimagene carmaleucel;nalotimagène carmaleucel;3002.51;NC2803Bc Ann. T/4;HSC/67;2021;118;no mention;HSC/63 (3002.90)
+nalotimagene carmaleucel;nalotimagène carmaleucel;3002.51;NC2803Bc Ann. T/4;HSC/67;2021;118;;HSC/63 (3002.90)
 naloxegol;naloxégol;2939.19;NC1760B1b Ann. N/8;HSC/49;2012;105;854601-70-0;
 naloxone;naloxone;2939.19;NC2004B1b Ann. O/6;HSC/53;2014;13;465-65-6;HSC/11 (2939.10)
 naltalimide;naltalimide;2934.99;NC1874B1b Ann. O/1;HSC/51;2013;106;160359-68-2;
@@ -3525,7 +3525,7 @@ nelociguat;nélociguat;2933.59;NC1760B1b Ann. N/8;HSC/49;2012;105;625115-52-8;
 nelonemdaz;nélonemdaz;2922.50;NC2803Bc Ann. T/3;HSC/67;2021;121;640290-67-1;
 nelonicline;nélonicline;2934.99;NC2237B1b Ann. S/8;HSC/57;2016;112;1026134-63-3;
 nelotanserin;nélotansérine;2933.19;NC1604B1b Ann. N/5;HSC/46;2010;101;839713-36-9;
-Neltependocel;Neltependocel;3002.51;NC3086Bc Ann. O/8;HSC/71;2023;127;no mention;
+Neltependocel;Neltependocel;3002.51;NC3086Bc Ann. O/8;HSC/71;2023;127;;
 Nelutroctiv;Nélutroctiv;2933.39;NC3086Bc Ann. O/8;HSC/71;2023;127;2299177-09-4;
 neluxicapone;néluxicapone;2926.90;NC2626B1b Ann. O/6;HSC/63;2019;119;1498323-18-4;
 nemadectin;némadectine;2941.90;38.100 Ann. Q (No. 575);HSC/11;1993;60;102130-84-7;
@@ -3603,7 +3603,7 @@ nitisinone;nitisinone;2914.79;NC2116B1b Ann. S/1;HSC/55;2015;78;104206-65-7;HSC/
 nitraquazone;nitraquazone;2933.59;38.100 Ann. Q (No. 586);HSC/11;1993;53;56739-21-0;
 nitrazepam;nitrazépam;2933.91;E.N. Chap. 29 - List I-II (Psychotropic);HSC/25;2000;16;146-22-5;
 nitricholine perchlorate;perchlorate de nitricholine;2923.90;38.100 Ann. Q (No. 587);HSC/11;1993;6;7009-91-8;
-nivadstrocel;nivadstrocel;3002.51;NC2930Bc Ann. P/25;HSC/69;2022;124;no mention;
+nivadstrocel;nivadstrocel;3002.51;NC2930Bc Ann. P/25;HSC/69;2022;124;;
 Nivasorexant;Nivasorexant;2934.99;NC3086Bc Ann. O/8;HSC/71;2023;127;1435480-40-2;
 nivatrotamab;nivatrotamab;3002.13;NC2930Bc Ann. P/25;HSC/69;2022;124;2278244-14-5;
 nivimedone;nivimédone;2914.79;NC2116B1b Ann. S/1;HSC/55;2015;37;49561-92-4;HSC/11 (2914.70)
@@ -3646,7 +3646,7 @@ nortopixantrone;nortopixantrone;2933.99;NC0730B2 Ann. M/7;HSC/31;2003;87;156090-
 norucholic acid;acide norucholique;2918.19 ;NC2803Bc Ann. T/6;HSC/67;2021;122;99697-24-2;
 norvinisterone;norvinistérone;2937.23;NC2004B1b Ann. O/6;HSC/53;2014;10;6795-60-4;HSC/11 (2937.92)
 nosantine;nosantine;2933.59;38.100 Ann. Q (No. 603);HSC/11;1993;55;76600-30-1;
-nulabeglogene autogedtemcel;nulabéglogène autogedtemcel;3002.51;NC3086Bc Ann. O/7;HSC/71;2023;126;no mention;
+nulabeglogene autogedtemcel;nulabéglogène autogedtemcel;3002.51;NC3086Bc Ann. O/7;HSC/71;2023;126;;
 numidargistat;numidargistat;2933.99;NC2803Bc Ann. T/3;HSC/67;2021;121;2095732-06-0;
 nupafant;nupafant;2935.90;NC2116B1b Ann. S/1;HSC/55;2015;70;139133-27-0;HSC/18 (2935.00)
 nurulimab;nurulimab;3002.13;NC2803Bc Ann. T/3;HSC/67;2021;121;2168561-20-2;
@@ -3654,7 +3654,7 @@ nusinersen;nusinersen;2934.99;NC2237B1b Ann. S/8;HSC/57;2016;112;1258984-36-9;
 nuvenzepine;nuvenzépine;2933.39;38.100 Ann. Q (No. 604);HSC/11;1993;59;96487-37-5;
 obafistat;obafistat;2935.90;NC2803Bc Ann. T/3;HSC/67;2021;121;2160582-57-8;
 obatoclax;obatoclax;2933.99;NC1123B1b Ann. N/1;HSC/38;2006;94;803712-67-6;
-obecabtagene autoleucel;obécabtagène autoleucel;3002.51 ;NC2803Bc Ann. T/7;HSC/67;2021;123;no mention;
+obecabtagene autoleucel;obécabtagène autoleucel;3002.51 ;NC2803Bc Ann. T/7;HSC/67;2021;123;;
 obefazimod ;obéfazimod;2933.49;NC2930Bc Ann. P/27;HSC/69;2022;125;1258453-75-6;
 Obeldesivir;Obeldésivir;2934.99;NC3086Bc Ann. O/8;HSC/71;2023;127 - COVID-19 ADDENDUM;2647441-36-7;
 obenoxazine;obenoxazine;2934.99;NC1649B3b Ann. R/14;HSC/47;2011;103;173352-21-1;
@@ -3717,7 +3717,7 @@ olinciguat;olinciguat;2934.99;NC2501B1b Ann. M/6;HSC/61;2018;117;1628732-62-6;
 olinvacimab;olinvacimab;3002.13;NC2626B1b Ann. O/6;HSC/63;2019;119;2095504-49-5;
 olipudase alfa;olipudase alfa;3507.90;NC2116B1b Ann. R/5;HSC/55;2015;111;927883-84-9;
 olitigaltin;olitigaltine;2934.99;NC3086Bc Ann. O/7;HSC/71;2023;126;1450824-22-2;
-olitresgene autoleucel;olitresgène autoleucel;3002.51;NC2803Bc Ann. T/3;HSC/67;2021;121;no mention;
+olitresgene autoleucel;olitresgène autoleucel;3002.51;NC2803Bc Ann. T/3;HSC/67;2021;121;;
 olmesartan;olmésartan;2933.29;NC1059B2b Ann. O/5;HSC/37;2006;93;144689-24-7;
 olmutinib;olmutinib;2934.99;NC2373B1b Ann. O/6;HSC/59;2017;114;1353550-13-6;
 olodanrigan;olodanrigan;2933.49;NC2501B1b Ann. M/5;HSC/61;2018;116;1316755-16-4;
@@ -3751,7 +3751,7 @@ omeprazole;oméprazole;2933.39;38.100 Ann. Q (No. 610);HSC/11;1993;46;73590-58-6
 Omesdafexor;Omesdafexor;2933.19;NC3086Bc Ann. O/8;HSC/71;2023;127;2244440-85-3;
 omfiloctocog alfa;omfiloctocog alfa;3002.12 ;NC2803Bc Ann. T/6;HSC/67;2021;122;2249927-58-8;
 omidenepag;omidénépag;2935.90;NC2373B1b Ann. O/6;HSC/59;2017;114;1187451-41-7;
-omidubicel;omidubicel;3002.51;NC2803Bc Ann. T/3;HSC/67;2021;121;no mention;
+omidubicel;omidubicel;3002.51;NC2803Bc Ann. T/3;HSC/67;2021;121;;
 omigapil;omigapil;2932.99;NC0938B2b Ann. O/3 (I);HSC/35;2005;90;181296-84-4;
 omilancor ;omilancor;2933.59;NC2930Bc Ann. P/27;HSC/69;2022;125;1912399-75-7;
 omiloxetine;omiloxétine;2934.99;NC2004B1b Ann. O/6;HSC/53;2014;76;176894-09-0;HSC/21 (2934.90)
@@ -3798,7 +3798,7 @@ opilrelagene atradenorepvec;opilrélagène atradénorepvec;3002.49;NC3086Bc Ann.
 opinercept;opinercept;3002.13;NC2626B1b Ann. O/5;HSC/63;2019;118;2055118-96-0;
 opiranserin;opiransérine;2932.99;NC2501B1b Ann. M/6;HSC/61;2018;117;1441000-45-8;
 oplunofusp;oplunofusp;3507.90;NC2930Bc Ann. P/29;HSC/69;2022;123;946032-08-2;
-opolimogene capmilisbac;opolimogène capmilisbac;3002.49;NC2930Bc Ann. P/33;HSC/69;2022;117;no mention;HSC/61 (3002.90)
+opolimogene capmilisbac;opolimogène capmilisbac;3002.49;NC2930Bc Ann. P/33;HSC/69;2022;117;;HSC/61 (3002.90)
 oportuzumab monatox;oportuzumab monatox;3002.13;NC2116B1b Ann. S/2;HSC/55;2015;100;945228-48-8;HSC/45 (3002.10)
 opratonium iodide;iodure d'opratonium;2924.19;NC2004B1b Ann. O/6;HSC/53;2014;76;210419-36-6;HSC/21 (2924.10)
 oprelvekin;oprelvékine;3002.13;NC2116B1b Ann. S/2;HSC/55;2015;76;145941-26-0;HSC/21 (3002.10)
@@ -3828,7 +3828,7 @@ ornipressin;ornipressine;2937.19;NC2004B1b Ann. O/6;HSC/53;2014;22;3397-23-7;HSC
 ortataxel;ortataxel;2932.99;NC0845B2 Ann. M/1 (II);HSC/33;2004;87;186348-23-2;
 orteronel;ortéronel;2933.99;NC1760B1b Ann. N/7;HSC/49;2012;104;566939-85-3;
 orticumab;orticumab;3002.13;NC2116B1b Ann. S/2;HSC/55;2015;107;1314241-10-5;HSC/51 (3002.10)
-orvacabtagene autoleucel;orvacabtagène autoleucel;3002.51 ;NC2803Bc Ann. T/6;HSC/67;2021;122;no mention;
+orvacabtagene autoleucel;orvacabtagène autoleucel;3002.51 ;NC2803Bc Ann. T/6;HSC/67;2021;122;;
 orvepitant;orvépitant;2933.79;NC1178B1c Ann. O/3;HSC/39;2007;94;579475-18-6;
 osanetant;osanétant;2933.39;42.100 Ann. O (III);HSC/21;1998;74;160492-56-8;
 oseltamivir;oséltamivir;2924.29;NC0090B2 Ann. M/5;HSC/23;1999;80;196618-13-0;
@@ -3919,7 +3919,7 @@ palovarotene;palovarotène;2933.19;NC1443B1b Ann. P/6;HSC/43;2009;99;410528-02-8
 palsucibep pegol;palsucibep pégol;3907.29;NC3086Bc Ann. O/7;HSC/71;2023;126;2218524-43-5;
 paltimatrectinib;paltimatrectinib;2933.59;NC3086Bc Ann. O/7;HSC/71;2023;126;2353522-15-1;
 paltusotine;paltusotine;2933.49;NC2803Bc Ann. T/3;HSC/67;2021;121;2172870-89-0;
-palucorcel;palucorcel;3002.51;NC2803Bc Ann. T/4;HSC/67;2021;115;no mention;HSC/61 (3002.90)
+palucorcel;palucorcel;3002.51;NC2803Bc Ann. T/4;HSC/67;2021;115;;HSC/61 (3002.90)
 palupiprant;palupiprant;2933.19;NC3086Bc Ann. O/7;HSC/71;2023;126;1369489-71-3;
 pamapimod;pamapimod;2933.79;NC1310B1b Ann. N/10;HSC/41;2008;96;449811-01-2;
 pamaqueside;pamaquéside;2938.90;42.100 Ann. O (III);HSC/21;1998;74;150332-35-7;
@@ -3949,7 +3949,7 @@ paridiprubart;paridiprubart;3002.13;NC3086Bc Ann. O/7;HSC/71;2023;126 - COVID-19
 pariglasgene brecaparvovec;pariglasgène brécaparvovec;3002.49 ;NC2930Bc Ann. P/33;HSC/69;2022;123;2259927-72-3;HSC/67 (3002.90)
 parimifasor;parimifasor;2933.19;NC2626B1b Ann. O/5;HSC/63;2019;118;1796641-10-5;
 paritaprevir;paritaprévir;2935.90;NC2237B1b Ann. T/12;HSC/57;2016;111;1216941-48-8;HSC/55 (2935.00)
-parnaparin sodium;parnaparine sodique;3001.90;NC1553B1b Ann. O/5;HSC/45;2010;64;no mention;
+parnaparin sodium;parnaparine sodique;3001.90;NC1553B1b Ann. O/5;HSC/45;2010;64;;
 parogrelil;parogrélil;2933.39;NC1178B1c Ann. O/3;HSC/39;2007;94;139145-27-0;
 parsaclisib;parsaclisib;2933.79;NC2501B1b Ann. M/6;HSC/61;2018;117;1426698-88-5;
 parsatuzumab;parsatuzumab;3002.13;NC2116B1b Ann. S/2;HSC/55;2015;107;1312797-14-0;HSC/51 (3002.10)
@@ -3980,7 +3980,7 @@ peforelin;peforeline;2937.19;NC1059B2b Ann. O/5;HSC/37;2006;93;147859-97-0;
 pegacaristim;pégacaristim;3002.13;NC2116B1b Ann. S/2;HSC/55;2015;80;187139-68-0;HSC/47 (3002.10)
 pegamotecan;pégamotécan;2939.79;NC2237B1b Ann. T/12;HSC/57;2016;91;203066-49-3;HSC/37 (2939.99)
 pegapamodutide;pégapamodutide;2937.19;NC2501B1b Ann. M/5;HSC/61;2018;116;1492924-65-8;
-pegaptanib;pégaptanib;3907.29;NC2803Bc Ann. T/4;HSC/67;2021;87;no mention;HSC/33 (3907.20)
+pegaptanib;pégaptanib;3907.29;NC2803Bc Ann. T/4;HSC/67;2021;87;;HSC/33 (3907.20)
 pegargiminase;pégargiminase;3507.90;NC2116B1b Ann. R/5;HSC/55;2015;111;1394129-74-8;
 pegbelfermin;pegbelfermine;2937.19;NC2803Bc Ann. T/2;HSC/67;2021;120;2089039-22-3;
 pegbovigrastim;pegbovigrastim;3002.13;NC2116B1b Ann. S/2;HSC/55;2015;109;1363409-60-2;HSC/53 (3002.10)
@@ -4038,7 +4038,7 @@ pemaglitazar;pémaglitazar;2930.90;NC1004B1b Ann. L/11;HSC/36;2005;92;496050-39-
 pembrolizumab;pembrolizumab;3002.13;NC2116B1b Ann. S/2;HSC/55;2015;110;1374853-91-4;HSC/53 (3002.10)
 pemetrexed;pémétrexed;2933.59;42.750 Ann. O;HSC/22;1998;78;137281-23-3;
 pemigatinib;pémigatinib;2934.99;NC2626B1b Ann. O/5;HSC/63;2019;118;1513857-77-6;
-pemlimogene merolisbac;pemlimogène mérolisbac;3002.49;NC2930Bc Ann. P/33;HSC/69;2022;117;no mention;HSC/61 (3002.90)
+pemlimogene merolisbac;pemlimogène mérolisbac;3002.49;NC2930Bc Ann. P/33;HSC/69;2022;117;;HSC/61 (3002.90)
 pemoline;pémoline;2934.91;E.N. Chap. 29 - List I-II (Psychotropic);HSC/25;2000;12;2152-34-3;
 pemrametostat;pemramétostat;2933.59 ;NC2803Bc Ann. T/7;HSC/67;2021;123;1616392-22-3;
 pemvidutide;pemvidutide;2937.19;NC3086Bc Ann. O/7;HSC/71;2023;126;2538014-94-5;
@@ -4146,7 +4146,7 @@ piromelatine;piromélatine;2937.90;NC2004B1b Ann. O/4;HSC/53;2014;108;946846-83-
 pirtobrutinib ;pirtobrutinib;2933.19;NC2930Bc Ann. P/27;HSC/69;2022;125;2101700-15-4;
 pitavastatin;pitavastatin;2933.49;NC2004B1b Ann. O/6;HSC/53;2014;83;147511-69-1;HSC/25 (2933.40)
 pitolisant ;pitolisant ;2933.39;NC1443B1b Ann. P/5;HSC/43;2009;100;362665-56-3;
-pitrakinra;pitrakinra;3002.13;NC2116B1b Ann. S/2;HSC/55;2015;84;no mention;HSC/47 (3002.10)
+pitrakinra;pitrakinra;3002.13;NC2116B1b Ann. S/2;HSC/55;2015;84;;HSC/47 (3002.10)
 pivekimab;pivékimab;3002.13;NC2930Bc Ann. P/27;HSC/69;2022;125;2234335-84-1;
 pivekimab sunirine ;pivékimab sunirine;3002.13;NC2930Bc Ann. P/27;HSC/69;2022;125;2417174-95-7;
 pivmecillinam;pivmécillinam;2941.90;42.100 Ann. O (II);HSC/21;1998;32;32886-97-8;
@@ -4164,12 +4164,12 @@ pleuromulin;pleuromuline;2941.90;42.100 Ann. O (I);HSC/21;1998;35;125-65-5;
 plevitrexed;plévitrexed;2933.59;NC0845B2 Ann. M/1 (II);HSC/33;2004;87;153537-73-6;
 plinabulin;plinabuline;2933.79;NC1649B3b Ann. R/13;HSC/47;2011;102;714272-27-2;
 plitidepsin;plitidepsine;2934.99;NC1059B2b Ann. O/5;HSC/37;2006;93;137219-37-5;
-plixacabtagene autoleucel;plixacabtagène autoleucel;3002.51;NC3086Bc Ann. O/7;HSC/71;2023;126;no mention;
+plixacabtagene autoleucel;plixacabtagène autoleucel;3002.51;NC3086Bc Ann. O/7;HSC/71;2023;126;;
 plocabulin;plocabuline;2932.20;NC2501B1b Ann. M/6;HSC/61;2018;117;960210-99-5;
 Plogosertib;Plogosertib;2933.59;NC3086Bc Ann. O/8;HSC/71;2023;127;1137212-79-3;
 plonmarlimab;plonmarlimab;3002.13;NC2930Bc Ann. P/25;HSC/69;2022;124;2377482-36-3;
 plozalizumab;plozalizumab;3002.13;NC2237B1b Ann. T/11;HSC/57;2016;113;1610761-46-0;HSC/57 (3002.10) (S/9)
-plusonermin;plusonermine;3003.39;"40.600 Ann. D, par. 6";HSC/18;1996;73;no mention;
+plusonermin;plusonermine;3003.39;"40.600 Ann. D, par. 6";HSC/18;1996;73;;
 plutavimab;plutavimab;3002.13;NC3086Bc Ann. O/7;HSC/71;2023;126 - COVID-19;2529854-88-2;
 pobilukast;pobilukast;2930.90;"40.600 Ann. D, par. 6";HSC/18;1996;70;107023-41-6;
 pocapavir;pocapavir;2909.30;NC1874B1b Ann. O/2;HSC/51;2013;107;146949-21-5;
@@ -4199,7 +4199,7 @@ Polzastobart;Polzastobart;3002.13;NC3086Bc Ann. O/8;HSC/71;2023;127;2640981-19-5
 pomaglumetad methionil;pomaglumétad méthionil;2934.99;NC1760B1b Ann. N/7;HSC/49;2012;104;635318-55-7;
 pomalidomide;pomalidomide;2925.19;NC1310B1b Ann. N/4;HSC/41;2008;97;19171-19-8;
 pomisartan;pomisartan;2933.99;NC2004B1b Ann. O/6;HSC/53;2014;73;144702-17-0;HSC/18 (2933.90)
-Pomlucabtagene autoleucel;Pomlucabtagène autoleucel;3002.51;NC3086Bc Ann. O/8;HSC/71;2023;127;no mention;
+Pomlucabtagene autoleucel;Pomlucabtagène autoleucel;3002.51;NC3086Bc Ann. O/8;HSC/71;2023;127;;
 Pomotrelvir;Pomotrelvir;2933.79;NC3086Bc Ann. O/8;HSC/71;2023;127 - COVID-19 ADDENDUM;2713437-86-4;
 pomulmeran;pomulméran;2934.99 ;NC2803Bc Ann. T/7;HSC/67;2021;123;2304576-72-3;
 ponatinib;ponatinib;2933.59;NC1760B1b Ann. N/7;HSC/49;2012;104;943319-70-8;
@@ -4217,7 +4217,7 @@ poseltinib ;poseltinib;2934.99;NC2373B1b Ann. O/7;HSC/59;2017;116;1353552-97-2;(
 posenacaftor;posénacaftor;2934.99 ;NC2803Bc Ann. T/6;HSC/67;2021;122;2095064-05-2;
 posizolid;posizolid;2934.99;NC0845B2 Ann. M/2;HSC/33;2004;88;252260-02-9;
 poskine;poskine;2939.79;NC2116B1b Ann. S/1;HSC/55;2015;8;585-14-8;HSC/11 (2939.90)    HSC/53 (2939.99)
-posoleucel;posoleucel;3002.51 ;NC2803Bc Ann. T/7;HSC/67;2021;123;no mention;
+posoleucel;posoleucel;3002.51 ;NC2803Bc Ann. T/7;HSC/67;2021;123;;
 posovolone;posovolone;2933.29;NC3086Bc Ann. O/7;HSC/71;2023;126;256955-84-7;
 Povafonidine;Povafonidine;2933.29;NC3086Bc Ann. O/8;HSC/71;2023;127;177843-85-5;
 Povetacicept;Povétacicept;3002.13;NC3086Bc Ann. O/8;HSC/71;2023;127;2490217-42-8;
@@ -4228,7 +4228,7 @@ poziotinib;poziotinib;2933.59;NC2004B1b Ann. O/4;HSC/53;2014;108;1092364-38-9;
 pracinostat;pracinostat;2933.99;NC1760B1b Ann. N/7;HSC/49;2012;104;929016-96-6;
 praconase;praconase;3507.90;NC2626B1b Ann. O/5;HSC/63;2019;118;2098615-90-6;
 pradefovir;pradefovir;2934.99;NC1123E1b Ann. G/10 par. 3;HSC/38;2006;93;625095-60-5;
-prademagene zamikeracel;pradémagène zamikéracel;3002.51;NC2803Bc Ann. T/4;HSC/67;2021;119;no mention;HSC/63 (3002.90)
+prademagene zamikeracel;pradémagène zamikéracel;3002.51;NC2803Bc Ann. T/4;HSC/67;2021;119;;HSC/63 (3002.90)
 pradigastat;pradigastat;2933.39;NC1874B1b Ann. O/1;HSC/51;2013;106;956136-95-1;
 pradimotide;pradimotide;3002.41;NC2803Bc Ann. T/4;HSC/67;2021;107;908587-83-7;HSC/51 (3002.20)
 pradofloxacin;pradofloxacine;2933.49;NC0590B2 Ann. L/15;HSC/29;2002;84;195532-12-8;
@@ -4358,7 +4358,7 @@ rafivirumab;rafivirumab;3002.13;NC2116B1b Ann. S/2;HSC/55;2015;99;944548-37-2;HS
 rafutrombopag;rafutrombopag;2934.99;NC3086Bc Ann. O/7;HSC/71;2023;126;2600513-51-5;
 ragaglitazar;ragaglitazar;2934.99;NC0590B2 Ann. L/15;HSC/29;2002;85;222834-30-2;
 ragifilimab;ragifilimab;3002.13 ;NC2803Bc Ann. T/6;HSC/67;2021;122;2207590-51-8;
-raguneprocel;ragunéprocel;3002.51;NC3086Bc Ann. O/7;HSC/71;2023;126;no mention;
+raguneprocel;ragunéprocel;3002.51;NC3086Bc Ann. O/7;HSC/71;2023;126;;
 ralaniten;ralaniten;2909.49;NC2501B1b Ann. M/6;HSC/61;2018;117;1203490-23-6;
 ralimetinib;ralimétinib;2933.29;NC2004B1b Ann. O/5;HSC/53;2014;109;862505-00-8;
 ralinepag;ralinépag;2924.29;NC2237B1b Ann. S/8;HSC/57;2016;112;1187856-49-0;
@@ -4384,7 +4384,7 @@ ranpirnase;ranpirnase;3507.90;NC0250B2 Ann. P/1 (II);HSC/25;2000;81;196488-72-9;
 ranuzifigene civaparvovec;ranuzifigène civaparvovec;3002.49;NC2930Bc Ann. P/33;HSC/69;2022;120;2143578-32-7;HSC/67 (3002.90)
 rapacuronium bromide;bromure de rapacuronium;2933.39;42.750 Ann. O;HSC/22;1998;78;156137-99-4;
 rapastinel;rapastinel;2933.99;NC2116B1b Ann. R/5;HSC/55;2015;111;117928-94-6;
-rapcabtagene autoleucel;rapcabtagène autoleucel;3002.51;NC3086Bc Ann. O/7;HSC/71;2023;126;no mention;
+rapcabtagene autoleucel;rapcabtagène autoleucel;3002.51;NC3086Bc Ann. O/7;HSC/71;2023;126;;
 rasagiline;rasagiline;2921.49;"40.600 Ann. D, par. 6";HSC/18;1996;70;136236-51-6;
 rasburicase;rasburicase;3507.90;NC0250B2 Ann. P/1 (II);HSC/25;2000;81;134774-45-1;
 raseglurant;raséglurant;2933.39;NC1604B1b Ann. N/6;HSC/46;2010;102;757950-09-7;
@@ -4405,7 +4405,7 @@ rebamipide mofetil;rébamipide mofétil;2934.99;NC2803Bc Ann. T/3;HSC/67;2021;12
 rebastinib;rébastinib;2933.49;NC2004B1b Ann. O/4;HSC/53;2014;108;1020172-07-9;
 rebemadlin ;rébémadline;2933.59;NC2930Bc Ann. P/27;HSC/69;2022;125;675576-98-4;
 rebisufligene etisparvovec;rébisufligène étisparvovec;3002.49;NC2930Bc Ann. P/33;HSC/69;2022;118;1966978-67-5;HSC/63 (3002.90)
-rebonuputemcel;rébonuputemcel;3002.51 ;NC2803Bc Ann. T/7;HSC/67;2021;123;no mention;
+rebonuputemcel;rébonuputemcel;3002.51 ;NC2803Bc Ann. T/7;HSC/67;2021;123;;
 recainam;récaïnam;2924.21;38.100 Ann. Q (No. 673);HSC/11;1993;54;74738-24-2;
 recanaclotide ;récanaclotide;2934.99;NC2373B1b Ann. O/7;HSC/59;2017;115;1667762-62-0;
 recaticimab;récaticimab;3002.13 ;NC2803Bc Ann. T/7;HSC/67;2021;123;2361290-85-7;
@@ -4432,7 +4432,7 @@ reldesemtiv;reldésemtiv;2933.59;NC2626B1b Ann. O/6;HSC/63;2019;119;1345410-31-2
 relebactam;relebactam;2933.39;NC2237B1b Ann. S/8;HSC/57;2016;112;1174018-99-5;
 relenopride;rélénopride;2933.39;NC2116B1b Ann. R/5;HSC/55;2015;111;1221416-43-8;
 relfovetmab;relfovetmab;3002.13;NC2803Bc Ann. T/2;HSC/67;2021;120;2171034-70-9;
-relmacabtagene autoleucel;relmacabtagène autoleucel;3002.51 ;NC2803Bc Ann. T/7;HSC/67;2021;123;no mention;
+relmacabtagene autoleucel;relmacabtagène autoleucel;3002.51 ;NC2803Bc Ann. T/7;HSC/67;2021;123;;
 relmapirazin;relmapirazine;2933.99;NC2501B1b Ann. M/6;HSC/61;2018;117;1313706-17-0;
 reloxaliase;réloxaliase;3507.90;NC2501B1b Ann. M/6;HSC/61;2018;117;202011-67-4;
 reltecimod ;reltécimod;2933.99;NC2373B1b Ann. O/7;HSC/59;2017;115;1447799-33-8;
@@ -4442,14 +4442,14 @@ relzomostat;relzomostat;2934.99 ;NC2803Bc Ann. T/6;HSC/67;2021;122;2081078-92-2;
 remacemide;rémacémide;2924.29;38.100 Ann. Q (No. 674);HSC/11;1993;63;128298-28-2;
 remdesivir;remdésivir;2934.99;NC2501B1b Ann. M/5;HSC/61;2018;116;1809249-37-3;
 remeglurant;réméglurant;2933.59;NC2004B1b Ann. O/5;HSC/53;2014;109;1309783-00-3;
-remestemcel;rémestemcel;3002.51;NC2803Bc Ann. T/3;HSC/67;2021;121;no mention;
+remestemcel;rémestemcel;3002.51;NC2803Bc Ann. T/3;HSC/67;2021;121;;
 remetinostat ;rémétinostat;2928.00;NC2373B1b Ann. O/7;HSC/59;2017;115;946150-57-8;
 remibrutinib;rémibrutinib;2933.59;NC2803Bc Ann. T/3;HSC/67;2021;121;1787294-07-8;
 remimazolam;rémimazolam;2933.39;NC1604B1b Ann. N/6;HSC/46;2010;102;308242-62-8;
 remlarsen;remlarsen;2934.99;NC2501B1b Ann. M/6;HSC/61;2018;117;1848266-71-6;
 remogliflozin etabonate;étabonate de rémogliflozine;2940.00;NC1443B1b Ann. P/5;HSC/43;2009;98;442201-24-3;
 remtolumab ;remtolumab;3002.13;NC2373B1b Ann. O/7;HSC/59;2017;115;1791410-27-9;
-remumiocel;rémumiocel;3002.51;NC3086Bc Ann. O/7;HSC/71;2023;126;no mention;
+remumiocel;rémumiocel;3002.51;NC3086Bc Ann. O/7;HSC/71;2023;126;;
 renadirsen;rénadirsen;2934.99;NC2501B1b Ann. M/6;HSC/61;2018;120;1782108-31-9;(List 117: renapersen)
 rencofilstat ;rencofilstat;2933.79;NC2930Bc Ann. P/27;HSC/69;2022;125;1383420-08-3;
 renytoline;rénytoline;2925.29;NC2004B1b Ann. O/6;HSC/53;2014;13;1729-61-9;HSC/11 (2925.20)
@@ -4481,7 +4481,7 @@ retifanlimab;rétifanlimab;3002.13;NC2803Bc Ann. T/3;HSC/67;2021;121;2079108-44-
 retigabine;rétigabine;2924.29;42.100 Ann. O (V);HSC/21;1998;76;150812-12-7;
 retlirafusp alfa;rétlirafusp alfa;3002.13;NC2930Bc Ann. P/25;HSC/69;2022;124;2395839-91-3;
 retosiban;rétosiban;2934.99;NC1443B1b Ann. P/5;HSC/43;2009;98;820957-38-8;
-revakinagene taroretcel;révakinagène taroretcel;3002.51 ;NC2803Bc Ann. T/7;HSC/67;2021;123;no mention;
+revakinagene taroretcel;révakinagène taroretcel;3002.51 ;NC2803Bc Ann. T/7;HSC/67;2021;123;;
 revamilast;révamilast;2934.99;NC1604B1b Ann. N/6;HSC/46;2010;102;893555-90-3;
 revaprazan;révaprazan;2933.59;NC0938B2b Ann. O/3 (II);HSC/35;2005;91;199463-33-7;
 revatropate;révatropate;2933.39;42.100 Ann. O (III);HSC/21;1998;74;149926-91-0;
@@ -4489,7 +4489,7 @@ revdofilimab;revdofilimab;3002.13 ;NC2803Bc Ann. T/6;HSC/67;2021;122;2230138-89-
 revefenacin;révéfénacine;2933.39;NC2373B1b Ann. O/6;HSC/59;2017;114;864750-70-9;
 reveglucosidase alfa;révéglucosidase alfa;3507.90;NC2116B1b Ann. R/5;HSC/55;2015;111;1446198-96-4;
 revexepride;révexépride;2934.99;NC2004B1b Ann. O/4;HSC/53;2014;108;219984-49-3;
-reviparin sodium;réviparine sodique;3001.90;NC1553B1b Ann. O/5;HSC/45;2010;64;no mention;
+reviparin sodium;réviparine sodique;3001.90;NC1553B1b Ann. O/5;HSC/45;2010;64;;
 revosimeline;révosiméline;2933.79;NC2626B1b Ann. O/5;HSC/63;2019;118;1810001-96-7;
 revumenib;révuménib;2935.90;NC3086Bc Ann. O/7;HSC/71;2023;126;2169919-21-3;
 revusiran;révusiran;2934.99;NC2116B1b Ann. R/5;HSC/55;2015;111;1438322-82-7;
@@ -4522,7 +4522,7 @@ rilimogene galvacirepvec;rilimogène galvacirépvec;3002.49;NC2930Bc Ann. P/33;H
 rilimogene glafolivec;rilimogène glafolivec;3002.49;NC2930Bc Ann. P/33;HSC/69;2022;107;1225283-43-0;HSC/51 (3002.90)
 rilonacept;rilonacept;3002.13;NC2116B1b Ann. S/2;HSC/55;2015;95;501081-76-1;HSC/39 (3002.10)
 rilotumumab;rilotumumab;3002.13;NC2116B1b Ann. S/2;HSC/55;2015;101;872514-65-3;HSC/46 (3002.10)
-Rilparencel;Rilparencel;3002.51;NC3086Bc Ann. O/8;HSC/71;2023;127;no mention;
+Rilparencel;Rilparencel;3002.51;NC3086Bc Ann. O/8;HSC/71;2023;127;;
 rilpivirine;rilpivirine;2933.59;NC0938B2b Ann. O/3 (II);HSC/35;2005;91;500287-72-9;
 Riltovetbart;Riltovetbart;3002.13;NC3086Bc Ann. O/8;HSC/71;2023;127;2641479-65-2;
 riltozinameran;riltozinaméran;3002.41;NC3086Bc Ann. O/7;HSC/71;2023;126 - COVID-19 ADDENDUM;2749948-25-0;
@@ -4571,7 +4571,7 @@ rivenprost;rivenprost;2937.50;NC1059B2b Ann. O/5;HSC/37;2006;93;256382-08-8;
 riviciclib;riviciclib;2934.99;NC2004B1b Ann. O/5;HSC/53;2014;109;920113-02-6;
 rivipansel;rivipansel;2940.00;NC2004B1b Ann. O/5;HSC/53;2014;109;927881-99-0;
 rivoceranib;rivocéranib;2933.39;NC2501B1b Ann. M/6;HSC/61;2018;117;811803-05-1;
-rivogenlecleucel;rivogenlecleucel;3002.51;NC2803Bc Ann. T/4;HSC/67;2021;117;no mention;HSC/61 (3002.90)
+rivogenlecleucel;rivogenlecleucel;3002.51;NC2803Bc Ann. T/4;HSC/67;2021;117;;HSC/61 (3002.90)
 rivoglitazone;rivoglitazone;2934.10;NC0590B2 Ann. L/15;HSC/29;2002;84;185428-18-6;
 Rivunatpagene miziparvovec;Rivunatpagène miziparvovec;3002.49;NC3086Bc Ann. O/8;HSC/71;2023;127;2646715-00-4;
 rizatriptan;rizatriptan;2933.99;NC2004B1b Ann. O/6;HSC/53;2014;75;144034-80-0;HSC/21 (2933.90)
@@ -4635,7 +4635,7 @@ rotamicillin;rotamicilline;2941.10;38.100 Ann. Q (No. 683);HSC/11;1993;35;55530-
 rotigaptide;rotigaptide;2933.99;NC1123B1b Ann. N/1;HSC/38;2006;94;355151-12-1;
 rotigotine;rotigotine;2934.99;NC2004B1b Ann. O/6;HSC/53;2014;83;99755-59-6;HSC/27 (2934.90)
 rovafovir etalafenamide;rovafovir étalafénamide;2934.99;NC2626B1b Ann. O/6;HSC/63;2019;119;912809-27-9;
-rovaleucel;rovaleucel;3002.51;NC2803Bc Ann. T/3;HSC/67;2021;121;no mention;
+rovaleucel;rovaleucel;3002.51;NC2803Bc Ann. T/3;HSC/67;2021;121;;
 rovalpituzumab;rovalpituzumab;3002.13;NC2237B1b Ann. T/11;HSC/57;2016;113;1613313-01-1;HSC/57 (3002.10) (S/9)
 rovalpituzumab tesirine;rovalpituzumab tésirine;3002.13;NC2237B1b Ann. T/11;HSC/57;2016;113;1613313-09-9;HSC/57 (3002.10) (S/9)
 rovanersen;rovanersen;2934.99;NC2930Bc Ann. P/27;HSC/69;2022;125;2072901-32-5;
@@ -4733,7 +4733,7 @@ satoreotide tetraxetan;satoréotide tétraxétan;2934.99;NC2626B1b Ann. O/5;HSC/
 satoreotide trizoxetan;satoréotide trizoxétan;2934.99;NC2373B1b Ann. O/6;HSC/59;2017;114;1638746-88-9;
 satralizumab;satralizumab;3002.13;NC2373B1b Ann. O/6;HSC/59;2017;116;1535963-91-7;(List 114 sapelizumab)
 satraplatin;satraplatine;2843.90;NC0250B2 Ann. P/1 (I);HSC/25;2000;80;129580-63-8;
-Satricabtagene autoleucel;Satricabtagène autoleucel ;3002.51;NC3086Bc Ann. O/8;HSC/71;2023;127;no mention;
+Satricabtagene autoleucel;Satricabtagène autoleucel ;3002.51;NC3086Bc Ann. O/8;HSC/71;2023;127;;
 satumomab;satumomab;3002.13;NC2116B1b Ann. S/2;HSC/55;2015;68;144058-40-2;HSC/16 (3002.10)
 savolitinib;savolitinib;2933.19;NC2116B1b Ann. R/5;HSC/55;2015;111;1313725-88-0;
 saxagliptin;saxagliptine;2933.99;NC1059B2b Ann. O/4;HSC/37;2006;92;361442-04-8;
@@ -4744,9 +4744,8 @@ secbutabarbital;secbutabarbital;2933.53;E.N. Chap. 29 - List I-II (Psychotropic)
 seclidemstat;séclidemstat;2935.90;NC2626B1b Ann. O/5;HSC/63;2019;118;1423715-37-0;
 secobarbital;sécobarbital;2933.53;E.N. Chap. 29 - List I-II (Psychotropic);HSC/25;2000;4;76-73-3;
 secretin human;sécrétine humaine;2937.19;NC1874B1b Ann. O/1;HSC/51;2013;106;108153-74-8;
-secukinumab;sécukinumab;3002.13;NC2116B1b Ann. S/2;HSC/55;2015;102;"875356-43-7 (H chain), 
-875356-44-8 (L chain)";HSC/46 (3002.10)
-securinine;sécurinine;2939.79;NC2116B1b Ann. S/1;HSC/55;2015;34;875356-44-8 (L chain);HSC/21 (2939.90)   HSC/53 (2939.99)
+secukinumab;sécukinumab;3002.13;NC2116B1b Ann. S/2;HSC/55;2015;102;;HSC/46 (3002.10)
+securinine;sécurinine;2939.79;NC2116B1b Ann. S/1;HSC/55;2015;34;875356-44-8;HSC/21 (2939.90)   HSC/53 (2939.99)
 sedecamycin;sédécamycine;2941.90;38.100 Ann. Q (No. 691);HSC/11;1993;55;23477-98-7;
 segesterone;ségestérone;2937.23;NC1059B2b Ann. O/3;HSC/37;2006;89;7690-08-6;
 Seglebegagene dasniparvovec;Seglébégagène dasniparvovec;3002.49;NC3086Bc Ann. O/8;HSC/71;2023;127;2607029-99-0;
@@ -4814,7 +4813,7 @@ serplulimab;serplulimab;3002.13;NC2803Bc Ann. T/3;HSC/67;2021;121;2231029-82-4;
 serum gonadotrophin;gonadotrophine sérique;2937.19;NC2004B1b Ann. O/6;HSC/53;2014;1;9002-70-4;HSC/11 (2937.10)
 sesiclenegene cosaparvovec;sésiclénégène cosaparvovec;3002.49;NC2930Bc Ann. P/25;HSC/69;2022;124;2379806-98-9;
 setafrastat;sétafrastat;2934.99;NC2626B1b Ann. O/5;HSC/63;2019;118;1399715-48-0;
-setamevetcel;sétamévetcel;3002.51;NC2803Bc Ann. T/3;HSC/67;2021;121;no mention;
+setamevetcel;sétamévetcel;3002.51;NC2803Bc Ann. T/3;HSC/67;2021;121;;
 setanaxib;sétanaxib;2933.79;NC2803Bc Ann. T/2;HSC/67;2021;120;1218942-37-0;
 setileuton;sétileuton;2934.99;NC1604B1b Ann. N/5;HSC/46;2010;101;910656-27-8;
 setipafant;sétipafant;2934.99;NC2004B1b Ann. O/6;HSC/53;2014;72;132418-35-0;HSC/18 (2934.90)
@@ -4847,7 +4846,7 @@ simeticone;siméticone;3910.00;NC0250B2 Ann. P/1 (I);HSC/25;2000;80;8050-81-5;
 simfibrate;simfibrate;2918.99;NC2373B1b Ann. O/12;HSC/59;2017;22;14929-11-4;HSC/11 (2918.90)
 simlukafusp alfa;simlukafusp alfa;3002.13;NC2803Bc Ann. T/3;HSC/67;2021;121;1776942-10-9;
 simoctocog alfa;simoctocog alfa;3002.12;NC2116B1b Ann. S/2;HSC/55;2015;104;1219013-68-9;HSC/49 (3002.10)
-simoladagene autotemcel;simoladagène autotemcel;3002.51 ;NC2803Bc Ann. T/6;HSC/67;2021;122;no mention;
+simoladagene autotemcel;simoladagène autotemcel;3002.51 ;NC2803Bc Ann. T/6;HSC/67;2021;122;;
 simotaxel;simotaxel;2934.99;NC1178B1c Ann. O/3;HSC/39;2007;94;791635-59-1;
 simpinicline;simpinicline;2933.59;NC2930Bc Ann. P/25;HSC/69;2022;124;753015-44-0;
 simridarlimab ;simridarlimab;3002.13;NC2930Bc Ann. P/27;HSC/69;2022;125;2378862-90-7;
@@ -4881,15 +4880,15 @@ sitalidone;sitalidone;2935.90;NC2116B1b Ann. S/1;HSC/55;2015;59;108894-39-9;HSC/
 sitamaquine;sitamaquine;2933.49;NC2004B1b Ann. O/6;HSC/53;2014;80;57695-04-2;HSC/23 (2933.40)
 sitaxentan;sitaxentan;2935.90;NC2116B1b Ann. S/1;HSC/55;2015;83;184036-34-8;HSC/27 (2935.00)
 sitimagene ceradenovec;sitimagène céradénovec;3002.49;NC2930Bc Ann. P/33;HSC/69;2022;97;898830-54-1;HSC/41 (3002.90)
-sitocabnagene loxiveleucel ;sitocabnagène loxivéleucel;3002.51;NC2930Bc Ann. P/27;HSC/69;2022;125;no mention;
+sitocabnagene loxiveleucel ;sitocabnagène loxivéleucel;3002.51;NC2930Bc Ann. P/27;HSC/69;2022;125;;
 sitofibrate;sitofibrate;2918.99;NC2373B1b Ann. O/12;HSC/59;2017;32;55902-94-8;HSC/11 (2918.90)
 sitravatinib;sitravatinib;2934.99;NC2373B1b Ann. O/6;HSC/59;2017;114;1123837-84-2;
 sivelestat;sivélestat;2935.90;NC2116B1b Ann. S/1;HSC/55;2015;78;127373-66-4;HSC/22 (2935.00)
 sivifene;sivifène;2928.00;NC1553B1b Ann. O/4;HSC/45;2010;99;2675-35-6;
 sivopixant;sivopixant;2933.69 ;NC2803Bc Ann. T/7;HSC/67;2021;123;2414285-40-6;
-sizavaleucel;sizavaleucel;3002.51 ;NC2803Bc Ann. T/7;HSC/67;2021;123;no mention;
+sizavaleucel;sizavaleucel;3002.51 ;NC2803Bc Ann. T/7;HSC/67;2021;123;;
 smilagenin;smilagénine;2932.99;NC2004B1b Ann. O/5;HSC/53;2014;109;126-18-1;
-sobetirome;sobetiromo;2918.99;NC1553B1b Ann. O/7;HSC/45;2010;100;211110-63-3 ;
+sobetirome;sobetiromo;2918.99;NC1553B1b Ann. O/7;HSC/45;2010;100;211110-63-3;
 soblidotin;soblidotine;2933.99;NC0730B2 Ann. M/4;HSC/31;2003;84;149606-27-9;
 socazolimab ;socazolimab;3002.13;NC2930Bc Ann. P/27;HSC/69;2022;125;2305043-30-3;
 sodelglitazar;sodelglitazar;2934.10;NC1178B1c Ann. O/5;HSC/39;2007;95;447406-78-2;
@@ -4953,8 +4952,8 @@ sovesudil;sovésudil;2933.39 ;NC2803Bc Ann. T/6;HSC/67;2021;122;1333400-14-8;
 sovilnesib;sovilnésib;2935.90;NC2930Bc Ann. P/27;HSC/69;2022;125;2410796-79-9;
 sovleplenib;sovléplénib;2935.90;NC3086Bc Ann. O/7;HSC/71;2023;126;1415792-84-5;
 sozinibercept;sozinibercept;3002.13;NC3086Bc Ann. O/7;HSC/71;2023;126;2568358-31-4;
-spanlecortemlocel;spanlécortemlocel;3002.51;NC2803Bc Ann. T/4;HSC/67;2021;112;no mention;HSC/61 (3002.90)
-spanlecortemlocel;spanlécortemlocel;3002.51;NC2237B1b Ann. T/10;HSC/57;2016;115;"Based on INN List 115 Amendment, the original CAS number was deleted";(List 112)
+spanlecortemlocel;spanlécortemlocel;3002.51;NC2803Bc Ann. T/4;HSC/67;2021;112;;HSC/61 (3002.90)
+spanlecortemlocel;spanlécortemlocel;3002.51;NC2237B1b Ann. T/10;HSC/57;2016;115;;(List 112)
 sparsentan;sparsentan;2935.90;NC2237B1b Ann. T/11;HSC/57;2016;113;254740-64-2;HSC/57 (2935.00) (S/9)
 spartalizumab;spartalizumab;3002.13;NC2501B1b Ann. M/6;HSC/61;2018;117;1935694-88-4;
 spebrutinib;spébrutinib;2933.59;NC2237B1b Ann. S/8;HSC/57;2016;112;1202757-89-8;
@@ -4969,7 +4968,7 @@ squalamine;squalamine;2922.19;NC0845B2 Ann. M/2;HSC/33;2004;88;148717-90-2;
 stacofylline;stacofylline;2939.59;NC2004B1b Ann. O/6;HSC/53;2014;73;98833-92-2;HSC/18 (2939.50)
 stamulumab;stamulumab;3002.13;NC2116B1b Ann. S/2;HSC/55;2015;94;705287-60-1;HSC/38 (3002.10)
 stannsoporfin;stannsoporfine;2933.99;NC2004B1b Ann. O/6;HSC/53;2014;79;106344-20-1;HSC/23 (2933.90)
-stapuldencel;stapuldencel;3002.51;NC2803Bc Ann. T/3;HSC/67;2021;121;no mention;
+stapuldencel;stapuldencel;3002.51;NC2803Bc Ann. T/3;HSC/67;2021;121;;
 stenbolone;stenbolone;2937.29;NC2004B1b Ann. O/6;HSC/53;2014;17;5197-58-0;HSC/11 (2937.99)
 stibamine glucoside;stibamine glucoside;2932.99;42.100 Ann. O (II);HSC/21;1998;1;1344-34-9;
 subasumstat;subasumstat;2934.99 ;NC2803Bc Ann. T/11;HSC/67;2021;124 COVID-19;1858276-04-6;
@@ -5017,19 +5016,19 @@ suvodirsen;suvodirsen;2934.99;NC2803Bc Ann. T/3;HSC/67;2021;121;2095270-67-8;
 suvorexant;suvorexant;2934.99;NC1760B1b Ann. N/8;HSC/49;2012;105;1030377-33-3;
 suvratoxumab;suvratoxumab;3002.13;NC2501B1b Ann. M/5;HSC/61;2018;116;1629620-18-3;
 tabalumab;tabalumab;3002.13;NC2116B1b Ann. S/2;HSC/55;2015;105;1143503-67-6;HSC/49 (3002.10)
-tabelecleucel;tabélecleucel;3002.51;NC2803Bc Ann. T/4;HSC/67;2021;117;no mention;HSC/61 (3002.90)
+tabelecleucel;tabélecleucel;3002.51;NC2803Bc Ann. T/4;HSC/67;2021;117;;HSC/61 (3002.90)
 taberminogene vadenovec;taberminogène vadénovec;3002.49;NC2930Bc Ann. P/33;HSC/69;2022;100;943980-47-0;HSC/45 (3002.90)
 tabimorelin;tabimoréline;2924.29;NC0250B2 Ann. P/1 (I);HSC/25;2000;80;193079-69-5;
 tabituximab;tabituximab;3002.13;NC2626B1b Ann. O/6;HSC/63;2019;119;1644134-10-0;
 tabituximab barzuxetan;tabituximab barzuxétan;3002.13;NC2626B1b Ann. O/6;HSC/63;2019;119;1612758-88-9;
 tacapenem;tacapénem;2941.90;NC0730B2 Ann. M/7;HSC/31;2003;87;193811-33-5;
-tacatresgene autoleucel;tacatresgène autoleucel;3002.51;NC2930Bc Ann. P/25;HSC/69;2022;124;no mention;
+tacatresgene autoleucel;tacatresgène autoleucel;3002.51;NC2930Bc Ann. P/25;HSC/69;2022;124;;
 tacedinaline;tacédinaline;2924.29;NC0845B2 Ann. M/2;HSC/33;2004;88;112522-64-2;
 tadalafil;tadalafil;2934.99;NC0590B2 Ann. L/15;HSC/29;2002;85;171596-29-5;
 tadekinig alfa;tadékinig alfa;3002.13;NC2116B1b Ann. S/2;HSC/55;2015;90;220712-29-8;HSC/47 (3002.10)
 tadnersen;tadnersen;2934.99;NC2930Bc Ann. P/25;HSC/69;2022;124;2170507-65-8;
 tadocizumab;tadocizumab;3002.13;NC2116B1b Ann. S/2;HSC/55;2015;94;339086-80-5;HSC/38 (3002.10)
-tafamidis;tafamidis;2934.99;NC1604B1b Ann. N/5;HSC/46;2010;101;594839-88-0 ;
+tafamidis;tafamidis;2934.99;NC1604B1b Ann. N/5;HSC/46;2010;101;594839-88-0;
 tafasitamab;tafasitamab;3002.13;NC2626B1b Ann. O/6;HSC/63;2019;119;1422527-84-1;
 tafenoquine;tafénoquine;2933.49;NC2004B1b Ann. O/6;HSC/53;2014;80;106635-80-7;HSC/23 (2933.40)
 tafluposide;tafluposide;2940.00;NC0590B2 Ann. L/15;HSC/29;2002;85;179067-42-6;
@@ -5077,7 +5076,7 @@ tanezumab;tanézumab;3002.13;NC2116B1b Ann. S/2;HSC/55;2015;99;880266-57-9;HSC/4
 tanfanercept;tanfanercept;3002.13;NC2803Bc Ann. T/2;HSC/67;2021;120;2119738-70-2;
 taniborbactam;taniborbactam;2934.99;NC2626B1b Ann. O/6;HSC/63;2019;119;1613267-49-4;
 tanimilast;tanimilast;2935.90;NC2803Bc Ann. T/3;HSC/67;2021;121;1239278-59-1;
-taniraleucel;taniraleucel;3002.51 ;NC2803Bc Ann. T/7;HSC/67;2021;123;no mention;
+taniraleucel;taniraleucel;3002.51 ;NC2803Bc Ann. T/7;HSC/67;2021;123;;
 tanogitran;tanogitran;2933.99;NC1059B2b Ann. O/4;HSC/37;2006;92;637328-69-9;
 tanomastat;tanomastat;2930.90;NC0430B2 Ann. Q/1 (I);HSC/27;2001;82;179545-77-8;
 tanurmotide;tanurmotide;3002.41;NC2803Bc Ann. T/4;HSC/67;2021;109;907596-28-5;HSC/53 (3002.20)
@@ -5127,7 +5126,7 @@ tebentafusp;tébentafusp;3002.13;NC2626B1b Ann. O/5;HSC/63;2019;118;1874157-95-5
 Tebideutorexant;Tébideutorexant;2845.90;NC3086Bc Ann. O/8;HSC/71;2023;127;1637681-55-0;
 tebipenem pivoxil;tébipénem pivoxil;2941.90;NC0430B2 Ann. Q/1 (I);HSC/27;2001;87;161715-24-8;
 tebotelimab;tébotélimab;3002.13 ;NC2803Bc Ann. T/6;HSC/67;2021;122;2245725-04-4;
-tebrocabtagene autoleucel;tébrocabtagène autoleucel;3002.51;NC2803Bc Ann. T/3;HSC/67;2021;121;no mention;
+tebrocabtagene autoleucel;tébrocabtagène autoleucel;3002.51;NC2803Bc Ann. T/3;HSC/67;2021;121;;
 tecadenoson;técadénoson;2934.99;NC0730B2 Ann. M/7;HSC/31;2003;87;204512-90-3;
 tecaginlimab;técaginlimab;3002.13;NC2930Bc Ann. P/27;HSC/69;2022;125;2253891-70-0;
 tecalcet;técalcet;2922.29;NC0730B2 Ann. M/7;HSC/31;2003;87;148717-54-8;
@@ -5196,8 +5195,7 @@ tenalisib;ténalisib;2934.99;NC2373B1b Ann. O/6;HSC/59;2017;114;1639417-53-0;
 tenamfetamine;ténamfétamine;2932.99;E.N. Chap. 29 - List I-II (Psychotropic);HSC/25;2000;55;51497-09-7;
 tenapanor;ténapanor;2935.90;NC2116B1b Ann. S/1;HSC/55;2015;107;1234423-95-0;HSC/51 (2935.00)
 tenatoprazole;ténatoprazole;2933.39;NC0090B2 Ann. M/5;HSC/23;1999;80;113712-98-4;
-tenatumomab;ténatumomab;3002.13;NC2116B1b Ann. S/2;HSC/55;2015;98;"592557-43-2 (light chain)
- 592557-41-0 (heavy chain)";HSC/43 (3002.10)
+tenatumomab;ténatumomab;3002.13;NC2116B1b Ann. S/2;HSC/55;2015;98;;HSC/43 (3002.10)
 tenecteplase;ténectéplase;3507.90;NC0090B2 Ann. M/1 (II);HSC/23;1999;79;191588-94-0;
 teneligliptin;ténéligliptine;2934.10;NC1443B1b Ann. P/6;HSC/43;2009;99;760937-92-6;
 teneliximab;ténéliximab;3002.13;NC2116B1b Ann. S/2;HSC/55;2015;87;299423-37-3;HSC/31 (3002.10)
@@ -5210,7 +5208,7 @@ tenofovir;ténofovir;2933.59;NC0430B2 Ann. Q/1 (I);HSC/27;2001;82;147127-20-6;
 tenofovir alafenamide;ténofovir alafénamide;2933.59;NC2116B1b Ann. R/5;HSC/55;2015;111;379270-37-8;
 tenofovir amibufenamide;ténofovir amibufénamide;2933.59 ;NC2803Bc Ann. T/7;HSC/67;2021;123;1571076-26-0;
 tenofovir exalidex ;ténofovir exalidex;2933.59;NC2373B1b Ann. O/7;HSC/59;2017;115;911208-73-6;
-tenvumestrocel;tenvumestrocel;3002.51 ;NC2803Bc Ann. T/7;HSC/67;2021;123;no mention;
+tenvumestrocel;tenvumestrocel;3002.51 ;NC2803Bc Ann. T/7;HSC/67;2021;123;;
 tepilamide fumarate;fumarate de tépilamide;2924.19;NC2626B1b Ann. O/5;HSC/63;2019;118;1208229-58-6;
 teplinovivint;téplinovivint;2933.39 ;NC2803Bc Ann. T/7;HSC/67;2021;123;1428064-91-8;
 teplizumab;téplizumab;3002.13;NC2116B1b Ann. S/2;HSC/55;2015;97;876387-05-2;HSC/41 (3002.10)
@@ -5261,7 +5259,7 @@ thymalfasin;thymalfasine;3002.13;NC2373B1b Ann. O/12;HSC/59;2017;73;62304-98-7;"
 HSC/55 (3002.10)"
 thymocartin;thymocartine;2937.19;NC2004B1b Ann. O/6;HSC/53;2014;60;85466-18-8;HSC/11 (2937.99)
 thymotrinan;thymotrinan;2925.29;NC2004B1b Ann. O/6;HSC/53;2014;61;85465-82-3;HSC/11 (2925.20)
-thyrotropin alfa;thyrotropine alfa;2937.19;NC2116B1b Ann. R/7;HSC/55;2015;78;no mention;HSC/25 (2934.90)     HSC/53 (2934.99)
+thyrotropin alfa;thyrotropine alfa;2937.19;NC2116B1b Ann. R/7;HSC/55;2015;78;;HSC/25 (2934.90)     HSC/53 (2934.99)
 tiazotic acid;acide tiazotique;2933.99;NC1874B1b Ann. O/1;HSC/51;2013;106;64679-65-8;
 tibulizumab;tibulizumab;3002.13;NC2501B1b Ann. M/6;HSC/61;2018;117;1849636-24-3;
 ticagrelor;ticagrélor;2933.59;NC1178B1c Ann. O/5;HSC/39;2007;95;274693-27-5;
@@ -5315,7 +5313,7 @@ tinlarebant;tinlarébant;2933.39;NC2803Bc Ann. T/3;HSC/67;2021;121;1821327-95-0;
 Tinlorafenib;Tinlorafénib;2935.90;NC3086Bc Ann. O/8;HSC/71;2023;127;2573781-75-4;
 tinostamustine;tinostamustine;2933.99;NC2501B1b Ann. M/5;HSC/61;2018;116;1236199-60-2;
 tinurilimab;tinurilimab;3002.13;NC2803Bc Ann. T/3;HSC/67;2021;121;2226224-30-0;
-tinzaparin sodium;tinzaparine sodique;3001.90;NC1553B1b Ann. O/5;HSC/45;2010;65;no mention;
+tinzaparin sodium;tinzaparine sodique;3001.90;NC1553B1b Ann. O/5;HSC/45;2010;65;;
 tiomolibdic acid;acide tiomolibdique;2830.90;NC1649B3b Ann. R/12;HSC/47;2011;101;13818-85-4;
 tipapkinogene sovacivec;tipapkinogène sovacivec;3002.49;NC2930Bc Ann. P/33;HSC/69;2022;101;1052105-48-2;HSC/47 (3002.90)
 tipelukast;tipélukast;2930.90;NC1178B1c Ann. O/5;HSC/39;2007;95;125961-82-2;
@@ -5335,7 +5333,7 @@ tirnovetmab;tirnovetmab;3002.13;NC2930Bc Ann. P/25;HSC/69;2022;124;2364504-80-1;
 tirofiban;tirofiban;2935.90;NC2116B1b Ann. S/1;HSC/55;2015;73;144494-65-5;HSC/18 (2935.00)
 tirvalimogene teraplasmid;tirvalimogène téraplasmide;2934.99;NC2501B1b Ann. M/6;HSC/61;2018;117;1905430-26-3;
 tirzepatide;tirzépatide;2937.19;NC2626B1b Ann. O/6;HSC/63;2019;119;2023788-19-2;
-tisagenlecleucel;tisagenlecleucel;3002.51;NC2803Bc Ann. T/4;HSC/67;2021;117;no mention;HSC/61 (3002.90)
+tisagenlecleucel;tisagenlecleucel;3002.51;NC2803Bc Ann. T/4;HSC/67;2021;117;;HSC/61 (3002.90)
 tislelizumab;tislélizumab;3002.13;NC2501B1b Ann. M/6;HSC/61;2018;117;1858168-59-8;
 tisocalcitate;tisocalcitate;2918.19;NC0938B2b Ann. O/2;HSC/35;2005;89;156965-06-9;
 tisotumab;tisotumab;3002.13;NC2237B1b Ann. T/11;HSC/57;2016;113;1418628-81-5;HSC/57 (3002.10) (S/9)
@@ -5385,7 +5383,7 @@ tonabacase ;tonabacase;3507.90;NC2373B1b Ann. O/7;HSC/59;2017;115;1788041-31-5;
 tonabersat;tonabersat;2932.99;NC0090B2 Ann. M/5;HSC/23;1999;80;175013-84-0;
 tonapofylline;tonapofylline;2939.59;NC1705B1b Ann. O/6;HSC/48;2011;102;340021-17-2;
 Tonlamarsen;Tonlamarsen;2934.99;NC3086Bc Ann. O/8;HSC/71;2023;127;2589926-20-3;
-tonogenconcel;tonogenconcel;3002.51;NC2803Bc Ann. T/4;HSC/67;2021;115;no mention;HSC/61 (3002.90)
+tonogenconcel;tonogenconcel;3002.51;NC2803Bc Ann. T/4;HSC/67;2021;115;;HSC/61 (3002.90)
 topilutamide;topilutamide;2924.29;NC0938B2b Ann. O/3 (II);HSC/35;2005;91;260980-89-0;
 topiroxostat;topiroxostat;2933.39;NC1604B1b Ann. N/6;HSC/46;2010;102;577778-58-6;
 topixantrone;topixantrone;2933.99;NC0730B2 Ann. M/7;HSC/31;2003;87;156090-18-5;
@@ -5401,7 +5399,7 @@ toreforant;toréforant;2933.59;NC2237B1b Ann. S/8;HSC/57;2016;112;952494-46-1;
 toripalimab;toripalimab;3002.13;NC2626B1b Ann. O/6;HSC/63;2019;119;1924598-82-2;
 toripristone;toripristone;2937.29;NC2004B1b Ann. O/6;HSC/53;2014;61;91935-26-1;HSC/11 (2937.99)
 torudokimab;torudokimab;3002.13;NC2930Bc Ann. P/25;HSC/69;2022;124;2241728-76-5;
-Torulimogene lonferencel;Torulimogène lonférencel;3002.51;NC3086Bc Ann. O/8;HSC/71;2023;127;no mention;
+Torulimogene lonferencel;Torulimogène lonférencel;3002.51;NC3086Bc Ann. O/8;HSC/71;2023;127;;
 tosactide;tosactide;2937.19;NC2004B1b Ann. O/6;HSC/53;2014;24;47931-80-6;HSC/21 (2937.10)
 tosagestin;tosagestin;2937.23;NC0730B2 Ann. M/6;HSC/31;2003;86;110072-15-6;
 tosatoxumab;tosatoxumab;3002.13;NC2116B1b Ann. S/2;HSC/55;2015;109;1374419-41-6;HSC/53 (3002.10)
@@ -5450,7 +5448,7 @@ trelanserin;trélansérine;2934.99;NC1310B1b Ann. N/4;HSC/41;2008;97;189003-92-7
 tremacamra;tremacamra;3504.00;NC0250B2 Ann. P/1;HSC/25;2000;78;155576-45-7;
 tremelimumab;trémélimumab;3002.13;NC2116B1b Ann. S/2;HSC/55;2015;97;745013-59-6;HSC/38 (3002.10)
 trempamotide;trempamotide;3002.41;NC2803Bc Ann. T/4;HSC/67;2021;107;1018833-44-7;HSC/51 (3002.20)
-Tremtelectogene empogeditemcel;Tremtélectogène empogéditemcel;3002.51;NC3086Bc Ann. O/8;HSC/71;2023;127;no mention;
+Tremtelectogene empogeditemcel;Tremtélectogène empogéditemcel;3002.51;NC3086Bc Ann. O/8;HSC/71;2023;127;;
 trengestone;trengestone;2937.23;NC2004B1b Ann. O/6;HSC/53;2014;22;5192-84-7;HSC/11 (2937.92)
 trenonacog alfa;trénonacog alfa;3002.12;NC2116B1b Ann. S/2;HSC/55;2015;107;1232401-60-3;HSC/51 (3002.10)
 treosulfan;tréosulfan;2905.49;42.100 Ann. O (I);HSC/21;1998;26;299-75-2;
@@ -5505,8 +5503,7 @@ troxacitabine;troxacitabine;2934.99;NC2004B1b Ann. O/6;HSC/53;2014;81;145918-75-
 tryptophan;tryptophane;2933.99;NC2004B1b Ann. O/6;HSC/53;2014;58;73-22-3;HSC/11 (2933.90)
 tucidinostat ;tucidinostat;2933.39;NC2373B1b Ann. O/7;HSC/59;2017;115;1616493-44-7;
 tucotuzumab celmoleukin;tucotuzumab celmoleukine;3002.13;NC2116B1b Ann. S/2;HSC/55;2015;94;339986-90-2;HSC/38 (3002.10)
-tulathromycin;tulathromycine;2941.90;NC0730B2 Ann. M/7;HSC/31;2003;87;"217500-96-4 tulathromycinum A 
-280755-12-6 tulathromycinum B";
+tulathromycin;tulathromycine;2941.90;NC0730B2 Ann. M/7;HSC/31;2003;87;;
 tulinercept;tulinercept;3002.13;NC2501B1b Ann. M/5;HSC/61;2018;116;1623177-41-2;
 Tulisokibart;Tulisokibart;3002.13;NC3086Bc Ann. O/8;HSC/71;2023;127;2648504-55-4;
 tulmimetostat;tulmimétostat;2934.99;NC3086Bc Ann. O/7;HSC/71;2023;126;2567686-02-4;
@@ -5516,7 +5513,7 @@ Tunodafil;Tunodafil;2935.90;NC3086Bc Ann. O/8;HSC/71;2023;127;804518-63-6;
 Tuparstobart;Tuparstobart;3002.13;NC3086Bc Ann. O/8;HSC/71;2023;127;2649466-03-3;
 turoctocog alfa;turoctocog alfa;3002.12;NC2116B1b Ann. S/2;HSC/55;2015;104;1192451-26-5;HSC/49 (3002.10)
 turoctocog alfa pegol;turoctocog alfa pégol;3002.12;NC2116B1b Ann. S/2;HSC/55;2015;108;1309086-46-1;HSC/53 (3002.10)
-turofexorate isopropyl;turofexorate d’isopropyle;2933.99;NC1604B1b Ann. N/5;HSC/46;2010;101;629664-81-9 ;
+turofexorate isopropyl;turofexorate d’isopropyle;2933.99;NC1604B1b Ann. N/5;HSC/46;2010;101;629664-81-9;
 tusamitamab;tusamitamab;3002.13 ;NC2803Bc Ann. T/7;HSC/67;2021;123;2349294-95-5;
 tusamitamab ravtansine;tusamitamab ravtansine;3002.13 ;NC2803Bc Ann. T/7;HSC/67;2021;123;2254086-60-5;
 Tuspetinib;Tuspétinib;2933.59;NC3086Bc Ann. O/8;HSC/71;2023;127;2294874-49-8;
@@ -5560,7 +5557,7 @@ umibecestat;umibécestat;2934.99;NC2626B1b Ann. O/6;HSC/63;2019;119;1387560-01-1
 umifenovir;umifénovir;2933.99;NC1649B3b Ann. R/14;HSC/47;2011;103;131707-25-0;
 umifoxolaner;umifoxolaner;2934.99;NC2930Bc Ann. P/25;HSC/69;2022;124;2021230-37-3;
 umirolimus;umirólimus;2934.99;NC1649B3b Ann. R/14;HSC/47;2011;116;851536-75-9;(List 103 umirolimús)
-Umitrelimorgene autodencel;Umitrélimorgène autodencel;3002.51;NC3086Bc Ann. O/8;HSC/71;2023;127;no mention;
+Umitrelimorgene autodencel;Umitrélimorgène autodencel;3002.51;NC3086Bc Ann. O/8;HSC/71;2023;127;;
 Umizortamig;Umizortamig;3002.13;NC3086Bc Ann. O/8;HSC/71;2023;127;2599198-83-9;
 unasnemab;unasnémab;3002.13;NC2930Bc Ann. P/25;HSC/69;2022;124;2379805-59-9;
 Unecritinib;Unécritinib;2933.39;NC3086Bc Ann. O/8;HSC/71;2023;127;1418026-92-2;
@@ -5595,7 +5592,7 @@ uzansertib;uzansertib;2933.39 ;NC2803Bc Ann. T/6;HSC/67;2021;122;1620012-39-6;
 vabicaserin;vabicasérine;2933.99;NC1178B1c Ann. O/5;HSC/39;2007;95;620948-93-8;
 vaborbactam;vaborbactam;2934.99;NC2237B1b Ann. S/9;HSC/57;2016;113;1360457-46-0;
 vactosertib;vactosertib;2933.39;NC2501B1b Ann. M/6;HSC/61;2018;117;1352608-82-2;
-vadacabtagene leraleucel;vadacabtagène léraleucel;3002.51;NC2803Bc Ann. T/4;HSC/67;2021;117;no mention;HSC/61 (3002.90)
+vadacabtagene leraleucel;vadacabtagène léraleucel;3002.51;NC2803Bc Ann. T/4;HSC/67;2021;117;;HSC/61 (3002.90)
 vadadustat;vadadustat;2933.39;NC2373B1b Ann. O/6;HSC/59;2017;114;1000025-07-9;
 vadastuximab;vadastuximab;3002.13;NC2373B1b Ann. O/6;HSC/59;2017;114;1436390-63-4;
 vadastuximab talirine;vadastuximab talirine;3002.13;NC2237B1b Ann. T/11;HSC/57;2016;113;1436390-64-5;HSC/57 (3002.10) (S/9)
@@ -5623,7 +5620,7 @@ valziflocept;valziflocept;3002.13;NC2501B1b Ann. M/6;HSC/61;2018;117;1804910-11-
 vamifeport;vamiféport;2934.99 ;NC2803Bc Ann. T/7;HSC/67;2021;123;2095668-10-1;
 vamorolone ;vamorolone;2937.29;NC2373B1b Ann. O/7;HSC/59;2017;115;13209-41-1;
 Vamotinib;Vamotinib;2933.59;NC3086Bc Ann. O/8;HSC/71;2023;127;1416241-23-0;
-vandefitemcel;vandéfitemcel;3002.51;NC2803Bc Ann. T/4;HSC/67;2021;115;no mention;HSC/61 (3002.90)
+vandefitemcel;vandéfitemcel;3002.51;NC2803Bc Ann. T/4;HSC/67;2021;115;;HSC/61 (3002.90)
 vandetanib;vandétanib;2933.59;NC0938B2b Ann. O/3 (II);HSC/35;2005;91;338992-00-0;
 vandortuzumad vedotin;vandortuzumab védotine;3002.13;NC2237B1b Ann. T/10;HSC/57;2012;112;1471985-92-8;HSC/57 (3002.10) (S/8)
 vangatalcite;vangatalcite;2842.90;NC0250B2 Ann. P/1 (I);HSC/25;2000;80;12539-23-0;
@@ -5640,12 +5637,11 @@ vapreotide;vapréotide;2934.99;NC2004B1b Ann. O/6;HSC/53;2014;62;103222-11-3;HSC
 vardenafil;vardénafil;2935.90;NC2116B1b Ann. S/1;HSC/55;2015;82;224785-90-4;HSC/27 (2935.00)
 varenicline;varénicline;2933.39;NC0938B2b Ann. O/2;HSC/35;2005;89;249296-44-4;
 varespladib;varespladib;2933.99;NC0730B2 Ann. M/7;HSC/31;2003;87;172732-68-2;
-varfollitropin alfa;varfollitropine alfa ;2937.19;NC1649B3b Ann. R/12;HSC/47;2011;101;"847420-38-6 (beta subunit); 
-847420-37-5 (alpha subunit)";
+varfollitropin alfa;varfollitropine alfa ;2937.19;NC1649B3b Ann. R/12;HSC/47;2011;101;;
 varisacumab;varisacumab;3002.13;NC2501B1b Ann. M/5;HSC/61;2018;116;1610010-60-0;
 varlilumab;varlilumab;3002.13;NC2237B1b Ann. T/13;HSC/57;2016;111;1393344-72-3;HSC/55 (3002.10)
 varlitinib;varlitinib;2934.10;NC1649B3b Ann. R/13;HSC/47;2011;102;845272-21-1;
-Varnimcabtagene autoleucel;Varnimcabtagène autoleucel;3002.51;NC3086Bc Ann. O/8;HSC/71;2023;127;no mention;
+Varnimcabtagene autoleucel;Varnimcabtagène autoleucel;3002.51;NC3086Bc Ann. O/8;HSC/71;2023;127;;
 varodarsen;varodarsen;2934.99;NC2501B1b Ann. M/5;HSC/61;2018;116;1225408-05-8;
 varoglutamstat;varoglutamstat;2933.29;NC2930Bc Ann. P/25;HSC/69;2022;124;1276021-65-8;
 Varokibart;Varokibart;3002.13;NC3086Bc Ann. O/8;HSC/71;2023;127;2643349-04-4;
@@ -5712,7 +5708,7 @@ vestipitant;vestipitant;2933.59;NC0938B2b Ann. O/3 (II);HSC/35;2005;91;334476-46
 vestronidase alfa ;vestronidase alfa;3507.90;NC2373B1b Ann. O/7;HSC/59;2017;115;1638194-78-1;
 veverimer;vévérimère;3911.90;NC2803Bc Ann. T/3;HSC/67;2021;121;2099678-27-8;
 vevorisertib;vévorisertib;2933.39 ;NC2803Bc Ann. T/7;HSC/67;2021;123;1416775-46-6;
-vibapapogene autoleucel;vibapapogène autoleucel;3002.51 ;NC2803Bc Ann. T/7;HSC/67;2021;123;no mention;
+vibapapogene autoleucel;vibapapogène autoleucel;3002.51 ;NC2803Bc Ann. T/7;HSC/67;2021;123;;
 vibecotamab;vibécotamab;3002.13;NC2803Bc Ann. T/2;HSC/67;2021;120;2138442-13-2;
 vibegron;vibégron;2933.59;NC2004B1b Ann. O/4;HSC/53;2014;108;1190389-15-1;
 vibosameran;vibosaméran;2934.99 ;NC2803Bc Ann. T/7;HSC/67;2021;123;2348560-90-5;
@@ -5764,7 +5760,7 @@ Vodudeutentan;Vodudeutentan;2845.90;NC3086Bc Ann. O/8;HSC/71;2023;127;2364365-83
 vofatamab;vofatamab;3002.13;NC2803Bc Ann. T/2;HSC/67;2021;120;1312305-12-6;
 vofopitant;vofopitant;2933.39;NC0430B2 Ann. Q/1 (I);HSC/27;2001;82;168266-90-8;
 volagidemab;volagidémab;3002.13;NC2803Bc Ann. T/2;HSC/67;2021;120;1233956-13-2;
-volamcabtagene durzigedleucel;volamcabtagène durzigedleucel;3002.51;NC3086Bc Ann. O/7;HSC/71;2023;126;no mention;
+volamcabtagene durzigedleucel;volamcabtagène durzigedleucel;3002.51;NC3086Bc Ann. O/7;HSC/71;2023;126;;
 volanesorsen;volanésorsen;2934.99;NC2237B1b Ann. S/9;HSC/57;2016;113;915430-78-3;
 volasertib;volasertib;2933.59;NC1604B1b Ann. N/6;HSC/46;2010;102;755038-65-4;
 volinaserin;volinasérine;2933.39;NC1178B1c Ann. O/5;HSC/39;2007;95;139290-65-6;
@@ -5801,7 +5797,7 @@ votucalis;votucalis;2934.99;NC1310B1b Ann. N/10;HSC/41;2008;96;872525-61-6;
 votumumab;votumumab;3002.13;NC2116B1b Ann. S/2;HSC/55;2015;70;148189-70-2;HSC/18 (3002.10)
 voxalatamab ;voxalatamab ;3002.13;NC2930Bc Ann. P/27;HSC/69;2022;125;2411871-58-2;
 voxelotor;voxélotor;2933.39;NC2501B1b Ann. M/5;HSC/61;2018;116;1446321-46-5;
-voxeralgagene autotemcel;voxéralgagène autotemcel;3002.51;NC2930Bc Ann. P/25;HSC/69;2022;124;no mention;
+voxeralgagene autotemcel;voxéralgagène autotemcel;3002.51;NC2930Bc Ann. P/25;HSC/69;2022;124;;
 voxergolide;voxergolide;2934.99;NC2004B1b Ann. O/6;HSC/53;2014;61;89651-00-3;HSC/11 (2934.90)
 voxilaprevir;voxilaprévir;2935.90;NC2237B1b Ann. T/11;HSC/57;2016;113;1535212-07-7;HSC/57 (2935.00) (S/9)
 voxtalisib;voxtalisib;2933.79;NC2116B1b Ann. R/3;HSC/55;2015;108;934493-76-2;
@@ -5855,7 +5851,7 @@ zamaglutenase;zamagluténase;3507.90;NC3086Bc Ann. O/7;HSC/71;2023;126;2542082-3
 zamerovimab;zamerovimab;3002.13;NC2930Bc Ann. P/27;HSC/69;2022;125;2419087-87-7;
 zamicastat;zamicastat;2934.99;NC2004B1b Ann. O/4;HSC/53;2014;108;1080028-80-3;
 zampilimab;zampilimab;3002.13;NC2626B1b Ann. O/6;HSC/63;2019;119;2098280-42-1;
-zamtocabtagene autoleucel;zamtocabtagène autoleucel;3002.51;NC2930Bc Ann. P/25;HSC/69;2022;124;no mention;
+zamtocabtagene autoleucel;zamtocabtagène autoleucel;3002.51;NC2930Bc Ann. P/25;HSC/69;2022;124;;
 zanamivir;zanamivir;2932.99;"40.600 Ann. D, par. 6";HSC/18;1996;72;139110-80-8;
 zanapezil;zanapézil;2933.39;NC0590B2 Ann. L/15;HSC/29;2002;85;142852-50-4;
 Zandatrigine;Zandatrigine;2935.90;NC3086Bc Ann. O/8;HSC/71;2023;127;2154406-04-7;
@@ -5876,7 +5872,7 @@ zaurategrast;zauratégrast;2933.99;NC1604B1b Ann. N/5;HSC/46;2010;101;455264-31-
 zavacorilant ;zavacorilant;2935.90;NC2930Bc Ann. P/27;HSC/69;2022;125;1781245-13-3;
 zavegepant;zavégépant;2933.79;NC2930Bc Ann. P/25;HSC/69;2022;124;1337918-83-8;
 zectivimod ;zectivimod;2933.39;NC2930Bc Ann. P/27;HSC/69;2022;125;1623066-63-6;
-zedenoleucel;zédénoleucel;3002.51;NC2930Bc Ann. P/27;HSC/69;2022;125;no mention;
+zedenoleucel;zédénoleucel;3002.51;NC2930Bc Ann. P/27;HSC/69;2022;125;;
 zegocractin ;zégocractine;2934.99;NC2930Bc Ann. P/27;HSC/69;2022;125;1713240-67-5;
 Zegruvirimat;Zegruvirimat;2934.99;NC3086Bc Ann. O/8;HSC/71;2023;127;2122781-86-4;
 zelandopam;zélandopam;2933.49;NC0590B2 Ann. L/15;HSC/29;2002;84;139233-53-7;
@@ -5895,7 +5891,7 @@ Zerlasiran;Zerlasiran;2934.99;NC3086Bc Ann. O/8;HSC/71;2023;127;2646703-64-0;
 zeteletinib;zétélétinib;2934.99;NC2930Bc Ann. P/25;HSC/69;2022;124;2216753-97-6;
 zetomipzomib;zétomipzomib;2934.99;NC2930Bc Ann. P/27;HSC/69;2022;125;1629677-75-3;
 zevaquenabant;zévaquénabant;2935.90;NC3086Bc Ann. O/7;HSC/71;2023;126;1998760-00-1;
-zevorcabtagene autoleucel ;zévorcabtagène autoleucel;3002.51;NC2930Bc Ann. P/27;HSC/69;2022;125;no mention;
+zevorcabtagene autoleucel ;zévorcabtagène autoleucel;3002.51;NC2930Bc Ann. P/27;HSC/69;2022;125;;
 zibotentan;zibotentan;2935.90;NC2116B1b Ann. S/1;HSC/55;2015;94;186497-07-4;HSC/38 (2935.00)
 zibrofusidic acid;acide zibrofusidique;2941.90;NC1649B3b Ann. R/13;HSC/47;2011;102;827603-95-2;
 Ziclumeran;Zicluméran;2934.99;NC3086Bc Ann. O/8;HSC/71;2023;127;2305431-29-0;
@@ -5928,7 +5924,7 @@ zinpentraxin alfa ;zinpentraxine alfa;3002.12;NC2930Bc Ann. P/27;HSC/69;2022;125
 zipalertinib;zipalertinib;2933.59;NC3086Bc Ann. O/7;HSC/71;2023;126;1661854-97-2;
 zipeprol;zipéprol;2933.55;E.N. Chap. 29 - List I-II (Psychotropic);HSC/25;2000;27;34758-83-3;
 ziprasidone;ziprasidone;2934.20;"40.600 Ann. D, par. 6";HSC/18;1996;72;146939-27-7;
-ziralimumab;ziralimumab;3002.13;NC2116B1b Ann. S/2;HSC/55;2015;84;no mention;HSC/29 (3002.10)
+ziralimumab;ziralimumab;3002.13;NC2116B1b Ann. S/2;HSC/55;2015;84;;HSC/29 (3002.10)
 Zirconium (89Zr) crefmirlimab berdoxam;Zirconium (89Zr) crefmirlimab berdoxam;2844.43 ;NC3086Bc Ann. O/8;HSC/71;2023;127;2377668-38-5;
 ziresovir;zirésovir;2934.99;NC2803Bc Ann. T/2;HSC/67;2021;120;1422500-60-4;
 ziritaxestat;ziritaxestat;2934.10;NC2803Bc Ann. T/2;HSC/67;2021;120;1628260-79-6;

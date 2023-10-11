@@ -15,6 +15,7 @@ import static org.neo4j.driver.Values.parameters;
  * <p>
  * Creates Substance nodes, ASK nodes and CAS nodes.
  */
+@Deprecated
 public class SubstanceMigrator extends Migrator {
 
 	private static final int ID_INDEX = 0;

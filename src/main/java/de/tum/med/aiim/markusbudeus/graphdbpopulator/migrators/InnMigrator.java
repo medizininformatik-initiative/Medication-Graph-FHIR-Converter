@@ -30,7 +30,7 @@ public class InnMigrator extends Migrator {
 
 	// Data is taken from
 	// https://www.wcoomd.org/en/topics/nomenclature/instrument-and-tools/tools-to-assist-with-the-classification-in-the-hs/hs_classification-decisions/inn-table.aspx
-	// (28.08.2023, migrated to CSV with slight adaptations)
+	// (28.08.2023, migrated to CSV with some adaptations, primarily removing unknown CAS numbers or non-unique CAS numbers)
 
 	public static void main(String[] args) {
 		DatabaseConnection.runSession(session -> {
@@ -63,7 +63,7 @@ public class InnMigrator extends Migrator {
 		unmentioned_cas = 0;
 		super.migrate();
 		System.out.println("INN Migration complete. " +
-				unmentioned_cas + " entries with \"no mention\" as CAS number were skipped.");
+				unmentioned_cas + " entries without a CAS number were skipped.");
 	}
 
 	@Override
@@ -71,7 +71,7 @@ public class InnMigrator extends Migrator {
 		String inn = line[NAME_INDEX];
 		String cas = line[CAS_INDEX];
 
-		if ("no mention".equals(cas)) {
+		if ("".equals(cas)) {
 			unmentioned_cas += 1;
 		} else if (cas.matches(cas_regex)) {
 			addNodes(inn, cas);

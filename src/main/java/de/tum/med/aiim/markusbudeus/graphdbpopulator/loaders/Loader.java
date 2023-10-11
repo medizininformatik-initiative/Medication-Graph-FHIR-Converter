@@ -56,7 +56,7 @@ public abstract class Loader {
 	 * @param statement the statement to execute for each row
 	 * @return a full Cypher statement
 	 */
-	public String constructLoadStatement(String statement) {
+	public String withLoadStatement(String statement) {
 		return "LOAD CSV WITH HEADERS FROM '" + getCypherFilePath() + "'"
 				+ " AS " + ROW_IDENTIFIER
 				+ " FIELDTERMINATOR ';' "
@@ -64,15 +64,26 @@ public abstract class Loader {
 	}
 
 	/**
-	 * Creates a cypher expression which retrieves the value of the column with the given header name in the current
-	 * row.
-	 * I.e., if you pass the header name "City", this will be converted to row.City.
+	 * Creates a Cypher expression which retrieves the value of the column with the given header name in the current
+	 * row. I.e., if you pass the header name "City", this will be converted to row.City.
 	 *
 	 * @param headerName the header name
 	 * @return a Cypher expression to access the corresponding field of the current row
 	 */
 	public String row(String headerName) {
 		return ROW_IDENTIFIER + "." + headerName;
+	}
+
+	/**
+	 * Creates a Cypher expression which retrieves the value of the column with the given header name in the current row
+	 * and parses it to an integer. I.e., if you pass the header name "City", this will be converted to
+	 * "toInteger(row.City)".
+	 *
+	 * @param headerName the header name
+	 * @return a Cypher expression to access the corresponding field of the current row as integer
+	 */
+	public String intRow(String headerName) {
+		return "toInteger(" + row(headerName) + ")";
 	}
 
 	public void execute() {

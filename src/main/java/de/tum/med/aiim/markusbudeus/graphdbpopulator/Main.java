@@ -1,5 +1,7 @@
 package de.tum.med.aiim.markusbudeus.graphdbpopulator;
 
+import de.tum.med.aiim.markusbudeus.graphdbpopulator.loaders.ProductLoader;
+import de.tum.med.aiim.markusbudeus.graphdbpopulator.loaders.PznLoader;
 import de.tum.med.aiim.markusbudeus.graphdbpopulator.loaders.SubstanceLoader;
 import de.tum.med.aiim.markusbudeus.graphdbpopulator.migrators.*;
 import org.neo4j.driver.Query;
@@ -23,7 +25,9 @@ public class Main {
 		     Session session = connection.createSession()) {
 
 			long time = System.currentTimeMillis();
-			new SubstanceLoader(session).execute();
+//			new SubstanceLoader(session).execute();
+//			new ProductLoader(session).execute();
+			new PznLoader(session).execute();
 			System.out.println("Took "+(System.currentTimeMillis() - time)+"ms");
 
 			List<Migrator> migrators = new ArrayList<>();
