@@ -25,24 +25,10 @@ public class PznLoader extends Loader {
 				"CREATE CONSTRAINT pznCodeConstraint IF NOT EXISTS FOR (p:" + PZN_LABEL + ") REQUIRE p.code IS UNIQUE"
 		));
 
-//		session.run(new Query(withLoadStatement(
-//				"MERGE (p:" + PZN_LABEL + " {code: " + row(PZN) + "}) " +
-//						"ON CREATE SET p:" + CODING_SYSTEM_LABEL + " " +
-//						"WITH * " +
-//						"MATCH (i:" + PRODUCT_LABEL + " {mmiId: " + intRow(PRODUCT_ID) + "}) " +
-//						"MERGE (p)-[:" + CODE_REFERENCE_RELATIONSHIP_NAME + "]->(i)"
-//		)));
-
 		session.run(new Query(withLoadStatement(
 				"MERGE (p:" + PZN_LABEL + " {code: " + row(PZN) + "}) " +
 						"ON CREATE SET p:" + CODING_SYSTEM_LABEL
 		)));
-
-		System.out.println(withLoadStatement(
-				"MATCH (p:" + PZN_LABEL + " {code: " + row(PZN) + "}) " +
-						"MATCH (i:" + PRODUCT_LABEL + " {mmiId: " + intRow(PRODUCT_ID) + "}) " +
-						"MERGE (p)-[:" + CODE_REFERENCE_RELATIONSHIP_NAME + "]->(i)"
-		));
 
 		session.run(new Query(withLoadStatement(
 				"MATCH (p:" + PZN_LABEL + " {code: " + row(PZN) + "}) " +
