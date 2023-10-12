@@ -1,4 +1,4 @@
-# Id; Molecule Id; XX; XX; Mass_from; Mass_to; Unit_Catalog_Id; Unit_Catalog_Code
-0;3;Metoprolol 50 mg;XX;50;50;107;MG
-1;1;Midazolam 15mg;XX;15;15;107;MG
-2;1;Midazolam 5mg;XX;5;5;107;MG
+"ID";"MOLECULEID";"MOLECULETYPECATALOGID";"MOLECULETYPECODE";"MASSFROM";"MASSTO";"MOLECULEUNITCATALOGID";"MOLECULEUNITCODE"
+0;3;"Metoprolol 50 mg";XX;50;50;107;MG
+1;1;"Midazolam 15mg";XX;15;15;107;MG
+2;1;"Midazolam 5mg";XX;5;5;107;MG

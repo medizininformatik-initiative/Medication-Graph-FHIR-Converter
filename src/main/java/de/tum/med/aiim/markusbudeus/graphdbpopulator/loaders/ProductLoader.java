@@ -22,12 +22,12 @@ public class ProductLoader extends Loader {
 
 	@Override
 	protected void executeLoad() {
-		session.run(new Query(
+		executeQuery(
 				"CREATE CONSTRAINT productMmiIdConstraint IF NOT EXISTS FOR (p:" + PRODUCT_LABEL + ") REQUIRE p.mmiId IS UNIQUE"
-		));
-		session.run(new Query(withLoadStatement(
+		);
+		executeQuery(withLoadStatement(
 				"CREATE (d:" + DatabaseDefinitions.PRODUCT_LABEL + " {name: " + row(NAME) + ", mmiId: " + intRow(
 						ID) + "})"
-		)));
+		));
 	}
 }

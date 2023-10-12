@@ -10,7 +10,6 @@ import org.neo4j.driver.Session;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.nio.file.Path;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -27,14 +26,13 @@ public class IntegrationTest {
 	private Session session;
 
 	@BeforeAll
-	@SuppressWarnings("ConstantConditions")
 	public void integrationTestSetup() throws URISyntaxException {
-		Path sampleFilesPath = Path.of(IntegrationTest.class.getClassLoader().getResource("sample").toURI());
+//		Path sampleFilesPath = Path.of(IntegrationTest.class.getClassLoader().getResource("sample").toURI());
 		connection = new DatabaseConnection();
 		session = connection.createSession();
 		session.run(new Query("MATCH (n) DETACH DELETE n")).consume(); // Delete everything
 		try {
-			Main.runMigrators(sampleFilesPath, false);
+			Main.runMigrators(false);
 		} catch (IOException | InterruptedException e) {
 			throw new RuntimeException("Integration test failed!", e);
 		}
@@ -61,7 +59,7 @@ public class IntegrationTest {
 						"(d:"+ DatabaseDefinitions.DRUG_LABEL+")-[c2:"+ DatabaseDefinitions.DRUG_CONTAINS_INGREDIENT_LABEL+"]->" +
 						"(i:"+ DatabaseDefinitions.INGREDIENT_LABEL+")-[c3:"+ DatabaseDefinitions.INGREDIENT_IS_SUBSTANCE_LABEL+"]->" +
 						"(s:"+ DatabaseDefinitions.SUBSTANCE_LABEL+" {name: 'Midazolamhydrochlorid'}) " +
-						"RETURN s,p.name,i.mass_to"
+						"RETURN s,p.name,i.massTo"
 		);
 
 		Record r1 = result.next();
@@ -78,7 +76,7 @@ public class IntegrationTest {
 	@Test
 	public void manufacturerConnected() {
 		Result result = session.run(
-				"MATCH (m:"+ DatabaseDefinitions.COMPANY_LABEL+")-[r:"+ DatabaseDefinitions.MANUFACTURES_LABEL+"]-(p:"+ DatabaseDefinitions.PRODUCT_LABEL+") RETURN p.mmi_id"
+				"MATCH (m:"+ DatabaseDefinitions.COMPANY_LABEL+")-[r:"+ DatabaseDefinitions.MANUFACTURES_LABEL+"]-(p:"+ DatabaseDefinitions.PRODUCT_LABEL+") RETURN p.mmiId"
 		);
 
 		boolean[] mmiIdIncluded = new boolean[] { false, false, false };

@@ -1,5 +1,7 @@
 package de.tum.med.aiim.markusbudeus.graphdbpopulator.loaders;
 
+import org.neo4j.driver.Query;
+import org.neo4j.driver.Result;
 import org.neo4j.driver.Session;
 
 import java.io.IOException;
@@ -23,10 +25,16 @@ public abstract class Loader {
 	protected final Session session;
 	private final Path path;
 
+	/**
+	 * Loader referencing the CSV file with the given name inside the MMI PharmIndex dataset.
+	 */
 	public Loader(String filename, Session session) throws IOException {
 		this(MMI_PHARMINDEX_IMPORT_DIR.resolve(filename), session);
 	}
 
+	/**
+	 * Loader referencing any file within the Neo4j import scope.
+	 */
 	public Loader(Path path, Session session) throws IOException {
 		this.path = path;
 		this.session = session;
@@ -76,8 +84,8 @@ public abstract class Loader {
 
 	/**
 	 * Creates a Cypher expression which retrieves the value of the column with the given header name in the current row
-	 * and parses it to an integer. I.e., if you pass the header name "City", this will be converted to
-	 * "toInteger(row.City)".
+	 * and parses it to an integer. I.e., if you pass the header name "Amount", this will be converted to
+	 * "toInteger(row.Amount)".
 	 *
 	 * @param headerName the header name
 	 * @return a Cypher expression to access the corresponding field of the current row as integer
@@ -86,10 +94,35 @@ public abstract class Loader {
 		return "toInteger(" + row(headerName) + ")";
 	}
 
+	/**
+	 * Creates a Cypher expression which retrieves the value of the column with the given header name in the current row
+	 * and parses it to a float. I.e., if you pass the header name "Amount", this will be converted to
+	 * "toFloat(row.Amount)".
+	 *
+	 * @param headerName the header name
+	 * @return a Cypher expression to access the corresponding field of the current row as integer
+	 */
+	public String floatRow(String headerName) {
+		return "toFloat(" + row(headerName) + ")";
+	}
+
 	public void execute() {
+		System.out.print("Running " + getClass().getSimpleName() + "...");
+		long time = System.currentTimeMillis();
 		executeLoad();
+		System.out.println("done (" + (System.currentTimeMillis() - time) + "ms)");
 	}
 
 	protected abstract void executeLoad();
+
+	/**
+	 * Executes the given query and returns its result.
+	 *
+	 * @param statement the query to execute
+	 * @return the query's result
+	 */
+	public Result executeQuery(String statement) {
+		return session.run(new Query(statement));
+	}
 
 }

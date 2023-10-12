@@ -8,6 +8,10 @@ import java.nio.file.Path;
 
 import static de.tum.med.aiim.markusbudeus.graphdbpopulator.DatabaseDefinitions.*;
 
+/**
+ * Creates INN nodes and references to CAS nodes. CAS Nodes are created as necessary, but will be resolved if they
+ * already exist.
+ */
 public class InnLoader extends Loader {
 
 	private static final String INN = "PRODUCT_EN";
@@ -19,14 +23,15 @@ public class InnLoader extends Loader {
 
 	@Override
 	protected void executeLoad() {
-		session.run(new Query(
+		executeQuery(
 				"CREATE CONSTRAINT innCodeConstraint IF NOT EXISTS FOR (i:" + INN_LABEL + ") REQUIRE i.code IS UNIQUE"
-		));
-		session.run(new Query(withLoadStatement(
-				"CREATE (i:" + INN_LABEL + ":" + CODING_SYSTEM_LABEL + " {code: " + row(INN) + "}) " +
+		);
+		executeQuery(withLoadStatement(
+				"WITH " + ROW_IDENTIFIER + " WHERE NOT " + row(CAS) + " = '' " +
+						"CREATE (i:" + INN_LABEL + ":" + CODING_SYSTEM_LABEL + " {code: " + row(INN) + "}) " +
 						"MERGE (c:" + CAS_LABEL + " {code: " + row(CAS) + "}) " +
 						"ON CREATE SET c:" + CODING_SYSTEM_LABEL + " " +
 						"CREATE (i)-[:" + CODE_REFERENCE_RELATIONSHIP_NAME + "]->(c)"
-		)));
+		));
 	}
 }

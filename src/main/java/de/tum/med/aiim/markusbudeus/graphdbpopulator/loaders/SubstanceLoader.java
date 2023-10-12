@@ -1,6 +1,5 @@
 package de.tum.med.aiim.markusbudeus.graphdbpopulator.loaders;
 
-import org.neo4j.driver.Query;
 import org.neo4j.driver.Session;
 
 import java.io.IOException;
@@ -26,16 +25,16 @@ public class SubstanceLoader extends Loader {
 
 	@Override
 	protected void executeLoad() {
-		session.run(new Query(
+		executeQuery(
 				"CREATE CONSTRAINT substanceMmiIdConstraint IF NOT EXISTS FOR (s:" + SUBSTANCE_LABEL + ") REQUIRE s.mmiId IS UNIQUE"
-		));
-		session.run(new Query(
+		);
+		executeQuery(
 				"CREATE CONSTRAINT casCodeConstraint IF NOT EXISTS FOR (c:" + CAS_LABEL + ") REQUIRE c.code IS UNIQUE"
-		));
-		session.run(new Query(
+		);
+		executeQuery(
 				"CREATE CONSTRAINT askCodeConstraint IF NOT EXISTS FOR (a:" + ASK_LABEL + ") REQUIRE a.code IS UNIQUE"
-		));
-		session.run(new Query(withLoadStatement(
+		);
+		executeQuery(withLoadStatement(
 				"CREATE (s:" + SUBSTANCE_LABEL + " {name: " + row(NAME) + ", mmiId: " + intRow(ID) + "}) " +
 						"WITH * " +
 						"CALL {" +
@@ -50,7 +49,7 @@ public class SubstanceLoader extends Loader {
 						"MERGE (c:" + CAS_LABEL + ":" + CODING_SYSTEM_LABEL + " {code: " + row(CAS) + "}) " +
 						"CREATE (c)-[rc:" + CODE_REFERENCE_RELATIONSHIP_NAME + "]->(s)" +
 						"}"
-		)));
+		));
 	}
 
 }

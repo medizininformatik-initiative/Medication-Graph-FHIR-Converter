@@ -8,7 +8,7 @@ import java.io.IOException;
 import static de.tum.med.aiim.markusbudeus.graphdbpopulator.DatabaseDefinitions.*;
 
 /**
- * This migrator uses the PACKAGE table to create PZN nodes and make them point to the corresponding product nodes.
+ * This loader uses the PACKAGE table to create PZN nodes and make them point to the corresponding product nodes.
  */
 public class PznLoader extends Loader {
 
@@ -21,19 +21,19 @@ public class PznLoader extends Loader {
 
 	@Override
 	protected void executeLoad() {
-		session.run(new Query(
+		executeQuery(
 				"CREATE CONSTRAINT pznCodeConstraint IF NOT EXISTS FOR (p:" + PZN_LABEL + ") REQUIRE p.code IS UNIQUE"
-		));
+		);
 
-		session.run(new Query(withLoadStatement(
+		executeQuery(withLoadStatement(
 				"MERGE (p:" + PZN_LABEL + " {code: " + row(PZN) + "}) " +
 						"ON CREATE SET p:" + CODING_SYSTEM_LABEL
-		)));
+		));
 
-		session.run(new Query(withLoadStatement(
+		executeQuery(withLoadStatement(
 				"MATCH (p:" + PZN_LABEL + " {code: " + row(PZN) + "}) " +
 						"MATCH (i:" + PRODUCT_LABEL + " {mmiId: " + intRow(PRODUCT_ID) + "}) " +
 						"MERGE (p)-[:" + CODE_REFERENCE_RELATIONSHIP_NAME + "]->(i)"
-		)));
+		));
 	}
 }
