@@ -1,6 +1,5 @@
 package de.tum.med.aiim.markusbudeus.graphdbpopulator.loaders;
 
-import org.neo4j.driver.Query;
 import org.neo4j.driver.Session;
 
 import java.io.IOException;
