@@ -1,3 +1,5 @@
 "CATALOGID";"CODE";"UPPERCODE";"UPPERRELATION";"SHORTNAME";"NAME";"DESCRIPTION"
 107;"MG";"G";-3;"ML";"ml"
 107;"ML";;;"MG";"mg"
+104;1;;;1;"Tbl.";"Zum Einnehmen"
+104;220;;;220;"Injektionslsg.";"parenteral"

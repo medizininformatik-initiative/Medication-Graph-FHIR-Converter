@@ -7,6 +7,8 @@ import org.neo4j.driver.Session;
 import java.io.IOException;
 import java.nio.file.Path;
 
+import static org.neo4j.driver.Values.parameters;
+
 /**
  * Loaders use the LOAD CSV function of Cypher to load bulk data.
  */
@@ -65,9 +67,20 @@ public abstract class Loader {
 	 * @return a full Cypher statement
 	 */
 	public String withLoadStatement(String statement) {
+		return withLoadStatement(statement, ';');
+	}
+
+	/**
+	 * Creates the LOAD CSV statement and appends the given statement.
+	 *
+	 * @param statement the statement to execute for each row
+	 * @param fieldTerminator the field terminator to use when reading the CSV file
+	 * @return a full Cypher statement
+	 */
+	public String withLoadStatement(String statement, char fieldTerminator) {
 		return "LOAD CSV WITH HEADERS FROM '" + getCypherFilePath() + "'"
 				+ " AS " + ROW_IDENTIFIER
-				+ " FIELDTERMINATOR ';' "
+				+ " FIELDTERMINATOR '"+fieldTerminator+"' "
 				+ statement;
 	}
 
@@ -121,8 +134,12 @@ public abstract class Loader {
 	 * @param statement the query to execute
 	 * @return the query's result
 	 */
-	public Result executeQuery(String statement) {
-		return session.run(new Query(statement));
+	public Result executeQuery(String statement, Object... params) {
+		if (params.length == 0) {
+			return session.run(new Query(statement));
+		} else {
+			return session.run(new Query(statement, parameters(params)));
+		}
 	}
 
 }

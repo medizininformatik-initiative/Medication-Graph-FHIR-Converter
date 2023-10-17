@@ -26,7 +26,7 @@ public class PznLoader extends Loader {
 
 		executeQuery(withLoadStatement(
 				"MERGE (p:" + PZN_LABEL + " {code: " + row(PZN) + "}) " +
-						"ON CREATE SET p:" + CODING_SYSTEM_LABEL
+						"ON CREATE SET p:" + CODE_LABEL
 		));
 
 		executeQuery(withLoadStatement(

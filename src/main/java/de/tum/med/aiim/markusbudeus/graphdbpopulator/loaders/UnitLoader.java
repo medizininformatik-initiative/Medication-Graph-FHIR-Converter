@@ -8,7 +8,7 @@ import java.util.Map;
 
 import static de.tum.med.aiim.markusbudeus.graphdbpopulator.DatabaseDefinitions.*;
 
-public class UnitLoader extends Loader {
+public class UnitLoader extends CatalogEntryLoader {
 
 	/**
 	 * The catalog id of the molecule units.
@@ -51,7 +51,8 @@ public class UnitLoader extends Loader {
 		ucumDefinitions.put("MG24H", new UcumDefinition("mg/(24.h)", "MG/(24.HR)", "mg/24h"));
 		ucumDefinitions.put("MIOIE", new UcumDefinition("10^6.[iU]", "10^6.[IU]", "Mio. I.E."));
 		ucumDefinitions.put("MIOKEIME", new UcumDefinition("10^6{Keime}", "10^6{KEIME}", "Mio. Keime"));
-		ucumDefinitions.put("MIOKEIMEMW", new UcumDefinition("10^6{Keime (MW)}", "10^6{KEIME (MW)}", "Mio. Keime (MW)"));
+		ucumDefinitions.put("MIOKEIMEMW",
+				new UcumDefinition("10^6{Keime (MW)}", "10^6{KEIME (MW)}", "Mio. Keime (MW)"));
 		ucumDefinitions.put("MIOZELLEN", new UcumDefinition("10^6{Zellen}", "10^6{ZELLEN}", "Mio. Zellen"));
 		ucumDefinitions.put("MIO.ZELLEN/KG KG",
 				new UcumDefinition("10^6{Zellen}/kg{KG}", "10^6{ZELLEN}/KG{KG}", "Mio. Zellen/kg KG"));
@@ -69,11 +70,12 @@ public class UnitLoader extends Loader {
 		ucumDefinitions.put("NL", new UcumDefinition("nl", "NL", "nl"));
 		ucumDefinitions.put("STK", new UcumDefinition("{Stk.}", "{STK.}", "Stk."));
 		ucumDefinitions.put("VOLPERC", new UcumDefinition("%{Vol.}", "%{VOL.}", "Vol.-%"));
-		ucumDefinitions.put("ZELLEN", new UcumDefinition("({Zellen}/cm2){(MW)}", "({ZELLEN}/CM2){(MW)}", "Zellen/cm2 (MW)"));
+		ucumDefinitions.put("ZELLEN",
+				new UcumDefinition("({Zellen}/cm2){(MW)}", "({ZELLEN}/CM2){(MW)}", "Zellen/cm2 (MW)"));
 	}
 
 	public UnitLoader(Session session) throws IOException {
-		super("CATALOGENTRY.CSV", session);
+		super(session);
 	}
 
 	@Override
@@ -91,22 +93,24 @@ public class UnitLoader extends Loader {
 			String mmiCode = ucumDefinitionEntry.getKey();
 			UcumDefinition definition = ucumDefinitionEntry.getValue();
 			executeQuery(
-					"MATCH (u:" + UNIT_LABEL + " {mmiCode: '" + mmiCode + "'}) " +
+					"MATCH (u:" + UNIT_LABEL + " {mmiCode: $mmiCode}) " +
 							"SET u:" + UCUM_LABEL + " " +
-							"SET u.ucumCs = '" + definition.caseSensitiveUnit + "' " +
-							"SET u.ucumCi = '" + definition.caseInsensitiveUnit + "' " +
-							"SET u.print = '" + definition.printUnit + "' "
+							"SET u.ucumCs = $ucumCs " +
+							"SET u.ucumCi = $ucumCi " +
+							"SET u.print = $print ",
+					"mmiCode", mmiCode, "ucumCs", definition.caseSensitiveUnit,
+					"ucumCi", definition.caseInsensitiveUnit, "print", definition.printUnit
 			);
 		}
 
 		// Delete the PERCVV unit and make all relations to it instead point to VOLPERC, because it means the same
 		executeQuery(
-				"MATCH (v1:"+UNIT_LABEL+ " {mmiCode: 'VOLPERC'}) " +
-						"MATCH (v2:"+UNIT_LABEL+" {mmiCode: 'PERCVV'})-[r:"+INGREDIENT_HAS_UNIT_LABEL+"]-(i) " +
+				"MATCH (v1:" + UNIT_LABEL + " {mmiCode: 'VOLPERC'}) " +
+						"MATCH (v2:" + UNIT_LABEL + " {mmiCode: 'PERCVV'})-[r:" + INGREDIENT_HAS_UNIT_LABEL + "]-(i) " +
 						"WITH v1, v2, r, i " +
-						"CREATE (i)-[:"+INGREDIENT_HAS_UNIT_LABEL+"]->(v1) " +
+						"CREATE (i)-[:" + INGREDIENT_HAS_UNIT_LABEL + "]->(v1) " +
 						"DELETE r " +
-						"WITH DISTINCT v2" +
+						"WITH DISTINCT v2 " +
 						"DELETE v2"
 		);
 	}

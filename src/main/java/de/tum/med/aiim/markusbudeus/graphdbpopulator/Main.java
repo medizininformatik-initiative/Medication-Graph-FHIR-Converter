@@ -21,8 +21,12 @@ public class Main {
 
 			List<Loader> loaders = new ArrayList<>();
 
-			// Unit nodes
+			// Unit nodes and UCUM definitions
 			loaders.add(new UnitLoader(session));
+			// MMI Dose forms
+			loaders.add(new DoseFormLoader(session));
+			// EDQM Dose forms
+			loaders.add(new EdqmDoseFormLoader(session));
 			// Substance nodes, ASK nodes and CAS nodes and their relations
 			loaders.add(new SubstanceLoader(session));
 			// Product nodes

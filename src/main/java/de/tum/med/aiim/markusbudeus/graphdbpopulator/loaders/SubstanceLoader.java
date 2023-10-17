@@ -40,13 +40,13 @@ public class SubstanceLoader extends Loader {
 						"CALL {" +
 						"WITH row, s " +
 						"WITH * WHERE NOT " + nullIfBlank(row(ASK)) + " IS null " +
-						"MERGE (a:" + ASK_LABEL + ":" + CODING_SYSTEM_LABEL + " {code: " + row(ASK) + "}) " +
+						"MERGE (a:" + ASK_LABEL + ":" + CODE_LABEL + " {code: " + row(ASK) + "}) " +
 						"CREATE (a)-[ra:" + CODE_REFERENCE_RELATIONSHIP_NAME + "]->(s) " +
 						"}" +
 						"CALL {" +
 						"WITH row, s " +
 						"WITH * WHERE NOT " + nullIfBlank(row(CAS)) + " IS null " +
-						"MERGE (c:" + CAS_LABEL + ":" + CODING_SYSTEM_LABEL + " {code: " + row(CAS) + "}) " +
+						"MERGE (c:" + CAS_LABEL + ":" + CODE_LABEL + " {code: " + row(CAS) + "}) " +
 						"CREATE (c)-[rc:" + CODE_REFERENCE_RELATIONSHIP_NAME + "]->(s)" +
 						"}"
 		));

@@ -27,9 +27,9 @@ public class InnLoader extends Loader {
 		);
 		executeQuery(withLoadStatement(
 				"WITH " + ROW_IDENTIFIER + " WHERE NOT " + row(CAS) + " = '' " +
-						"CREATE (i:" + INN_LABEL + ":" + CODING_SYSTEM_LABEL + " {code: " + row(INN) + "}) " +
+						"CREATE (i:" + INN_LABEL + ":" + CODE_LABEL + " {code: " + row(INN) + "}) " +
 						"MERGE (c:" + CAS_LABEL + " {code: " + row(CAS) + "}) " +
-						"ON CREATE SET c:" + CODING_SYSTEM_LABEL + " " +
+						"ON CREATE SET c:" + CODE_LABEL + " " +
 						"CREATE (i)-[:" + CODE_REFERENCE_RELATIONSHIP_NAME + "]->(c)"
 		));
 	}

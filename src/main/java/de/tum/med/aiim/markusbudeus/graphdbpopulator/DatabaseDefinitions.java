@@ -2,7 +2,9 @@ package de.tum.med.aiim.markusbudeus.graphdbpopulator;
 
 public class DatabaseDefinitions {
 
-	public static final String CODING_SYSTEM_LABEL = "Code";
+	public static final String CODING_SYSTEM_LABEL = "CodingSystem";
+	public static final String BELONGS_TO_CODING_SYSTEM_LABEL = "BELONGS_TO";
+	public static final String CODE_LABEL = "Code";
 	public static final String CODE_REFERENCE_RELATIONSHIP_NAME = "REFERENCES";
 	public static final String SUBSTANCE_LABEL = "Substance";
 	public static final String PRODUCT_LABEL = "Product";
@@ -20,8 +22,13 @@ public class DatabaseDefinitions {
 	public static final String INGREDIENT_IS_SUBSTANCE_LABEL = "IS_SUBSTANCE";
 
 	public static final String INGREDIENT_HAS_UNIT_LABEL = "HAS_UNIT";
+	public static final String DRUG_HAS_UNIT_LABEL = "HAS_UNIT";
+	public static final String DRUG_HAS_DOSE_FORM_LABEL = "HAS_DOSE_FORM";
 
 	public static final String UNIT_LABEL = "Unit";
+	public static final String DOSE_FORM_LABEL = "DoseForm";
 	public static final String UCUM_LABEL = "UCUM";
+	public static final String EDQM_LABEL = "EDQM";
+	public static final String DOSE_FORM_IS_EDQM = "CORRESPONDS_TO";
 
 }
