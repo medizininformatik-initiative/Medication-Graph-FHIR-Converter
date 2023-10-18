@@ -9,7 +9,7 @@ import static de.tum.med.aiim.markusbudeus.graphdbpopulator.DatabaseDefinitions.
 /**
  * This loader uses the PACKAGE table to create PZN nodes and make them point to the corresponding product nodes.
  */
-public class PznLoader extends Loader {
+public class PznLoader extends CsvLoader {
 
 	private static final String PRODUCT_ID = "PRODUCTID";
 	private static final String PZN = "PZN";

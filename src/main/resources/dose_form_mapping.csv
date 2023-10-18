@@ -1,63 +1,63 @@
 MMICODE,EDQMCODE,NAME,STATUS,INTENDEDSITE
-1,PDF-10219000,Tablet,Current,Oral
-2,,,,
-3,PDF-10610000,Eye lotion,Current,Ocular
-4,,,,
-5,PDF-10604000,"Eye drops, solution",Current,Ocular
-6,PDF-10603000,Eye ointment,Current,Ocular
-7,PDF-10501000,Bath additive,Current,Cutaenous
-8,PDF-10222000,Effervescent tablet,Current,Oral
-10,PDF-10502000,Cream,Current,"Cutaenous, Transdermal"
-13,PDF-10220000,Coated tablet,Current,Oral
-14,PDF-10221000,Film-coated tablet,Current,Oral
-15,PDF-10220000,Coated tablet,Current,Oral
-16,,,,
-17,PDF-10104000,Oral liquid,Current,Oral
-18,PDF-10546250,Transdermal gel,Current,Transdermal
-20,PDF-10204000,Granules,Current,Oral
-21,,,,
-22,,,,
-23,PDF-11212000,Powder for solution for infusion,Current,Parenteral
-24,,,,
-25,,,,
-26,PDF-11114000,"Inhalation vapour, solution",Current,Pulmonary
-27,,,,
-28,PDF-11211500,Powder for dispersion for infusion,Current,Parenteral
-29,PDF-11014000,Rectal capsule,Current,Rectal
-30,PDF-10228000,Chewable tablet,Current,Oral
-32,PDF-10228000,Chewable tablet,Current,Oral
-33,,,,
-35,PDF-10320000,Buccal tablet,Current,Buccal
-36,PDF-10502000,Cream,Current,"Cutaenous, Transdermal"
-38,,,,
-40,PDF-10804000,"Nasal drops, solution",Current,Nasal
-41,PDF-10704000,"Ear drops, solution",Current,Auricular
-42,PDF-10505000,Cutaneous paste,Current,Cutaenous
-43,PDF-10323000,Pastille,Current,Oromucosal
-44,PDF-10517000,Cutaneous powder,Current,Cutaenous
-45,PDF-10201000,Oral powder,Current,Oral
-47,PDF-10504000,Ointment,Current,"Cutaenous, Transdermal"
-49,PDF-10117000,Syrup,Current,Oral
-50,,,,
-51,PDF-11013000,Suppository,Current,Rectal
-54,PDF-10227000,Modified-release tablet,Current,Oral
-55,,,,
-58,,,,
-59,PDF-10101000,"Oral drops, solution",Current,Oral
-60,PDF-10102000,"Oral drops, suspension",Current,Oral
-61,PDF-10902000,Vaginal gel,Current,Vaginal
-62,,,,
-64,PDF-10909000,Pessary,Current,Vaginal
-65,PDF-10912000,Vaginal tablet,Current,Vaginal
-66,,,,
-67,,,,
-68,,,,
-69,PDF-13077000,Urethral emulsion,Current,Urethral
-72,PDF-10229000,Medicated chewing-gum,Current,"Oral, Oromucosal"
-76,PDF-10225000,Gastro-resistant tablet,Current,Oral
-77,PDF-11212000,Powder for solution for infusion,Current,Parenteral
-86,PDF-10402000,Dental gel,Current,Dental
-88,PDF-10406000,Dental solution,Current,Dental
+001,PDF-10219000,Tablet,Current,Oral
+002,,,,
+003,PDF-10610000,Eye lotion,Current,Ocular
+004,,,,
+005,PDF-10604000,"Eye drops, solution",Current,Ocular
+006,PDF-10603000,Eye ointment,Current,Ocular
+007,PDF-10501000,Bath additive,Current,Cutaenous
+008,PDF-10222000,Effervescent tablet,Current,Oral
+010,PDF-10502000,Cream,Current,"Cutaenous, Transdermal"
+013,PDF-10220000,Coated tablet,Current,Oral
+014,PDF-10221000,Film-coated tablet,Current,Oral
+015,PDF-10220000,Coated tablet,Current,Oral
+016,,,,
+017,PDF-10104000,Oral liquid,Current,Oral
+018,PDF-10546250,Transdermal gel,Current,Transdermal
+020,PDF-10204000,Granules,Current,Oral
+021,,,,
+022,,,,
+023,PDF-11212000,Powder for solution for infusion,Current,Parenteral
+024,,,,
+025,,,,
+026,PDF-11114000,"Inhalation vapour, solution",Current,Pulmonary
+027,,,,
+028,PDF-11211500,Powder for dispersion for infusion,Current,Parenteral
+029,PDF-11014000,Rectal capsule,Current,Rectal
+030,PDF-10228000,Chewable tablet,Current,Oral
+032,PDF-10228000,Chewable tablet,Current,Oral
+033,,,,
+035,PDF-10320000,Buccal tablet,Current,Buccal
+036,PDF-10502000,Cream,Current,"Cutaenous, Transdermal"
+038,,,,
+040,PDF-10804000,"Nasal drops, solution",Current,Nasal
+041,PDF-10704000,"Ear drops, solution",Current,Auricular
+042,PDF-10505000,Cutaneous paste,Current,Cutaenous
+043,PDF-10323000,Pastille,Current,Oromucosal
+044,PDF-10517000,Cutaneous powder,Current,Cutaenous
+045,PDF-10201000,Oral powder,Current,Oral
+047,PDF-10504000,Ointment,Current,"Cutaenous, Transdermal"
+049,PDF-10117000,Syrup,Current,Oral
+050,,,,
+051,PDF-11013000,Suppository,Current,Rectal
+054,PDF-10227000,Modified-release tablet,Current,Oral
+055,,,,
+058,PDF-10122000,Herbal tea,Current,Oral
+059,PDF-10101000,"Oral drops, solution",Current,Oral
+060,PDF-10102000,"Oral drops, suspension",Current,Oral
+061,PDF-10902000,Vaginal gel,Current,Vaginal
+062,,,,
+064,PDF-10909000,Pessary,Current,Vaginal
+065,PDF-10912000,Vaginal tablet,Current,Vaginal
+066,,,,
+067,,,,
+068,,,,
+069,PDF-13077000,Urethral emulsion,Current,Urethral
+072,PDF-10229000,Medicated chewing-gum,Current,"Oral, Oromucosal"
+076,PDF-10225000,Gastro-resistant tablet,Current,Oral
+077,PDF-11212000,Powder for solution for infusion,Current,Parenteral
+086,PDF-10402000,Dental gel,Current,Dental
+088,PDF-10406000,Dental solution,Current,Dental
 109,PDF-10602000,Eye gel,Current,Ocular
 111,PDF-50050500,Powder for intravesical solution/solution for injection,Current,"Intravesical, Parenteral"
 112,PDF-10301000,Gargle,Current,Oromucosal
@@ -68,9 +68,9 @@ MMICODE,EDQMCODE,NAME,STATUS,INTENDEDSITE
 130,PDF-11301000,Implant,Current,Parenteral
 132,PDF-10808000,"Nasal spray, solution",Current,Nasal
 138,,,,
-140,,,,
-145,,,,
-147,,,,
+140,PDF-11901000,Intrauterine delivery system,Current,Intrauterine
+145,PDF-50043000,Powder for concentrate for solution for infusion,Current,Parenteral
+147,PDF-10322000,Compressed lozenge,Current,Oromucosal
 154,PDF-50050000,Powder for intravesical solution,Current,Intravesical
 156,PDF-50051000,Powder for intravesical suspension,Current,Intravesical
 158,PDF-13029000,Powder for intraocular instillation solution,Current,Ocular
@@ -97,7 +97,7 @@ MMICODE,EDQMCODE,NAME,STATUS,INTENDEDSITE
 224,PDF-50063000,Suspension for infusion,Deprecated,Parenteral
 226,,,,
 227,,,,
-229,,,,
+229,PDF-10321000,Lozenge,Current,Oromucosal
 231,PDF-10803000,Nasal ointment,Current,Nasal
 232,PDF-10808000,"Nasal spray, solution",Current,Nasal
 233,PDF-10512000,Cutaneous liquid,Current,Cutaenous

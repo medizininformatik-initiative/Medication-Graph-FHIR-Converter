@@ -14,11 +14,14 @@ public class DatabaseDefinitions {
 	public static final String CAS_LABEL = "CAS";
 	public static final String INN_LABEL = "INN";
 	public static final String RXCUI_LABEL = "RXCUI";
+	public static final String ATC_LABEL = "ATC";
+	public static final String ATC_HAS_PARENT_LABEL = "HAS_PARENT";
 	public static final String PZN_LABEL = "PZN";
 	public static final String COMPANY_LABEL = "Manufacturer";
 	public static final String MANUFACTURES_LABEL = "MANUFACTURES";
 	public static final String PRODUCT_CONTAINS_DRUG_LABEL = "CONTAINS";
 	public static final String DRUG_CONTAINS_INGREDIENT_LABEL = "CONTAINS";
+	public static final String DRUG_MATCHES_ATC_CODE_LABEL = "MATCHES";
 	public static final String INGREDIENT_IS_SUBSTANCE_LABEL = "IS_SUBSTANCE";
 
 	public static final String INGREDIENT_HAS_UNIT_LABEL = "HAS_UNIT";

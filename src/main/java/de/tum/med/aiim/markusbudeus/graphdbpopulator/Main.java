@@ -27,6 +27,8 @@ public class Main {
 			loaders.add(new DoseFormLoader(session));
 			// EDQM Dose forms
 			loaders.add(new EdqmDoseFormLoader(session));
+			// ATC Hierarchy
+			loaders.add(new AtcLoader(session));
 			// Substance nodes, ASK nodes and CAS nodes and their relations
 			loaders.add(new SubstanceLoader(session));
 			// Product nodes
@@ -47,6 +49,10 @@ public class Main {
 			loaders.add(new IngredientLoader(session));
 			// Relations between Ingredient nodes and Drug nodes
 			loaders.add(new DrugIngredientConnectionLoader(session));
+			// Relations between Drug nodes and ATC nodes
+			loaders.add(new DrugAtcConnectionLoader(session));
+			// Coding System Nodes and connections to it
+			loaders.add(new CodingSystemNodeCreator(session));
 
 			for (Loader loader : loaders) {
 				loader.execute();

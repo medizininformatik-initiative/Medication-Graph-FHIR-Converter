@@ -14,7 +14,7 @@ import static de.tum.med.aiim.markusbudeus.graphdbpopulator.DatabaseDefinitions.
  * Also connects them to the corresponding dose form and amount unit nodes. The MMI Dose form nodes as well as the unit
  * nodes must already exist for that.
  */
-public class DrugLoader extends Loader {
+public class DrugLoader extends CsvLoader {
 
 	private static final String ID = "ID";
 	private static final String PRODUCT_ID = "PRODUCTID";

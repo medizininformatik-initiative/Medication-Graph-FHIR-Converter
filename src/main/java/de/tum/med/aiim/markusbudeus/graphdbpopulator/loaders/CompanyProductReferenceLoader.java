@@ -10,7 +10,7 @@ import static de.tum.med.aiim.markusbudeus.graphdbpopulator.DatabaseDefinitions.
  * Uses the PRODUCT_COMPANY table from the MMI PharmIndex to create references between Product and Manufacturer nodes.
  * Requires the Product and Manufacturer nodes to already exist.
  */
-public class CompanyProductReferenceLoader extends Loader {
+public class CompanyProductReferenceLoader extends CsvLoader {
 
 	private static final String PRODUCT_ID = "PRODUCTID";
 	private static final String COMPANY_ID = "COMPANYID";

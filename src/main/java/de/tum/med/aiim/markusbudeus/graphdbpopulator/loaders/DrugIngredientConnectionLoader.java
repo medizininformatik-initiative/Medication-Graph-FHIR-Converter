@@ -8,7 +8,7 @@ import java.io.IOException;
 /**
  * This loader reads the ITEM_COMPOSITIONELEMENT table and uses it to connect existing Ingredient and Drug nodes.
  */
-public class DrugIngredientConnectionLoader extends Loader {
+public class DrugIngredientConnectionLoader extends CsvLoader {
 
 	private static final String ITEM_ID = "ITEMID";
 	private static final String COMPOSITION_ELEMENT_ID = "COMPOSITIONELEMENTID";

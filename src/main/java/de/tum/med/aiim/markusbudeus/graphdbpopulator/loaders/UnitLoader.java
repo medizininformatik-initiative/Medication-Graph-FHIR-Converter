@@ -13,11 +13,7 @@ public class UnitLoader extends CatalogEntryLoader {
 	/**
 	 * The catalog id of the molecule units.
 	 */
-	private static final String UNIT_CATALOG_ID = "107";
-
-	private static final String CATALOG_ID = "CATALOGID";
-	private static final String CODE = "CODE";
-	private static final String NAME = "NAME";
+	private static final int UNIT_CATALOG_ID = 107;
 
 	private static final Map<String, UcumDefinition> ucumDefinitions = new HashMap<>();
 
@@ -83,8 +79,7 @@ public class UnitLoader extends CatalogEntryLoader {
 		executeQuery(
 				"CREATE CONSTRAINT unitMmiCodeConstraint IF NOT EXISTS FOR (u:" + UNIT_LABEL + ") REQUIRE u.mmiCode IS UNIQUE"
 		);
-		executeQuery(withLoadStatement(
-				"WITH " + ROW_IDENTIFIER + " WHERE " + row(CATALOG_ID) + " = '" + UNIT_CATALOG_ID + "' " +
+		executeQuery(withFilteredLoadStatement(UNIT_CATALOG_ID,
 						"CREATE (u:" + UNIT_LABEL +
 						" {mmiCode: " + row(CODE) + ", mmiName: " + row(NAME) + "})"
 		));

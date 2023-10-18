@@ -9,7 +9,7 @@ import static de.tum.med.aiim.markusbudeus.graphdbpopulator.DatabaseDefinitions.
 /**
  * Creates company/manufacturer nodes using the company csv.
  */
-public class CompanyLoader extends Loader {
+public class CompanyLoader extends CsvLoader {
 
 	private static final String ID = "ID";
 	private static final String NAME = "NAME";

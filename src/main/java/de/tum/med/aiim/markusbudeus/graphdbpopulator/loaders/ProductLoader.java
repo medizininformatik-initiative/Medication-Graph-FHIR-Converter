@@ -1,7 +1,6 @@
 package de.tum.med.aiim.markusbudeus.graphdbpopulator.loaders;
 
 import de.tum.med.aiim.markusbudeus.graphdbpopulator.DatabaseDefinitions;
-import org.neo4j.driver.Query;
 import org.neo4j.driver.Session;
 
 import java.io.IOException;
@@ -11,7 +10,7 @@ import static de.tum.med.aiim.markusbudeus.graphdbpopulator.DatabaseDefinitions.
 /**
  * This class creates the Product nodes in the database using the PRODUCT table from the MMI PharmIndex.
  */
-public class ProductLoader extends Loader {
+public class ProductLoader extends CsvLoader {
 
 	private static final String ID = "ID";
 	private static final String NAME = "NAME_PLAIN";

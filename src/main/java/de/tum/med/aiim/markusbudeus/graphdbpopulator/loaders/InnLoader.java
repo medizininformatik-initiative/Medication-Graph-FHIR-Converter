@@ -11,7 +11,7 @@ import static de.tum.med.aiim.markusbudeus.graphdbpopulator.DatabaseDefinitions.
  * Creates INN nodes and references to CAS nodes. CAS Nodes are created as necessary, but will be resolved if they
  * already exist.
  */
-public class InnLoader extends Loader {
+public class InnLoader extends CsvLoader {
 
 	private static final String INN = "PRODUCT_EN";
 	public static final String CAS = "CAS";

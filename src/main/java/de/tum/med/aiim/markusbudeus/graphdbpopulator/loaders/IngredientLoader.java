@@ -13,7 +13,7 @@ import static de.tum.med.aiim.markusbudeus.graphdbpopulator.DatabaseDefinitions.
  * Includes the ID, MASSFROM and MASSTO as node attributes, named mmiId, massFrom, massTo. Additionally links to the
  * unit via a HAS_UNIT relation.
  */
-public class IngredientLoader extends Loader {
+public class IngredientLoader extends CsvLoader {
 
 	private static final String ID = "ID";
 	private static final String MOLECULE_ID = "MOLECULEID";

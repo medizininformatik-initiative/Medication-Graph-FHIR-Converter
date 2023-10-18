@@ -4,49 +4,22 @@ import org.neo4j.driver.Query;
 import org.neo4j.driver.Result;
 import org.neo4j.driver.Session;
 
-import java.io.IOException;
-import java.nio.file.Path;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
 import static org.neo4j.driver.Values.parameters;
 
 /**
- * Loaders use the LOAD CSV function of Cypher to load bulk data.
+ * Loaders are used to execute Cypher statements to load data into the database.
  */
 public abstract class Loader {
 
-	/**
-	 * The path inside the Neo4j import directory where the MMI PharmIndex data resides.
-	 */
-	private static final Path MMI_PHARMINDEX_IMPORT_DIR = Path.of("mmi_pharmindex");
-
-	/**
-	 * The variable name assigned to the current CSV row for the LOAD CSV statement.
-	 */
-	protected static final String ROW_IDENTIFIER = "row";
+	private static final DateTimeFormatter cypherDateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
 	protected final Session session;
-	private final Path path;
 
-	/**
-	 * Loader referencing the CSV file with the given name inside the MMI PharmIndex dataset.
-	 */
-	public Loader(String filename, Session session) throws IOException {
-		this(MMI_PHARMINDEX_IMPORT_DIR.resolve(filename), session);
-	}
-
-	/**
-	 * Loader referencing any file within the Neo4j import scope.
-	 */
-	public Loader(Path path, Session session) throws IOException {
-		this.path = path;
+	public Loader(Session session) {
 		this.session = session;
-	}
-
-	/**
-	 * Returns the Path to the CSV file in a way which can be passed to Cypher's LOAD CSV function.
-	 */
-	public String getCypherFilePath() {
-		return "file:///" + path.toString();
 	}
 
 	/**
@@ -61,62 +34,14 @@ public abstract class Loader {
 	}
 
 	/**
-	 * Creates the LOAD CSV statement and appends the given statement.
-	 *
-	 * @param statement the statement to execute for each row
-	 * @return a full Cypher statement
+	 * If the given value is not null, it is returned in single quotes ('), otherwise the string null is returned.
 	 */
-	public String withLoadStatement(String statement) {
-		return withLoadStatement(statement, ';');
+	protected String quoteOrNull(String value) {
+		return value == null ? "null" : "'" + value + "'";
 	}
 
-	/**
-	 * Creates the LOAD CSV statement and appends the given statement.
-	 *
-	 * @param statement the statement to execute for each row
-	 * @param fieldTerminator the field terminator to use when reading the CSV file
-	 * @return a full Cypher statement
-	 */
-	public String withLoadStatement(String statement, char fieldTerminator) {
-		return "LOAD CSV WITH HEADERS FROM '" + getCypherFilePath() + "'"
-				+ " AS " + ROW_IDENTIFIER
-				+ " FIELDTERMINATOR '"+fieldTerminator+"' "
-				+ statement;
-	}
-
-	/**
-	 * Creates a Cypher expression which retrieves the value of the column with the given header name in the current
-	 * row. I.e., if you pass the header name "City", this will be converted to row.City.
-	 *
-	 * @param headerName the header name
-	 * @return a Cypher expression to access the corresponding field of the current row
-	 */
-	public String row(String headerName) {
-		return ROW_IDENTIFIER + "." + headerName;
-	}
-
-	/**
-	 * Creates a Cypher expression which retrieves the value of the column with the given header name in the current row
-	 * and parses it to an integer. I.e., if you pass the header name "Amount", this will be converted to
-	 * "toInteger(row.Amount)".
-	 *
-	 * @param headerName the header name
-	 * @return a Cypher expression to access the corresponding field of the current row as integer
-	 */
-	public String intRow(String headerName) {
-		return "toInteger(" + row(headerName) + ")";
-	}
-
-	/**
-	 * Creates a Cypher expression which retrieves the value of the column with the given header name in the current row
-	 * and parses it to a float. I.e., if you pass the header name "Amount", this will be converted to
-	 * "toFloat(row.Amount)".
-	 *
-	 * @param headerName the header name
-	 * @return a Cypher expression to access the corresponding field of the current row as integer
-	 */
-	public String floatRow(String headerName) {
-		return "toFloat(" + row(headerName) + ")";
+	protected String toCypherDate(LocalDate date) {
+		return date == null ? "null" : "date('" + cypherDateFormatter.format(date) + "')";
 	}
 
 	public void execute() {

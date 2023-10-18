@@ -11,7 +11,7 @@ import static de.tum.med.aiim.markusbudeus.graphdbpopulator.DatabaseDefinitions.
  * <p>
  * Creates Substance nodes, ASK nodes and CAS nodes.
  */
-public class SubstanceLoader extends Loader {
+public class SubstanceLoader extends CsvLoader {
 
 	private static final String ID = "ID";
 	private static final String NAME = "NAME_PLAIN";

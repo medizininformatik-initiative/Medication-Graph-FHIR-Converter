@@ -10,6 +10,8 @@ import org.neo4j.driver.Session;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.util.HashSet;
+import java.util.Set;
 
 import static de.tum.med.aiim.markusbudeus.graphdbpopulator.DatabaseDefinitions.*;
 import static org.junit.jupiter.api.Assertions.*;
@@ -33,7 +35,6 @@ public class IntegrationTest {
 
 	@BeforeAll
 	public void integrationTestSetup() throws URISyntaxException {
-//		Path sampleFilesPath = Path.of(IntegrationTest.class.getClassLoader().getResource("sample").toURI());
 		connection = new DatabaseConnection();
 		session = connection.createSession();
 		session.run(new Query("MATCH (n) DETACH DELETE n")).consume(); // Delete everything
@@ -144,6 +145,37 @@ public class IntegrationTest {
 		Record record = result.next();
 		assertEquals("3", record.get(0).asString());
 		assertEquals("ml", record.get(1).asString());
+		assertFalse(result.hasNext());
+	}
+
+	@Test
+	public void atcHierarchy() {
+		Result result = session.run(
+				"MATCH (a:" + CODE_LABEL + ":" + ATC_LABEL + ")-[:" + ATC_HAS_PARENT_LABEL + "]->(p:" + ATC_LABEL + ") " +
+						"RETURN a.code, p.code"
+		);
+
+		Set<String> childCodes = new HashSet<>(2);
+
+		for (int i = 0; i < 2; i++) {
+			Record record = result.next();
+			childCodes.add(record.get(0).asString());
+			assertEquals("A01AA", record.get(1).asString());
+		}
+		assertFalse(result.hasNext());
+		assertEquals(Set.of("A01AA01", "A01AA02"), childCodes);
+	}
+
+	@Test
+	public void belocAtc() {
+		Result result = session.run(
+				"MATCH (m:" + PRODUCT_LABEL + " {name: 'Beloc mite'})--(:" + DRUG_LABEL + ")" +
+						"-[:" + DRUG_MATCHES_ATC_CODE_LABEL + "]->(a:" + ATC_LABEL + ") " +
+						"RETURN a.code"
+		);
+
+		Record record = result.next();
+		assertEquals("A01AA02", record.get(0).asString());
 		assertFalse(result.hasNext());
 	}
 
