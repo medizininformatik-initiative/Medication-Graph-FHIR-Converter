@@ -11,7 +11,7 @@ public class Medication {
 	public Meta meta;
 	public Identifier identifier;
 	public CodeableConcept code;
-	private Code status;
+	private Code status = new Code(Status.ACTIVE.value);
 	// TODO Manufacturer omitted for now
 	private CodeableConcept form;
 	private Ingredient ingredient;

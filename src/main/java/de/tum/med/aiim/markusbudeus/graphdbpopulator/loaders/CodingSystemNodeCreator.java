@@ -1,5 +1,6 @@
 package de.tum.med.aiim.markusbudeus.graphdbpopulator.loaders;
 
+import de.tum.med.aiim.markusbudeus.graphdbpopulator.CodingSystem;
 import org.neo4j.driver.Session;
 
 import java.time.LocalDate;
@@ -17,57 +18,15 @@ public class CodingSystemNodeCreator extends Loader {
 
 	@Override
 	protected void executeLoad() {
-		createCodingSystemNodeAndConnectAllLabelledNodes(
-				"standardterms.edqm.eu",
-				"EDQM Standard Terms database",
-				LocalDate.of(2023, 10, 16),
-				"Data is taken from the EDQM Standard Terms database and is reproduced with permission " +
-						"of the European Directorate for the Quality of Medicines & HealthCare, Council of Europe (EDQM). " +
-						"The data has been retrieved at the date given by the date property. Since the EDQM Standard " +
-						"Terms database is not a static list, this data may not be up to date.",
-				EDQM_LABEL
-		);
-
-		createCodingSystemNodeAndConnectAllLabelledNodes(
-				"http://fhir.de/CodeSystem/bfarm/atc",
-				"Anatomisch-Therapeutisch-Chemische Klassifikation",
-				LocalDate.now(),
-				"Data of the ATC classification has been retrieved from the MMI PharmIndex raw data on the " +
-						"date specified by this node. Be aware that the raw data provided to create this database " +
-						"may already have been outdated when this database was created. As such, the data may be " +
-						"older than what the date suggests.",
-				ATC_LABEL
-		);
-
-		createCodingSystemNodeAndConnectAllLabelledNodes(
-				"http://fhir.de/CodeSystem/ifa/pzn",
-				"Pharmazentralnummer",
-				LocalDate.now(),
-				"The PZN data has been retrieved from raw MMI PharmIndex data when this database was created. " +
-						"The database creation date is specified as date property on this node. However, the raw " +
-						"data used to instantiate this database may have been older than that.",
-				PZN_LABEL
-		);
-
-		createCodingSystemNodeAndConnectAllLabelledNodes(
-				"http://fhir.de/CodeSystem/ask",
-				"Arzneistoffkatalog",
-				LocalDate.now(),
-				"The ASK data has been retrieved from raw MMI PharmIndex data when this database was created. " +
-						"The database creation date is specified as date property on this node. However, the raw " +
-						"data used to instantiate this database may have been older than that.",
-				ASK_LABEL
-		);
-
-		createCodingSystemNodeAndConnectAllLabelledNodes(
-				"https://www.who.int/teams/health-product-and-policy-standards/inn",
-				"International Nonproprietary Name",
-				LocalDate.of(2023, 8, 28),
-				"The INN data has been retrieved from " +
-						"https://www.wcoomd.org/en/topics/nomenclature/instrument-and-tools/tools-to-assist-with-the-classification-in-the-hs/hs_classification-decisions/inn-table.aspx " +
-						"on the specified date.",
-				INN_LABEL
-		);
+		for (CodingSystem codingSystem : CodingSystem.values()) {
+			createCodingSystemNodeAndConnectAllLabelledNodes(
+					codingSystem.uri,
+					codingSystem.name,
+					codingSystem.dateOfRetrieval,
+					codingSystem.notice,
+					codingSystem.assignedNodesLabel
+			);
+		}
 	}
 
 	/**

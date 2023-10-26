@@ -1,7 +1,6 @@
 package de.tum.med.aiim.markusbudeus.graphdbpopulator.loaders;
 
 import org.neo4j.driver.Query;
-import org.neo4j.driver.Result;
 import org.neo4j.driver.Session;
 
 import java.time.LocalDate;
@@ -13,6 +12,8 @@ import static org.neo4j.driver.Values.parameters;
  * Loaders are used to execute Cypher statements to load data into the database.
  */
 public abstract class Loader {
+
+	private static final boolean DRY_RUN = true;
 
 	private static final DateTimeFormatter cypherDateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
@@ -59,11 +60,19 @@ public abstract class Loader {
 	 * @param statement the query to execute
 	 * @return the query's result
 	 */
-	public Result executeQuery(String statement, Object... params) {
-		if (params.length == 0) {
-			return session.run(new Query(statement));
+	public void executeQuery(String statement, Object... params) {
+		if (DRY_RUN) {
+			for (int i = 0; i < params.length; i += 2) {
+				statement = statement.replace("$"+params[i], params[i+1].toString());
+			}
+			System.out.println(statement);
+
 		} else {
-			return session.run(new Query(statement, parameters(params)));
+			if (params.length == 0) {
+				session.run(new Query(statement));
+			} else {
+				session.run(new Query(statement, parameters(params)));
+			}
 		}
 	}
 
