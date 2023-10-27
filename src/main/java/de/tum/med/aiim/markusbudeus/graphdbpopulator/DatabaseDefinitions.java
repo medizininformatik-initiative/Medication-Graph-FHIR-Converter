@@ -9,6 +9,7 @@ public class DatabaseDefinitions {
 	public static final String SUBSTANCE_LABEL = "Substance";
 	public static final String PRODUCT_LABEL = "Product";
 	public static final String INGREDIENT_LABEL = "Ingredient";
+	public static final String MMI_INGREDIENT_LABEL = "MmiIngredient";
 	public static final String DRUG_LABEL = "Drug";
 	public static final String ASK_LABEL = "ASK";
 	public static final String CAS_LABEL = "CAS";
@@ -23,6 +24,7 @@ public class DatabaseDefinitions {
 	public static final String DRUG_CONTAINS_INGREDIENT_LABEL = "CONTAINS";
 	public static final String DRUG_MATCHES_ATC_CODE_LABEL = "MATCHES";
 	public static final String INGREDIENT_IS_SUBSTANCE_LABEL = "IS_SUBSTANCE";
+	public static final String INGREDIENT_CORRESPONDS_TO_LABEL = "CORRESPONDS_TO";
 
 	public static final String INGREDIENT_HAS_UNIT_LABEL = "HAS_UNIT";
 	public static final String DRUG_HAS_UNIT_LABEL = "HAS_UNIT";

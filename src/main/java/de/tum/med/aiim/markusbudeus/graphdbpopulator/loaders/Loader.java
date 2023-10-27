@@ -13,7 +13,7 @@ import static org.neo4j.driver.Values.parameters;
  */
 public abstract class Loader {
 
-	private static final boolean DRY_RUN = true;
+	private static final boolean DRY_RUN = false;
 
 	private static final DateTimeFormatter cypherDateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 

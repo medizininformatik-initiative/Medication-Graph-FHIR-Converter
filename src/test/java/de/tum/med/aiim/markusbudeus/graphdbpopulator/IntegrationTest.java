@@ -48,7 +48,7 @@ public class IntegrationTest {
 	@Test
 	public void midazolamAskCode() {
 		Result result = session.run(
-				"MATCH (a:" + DatabaseDefinitions.ASK_LABEL + ")-[:" + DatabaseDefinitions.CODE_REFERENCE_RELATIONSHIP_NAME + "]->(s:" + DatabaseDefinitions.SUBSTANCE_LABEL + " {name: 'Midazolam'}) RETURN a.code");
+				"MATCH (a:" + ASK_LABEL + ")-[:" + CODE_REFERENCE_RELATIONSHIP_NAME + "]->(s:" + SUBSTANCE_LABEL + " {name: 'Midazolam'}) RETURN a.code");
 		assertEquals("22661", result.next().get(0).asString());
 		assertFalse(result.hasNext());
 	}
@@ -56,7 +56,7 @@ public class IntegrationTest {
 	@Test
 	public void midazolamCasCode() {
 		Result result = session.run(
-				"MATCH (a:" + DatabaseDefinitions.CAS_LABEL + ")-[:" + DatabaseDefinitions.CODE_REFERENCE_RELATIONSHIP_NAME + "]->(s:" + DatabaseDefinitions.SUBSTANCE_LABEL + " {name: 'Midazolam'}) RETURN a.code");
+				"MATCH (a:" + CAS_LABEL + ")-[:" + CODE_REFERENCE_RELATIONSHIP_NAME + "]->(s:" + SUBSTANCE_LABEL + " {name: 'Midazolam'}) RETURN a.code");
 		assertEquals("59467-70-8", result.next().get(0).asString());
 		assertFalse(result.hasNext());
 	}
@@ -64,10 +64,10 @@ public class IntegrationTest {
 	@Test
 	public void productsContainingMidazolamhydrochlorid() {
 		Result result = session.run(
-				"MATCH (p:" + PRODUCT_LABEL + ")-[c1:" + DatabaseDefinitions.PRODUCT_CONTAINS_DRUG_LABEL + "]->" +
-						"(d:" + DatabaseDefinitions.DRUG_LABEL + ")-[c2:" + DatabaseDefinitions.DRUG_CONTAINS_INGREDIENT_LABEL + "]->" +
-						"(i:" + DatabaseDefinitions.INGREDIENT_LABEL + ")-[c3:" + DatabaseDefinitions.INGREDIENT_IS_SUBSTANCE_LABEL + "]->" +
-						"(s:" + DatabaseDefinitions.SUBSTANCE_LABEL + " {name: 'Midazolamhydrochlorid'}) " +
+				"MATCH (p:" + PRODUCT_LABEL + ")-[c1:" + PRODUCT_CONTAINS_DRUG_LABEL + "]->" +
+						"(d:" + DRUG_LABEL + ")-[c2:" + DRUG_CONTAINS_INGREDIENT_LABEL + "]->" +
+						"(i:" + MMI_INGREDIENT_LABEL + ")-[c3:" + INGREDIENT_IS_SUBSTANCE_LABEL + "]->" +
+						"(s:" + SUBSTANCE_LABEL + " {name: 'Midazolamhydrochlorid'}) " +
 						"RETURN s,p.name,i.massTo"
 		);
 
@@ -85,7 +85,7 @@ public class IntegrationTest {
 	@Test
 	public void manufacturerConnected() {
 		Result result = session.run(
-				"MATCH (m:" + DatabaseDefinitions.COMPANY_LABEL + ")-[r:" + DatabaseDefinitions.MANUFACTURES_LABEL + "]-(p:" + PRODUCT_LABEL + ") RETURN p.mmiId"
+				"MATCH (m:" + COMPANY_LABEL + ")-[r:" + MANUFACTURES_LABEL + "]-(p:" + PRODUCT_LABEL + ") RETURN p.mmiId"
 		);
 
 		boolean[] mmiIdIncluded = new boolean[]{false, false, false};
@@ -176,6 +176,23 @@ public class IntegrationTest {
 
 		Record record = result.next();
 		assertEquals("A01AA02", record.get(0).asString());
+		assertFalse(result.hasNext());
+	}
+
+	@Test
+	public void midazolamhydrochloridCorrespondingIngredient() {
+		Result result = session.run(
+				"MATCH (p:" + PRODUCT_LABEL + " {name: 'Dormicum 15 mg/3 ml'})-->(d:" + DRUG_LABEL + ")" +
+						"-->(i:" + MMI_INGREDIENT_LABEL + ")-[:" + INGREDIENT_CORRESPONDS_TO_LABEL + "]->" +
+						"(ci:" + INGREDIENT_LABEL + ")--(s:" + SUBSTANCE_LABEL + ") " +
+						"MATCH (ci)--(u:" + UNIT_LABEL + ") " +
+						"RETURN ci.massFrom, s.name, u.mmiCode"
+		);
+
+		Record record = result.next();
+		assertEquals("12", record.get(0).asString());
+		assertEquals("Midazolam", record.get(1).asString());
+		assertEquals("MG", record.get(2).asString());
 		assertFalse(result.hasNext());
 	}
 

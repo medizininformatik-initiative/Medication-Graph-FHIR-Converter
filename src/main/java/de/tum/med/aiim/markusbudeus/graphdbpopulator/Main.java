@@ -53,7 +53,10 @@ public class Main {
 			loaders.add(new DrugAtcConnectionLoader(session));
 			// Coding System Nodes and connections to it
 			loaders.add(new CodingSystemNodeCreator(session));
+			// Corresponding ingredients and their amounts
+			loaders.add(new IngredientCorrespondenceLoader(session));
 
+			session.run("MATCH (n) DETACH DELETE n");
 			for (Loader loader : loaders) {
 				loader.execute();
 			}

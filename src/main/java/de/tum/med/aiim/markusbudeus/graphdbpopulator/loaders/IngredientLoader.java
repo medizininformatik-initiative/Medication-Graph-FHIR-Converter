@@ -28,16 +28,16 @@ public class IngredientLoader extends CsvLoader {
 	@Override
 	protected void executeLoad() {
 		executeQuery(
-				"CREATE CONSTRAINT ingredientMmiIdConstraint IF NOT EXISTS FOR (i:" + INGREDIENT_LABEL + ") REQUIRE i.mmiId IS UNIQUE"
+				"CREATE CONSTRAINT mmiIngredientIdConstraint IF NOT EXISTS FOR (i:" + MMI_INGREDIENT_LABEL + ") REQUIRE i.mmiId IS UNIQUE"
 		);
 
 		executeQuery(withLoadStatement(
-				"CREATE (i:" + INGREDIENT_LABEL + " {mmiId: " + intRow(ID) + ", massFrom: " + row(
-						MASS_FROM) + ", massTo: " + row(MASS_TO) + "}) "
+				"CREATE (i:" + MMI_INGREDIENT_LABEL + ":" + INGREDIENT_LABEL +
+						" {mmiId: " + intRow(ID) + ", massFrom: " + row(MASS_FROM) + ", massTo: " + row(MASS_TO) + "}) "
 		));
 
 		executeQuery(withLoadStatement(
-				"MATCH (i:" + INGREDIENT_LABEL + " {mmiId: " + intRow(ID) + "}) " +
+				"MATCH (i:" + MMI_INGREDIENT_LABEL + " {mmiId: " + intRow(ID) + "}) " +
 						"MATCH (s:" + SUBSTANCE_LABEL + " {mmiId: " + intRow(MOLECULE_ID) + "}) " +
 						"MATCH (u:" + UNIT_LABEL + " {mmiCode: " + row(MOLECULE_UNIT_CODE) + "}) " +
 						"WITH i, s, u " +
