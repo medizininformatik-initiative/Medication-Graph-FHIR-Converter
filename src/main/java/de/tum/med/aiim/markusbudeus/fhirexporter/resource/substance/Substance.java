@@ -2,11 +2,12 @@ package de.tum.med.aiim.markusbudeus.fhirexporter.resource.substance;
 
 import de.tum.med.aiim.markusbudeus.fhirexporter.resource.Code;
 import de.tum.med.aiim.markusbudeus.fhirexporter.resource.CodeableConcept;
+import de.tum.med.aiim.markusbudeus.fhirexporter.resource.Identifier;
 import de.tum.med.aiim.markusbudeus.fhirexporter.resource.Status;
 
 public class Substance {
 
-	// identifier omitted
+	public Identifier identifier;
 	private Code status = new Code(Status.ACTIVE.value);
 	public CodeableConcept[] category = new CodeableConcept[0];
 	/**

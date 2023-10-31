@@ -1,5 +1,6 @@
 package de.tum.med.aiim.markusbudeus.fhirexporter.neo4j;
 
+import de.tum.med.aiim.markusbudeus.fhirexporter.resource.Code;
 import de.tum.med.aiim.markusbudeus.fhirexporter.resource.Coding;
 import de.tum.med.aiim.markusbudeus.fhirexporter.resource.Uri;
 import de.tum.med.aiim.markusbudeus.graphdbpopulator.CodingSystem;
@@ -7,6 +8,7 @@ import io.netty.handler.codec.DateFormatter;
 import org.neo4j.driver.Session;
 
 import java.text.DateFormat;
+import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Objects;
 
@@ -22,11 +24,27 @@ public class CodingProvider {
 	 * and {@link Coding#userSelected} already specified through the given {@link CodingSystem}.
 	 */
 	public static Coding createCodingTemplate(CodingSystem codingSystem) {
+		return createCodingTemplate(codingSystem.uri, codingSystem.version, codingSystem.dateOfRetrieval);
+	}
+
+	public static Coding createCodingTemplate(String systemUri, String systemVersion, LocalDate systemDate) {
 		Coding coding = new Coding();
-		coding.system = new Uri(codingSystem.uri);
-		coding.version = Objects.requireNonNullElseGet(codingSystem.version,
-				() -> FHIR_DATE_FORMATTER.format(codingSystem.dateOfRetrieval));
+		coding.system = new Uri(systemUri);
+
+		if (systemDate == null) {
+			coding.version = systemVersion;
+		} else {
+			coding.version = Objects.requireNonNullElseGet(systemVersion,
+					() -> FHIR_DATE_FORMATTER.format(systemDate));
+		}
 		coding.userSelected = false;
+		return coding;
+	}
+
+	public static Coding createCoding(String value, String systemUri, String systemVersion, LocalDate systemDate) {
+		Coding coding = createCodingTemplate(systemUri, systemVersion, systemDate);
+		coding.code = new Code(value);
+		coding.display = value;
 		return coding;
 	}
 

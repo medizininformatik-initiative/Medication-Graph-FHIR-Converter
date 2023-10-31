@@ -2,6 +2,15 @@ package de.tum.med.aiim.markusbudeus.fhirexporter.resource;
 
 public class Identifier {
 
+	public static Identifier fromMmiId(long mmiId) {
+		return new Identifier(
+				Identifier.Use.USUAL,
+				null,
+				new Uri("https://www.mmi.de/mmi-pharmindex/mmi-pharmindex-daten"),
+				String.valueOf(mmiId)
+		);
+	}
+
 	private Code use;
 	public CodeableConcept type;
 	public Uri system;
@@ -28,7 +37,7 @@ public class Identifier {
 		}
 	}
 
-	private static enum Use {
+	public enum Use {
 		USUAL,
 		OFFICIAL,
 		TEMP,
