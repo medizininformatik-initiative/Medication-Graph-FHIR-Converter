@@ -25,7 +25,7 @@ public class Quantity implements RatioOrQuantity {
 		}
 	}
 
-	private enum Comparator {
+	public enum Comparator {
 		EXACT("="),
 		LESS("<"),
 		LESS_OR_EQUAL("<="),

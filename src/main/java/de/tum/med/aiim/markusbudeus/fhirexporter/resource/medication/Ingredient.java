@@ -6,6 +6,7 @@ public class Ingredient {
 
 	// TODO Extension omitted for now
 	public Item item;
+	public Boolean isActive;
 	public RatioOrQuantity strength;
 
 }

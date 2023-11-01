@@ -1,15 +1,21 @@
 package de.tum.med.aiim.markusbudeus.fhirexporter.neo4j;
 
+import de.tum.med.aiim.markusbudeus.fhirexporter.resource.*;
+import de.tum.med.aiim.markusbudeus.fhirexporter.resource.medication.Ingredient;
+import de.tum.med.aiim.markusbudeus.fhirexporter.resource.medication.Item;
 import de.tum.med.aiim.markusbudeus.fhirexporter.resource.medication.Medication;
+import de.tum.med.aiim.markusbudeus.fhirexporter.resource.medication.Meta;
 import de.tum.med.aiim.markusbudeus.fhirexporter.resource.substance.Substance;
+import de.tum.med.aiim.markusbudeus.fhirexporter.resource.substance.SubstanceReference;
 import de.tum.med.aiim.markusbudeus.graphdbpopulator.DatabaseConnection;
 import org.neo4j.driver.*;
 import org.neo4j.driver.Record;
-import org.neo4j.driver.types.MapAccessor;
 import org.neo4j.driver.types.MapAccessorWithDefaultValue;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Stream;
 
 import static de.tum.med.aiim.markusbudeus.graphdbpopulator.DatabaseDefinitions.*;
@@ -30,9 +36,10 @@ public class Neo4jMedicationExporter {
 
 	public static void main(String[] args) {
 		try (DatabaseConnection connection = new DatabaseConnection();
-		Session session = connection.createSession()){
+		     Session session = connection.createSession()) {
 			Neo4jMedicationExporter exporter = new Neo4jMedicationExporter(session);
-			exporter.loadMedications().forEach(med -> {});
+			exporter.loadMedications().forEach(med -> {
+			});
 		}
 	}
 
@@ -52,14 +59,17 @@ public class Neo4jMedicationExporter {
 						"CASE WHEN de IS NOT NULL THEN " + groupCodingSystem("de", "dfcs", "name:de.name,") +
 						" ELSE null END AS edqmDoseForm, " +
 						"collect({" +
-						"substanceMmiId:i.mmiId," +
+						"substanceMmiId:s.mmiId," +
+						"substanceName:s.name," +
 						"massFrom:i.massFrom," +
 						"massTo:i.massTo," +
 						"unitUcumCs:iu.ucumCs," +
-						"unitMmi:iu.mmiName" +
+						"unitMmi:iu.mmiName," +
+						"unitPrint:iu.print" +
 						"}) AS ingredients " +
 						"OPTIONAL MATCH (d)-[:" + DRUG_MATCHES_ATC_CODE_LABEL + "]->(a:" + ATC_LABEL + ")-[:" + BELONGS_TO_CODING_SYSTEM_LABEL + "]->(acs:" + CODING_SYSTEM_LABEL + ") " +
-						"WITH p, d, df, ingredients, collect(" + groupCodingSystem("a", "acs") + ") AS atcCodes, edqmDoseForm " +
+						"WITH p, d, df, ingredients, collect(" + groupCodingSystem("a",
+						"acs") + ") AS atcCodes, edqmDoseForm " +
 						"WITH p, collect({" +
 						"ingredients:ingredients," +
 						"atcCodes:atcCodes," +
@@ -67,29 +77,78 @@ public class Neo4jMedicationExporter {
 						"edqmDoseForm:edqmDoseForm" +
 						"}) AS drugs " +
 						"MATCH (pcs:" + CODING_SYSTEM_LABEL + ")<-[:" + BELONGS_TO_CODING_SYSTEM_LABEL + "]-(pc:" + CODE_LABEL + ")-->(p) " +
-						"RETURN p.name AS productName, collect(" + groupCodingSystem("pc", "pcs") + ") AS productCodes, drugs"
+						"RETURN p.name AS productName," +
+						"p.mmiId AS mmiId," +
+						"collect(" + groupCodingSystem("pc", "pcs") + ") AS productCodes," +
+						"drugs"
 		));
 
-		return result.stream().map(Neo4jMedicationExporter::toMedication);
+		return result.stream().map(Neo4jMedicationExporter::toMedication).filter(Objects::nonNull);
 	}
 
 	private static Medication toMedication(Record record) {
 		Neo4jExportProduct exportProduct = new Neo4jExportProduct(record);
 
+		if (exportProduct.drugs.size() > 1) {
+			System.err.println("Skipping product '" + exportProduct.name + "', because it contains multiple drugs!");
+			return null;
+		}
+		if (exportProduct.drugs.isEmpty()) {
+			System.err.println("Skipping product '" + exportProduct.name + "', because it contains no drugs!");
+			return null;
+		}
+
 		Medication medication = new Medication();
+		Meta meta = new Meta();
+		// TODO Somehow reference my Graph DB in meta.source?
+		meta.source = new Uri("https://www.mmi.de/mmi-pharmindex/mmi-pharmindex-daten");
+		medication.meta = meta;
+		medication.identifier = Identifier.fromMmiId(exportProduct.mmiId);
 
+		Neo4jExportDrug drug = exportProduct.drugs.get(0);
+		medication.form = new CodeableConcept();
+		if (drug.edqmDoseForm != null) {
+			Coding edqmCoding = drug.edqmDoseForm.toCoding();
+			edqmCoding.display = drug.edqmDoseForm.name;
+			medication.form.coding = new Coding[]{edqmCoding};
+			medication.form.text = drug.edqmDoseForm.name;
+		} else {
+			medication.form.text = drug.mmiDoseForm;
+		}
+		// TODO Amount of drug!
+		// medication.amount = ...
 
+		List<Ingredient> ingredients = drug.ingredients.stream().map(exportIngredient -> {
+			Ingredient ingredient = new Ingredient();
+			ingredient.item = new Item();
+			// TODO isActive!
+			ingredient.item.itemReference = new SubstanceReference(exportIngredient.substanceMmiId,
+					exportIngredient.substanceName);
+			ingredient.strength = exportIngredient.getStrength();
+			return ingredient;
+		}).toList();
+
+		medication.ingredient = ingredients.toArray(new Ingredient[0]);
+
+		List<Coding> codings = new java.util.ArrayList<>(
+				exportProduct.codes.stream().map(Neo4jExportCode::toCoding).toList());
+		codings.addAll(drug.atcCodes.stream().map(Neo4jExportCode::toCoding).toList());
+		medication.code = new CodeableConcept();
+		medication.code.coding = codings.toArray(new Coding[0]);
+		medication.code.text = exportProduct.name;
 
 		return medication;
 	}
 
 	private static class Neo4jExportProduct {
 		final String name;
+		final long mmiId;
 		final List<Neo4jExportCode> codes;
 		final List<Neo4jExportDrug> drugs;
 
 		Neo4jExportProduct(MapAccessorWithDefaultValue value) {
 			name = value.get("productName", (String) null);
+			mmiId = value.get("mmiId").asLong();
 			codes = value.get("productCodes").asList(Neo4jExportCode::new);
 			drugs = value.get("drugs").asList(Neo4jExportDrug::new);
 		}
@@ -116,17 +175,56 @@ public class Neo4jMedicationExporter {
 
 	private static class Neo4jExportIngredient {
 		final long substanceMmiId;
+		final String substanceName;
 		final String massFrom;
 		final String massTo;
 		final String unitUcumCs;
 		final String unitMmi;
+		final String unitPrint;
 
 		private Neo4jExportIngredient(MapAccessorWithDefaultValue value) {
 			substanceMmiId = value.get("substanceMmiId").asLong();
-			massFrom = value.get("massFrom", (String) null);
-			massTo = value.get("massTo", (String) null);
+			substanceName = value.get("substanceName").asString();
+			massFrom = replaceDecimalSeparator(value.get("massFrom", (String) null));
+			massTo = replaceDecimalSeparator(value.get("massTo", (String) null));
 			unitUcumCs = value.get("unitUcumCs", (String) null);
 			unitMmi = value.get("unitMmi", (String) null);
+			unitPrint = value.get("unitPrint", unitMmi);
+		}
+
+		private String replaceDecimalSeparator(String value) {
+			if (value != null) {
+				return value.replace(',', '.');
+			}
+			return value;
+		}
+
+		public RatioOrQuantity getStrength() {
+			Quantity quantity = new Quantity();
+			if (massFrom == null) {
+				if (massTo == null) {
+					return null;
+				} else {
+					quantity.value = new BigDecimal(massTo);
+					quantity.setComparator(Quantity.Comparator.EXACT);
+				}
+			} else {
+				quantity.value = new BigDecimal(massFrom);
+				if (massTo == null) {
+					quantity.setComparator(Quantity.Comparator.EXACT);
+				} else {
+					quantity.setComparator(Quantity.Comparator.GREATER_OR_EQUAL);
+				}
+			}
+
+			quantity.unit = unitPrint;
+
+			if (unitUcumCs != null) {
+				quantity.code = new Code(unitUcumCs);
+				quantity.system = new Uri("https://ucum.org/ucum");
+			}
+
+			return quantity;
 		}
 	}
 
@@ -141,6 +239,15 @@ public class Neo4jMedicationExporter {
 			codingSystemUri = value.get(SYSTEM_URI, (String) null);
 			codingSystemVersion = value.get(SYSTEM_VERSION, (String) null);
 			codingSystemDate = (LocalDate) value.get(SYSTEM_DATE, (LocalDate) null);
+		}
+
+		public Coding toCoding() {
+			return CodingProvider.createCoding(
+					code,
+					codingSystemUri,
+					codingSystemVersion,
+					codingSystemDate
+			);
 		}
 	}
 
