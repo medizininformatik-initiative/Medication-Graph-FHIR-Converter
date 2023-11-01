@@ -1,8 +1,10 @@
 package de.tum.med.aiim.markusbudeus.fhirexporter.resource;
 
+import java.math.BigDecimal;
+
 public class Quantity implements RatioOrQuantity {
 
-	public double value; // TODO Handle precision issues, see "decimal" definition in FHIR
+	public BigDecimal value;
 	private Code comparator;
 	public String unit;
 	public Uri system;
