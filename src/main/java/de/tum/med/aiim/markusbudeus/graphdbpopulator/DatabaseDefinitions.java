@@ -19,6 +19,8 @@ public class DatabaseDefinitions {
 	public static final String ATC_HAS_PARENT_LABEL = "HAS_PARENT";
 	public static final String PZN_LABEL = "PZN";
 	public static final String COMPANY_LABEL = "Manufacturer";
+	public static final String ADDRESS_LABEL = "Address";
+	public static final String COMPANY_HAS_ADDRESS_LABEL = "HAS_ADDRESS";
 	public static final String MANUFACTURES_LABEL = "MANUFACTURES";
 	public static final String PRODUCT_CONTAINS_DRUG_LABEL = "CONTAINS";
 	public static final String DRUG_CONTAINS_INGREDIENT_LABEL = "CONTAINS";

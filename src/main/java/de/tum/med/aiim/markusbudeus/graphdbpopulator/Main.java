@@ -41,6 +41,8 @@ public class Main {
 			}
 			// Manufacturer nodes
 			loaders.add(new CompanyLoader(session));
+			// Manufacturer Address nodes
+			loaders.add(new CompanyAddressLoader(session));
 			// Relation between Manufacturer nodes and their product nodes
 			loaders.add(new CompanyProductReferenceLoader(session));
 			// Drug nodes and relations to Product nodes

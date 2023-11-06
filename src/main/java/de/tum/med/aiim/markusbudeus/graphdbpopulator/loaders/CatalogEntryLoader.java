@@ -9,6 +9,7 @@ abstract class CatalogEntryLoader extends CsvLoader {
 	protected static final String CATALOG_ID = "CATALOGID";
 	protected static final String CODE = "CODE";
 	protected static final String UPPER_CODE = "UPPERCODE";
+	protected static final String SHORT_NAME = "SHORTNAME";
 	protected static final String NAME = "NAME";
 	protected static final String DESC = "DESCRIPTION";
 

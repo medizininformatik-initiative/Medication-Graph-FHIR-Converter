@@ -196,6 +196,23 @@ public class IntegrationTest {
 		assertFalse(result.hasNext());
 	}
 
+	@Test
+	public void manufacturerAddress() {
+		Result result = session.run(
+				"MATCH (c:"+COMPANY_LABEL+" {mmiId: 0})-[:"+COMPANY_HAS_ADDRESS_LABEL+"]->(a:"+ADDRESS_LABEL+") " +
+						"RETURN a.street, a.streetNumber, a.postalCode, a.city, a.country, a.countryCode"
+		);
+
+		Record record = result.next();
+		assertEquals("Arcisstraße", record.get(0).asString());
+		assertEquals("21", record.get(1).asString());
+		assertEquals("80333", record.get(2).asString());
+		assertEquals("München", record.get(3).asString());
+		assertEquals("Deutschland", record.get(4).asString());
+		assertEquals("DE", record.get(5).asString());
+		assertFalse(result.hasNext()); // Only the 'Firmensitz' address (type C) should exist in the db!
+	}
+
 	private void checkProductMatchesIngredient(Record record) {
 		String name = record.get(1).asString();
 		if (name.equals("Dormicum V 5 mg/5 ml")) {
