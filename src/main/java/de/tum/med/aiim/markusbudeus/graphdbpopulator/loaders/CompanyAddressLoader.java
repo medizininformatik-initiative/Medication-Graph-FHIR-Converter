@@ -51,7 +51,7 @@ public class CompanyAddressLoader extends CsvLoader {
 
 	private static class CompanyAddressCountryLoader extends CatalogEntryLoader {
 
-		private static final int COUNTRY_CODE_CATALOG_ID = 202;
+		private static final int COUNTRY_CODE_CATALOG_ID = 101;
 
 		public CompanyAddressCountryLoader(Session session) throws IOException {
 			super(session);

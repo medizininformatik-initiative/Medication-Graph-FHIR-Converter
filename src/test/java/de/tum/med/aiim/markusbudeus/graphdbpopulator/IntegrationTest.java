@@ -108,9 +108,8 @@ public class IntegrationTest {
 	public void belocDoseForm() {
 		Result result = session.run(
 				"MATCH (p:" + PRODUCT_LABEL + " {name: 'Beloc mite'})-[pd:" + PRODUCT_CONTAINS_DRUG_LABEL + "]->(d:" + DRUG_LABEL + ")" +
-						"-[df:" + DRUG_HAS_DOSE_FORM_LABEL + "]->(f:" + DOSE_FORM_LABEL + ")" +
-						"-[fe:" + DOSE_FORM_IS_EDQM + "]->(e:" + EDQM_LABEL + ") " +
-						"RETURN e.code, e.name"
+						"-[df:" + DRUG_HAS_DOSE_FORM_LABEL + "]->(f:" + DOSE_FORM_LABEL + ") " +
+						"RETURN f.edqmCode, f.edqmName"
 		);
 
 		Record record = result.next();
@@ -123,9 +122,8 @@ public class IntegrationTest {
 	public void midazolamDoseForm() {
 		Result result = session.run(
 				"MATCH (p:" + PRODUCT_LABEL + " {name: 'Dormicum V 5 mg/5 ml'})-[pd:" + PRODUCT_CONTAINS_DRUG_LABEL + "]->(d:" + DRUG_LABEL + ")" +
-						"-[df:" + DRUG_HAS_DOSE_FORM_LABEL + "]->(f:" + DOSE_FORM_LABEL + ")" +
-						"-[fe:" + DOSE_FORM_IS_EDQM + "]->(e:" + EDQM_LABEL + ") " +
-						"RETURN e.code, e.name"
+						"-[df:" + DRUG_HAS_DOSE_FORM_LABEL + "]->(f:" + DOSE_FORM_LABEL + ") " +
+						"RETURN f.edqmCode, f.edqmName"
 		);
 
 		Record record = result.next();
