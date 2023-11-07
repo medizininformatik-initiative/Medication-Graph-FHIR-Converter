@@ -25,7 +25,7 @@ public class AtcLoader extends CatalogEntryLoader {
 
 		// Create all ATC Nodes
 		executeQuery(withFilteredLoadStatement(ATC_CATALOG_ID,
-				"CREATE (a:" + ATC_LABEL + " {" +
+				"CREATE (a:" + ATC_LABEL + ":" + CODING_SYSTEM_LABEL + " {" +
 						"code: " + row(CODE) + ", " +
 						"description: " + row(NAME) + ", " +
 						"parent: " + nullIfBlank(row(UPPER_CODE)) +
@@ -37,12 +37,6 @@ public class AtcLoader extends CatalogEntryLoader {
 				"MATCH (p:" + ATC_LABEL + " {code: a.parent}) " +
 				"WITH a, p " +
 				"CREATE (a)-[:" + ATC_HAS_PARENT_LABEL + "]->(p)");
-
-		// Designate Leaf nodes
-		executeQuery("MATCH (a:" + ATC_LABEL + ")" +
-				" WHERE NOT ()-[:" + ATC_HAS_PARENT_LABEL + "]->(a) " +
-				" SET a:" + CODE_LABEL);
-
 	}
 
 }
