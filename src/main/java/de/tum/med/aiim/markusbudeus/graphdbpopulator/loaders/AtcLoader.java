@@ -25,7 +25,7 @@ public class AtcLoader extends CatalogEntryLoader {
 
 		// Create all ATC Nodes
 		executeQuery(withFilteredLoadStatement(ATC_CATALOG_ID,
-				"CREATE (a:" + ATC_LABEL + ":" + CODING_SYSTEM_LABEL + " {" +
+				"CREATE (a:" + ATC_LABEL + ":" + CODE_LABEL + " {" +
 						"code: " + row(CODE) + ", " +
 						"description: " + row(NAME) + ", " +
 						"parent: " + nullIfBlank(row(UPPER_CODE)) +

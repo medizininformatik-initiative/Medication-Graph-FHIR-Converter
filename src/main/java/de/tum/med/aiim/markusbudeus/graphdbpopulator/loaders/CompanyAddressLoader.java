@@ -12,8 +12,6 @@ import static de.tum.med.aiim.markusbudeus.graphdbpopulator.DatabaseDefinitions.
  */
 public class CompanyAddressLoader extends CsvLoader {
 
-	// TODO Fix failing test
-
 	private static final String COMPANY_ID = "COMPANYID";
 	private static final String COUNTRY_CATALOG_CODE = "COUNTRYCODE";
 	private static final String STREET = "STREET";

@@ -28,7 +28,7 @@ public class Main {
 			// EDQM Dose forms
 			loaders.add(new EdqmDoseFormLoader(session));
 			// Merge MMI and EDQM Dose form nodes
-			loaders.add(new EdqmMmiDoseFormMerger(session));
+//			loaders.add(new EdqmMmiDoseFormMerger(session));
 			// ATC Hierarchy
 			loaders.add(new AtcLoader(session));
 			// Substance nodes, ASK nodes and CAS nodes and their relations

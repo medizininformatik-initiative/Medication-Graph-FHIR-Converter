@@ -108,8 +108,8 @@ public class IntegrationTest {
 	public void belocDoseForm() {
 		Result result = session.run(
 				"MATCH (p:" + PRODUCT_LABEL + " {name: 'Beloc mite'})-[pd:" + PRODUCT_CONTAINS_DRUG_LABEL + "]->(d:" + DRUG_LABEL + ")" +
-						"-[df:" + DRUG_HAS_DOSE_FORM_LABEL + "]->(f:" + DOSE_FORM_LABEL + ") " +
-						"RETURN f.edqmCode, f.edqmName"
+						"-[df:" + DRUG_HAS_DOSE_FORM_LABEL + "]->(f:" + DOSE_FORM_LABEL + ")-[:" + DOSE_FORM_IS_EDQM + "]->(e:" + EDQM_LABEL + ") " +
+						"RETURN e.code, e.name"
 		);
 
 		Record record = result.next();
@@ -122,8 +122,8 @@ public class IntegrationTest {
 	public void midazolamDoseForm() {
 		Result result = session.run(
 				"MATCH (p:" + PRODUCT_LABEL + " {name: 'Dormicum V 5 mg/5 ml'})-[pd:" + PRODUCT_CONTAINS_DRUG_LABEL + "]->(d:" + DRUG_LABEL + ")" +
-						"-[df:" + DRUG_HAS_DOSE_FORM_LABEL + "]->(f:" + DOSE_FORM_LABEL + ") " +
-						"RETURN f.edqmCode, f.edqmName"
+						"-[df:" + DRUG_HAS_DOSE_FORM_LABEL + "]->(f:" + DOSE_FORM_LABEL + ")-[:" + DOSE_FORM_IS_EDQM + "]->(e:" + EDQM_LABEL + ") " +
+						"RETURN e.code, e.name"
 		);
 
 		Record record = result.next();
@@ -149,7 +149,7 @@ public class IntegrationTest {
 	@Test
 	public void atcHierarchy() {
 		Result result = session.run(
-				"MATCH (a:" + CODE_LABEL + ":" + ATC_LABEL + ")-[:" + ATC_HAS_PARENT_LABEL + "]->(p:" + ATC_LABEL + ") " +
+				"MATCH (a:" + ATC_LABEL + ")-[:" + ATC_HAS_PARENT_LABEL + "]->(p:" + ATC_LABEL + " {code: 'A01AA'}) " +
 						"RETURN a.code, p.code"
 		);
 
@@ -197,7 +197,7 @@ public class IntegrationTest {
 	@Test
 	public void manufacturerAddress() {
 		Result result = session.run(
-				"MATCH (c:"+COMPANY_LABEL+" {mmiId: 0})-[:"+COMPANY_HAS_ADDRESS_LABEL+"]->(a:"+ADDRESS_LABEL+") " +
+				"MATCH (c:" + COMPANY_LABEL + " {mmiId: 0})-[:" + COMPANY_HAS_ADDRESS_LABEL + "]->(a:" + ADDRESS_LABEL + ") " +
 						"RETURN a.street, a.streetNumber, a.postalCode, a.city, a.country, a.countryCode"
 		);
 

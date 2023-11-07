@@ -5,6 +5,9 @@ import org.neo4j.driver.Session;
 import static de.tum.med.aiim.markusbudeus.graphdbpopulator.DatabaseDefinitions.*;
 import static de.tum.med.aiim.markusbudeus.graphdbpopulator.DatabaseDefinitions.DOSE_FORM_LABEL;
 
+/**
+ * Merges EDQM nodes with dose form nodes.
+ */
 public class EdqmMmiDoseFormMerger extends Loader {
 
 	public EdqmMmiDoseFormMerger(Session session) {
@@ -14,14 +17,13 @@ public class EdqmMmiDoseFormMerger extends Loader {
 	@Override
 	protected void executeLoad() {
 		session.run(
-				"MATCH (d:" + DOSE_FORM_LABEL + ")-[:" + DOSE_FORM_IS_EDQM + "]->(e:" + EDQM_LABEL + ")-[:" + BELONGS_TO_CODING_SYSTEM_LABEL + "]->(cs:" + CODING_SYSTEM_LABEL + ") " +
+				"MATCH (d:" + DOSE_FORM_LABEL + ")-[:" + DOSE_FORM_IS_EDQM + "]->(e:" + EDQM_LABEL + ") " +
 						"SET d.edqmCode = e.code " +
 						"SET d.edqmName = e.name " +
 						"SET d.edqmStatus = e.status " +
 						"SET d.edqmIntendedSite = e.intendedSite " +
 						"SET d:" + EDQM_LABEL + " " +
-						"SET d:" + CODING_SYSTEM_LABEL + " " +
-						"CREATE (d)-[:" + BELONGS_TO_CODING_SYSTEM_LABEL + "]->(cs)"
+						"SET d:" + CODE_LABEL + " "
 		);
 		session.run(
 				"MATCH (e:" + EDQM_LABEL + ") WHERE NOT e:" + DOSE_FORM_LABEL + " DETACH DELETE e"

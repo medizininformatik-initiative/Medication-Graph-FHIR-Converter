@@ -26,6 +26,13 @@ public class EdqmDoseFormLoader extends CsvLoader {
 
 	@Override
 	protected void executeLoad() {
+		executeQuery(
+				"CREATE CONSTRAINT edqmCodeConstraint IF NOT EXISTS FOR (e:" + EDQM_LABEL + ") REQUIRE e.code IS UNIQUE"
+		);
+		executeQuery(
+				"CREATE CONSTRAINT edqmNameConstraint IF NOT EXISTS FOR (e:" + EDQM_LABEL + ") REQUIRE e.name IS UNIQUE"
+		);
+
 		// Create EQDM Nodes and connect them to MMI Dose Form Nodes
 		executeQuery(withLoadStatement(
 				"WITH " + ROW_IDENTIFIER + " WHERE " + nullIfBlank(row(EDQM_CODE)) + " IS NOT NULL " +
