@@ -1,15 +1,15 @@
 package de.tum.med.aiim.markusbudeus.fhirexporter.resource.substance;
 
 import de.tum.med.aiim.markusbudeus.fhirexporter.resource.Identifier;
+import de.tum.med.aiim.markusbudeus.fhirexporter.resource.Reference;
 import de.tum.med.aiim.markusbudeus.fhirexporter.resource.Uri;
 
-public class SubstanceReference {
+import java.sql.Ref;
 
-	public final Uri type = new Uri("http://hl7.org/fhir/StructureDefinition/Substance");
-	public Identifier identifier;
-	public String display;
+public class SubstanceReference extends Reference {
 
 	public SubstanceReference(long substanceMmiId, String substanceName) {
+		super(new Uri("http://hl7.org/fhir/StructureDefinition/Substance"));
 		this.identifier = Identifier.fromMmiId(substanceMmiId);
 		this.display = substanceName;
 	}
