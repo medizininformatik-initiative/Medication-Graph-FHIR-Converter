@@ -20,6 +20,9 @@ public class IngredientLoader extends CsvLoader {
 	private static final String MASS_FROM = "MASSFROM";
 	private static final String MASS_TO = "MASSTO";
 	private static final String MOLECULE_UNIT_CODE = "MOLECULEUNITCODE";
+	private static final String MOLECULE_TYPE_CODE = "MOLECULETYPECODE";
+
+	private static final String ACTIVE_INGREDIENT_TYPE_CODE = "A";
 
 	public IngredientLoader(Session session) throws IOException {
 		super("COMPOSITIONELEMENT.CSV", session);
@@ -33,7 +36,11 @@ public class IngredientLoader extends CsvLoader {
 
 		executeQuery(withLoadStatement(
 				"CREATE (i:" + MMI_INGREDIENT_LABEL + ":" + INGREDIENT_LABEL +
-						" {mmiId: " + intRow(ID) + ", massFrom: " + row(MASS_FROM) + ", massTo: " + row(MASS_TO) + "}) "
+						" {mmiId: " + intRow(ID) +
+						", massFrom: " + row(MASS_FROM) +
+						", massTo: " + row(MASS_TO) +
+						", isActive: (" + row(MOLECULE_TYPE_CODE) + " = '" + ACTIVE_INGREDIENT_TYPE_CODE + "')" +
+						"}) "
 		));
 
 		executeQuery(withLoadStatement(
