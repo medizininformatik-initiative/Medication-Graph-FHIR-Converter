@@ -56,30 +56,32 @@ public class Neo4jMedicationExporter {
 						"MATCH (d)-[:" + DRUG_CONTAINS_INGREDIENT_LABEL + "]->(i:" + MMI_INGREDIENT_LABEL + ")-[:" + INGREDIENT_HAS_UNIT_LABEL + "]->(iu:" + UNIT_LABEL + ") " +
 						"MATCH (i)-[:" + INGREDIENT_IS_SUBSTANCE_LABEL + "]->(s:" + SUBSTANCE_LABEL + ") " +
 						"WITH p, d, df," +
-						"CASE WHEN de IS NOT NULL THEN " + groupCodingSystem("de", "dfcs", "name:de.name,") +
+						"CASE WHEN de IS NOT NULL THEN " + groupCodingSystem("de", "dfcs", "name:de.name," ) +
 						" ELSE null END AS edqmDoseForm, " +
 						"collect({" +
 						"substanceMmiId:s.mmiId," +
 						"substanceName:s.name," +
+						"isActive:i.isActive," +
 						"massFrom:i.massFrom," +
 						"massTo:i.massTo," +
-						"unitUcumCs:iu.ucumCs," +
-						"unitMmi:iu.mmiName," +
-						"unitPrint:iu.print" +
+						"unit:iu" +
 						"}) AS ingredients " +
 						"OPTIONAL MATCH (d)-[:" + DRUG_MATCHES_ATC_CODE_LABEL + "]->(a:" + ATC_LABEL + ")-[:" + BELONGS_TO_CODING_SYSTEM_LABEL + "]->(acs:" + CODING_SYSTEM_LABEL + ") " +
 						"WITH p, d, df, ingredients, collect(" + groupCodingSystem("a",
-						"acs") + ") AS atcCodes, edqmDoseForm " +
+						"acs" ) + ") AS atcCodes, edqmDoseForm " +
+						"OPTIONAL MATCH (d)-[:" + DRUG_HAS_UNIT_LABEL + "]->(du:" + UNIT_LABEL + ") " +
 						"WITH p, collect({" +
 						"ingredients:ingredients," +
 						"atcCodes:atcCodes," +
 						"mmiDoseForm:df.mmiName," +
-						"edqmDoseForm:edqmDoseForm" +
+						"edqmDoseForm:edqmDoseForm," +
+						"amount:d.amount," +
+						"unit:du" +
 						"}) AS drugs " +
 						"MATCH (pcs:" + CODING_SYSTEM_LABEL + ")<-[:" + BELONGS_TO_CODING_SYSTEM_LABEL + "]-(pc:" + CODE_LABEL + ")-->(p) " +
 						"RETURN p.name AS productName," +
 						"p.mmiId AS mmiId," +
-						"collect(" + groupCodingSystem("pc", "pcs") + ") AS productCodes," +
+						"collect(" + groupCodingSystem("pc", "pcs" ) + ") AS productCodes," +
 						"drugs"
 		));
 
@@ -90,18 +92,18 @@ public class Neo4jMedicationExporter {
 		Neo4jExportProduct exportProduct = new Neo4jExportProduct(record);
 
 		if (exportProduct.drugs.size() > 1) {
-			System.err.println("Skipping product '" + exportProduct.name + "', because it contains multiple drugs!");
+			System.err.println("Skipping product '" + exportProduct.name + "', because it contains multiple drugs!" );
 			return null;
 		}
 		if (exportProduct.drugs.isEmpty()) {
-			System.err.println("Skipping product '" + exportProduct.name + "', because it contains no drugs!");
+			System.err.println("Skipping product '" + exportProduct.name + "', because it contains no drugs!" );
 			return null;
 		}
 
 		Medication medication = new Medication();
 		Meta meta = new Meta();
 		// TODO Somehow reference my Graph DB in meta.source?
-		meta.source = new Uri("https://www.mmi.de/mmi-pharmindex/mmi-pharmindex-daten");
+		meta.source = new Uri("https://www.mmi.de/mmi-pharmindex/mmi-pharmindex-daten" );
 		medication.meta = meta;
 		medication.identifier = Identifier.fromMmiId(exportProduct.mmiId);
 
@@ -115,13 +117,13 @@ public class Neo4jMedicationExporter {
 		} else {
 			medication.form.text = drug.mmiDoseForm;
 		}
-		// TODO Amount of drug!
-		// medication.amount = ...
+
+		medication.amount = quantityFromMassAndUnit(drug.amount, drug.unit);
 
 		List<Ingredient> ingredients = drug.ingredients.stream().map(exportIngredient -> {
 			Ingredient ingredient = new Ingredient();
 			ingredient.item = new Item();
-			// TODO isActive!
+			ingredient.isActive = exportIngredient.isActive;
 			ingredient.item.itemReference = new SubstanceReference(exportIngredient.substanceMmiId,
 					exportIngredient.substanceName);
 			ingredient.strength = exportIngredient.getStrength();
@@ -148,9 +150,9 @@ public class Neo4jMedicationExporter {
 
 		Neo4jExportProduct(MapAccessorWithDefaultValue value) {
 			name = value.get("productName", (String) null);
-			mmiId = value.get("mmiId").asLong();
-			codes = value.get("productCodes").asList(Neo4jExportCode::new);
-			drugs = value.get("drugs").asList(Neo4jExportDrug::new);
+			mmiId = value.get("mmiId" ).asLong();
+			codes = value.get("productCodes" ).asList(Neo4jExportCode::new);
+			drugs = value.get("drugs" ).asList(Neo4jExportDrug::new);
 		}
 	}
 
@@ -159,17 +161,18 @@ public class Neo4jMedicationExporter {
 		final List<Neo4jExportCode> atcCodes;
 		final String mmiDoseForm;
 		final Neo4jExportEdqm edqmDoseForm;
+		final String amount;
+		final Neo4jExportUnit unit;
 
 		Neo4jExportDrug(MapAccessorWithDefaultValue value) {
-			ingredients = value.get("ingredients").asList(Neo4jExportIngredient::new);
-			atcCodes = value.get("atcCodes").asList(Neo4jExportCode::new);
+			ingredients = value.get("ingredients" ).asList(Neo4jExportIngredient::new);
+			atcCodes = value.get("atcCodes" ).asList(Neo4jExportCode::new);
 			mmiDoseForm = value.get("mmiDoseForm", (String) null);
-			Value edqm = value.get("edqmDoseForm");
-			if (edqm.isNull()) {
-				edqmDoseForm = null;
-			} else {
-				edqmDoseForm = new Neo4jExportEdqm(edqm);
-			}
+			Value edqm = value.get("edqmDoseForm" );
+			edqmDoseForm = edqm.isNull() ? null : new Neo4jExportEdqm(edqm);
+			amount = value.get("amount", (String) null);
+			Value vUnit = value.get("unit");
+			unit = vUnit.isNull() ? null : new Neo4jExportUnit(vUnit);
 		}
 	}
 
@@ -178,18 +181,17 @@ public class Neo4jMedicationExporter {
 		final String substanceName;
 		final String massFrom;
 		final String massTo;
-		final String unitUcumCs;
-		final String unitMmi;
-		final String unitPrint;
+		final boolean isActive;
+		final Neo4jExportUnit unit;
 
 		private Neo4jExportIngredient(MapAccessorWithDefaultValue value) {
-			substanceMmiId = value.get("substanceMmiId").asLong();
-			substanceName = value.get("substanceName").asString();
+			substanceMmiId = value.get("substanceMmiId" ).asLong();
+			substanceName = value.get("substanceName" ).asString();
+			isActive = value.get("isActive").asBoolean();
 			massFrom = replaceDecimalSeparator(value.get("massFrom", (String) null));
 			massTo = replaceDecimalSeparator(value.get("massTo", (String) null));
-			unitUcumCs = value.get("unitUcumCs", (String) null);
-			unitMmi = value.get("unitMmi", (String) null);
-			unitPrint = value.get("unitPrint", unitMmi);
+			Value vUnit = value.get("unit");
+			unit = vUnit.isNull() ? null : new Neo4jExportUnit(vUnit);
 		}
 
 		private String replaceDecimalSeparator(String value) {
@@ -200,31 +202,23 @@ public class Neo4jMedicationExporter {
 		}
 
 		public RatioOrQuantity getStrength() {
-			Quantity quantity = new Quantity();
-			if (massFrom == null) {
-				if (massTo == null) {
-					return null;
-				} else {
-					quantity.value = new BigDecimal(massTo);
-					quantity.setComparator(Quantity.Comparator.EXACT);
-				}
-			} else {
-				quantity.value = new BigDecimal(massFrom);
-				if (massTo == null) {
-					quantity.setComparator(Quantity.Comparator.EXACT);
-				} else {
-					quantity.setComparator(Quantity.Comparator.GREATER_OR_EQUAL);
-				}
-			}
+			return quantityFromMassFromToAndUnit(massFrom, massTo, unit);
+		}
+	}
 
-			quantity.unit = unitPrint;
+	private static class Neo4jExportUnit {
+		final String mmiCode;
+		final String mmiName;
+		final String ucumCs;
+		final String ucumCi;
+		final String print;
 
-			if (unitUcumCs != null) {
-				quantity.code = new Code(unitUcumCs);
-				quantity.system = new Uri("https://ucum.org/ucum");
-			}
-
-			return quantity;
+		private Neo4jExportUnit(MapAccessorWithDefaultValue value) {
+			mmiCode = value.get("mmiCode").asString();
+			mmiName = value.get("mmiName", (String) null);
+			ucumCs = value.get("ucumCs", (String) null);
+			ucumCi = value.get("ucumCi", (String) null);
+			print = value.get("unitPrint", mmiName);
 		}
 	}
 
@@ -268,7 +262,7 @@ public class Neo4jMedicationExporter {
 	 * value.
 	 */
 	private String groupCodingSystem(String codeVariableName, String codingSystemVariableName) {
-		return groupCodingSystem(codeVariableName, codingSystemVariableName, "");
+		return groupCodingSystem(codeVariableName, codingSystemVariableName, "" );
 	}
 
 	/**
@@ -284,6 +278,47 @@ public class Neo4jMedicationExporter {
 				SYSTEM_DATE + ":" + codingSystemVariableName + ".date," +
 				SYSTEM_VERSION + ":" + codingSystemVariableName + ".version" +
 				"}";
+	}
+
+	private static RatioOrQuantity quantityFromMassFromToAndUnit(String massFrom, String massTo, Neo4jExportUnit unit) {
+		Quantity quantity;
+		if (massFrom == null) {
+			if (massTo == null) {
+				return null;
+			} else {
+				quantity = quantityFromMassAndUnit(massTo, unit);
+				quantity.setComparator(Quantity.Comparator.EXACT);
+			}
+		} else {
+			quantity = quantityFromMassAndUnit(massFrom, unit);
+			if (massTo == null) {
+				quantity.setComparator(Quantity.Comparator.EXACT);
+			} else {
+				quantity.setComparator(Quantity.Comparator.GREATER_OR_EQUAL);
+			}
+		}
+		return quantity;
+	}
+
+	private static Quantity quantityFromMassAndUnit(String mass, Neo4jExportUnit unit) {
+		if (mass == null && unit == null) return null;
+
+		Quantity quantity = new Quantity();
+
+		if (mass != null) {
+			quantity.value = new BigDecimal(mass);
+			quantity.setComparator(Quantity.Comparator.EXACT);
+		}
+
+		if (unit != null) {
+			quantity.unit = unit.print;
+
+			if (unit.ucumCs != null) {
+				quantity.code = new Code(unit.ucumCs);
+				quantity.system = new Uri("https://ucum.org/ucum" );
+			}
+		}
+		return quantity;
 	}
 
 }

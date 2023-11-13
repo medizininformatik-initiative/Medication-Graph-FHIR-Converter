@@ -1,9 +1,6 @@
 package de.tum.med.aiim.markusbudeus.fhirexporter.resource.medication;
 
-import de.tum.med.aiim.markusbudeus.fhirexporter.resource.Code;
-import de.tum.med.aiim.markusbudeus.fhirexporter.resource.CodeableConcept;
-import de.tum.med.aiim.markusbudeus.fhirexporter.resource.Identifier;
-import de.tum.med.aiim.markusbudeus.fhirexporter.resource.Status;
+import de.tum.med.aiim.markusbudeus.fhirexporter.resource.*;
 
 public class Medication {
 
@@ -14,6 +11,7 @@ public class Medication {
 	private Code status = new Code(Status.ACTIVE.value);
 	// TODO Manufacturer omitted for now
 	public CodeableConcept form;
+	public RatioOrQuantity amount;
 	public Ingredient[] ingredient;
 	// Batch omitted due to not easily doable
 
