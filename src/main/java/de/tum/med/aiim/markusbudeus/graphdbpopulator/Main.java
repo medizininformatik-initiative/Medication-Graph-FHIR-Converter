@@ -4,22 +4,27 @@ import de.tum.med.aiim.markusbudeus.graphdbpopulator.loaders.*;
 import org.neo4j.driver.Session;
 
 import java.io.IOException;
+import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
 
 public class Main {
 
 	public static void main(String[] args) throws IOException, InterruptedException {
-		runMigrators(true);
+		runMigrators();
 	}
 
-	public static void runMigrators(boolean includeInn) throws IOException, InterruptedException {
+	public static void runMigrators() throws IOException, InterruptedException {
 		try (DatabaseConnection connection = new DatabaseConnection();
 		     Session session = connection.createSession()) {
 
 			long time = System.currentTimeMillis();
 
 			List<Loader> loaders = new ArrayList<>();
+
+			new AmiceStoffBezLoader(session).execute();
+
+			if (true) return;
 
 			// Unit nodes and UCUM definitions
 			loaders.add(new UnitLoader(session));
@@ -37,10 +42,8 @@ public class Main {
 			loaders.add(new ProductLoader(session));
 			// PZN nodes and their relations with Product nodes
 			loaders.add(new PznLoader(session));
-			if (includeInn) {
-				// INN nodes and relations to CAS nodes
-				loaders.add(new InnLoader(session));
-			}
+			// INN and CAS nodes
+			loaders.add(new AmiceStoffBezLoader(session));
 			// Manufacturer nodes
 			loaders.add(new CompanyLoader(session));
 			// Manufacturer Address nodes

@@ -315,7 +315,7 @@ public class Neo4jMedicationExporter {
 
 			if (unit.ucumCs != null) {
 				quantity.code = new Code(unit.ucumCs);
-				quantity.system = new Uri("https://ucum.org/ucum" );
+				quantity.system = new Uri("http://unitsofmeasure.org" );
 			}
 		}
 		return quantity;

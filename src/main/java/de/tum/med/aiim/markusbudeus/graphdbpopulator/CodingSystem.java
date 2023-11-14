@@ -48,15 +48,35 @@ public enum CodingSystem {
 					"data used to instantiate this database may have been older than that.",
 			ASK_LABEL
 	),
+	//		INN(
+//			"https://www.who.int/teams/health-product-and-policy-standards/inn",
+//			"International Nonproprietary Name",
+//			LocalDate.of(2023, 8, 28),
+//			null,
+//			"The INN data has been retrieved from " +
+//					"https://www.wcoomd.org/en/topics/nomenclature/instrument-and-tools/tools-to-assist-with-the-classification-in-the-hs/hs_classification-decisions/inn-table.aspx " +
+//					"on the specified date.",
+//			INN_LABEL
+//	);
 	INN(
 			"https://www.who.int/teams/health-product-and-policy-standards/inn",
 			"International Nonproprietary Name",
-			LocalDate.of(2023, 8, 28),
+			LocalDate.of(2023, 1, 17),
 			null,
 			"The INN data has been retrieved from " +
-					"https://www.wcoomd.org/en/topics/nomenclature/instrument-and-tools/tools-to-assist-with-the-classification-in-the-hs/hs_classification-decisions/inn-table.aspx " +
-					"on the specified date.",
+					"https://www.bfarm.de/DE/Arzneimittel/Arzneimittelinformationen/Arzneimittel-recherchieren/Stoffbezeichnungen/_node.html " +
+					"and has the version of the specified date.",
 			INN_LABEL
+	),
+	CAS(
+			"https://www.cas.org/cas-data/cas-registry",
+			"Chemical Abstracts Service Registry Number®",
+			LocalDate.of(2023, 1, 17),
+			null,
+			"The CAS data has been retrieved from " +
+					"https://www.bfarm.de/DE/Arzneimittel/Arzneimittelinformationen/Arzneimittel-recherchieren/Stoffbezeichnungen/_node.html " +
+					"and has the version of the specified date.",
+			CAS_LABEL
 	);
 
 	/**
