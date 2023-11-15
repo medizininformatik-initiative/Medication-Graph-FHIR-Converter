@@ -15,26 +15,25 @@ import java.util.stream.Stream;
 
 import static de.tum.med.aiim.markusbudeus.graphdbpopulator.DatabaseDefinitions.*;
 
-public class Neo4jSubstanceExporter {
+public class Neo4jSubstanceExporter extends Neo4jExporter<Substance> {
 
 	private static final String CODE = "code";
 	private static final String SYSTEM_URI = "uri";
 	private static final String SYSTEM_DATE = "date";
 	private static final String SYSTEM_VERSION = "version";
 
-	private final Session session;
-
 	public Neo4jSubstanceExporter(Session session) {
-		this.session = session;
+		super(session);
 	}
 
 	/**
 	 * Reads all substances with their assigned codes and coding systems from the database and returns them as a stream
 	 * of {@link Substance Substances}.
 	 */
-	public Stream<Substance> loadSubstances() {
+	@Override
+	public Stream<Substance> exportObjects() {
 		Result result = session.run(new Query(
-				"MATCH (s:" + SUBSTANCE_LABEL + ") " +
+				"MATCH (s:" + SUBSTANCE_LABEL + " {name: 'Midazolam hydrochlorid'}) " +
 						"MATCH (cs:" + CODING_SYSTEM_LABEL + ")<-[:" + BELONGS_TO_CODING_SYSTEM_LABEL + "]-(c:" + CODE_LABEL + ")-->(s) " +
 						"WITH s, collect({" +
 						CODE + ":c.code," +

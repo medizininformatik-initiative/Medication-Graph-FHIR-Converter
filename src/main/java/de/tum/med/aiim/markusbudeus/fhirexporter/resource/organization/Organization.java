@@ -8,9 +8,9 @@ public class Organization {
 	public boolean active = true;
 	// type omitted
 	public String name;
-	public String[] alias;
+	public String[] alias = new String[0];
 	// telecom omitted
-	public Address[] address;
+	public Address[] address = new Address[0];
 	// partOf omitted
 	// contact omitted
 	// endpoint omitted

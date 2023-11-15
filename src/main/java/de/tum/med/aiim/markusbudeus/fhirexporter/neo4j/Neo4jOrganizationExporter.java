@@ -1,39 +1,34 @@
 package de.tum.med.aiim.markusbudeus.fhirexporter.neo4j;
 
-import de.tum.med.aiim.markusbudeus.fhirexporter.resource.CodeableConcept;
-import de.tum.med.aiim.markusbudeus.fhirexporter.resource.Coding;
 import de.tum.med.aiim.markusbudeus.fhirexporter.resource.Identifier;
 import de.tum.med.aiim.markusbudeus.fhirexporter.resource.organization.Address;
 import de.tum.med.aiim.markusbudeus.fhirexporter.resource.organization.Organization;
-import de.tum.med.aiim.markusbudeus.fhirexporter.resource.substance.Substance;
 import org.neo4j.driver.Query;
 import org.neo4j.driver.Record;
 import org.neo4j.driver.Result;
 import org.neo4j.driver.Session;
 import org.neo4j.driver.types.MapAccessorWithDefaultValue;
 
-import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Stream;
 
 import static de.tum.med.aiim.markusbudeus.graphdbpopulator.DatabaseDefinitions.*;
 
-public class Neo4jOrganizationExporter {
-	private final Session session;
+public class Neo4jOrganizationExporter extends Neo4jExporter<Organization> {
 
 	public Neo4jOrganizationExporter(Session session) {
-		this.session = session;
+		super(session);
 	}
 
 	/**
 	 * Reads all manufacturers from the database and returns them as a stream of {@link Organization Organizations}.
 	 */
-	public Stream<Organization> loadOrganizations() {
-
+	@Override
+	public Stream<Organization> exportObjects() {
 		Result result = session.run(new Query(
-				"MATCH (s:" + COMPANY_LABEL + ") " +
+				"MATCH (s:" + COMPANY_LABEL + "{mmiId: 16227}) " +
 						"OPTIONAL MATCH (s)-[:" + COMPANY_HAS_ADDRESS_LABEL + "]-(a:" + ADDRESS_LABEL + ") " +
-						"RETURN s.mmiId, s.name, s.shortName, collect({" +
+						"RETURN s.mmiId AS mmiId, s.name AS name, s.shortName AS shortName, collect({" +
 						"street:a.street," +
 						"streetNumber:a.streetNumber," +
 						"postalCode:a.postalCode," +
@@ -42,7 +37,7 @@ public class Neo4jOrganizationExporter {
 						"countryCode:a.countryCode" +
 						"}) as addresses"
 		));
-		return null;
+		return result.stream().map(Neo4jOrganizationExporter::toOrganization);
 	}
 
 	private static Organization toOrganization(Record record) {
@@ -50,11 +45,19 @@ public class Neo4jOrganizationExporter {
 
 		Organization organization = new Organization();
 		organization.active = true;
-		Address address = new Address();
-		address.setUse(Address.Use.WORK);
+		organization.name = exportOrganisation.name;
+		organization.identifier = Identifier.fromMmiId(exportOrganisation.mmiId);
+		if (exportOrganisation.shortName != null && !exportOrganisation.shortName.equals(exportOrganisation.name)) {
+			organization.alias = new String[]{exportOrganisation.shortName};
+		}
 
-		// TODO
-		return null;
+		organization.address = 		exportOrganisation.addresses
+				.stream()
+				.map(Neo4jExportAddress::toCompanyAddress)
+				.toList()
+				.toArray(new Address[0]);
+
+		return organization;
 	}
 
 	private static class Neo4jExportOrganisation {
@@ -86,6 +89,23 @@ public class Neo4jOrganizationExporter {
 			city = value.get("city", (String) null);
 			country = value.get("country", (String) null);
 			countryCode = value.get("countryCode", (String) null);
+		}
+
+		public Address toCompanyAddress() {
+			Address address = new Address();
+			address.setUse(Address.Use.WORK);
+
+			String line = null;
+			if (street != null) {
+				if (streetNumber != null) {
+					line = street + " " + streetNumber;
+				} else {
+					line = street;
+				}
+			}
+
+			address.setAddress(new String[] { line }, postalCode, city, country);
+			return address;
 		}
 
 	}

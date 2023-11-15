@@ -5,7 +5,7 @@ import de.tum.med.aiim.markusbudeus.fhirexporter.resource.Uri;
 
 public class Meta {
 
-	public long versionId;
+	// versionId omitted
 	// lastUpdated omitted
 	public Uri source;
 	// TODO profile??

@@ -7,7 +7,7 @@ import static de.tum.med.aiim.markusbudeus.graphdbpopulator.DatabaseDefinitions.
 public enum CodingSystem {
 
 	EDQM(
-			"standardterms.edqm.eu",
+			"https://standardterms.edqm.eu",
 			"EDQM Standard Terms database",
 			LocalDate.of(2023, 10, 16),
 			null,
