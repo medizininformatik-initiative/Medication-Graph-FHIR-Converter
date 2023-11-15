@@ -5,6 +5,7 @@ import de.tum.med.aiim.markusbudeus.fhirexporter.resource.medication.Ingredient;
 import de.tum.med.aiim.markusbudeus.fhirexporter.resource.medication.Item;
 import de.tum.med.aiim.markusbudeus.fhirexporter.resource.medication.Medication;
 import de.tum.med.aiim.markusbudeus.fhirexporter.resource.medication.Meta;
+import de.tum.med.aiim.markusbudeus.fhirexporter.resource.organization.OrganizationReference;
 import de.tum.med.aiim.markusbudeus.fhirexporter.resource.substance.Substance;
 import de.tum.med.aiim.markusbudeus.fhirexporter.resource.substance.SubstanceReference;
 import org.neo4j.driver.Record;
@@ -70,7 +71,8 @@ public class Neo4jMedicationExporter extends Neo4jExporter<Medication> {
 						"OPTIONAL MATCH (c:" + COMPANY_LABEL + ")-[:" + MANUFACTURES_LABEL + "]->(p) " +
 						"RETURN p.name AS productName," +
 						"p.mmiId AS mmiId," +
-						"c.mmiId AS companyMmiId,"+
+						"c.mmiId AS companyMmiId," +
+						"c.name AS companyName,"+
 						"collect(" + groupCodingSystem("pc", "pcs") + ") AS productCodes," +
 						"drugs"
 		));
@@ -129,6 +131,10 @@ public class Neo4jMedicationExporter extends Neo4jExporter<Medication> {
 		medication.code.coding = codings.toArray(new Coding[0]);
 		medication.code.text = exportProduct.name;
 
+		if (exportProduct.companyMmiId != null) {
+			medication.manufacturer = new OrganizationReference(exportProduct.companyMmiId, exportProduct.companyName);
+		}
+
 		return medication;
 	}
 
@@ -136,6 +142,7 @@ public class Neo4jMedicationExporter extends Neo4jExporter<Medication> {
 		final String name;
 		final long mmiId;
 		final Long companyMmiId;
+		final String companyName;
 		final List<Neo4jExportCode> codes;
 		final List<Neo4jExportDrug> drugs;
 
@@ -143,6 +150,7 @@ public class Neo4jMedicationExporter extends Neo4jExporter<Medication> {
 			name = value.get("productName", (String) null);
 			mmiId = value.get("mmiId").asLong();
 			companyMmiId = (Long) value.get("companyMmiId", (Long) 0L);
+			companyName = value.get("companyName", (String) null);
 			codes = value.get("productCodes").asList(Neo4jExportCode::new);
 			drugs = value.get("drugs").asList(Neo4jExportDrug::new);
 		}

@@ -9,7 +9,7 @@ public class Medication {
 	public Identifier identifier;
 	public CodeableConcept code;
 	private Code status = new Code(Status.ACTIVE.value);
-	private Reference manufacturer;
+	public Reference manufacturer;
 	public CodeableConcept form;
 	public RatioOrQuantity amount;
 	public Ingredient[] ingredient;

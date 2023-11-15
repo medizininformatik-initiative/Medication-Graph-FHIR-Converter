@@ -4,7 +4,7 @@ public class Identifier {
 
 	public static Identifier fromMmiId(long mmiId) {
 		return new Identifier(
-				Identifier.Use.USUAL,
+				Use.TEMP,
 				null,
 				new Uri("https://www.mmi.de/mmi-pharmindex/mmi-pharmindex-daten"),
 				String.valueOf(mmiId)
