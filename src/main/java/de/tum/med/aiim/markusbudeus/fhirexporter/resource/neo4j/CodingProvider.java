@@ -1,13 +1,8 @@
-package de.tum.med.aiim.markusbudeus.fhirexporter.neo4j;
+package de.tum.med.aiim.markusbudeus.fhirexporter.resource.neo4j;
 
-import de.tum.med.aiim.markusbudeus.fhirexporter.resource.Code;
 import de.tum.med.aiim.markusbudeus.fhirexporter.resource.Coding;
-import de.tum.med.aiim.markusbudeus.fhirexporter.resource.Uri;
 import de.tum.med.aiim.markusbudeus.graphdbpopulator.CodingSystem;
-import io.netty.handler.codec.DateFormatter;
-import org.neo4j.driver.Session;
 
-import java.text.DateFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Objects;
@@ -29,7 +24,7 @@ public class CodingProvider {
 
 	public static Coding createCodingTemplate(String systemUri, String systemVersion, LocalDate systemDate) {
 		Coding coding = new Coding();
-		coding.system = new Uri(systemUri);
+		coding.system = systemUri;
 
 		if (systemDate == null) {
 			coding.version = systemVersion;
@@ -43,7 +38,7 @@ public class CodingProvider {
 
 	public static Coding createCoding(String value, String systemUri, String systemVersion, LocalDate systemDate) {
 		Coding coding = createCodingTemplate(systemUri, systemVersion, systemDate);
-		coding.code = new Code(value);
+		coding.code = value;
 		coding.display = value;
 		return coding;
 	}

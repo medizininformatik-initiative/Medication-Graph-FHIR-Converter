@@ -7,7 +7,7 @@ public class Meta {
 
 	// versionId omitted
 	// lastUpdated omitted
-	public Uri source;
+	public String source;
 	// TODO profile??
 	// Security omitted
 	public Coding tag;

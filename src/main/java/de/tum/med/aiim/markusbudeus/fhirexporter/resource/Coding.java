@@ -4,10 +4,14 @@ import java.net.URI;
 
 public class Coding {
 
-	public Uri system;
+	public String system;
 	public String version;
-	public Code code;
+	public String code;
 	public String display;
 	public boolean userSelected = false;
+
+	public void setSystem(Uri system) {
+		this.system = system != null ? system.value : null;
+	}
 
 }

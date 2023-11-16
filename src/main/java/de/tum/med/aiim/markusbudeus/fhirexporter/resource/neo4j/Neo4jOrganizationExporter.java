@@ -1,4 +1,4 @@
-package de.tum.med.aiim.markusbudeus.fhirexporter.neo4j;
+package de.tum.med.aiim.markusbudeus.fhirexporter.resource.neo4j;
 
 import de.tum.med.aiim.markusbudeus.fhirexporter.resource.Identifier;
 import de.tum.med.aiim.markusbudeus.fhirexporter.resource.organization.Address;
@@ -46,7 +46,7 @@ public class Neo4jOrganizationExporter extends Neo4jExporter<Organization> {
 		Organization organization = new Organization();
 		organization.active = true;
 		organization.name = exportOrganisation.name;
-		organization.identifier = Identifier.fromMmiId(exportOrganisation.mmiId);
+		organization.identifier = Identifier.fromOrganizationMmiId(exportOrganisation.mmiId);
 		if (exportOrganisation.shortName != null && !exportOrganisation.shortName.equals(exportOrganisation.name)) {
 			organization.alias = new String[]{exportOrganisation.shortName};
 		}

@@ -1,4 +1,4 @@
-package de.tum.med.aiim.markusbudeus.fhirexporter.neo4j;
+package de.tum.med.aiim.markusbudeus.fhirexporter.resource.neo4j;
 
 import de.tum.med.aiim.markusbudeus.fhirexporter.resource.CodeableConcept;
 import de.tum.med.aiim.markusbudeus.fhirexporter.resource.Coding;
@@ -51,7 +51,7 @@ public class Neo4jSubstanceExporter extends Neo4jExporter<Substance> {
 	private static Substance toSubstance(Record record) {
 		Substance substance = new Substance();
 
-		substance.identifier = Identifier.fromMmiId(record.get(1).asLong());
+		substance.identifier = new Identifier[] { Identifier.fromSubstanceMmiId(record.get(1).asLong()) };
 		substance.description = record.get(0).asString(); // Substance name
 
 		CodeableConcept codeableConcept = new CodeableConcept();

@@ -8,7 +8,7 @@ public class OrganizationReference extends Reference {
 
 	public OrganizationReference(long manufacturerMmiId, String manufacturerName) {
 		super(new Uri("http://hl7.org/fhir/StructureDefinition/Organization"));
-		this.identifier = Identifier.fromMmiId(manufacturerMmiId);
+		this.identifier = Identifier.fromOrganizationMmiId(manufacturerMmiId);
 		this.display = manufacturerName;
 	}
 

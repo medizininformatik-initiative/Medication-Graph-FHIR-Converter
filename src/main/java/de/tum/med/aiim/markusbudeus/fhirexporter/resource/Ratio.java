@@ -2,7 +2,32 @@ package de.tum.med.aiim.markusbudeus.fhirexporter.resource;
 
 public class Ratio implements RatioOrQuantity {
 
-	public Quantity numerator;
-	public Quantity denominator;
+	public final Quantity numerator;
+	public final Quantity denominator;
 
+	public Ratio(Quantity numerator, Quantity denominator) {
+		if (numerator == null || denominator == null) {
+			throw new NullPointerException("The numerator and denominator may not be null!");
+		}
+		this.numerator = numerator;
+		this.denominator = denominator;
+	}
+
+	@Override
+	public RatioOrQuantity plus(RatioOrQuantity other) {
+		Quantity resultNumerator = null;
+		Quantity resultDenominator = null;
+		if (other instanceof Quantity) {
+			resultNumerator = numerator.plus((Quantity) other);
+			resultDenominator = denominator;
+		} else if (other instanceof Ratio) {
+			resultNumerator = numerator.plus(((Ratio) other).numerator);
+			resultDenominator = denominator.plus(((Ratio) other).denominator);
+		}
+
+		if (resultNumerator != null && resultDenominator != null) {
+			return new Ratio(resultNumerator, resultDenominator);
+		}
+		return null;
+	}
 }

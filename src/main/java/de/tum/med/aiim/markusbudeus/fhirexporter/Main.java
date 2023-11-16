@@ -2,10 +2,10 @@ package de.tum.med.aiim.markusbudeus.fhirexporter;
 
 import de.tum.med.aiim.markusbudeus.fhirexporter.json.GsonExporter;
 import de.tum.med.aiim.markusbudeus.fhirexporter.json.JsonExporter;
-import de.tum.med.aiim.markusbudeus.fhirexporter.neo4j.Neo4jExporter;
-import de.tum.med.aiim.markusbudeus.fhirexporter.neo4j.Neo4jMedicationExporter;
-import de.tum.med.aiim.markusbudeus.fhirexporter.neo4j.Neo4jOrganizationExporter;
-import de.tum.med.aiim.markusbudeus.fhirexporter.neo4j.Neo4jSubstanceExporter;
+import de.tum.med.aiim.markusbudeus.fhirexporter.resource.neo4j.Neo4jExporter;
+import de.tum.med.aiim.markusbudeus.fhirexporter.resource.neo4j.Neo4jMedicationExporter;
+import de.tum.med.aiim.markusbudeus.fhirexporter.resource.neo4j.Neo4jOrganizationExporter;
+import de.tum.med.aiim.markusbudeus.fhirexporter.resource.neo4j.Neo4jSubstanceExporter;
 import de.tum.med.aiim.markusbudeus.graphdbpopulator.DatabaseConnection;
 import org.neo4j.driver.Session;
 
@@ -26,18 +26,23 @@ public class Main {
 		     Session session = connection.createSession()) {
 
 			exportToJsonFiles(new Neo4jSubstanceExporter(session), SUBSTANCE_OUT_PATH,
-					substance -> substance.identifier.value + " " + substance.description);
+					substance -> appendPart2UnlessNull(substance.identifier[0].value, substance.description));
 			exportToJsonFiles(new Neo4jMedicationExporter(session), MEDICATION_OUT_PATH,
-					medication -> medication.identifier.value + " " + medication.code.text);
+					medication -> appendPart2UnlessNull(medication.identifier[0].value,medication.code.text));
 			exportToJsonFiles(new Neo4jOrganizationExporter(session), ORGANIZATION_OUT_PATH,
 					organization -> {
 						String name;
 						if (organization.alias != null && organization.alias.length > 0) {
 							name = organization.alias[0];
 						} else name = organization.name;
-						return organization.identifier.value + " " + name;
+						return appendPart2UnlessNull(organization.identifier.value, name);
 					});
 		}
+	}
+
+	private static String appendPart2UnlessNull(String part1, String part2) {
+		if (part2 == null) return part1;
+		return part1 + " " + part2;
 	}
 
 	/**

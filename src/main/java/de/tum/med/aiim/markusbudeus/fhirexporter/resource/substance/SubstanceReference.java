@@ -10,7 +10,7 @@ public class SubstanceReference extends Reference {
 
 	public SubstanceReference(long substanceMmiId, String substanceName) {
 		super(new Uri("http://hl7.org/fhir/StructureDefinition/Substance"));
-		this.identifier = Identifier.fromMmiId(substanceMmiId);
+		this.identifier = Identifier.fromSubstanceMmiId(substanceMmiId);
 		this.display = substanceName;
 	}
 

@@ -1,12 +1,10 @@
 package de.tum.med.aiim.markusbudeus.fhirexporter.resource.organization;
 
-import de.tum.med.aiim.markusbudeus.fhirexporter.resource.Code;
-
 public class Address {
 
 
-	private Code use;
-	private Code type;
+	private String use;
+	private String type;
 	private String text = "";
 
 	private String[] line;
@@ -14,17 +12,17 @@ public class Address {
 	private String city;
 	private String country;
 
-	public Code getUse() {
+	public String getUse() {
 		return use;
 	}
 	public void setUse(Use use) {
-		this.use = new Code(use.toString().toLowerCase());
+		this.use = use.toString().toLowerCase();
 	}
-	public Code getType() {
+	public String getType() {
 		return type;
 	}
 	public void setType(Type type) {
-		this.type = new Code(type.toString().toLowerCase());
+		this.type = type.toString().toLowerCase();
 	}
 	public String getText() {
 		return text;
