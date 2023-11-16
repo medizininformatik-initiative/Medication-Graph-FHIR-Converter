@@ -2,10 +2,10 @@ package de.tum.med.aiim.markusbudeus.fhirexporter;
 
 import de.tum.med.aiim.markusbudeus.fhirexporter.json.GsonExporter;
 import de.tum.med.aiim.markusbudeus.fhirexporter.json.JsonExporter;
-import de.tum.med.aiim.markusbudeus.fhirexporter.resource.neo4j.Neo4jExporter;
-import de.tum.med.aiim.markusbudeus.fhirexporter.resource.neo4j.Neo4jMedicationExporter;
-import de.tum.med.aiim.markusbudeus.fhirexporter.resource.neo4j.Neo4jOrganizationExporter;
-import de.tum.med.aiim.markusbudeus.fhirexporter.resource.neo4j.Neo4jSubstanceExporter;
+import de.tum.med.aiim.markusbudeus.fhirexporter.neo4j.Neo4jExporter;
+import de.tum.med.aiim.markusbudeus.fhirexporter.neo4j.Neo4jMedicationExporter;
+import de.tum.med.aiim.markusbudeus.fhirexporter.neo4j.Neo4jOrganizationExporter;
+import de.tum.med.aiim.markusbudeus.fhirexporter.neo4j.Neo4jSubstanceExporter;
 import de.tum.med.aiim.markusbudeus.graphdbpopulator.DatabaseConnection;
 import org.neo4j.driver.Session;
 

@@ -1,4 +1,4 @@
-package de.tum.med.aiim.markusbudeus.fhirexporter.resource.neo4j;
+package de.tum.med.aiim.markusbudeus.fhirexporter.neo4j;
 
 import de.tum.med.aiim.markusbudeus.fhirexporter.resource.Coding;
 import de.tum.med.aiim.markusbudeus.graphdbpopulator.CodingSystem;

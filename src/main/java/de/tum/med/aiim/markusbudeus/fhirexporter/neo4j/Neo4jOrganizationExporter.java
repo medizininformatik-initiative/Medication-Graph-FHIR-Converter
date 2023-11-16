@@ -1,4 +1,4 @@
-package de.tum.med.aiim.markusbudeus.fhirexporter.resource.neo4j;
+package de.tum.med.aiim.markusbudeus.fhirexporter.neo4j;
 
 import de.tum.med.aiim.markusbudeus.fhirexporter.resource.Identifier;
 import de.tum.med.aiim.markusbudeus.fhirexporter.resource.organization.Address;
