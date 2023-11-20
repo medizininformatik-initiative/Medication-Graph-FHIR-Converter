@@ -27,15 +27,15 @@ public class DatabaseDefinitions {
 	public static final String DRUG_MATCHES_ATC_CODE_LABEL = "MATCHES";
 	public static final String INGREDIENT_IS_SUBSTANCE_LABEL = "IS_SUBSTANCE";
 	public static final String INGREDIENT_CORRESPONDS_TO_LABEL = "CORRESPONDS_TO";
-
 	public static final String INGREDIENT_HAS_UNIT_LABEL = "HAS_UNIT";
 	public static final String DRUG_HAS_UNIT_LABEL = "HAS_UNIT";
 	public static final String DRUG_HAS_DOSE_FORM_LABEL = "HAS_DOSE_FORM";
-
 	public static final String UNIT_LABEL = "Unit";
 	public static final String DOSE_FORM_LABEL = "DoseForm";
 	public static final String UCUM_LABEL = "UCUM";
 	public static final String EDQM_LABEL = "EDQM";
 	public static final String DOSE_FORM_IS_EDQM = "CORRESPONDS_TO";
+	public static final String SYNONYME_LABEL = "Synonyme";
+	public static final String SYNONYME_REFERENCES_NODE_LABEL = "REFERENCES";
 
 }

@@ -4,7 +4,6 @@ import de.tum.med.aiim.markusbudeus.graphdbpopulator.loaders.*;
 import org.neo4j.driver.Session;
 
 import java.io.IOException;
-import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,11 +20,6 @@ public class Main {
 			long time = System.currentTimeMillis();
 
 			List<Loader> loaders = new ArrayList<>();
-
-			new SubstanceLoader(session).execute();
-			new AmiceStoffBezLoader(session).execute();
-
-			if (true) return;
 
 			// Unit nodes and UCUM definitions
 			loaders.add(new UnitLoader(session));

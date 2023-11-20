@@ -19,6 +19,9 @@ public abstract class CsvLoader extends Loader {
 	 * The variable name assigned to the current CSV row for the LOAD CSV statement.
 	 */
 	protected static final String ROW_IDENTIFIER = "row";
+
+	protected static final char DEFAULT_FIELD_TERMINATOR = ';';
+
 	private final Path path;
 
 	/**
@@ -50,7 +53,7 @@ public abstract class CsvLoader extends Loader {
 	 * @return a full Cypher statement
 	 */
 	public String withLoadStatement(String statement) {
-		return withLoadStatement(statement, ';');
+		return withLoadStatement(statement, DEFAULT_FIELD_TERMINATOR);
 	}
 
 	/**
@@ -61,10 +64,33 @@ public abstract class CsvLoader extends Loader {
 	 * @return a full Cypher statement
 	 */
 	public String withLoadStatement(String statement, char fieldTerminator) {
-		return "LOAD CSV WITH HEADERS FROM '" + getCypherFilePath() + "'"
+		return withLoadStatement(statement, fieldTerminator, true);
+	}
+
+	/**
+	 * Creates the LOAD CSV statement and appends the given statement.
+	 *
+	 * @param statement       the statement to execute for each row
+	 * @param fieldTerminator the field terminator to use when reading the CSV file
+	 * @param withHeaders     if true, the CSV file is loaded with headers so you can access colums by name instead of
+	 *                        index
+	 * @return a full Cypher statement
+	 */
+	public String withLoadStatement(String statement, char fieldTerminator, boolean withHeaders) {
+		return "LOAD CSV " + (withHeaders ? "WITH HEADERS " : "") + "FROM '" + getCypherFilePath() + "'"
 				+ " AS " + ROW_IDENTIFIER
 				+ " FIELDTERMINATOR '" + fieldTerminator + "' "
 				+ statement;
+	}
+
+	/**
+	 * Accesses a row entry by index. Only works if the CSV file was loaded without headers.
+	 *
+	 * @param index the index of the row to access
+	 * @return a Cypher expression to access the corresponding index of the current row
+	 */
+	public String row(int index) {
+		return ROW_IDENTIFIER + "[" + index + "]";
 	}
 
 	/**
