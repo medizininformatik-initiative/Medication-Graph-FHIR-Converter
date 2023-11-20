@@ -22,6 +22,7 @@ public class Main {
 
 			List<Loader> loaders = new ArrayList<>();
 
+			new SubstanceLoader(session).execute();
 			new AmiceStoffBezLoader(session).execute();
 
 			if (true) return;
