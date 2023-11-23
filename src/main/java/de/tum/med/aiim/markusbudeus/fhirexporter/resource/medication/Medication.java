@@ -5,6 +5,7 @@ import de.tum.med.aiim.markusbudeus.fhirexporter.resource.*;
 public class Medication {
 
 	// id omitted
+	public final String resourceType = "Medication";
 	public Meta meta;
 	public Identifier[] identifier;
 	public CodeableConcept code;

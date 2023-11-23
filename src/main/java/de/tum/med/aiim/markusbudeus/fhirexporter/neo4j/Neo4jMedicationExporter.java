@@ -55,7 +55,7 @@ public class Neo4jMedicationExporter extends Neo4jExporter<Medication> {
 						"}) AS ingredients " +
 						"OPTIONAL MATCH (d)-[:" + DRUG_MATCHES_ATC_CODE_LABEL + "]->(a:" + ATC_LABEL + ")-[:" + BELONGS_TO_CODING_SYSTEM_LABEL + "]->(acs:" + CODING_SYSTEM_LABEL + ") " +
 						"WITH p, d, df, ingredients, " +
-						"collect(" + groupCodingSystem("a","acs", "description:a.description") +
+						"collect(" + groupCodingSystem("a", "acs", "description:a.description") +
 						") AS atcCodes, edqmDoseForm " +
 						"OPTIONAL MATCH (d)-[:" + DRUG_HAS_UNIT_LABEL + "]->(du:" + UNIT_LABEL + ") " +
 						"WITH p, collect({" +
@@ -140,6 +140,7 @@ public class Neo4jMedicationExporter extends Neo4jExporter<Medication> {
 		Medication medication = new Medication();
 		Meta meta = new Meta();
 		// TODO Somehow reference my Graph DB in meta.source?
+		meta.profile = new String[]{"https://www.medizininformatik-initiative.de/fhir/core/modul-medikation/StructureDefinition/Medication"};
 		meta.source = "https://www.mmi.de/mmi-pharmindex/mmi-pharmindex-daten";
 		medication.meta = meta;
 		return medication;

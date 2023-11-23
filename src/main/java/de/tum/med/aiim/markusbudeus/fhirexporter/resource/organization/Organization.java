@@ -4,6 +4,7 @@ import de.tum.med.aiim.markusbudeus.fhirexporter.resource.Identifier;
 
 public class Organization {
 
+	public final String resourceType = "Organization";
 	public Identifier identifier;
 	public boolean active = true;
 	// type omitted

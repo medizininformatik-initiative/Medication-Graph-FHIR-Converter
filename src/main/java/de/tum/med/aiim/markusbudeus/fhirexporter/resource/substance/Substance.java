@@ -6,6 +6,7 @@ import de.tum.med.aiim.markusbudeus.fhirexporter.resource.Status;
 
 public class Substance {
 
+	public final String resourceType = "Substance";
 	public Identifier[] identifier;
 	private String  status = Status.ACTIVE.value;
 	public CodeableConcept[] category;
