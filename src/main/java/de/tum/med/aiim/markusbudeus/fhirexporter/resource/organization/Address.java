@@ -59,7 +59,7 @@ public class Address {
 			textBuilder.append("\n");
 		}
 		if (!textBuilder.isEmpty()) {
-			textBuilder.delete(textBuilder.length() - 2, textBuilder.length());
+			textBuilder.delete(textBuilder.length() - 1, textBuilder.length());
 		}
 		text = textBuilder.toString();
 	}
