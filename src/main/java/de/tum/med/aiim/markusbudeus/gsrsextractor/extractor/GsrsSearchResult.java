@@ -1,4 +1,4 @@
-package de.tum.med.aiim.markusbudeus.gsrsextractor;
+package de.tum.med.aiim.markusbudeus.gsrsextractor.extractor;
 
 public abstract class GsrsSearchResult {
 

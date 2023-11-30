@@ -1,6 +1,7 @@
-package de.tum.med.aiim.markusbudeus.gsrsextractor;
+package de.tum.med.aiim.markusbudeus.gsrsextractor.extractor;
 
 import de.tum.med.aiim.markusbudeus.graphdbpopulator.DatabaseConnection;
+import de.tum.med.aiim.markusbudeus.gsrsextractor.GsrsApiClient;
 import org.neo4j.driver.Result;
 import org.neo4j.driver.Session;
 
@@ -11,10 +12,14 @@ import java.util.Iterator;
 
 import static de.tum.med.aiim.markusbudeus.graphdbpopulator.DatabaseDefinitions.*;
 
-public class Main {
+/**
+ * This class extracts all primary CAS codes from the Neo4j database and looks them up in the GSRS api. The results are
+ * stored to a csv file.
+ */
+public class GsrsExtractor {
 
+	public static final String OUT_FILE = "output" + File.separator + "gsrs_matches.csv";
 	private static final int CONTINUE_AT = 1; // 1 for restart
-	private static final int REQUEST_INTERVAL = 300;
 
 	public static void main(String[] args) throws IOException, InterruptedException {
 
@@ -31,27 +36,28 @@ public class Main {
 			Iterator<GsrsResult> resultIterator = result
 					.stream()
 					.map(record -> {
+						GsrsSearchResult sr;
 						try {
-							return new GsrsResult(record.get(0).asLong(),
-									client.findSubstanceByCas(record.get(1).asString()));
+							sr = client.findSubstanceByCas(record.get(1).asString());
 						} catch (IOException | InterruptedException e) {
 							System.err.println(
 									"Failed to retrieve GSRS result for substance " +
 											record.get(0).asLong() + ":" + e.getMessage());
-							return new GsrsResult(record.get(0).asLong(), null);
+							sr = null;
 						}
+						return new GsrsResult(record.get(0).asLong(), record.get(1).asString(), sr);
 					})
 					.filter(res -> res.object != null)
 					.skip(CONTINUE_AT - 1)
 					.iterator();
 
-			writeResultsToFile(resultIterator, "output" + File.separator + "gsrs_matches.csv");
+			writeResultsToFile(resultIterator, OUT_FILE);
 
 		}
 	}
 
 	private static void writeResultsToFile(Iterator<GsrsResult> iterator, String path)
-	throws IOException, InterruptedException {
+	throws IOException {
 		File outFile = new File(path);
 		int iteration = Math.max(CONTINUE_AT, 1);
 		long lastRequest = 0;
@@ -60,12 +66,7 @@ public class Main {
 			if (!cont) writer.write("MMIID;UUID;NAME;CAS;UNII;RXCUI\n");
 
 			while (iterator.hasNext()) {
-				long waitTime = REQUEST_INTERVAL - (System.currentTimeMillis() - lastRequest);
-				if (waitTime > 0) {
-					Thread.sleep(waitTime);
-				}
-				lastRequest = System.currentTimeMillis();
-				System.out.print("\r"+iteration + "/4653");
+				System.out.print("\r" + iteration + "/4653");
 				iteration++;
 				GsrsResult result = iterator.next();
 				writer.write(toCsvLine(result));
@@ -82,7 +83,7 @@ public class Main {
 		stringBuilder.append(result.mmiId);
 		stringBuilder.append(separator);
 
-		if (result.object instanceof GsrsObject object) {
+		if (result.object instanceof GsrsSingleMatch object) {
 			appendValue(stringBuilder, object.uuid);
 			stringBuilder.append(separator);
 			appendValue(stringBuilder, object.name);
@@ -96,6 +97,7 @@ public class Main {
 			appendValues(stringBuilder, match.uuids);
 			stringBuilder.append(separator);
 			stringBuilder.append(separator);
+			appendValue(stringBuilder, result.cas);
 			stringBuilder.append(separator);
 			stringBuilder.append(separator);
 		}
@@ -117,10 +119,12 @@ public class Main {
 
 	private static class GsrsResult {
 		final long mmiId;
+		final String cas;
 		final GsrsSearchResult object;
 
-		private GsrsResult(long mmiId, GsrsSearchResult object) {
+		private GsrsResult(long mmiId, String cas, GsrsSearchResult object) {
 			this.mmiId = mmiId;
+			this.cas = cas;
 			this.object = object;
 		}
 	}

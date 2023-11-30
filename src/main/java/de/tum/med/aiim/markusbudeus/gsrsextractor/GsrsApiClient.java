@@ -2,6 +2,8 @@ package de.tum.med.aiim.markusbudeus.gsrsextractor;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
+import de.tum.med.aiim.markusbudeus.gsrsextractor.extractor.GsrsSearchResult;
+import de.tum.med.aiim.markusbudeus.gsrsextractor.refiner.GsrsObject;
 
 import java.io.IOException;
 import java.net.URI;
@@ -13,13 +15,22 @@ public class GsrsApiClient {
 
 	private static final String BASE_URL = "https://gsrs.ncats.nih.gov/ginas/app/api/v1/";
 
+	private static final int REQUEST_INTERVAL = 300;
+
 	private final HttpClient client;
+	private long lastRequestTime = 0;
 
 	public GsrsApiClient() {
 		client = HttpClient.newHttpClient();
 	}
 
 	public HttpResponse<String> makeRequest(String apiRequestUrl) throws IOException, InterruptedException {
+		long waitTime = REQUEST_INTERVAL - (System.currentTimeMillis() - lastRequestTime);
+		if (waitTime > 0) {
+			Thread.sleep(waitTime);
+		}
+		lastRequestTime = System.currentTimeMillis();
+
 		HttpRequest request = HttpRequest
 				.newBuilder(URI.create(BASE_URL + apiRequestUrl))
 				.header("Accept", "application/json")
@@ -37,12 +48,18 @@ public class GsrsApiClient {
 		JsonElement response = makeRequestAndParse("substances/search?q=root_codes_CAS%3A%22" + cas + "%22");
 		try {
 
-			return GsrsParser.constructFromQueryResponse(cas, response);
+			return GsrsParser.constructFromCasQueryResponse(cas, response);
 
 		} catch (IllegalArgumentException | IllegalStateException e) {
 			System.out.println("Failed to parse JSON object for CAS number " + cas + ": " + e.getMessage());
 			return null;
 		}
+	}
+
+	public GsrsObject getObject(String uuid) throws IOException, InterruptedException {
+		HttpResponse<String> response = makeRequest("substances("+uuid+")?view=internal");
+		if (response.statusCode() == 404) return null;
+		return GsrsParser.constructFromInternalSubstanceRequestResponse(JsonParser.parseString(response.body()));
 	}
 
 }
