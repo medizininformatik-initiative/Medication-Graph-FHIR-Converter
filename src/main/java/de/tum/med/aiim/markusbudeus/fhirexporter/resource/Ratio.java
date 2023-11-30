@@ -14,7 +14,7 @@ public class Ratio implements RatioOrQuantity {
 	}
 
 	@Override
-	public RatioOrQuantity plus(RatioOrQuantity other) {
+	public Ratio plus(RatioOrQuantity other) {
 		Quantity resultNumerator = null;
 		Quantity resultDenominator = null;
 		if (other instanceof Quantity) {
@@ -30,4 +30,5 @@ public class Ratio implements RatioOrQuantity {
 		}
 		return null;
 	}
+
 }

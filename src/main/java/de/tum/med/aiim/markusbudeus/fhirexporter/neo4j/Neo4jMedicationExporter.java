@@ -115,7 +115,7 @@ public class Neo4jMedicationExporter extends Neo4jExporter<Medication> {
 				childMedicationObjects.add(childMedication);
 			}
 			medication.ingredient = ingredients.toArray(new Ingredient[0]);
-			RatioOrQuantity parentAmount = null;
+			Ratio parentAmount = null;
 			for (Medication child : childMedicationObjects) {
 				if (parentAmount == null) parentAmount = child.amount;
 				else {
@@ -170,7 +170,7 @@ public class Neo4jMedicationExporter extends Neo4jExporter<Medication> {
 			target.form.text = drug.mmiDoseForm;
 		}
 
-		target.amount = quantityFromMassAndUnit(drug.amount, drug.unit);
+		target.amount = new Ratio(quantityFromMassAndUnit(drug.amount, drug.unit), Quantity.one());
 
 		List<Ingredient> ingredients = drug.ingredients.stream().map(exportIngredient -> {
 			Ingredient ingredient = new Ingredient();
@@ -271,8 +271,8 @@ public class Neo4jMedicationExporter extends Neo4jExporter<Medication> {
 			return value;
 		}
 
-		public RatioOrQuantity getStrength() {
-			return quantityFromMassFromToAndUnit(massFrom, massTo, unit);
+		public Ratio getStrength() {
+			return new Ratio(quantityFromMassFromToAndUnit(massFrom, massTo, unit), Quantity.one());
 		}
 	}
 
@@ -366,7 +366,7 @@ public class Neo4jMedicationExporter extends Neo4jExporter<Medication> {
 				"}";
 	}
 
-	private static RatioOrQuantity quantityFromMassFromToAndUnit(String massFrom, String massTo, Neo4jExportUnit unit) {
+	private static Quantity quantityFromMassFromToAndUnit(String massFrom, String massTo, Neo4jExportUnit unit) {
 		Quantity quantity;
 		if (massFrom == null) {
 			if (massTo == null) {

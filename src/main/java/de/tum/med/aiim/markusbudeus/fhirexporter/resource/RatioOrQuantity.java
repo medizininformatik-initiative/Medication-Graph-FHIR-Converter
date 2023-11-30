@@ -1,5 +1,11 @@
 package de.tum.med.aiim.markusbudeus.fhirexporter.resource;
 
+/**
+ * Designates a {@link Ratio} or a {@link Quantity}
+ *
+ * Despite the documentation claiming quantity shall be used instead of ratio where the denominator
+ * is known to be 1, examples do not reflect this behavior and it also fails validations.
+ */
 public interface RatioOrQuantity {
 
 

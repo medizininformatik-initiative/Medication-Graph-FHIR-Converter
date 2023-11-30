@@ -6,6 +6,13 @@ import java.util.Objects;
 
 public class Quantity implements RatioOrQuantity {
 
+	public static Quantity one() {
+		Quantity quantity = new Quantity();
+		quantity.code = "1";
+		quantity.value = BigDecimal.ONE;
+		return quantity;
+	}
+
 	public BigDecimal value;
 	private String comparator;
 	public String unit;

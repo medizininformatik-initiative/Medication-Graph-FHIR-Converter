@@ -12,7 +12,7 @@ public class Medication {
 	private String status = Status.ACTIVE.value;
 	public Reference manufacturer;
 	public CodeableConcept form;
-	public RatioOrQuantity amount;
+	public Ratio amount;
 	public Ingredient[] ingredient;
 	// Batch omitted due to not easily doable
 
