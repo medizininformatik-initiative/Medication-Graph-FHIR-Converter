@@ -2,24 +2,27 @@ package de.tum.med.aiim.markusbudeus.gsrsextractor;
 
 import java.util.Arrays;
 
-public class GsrsObject {
+public class GsrsObject extends GsrsSearchResult {
 
+	public final String uuid;
+
+	public final String name;
 	public final String unii;
-	public final String primaryRxcui;
-	public final String[] alternativeRxcui;
+	public final String[] rxcui;
 
-	public GsrsObject(String unii, String rxcui, String[] alternativeRxcui) {
+	public GsrsObject(String uuid, String name, String cas, String unii, String[] rxcui) {
+		super(cas);
+		this.uuid = uuid;
+		this.name = name;
 		this.unii = unii;
-		this.primaryRxcui = rxcui;
-		this.alternativeRxcui = alternativeRxcui;
+		this.rxcui = rxcui;
 	}
 
 	@Override
 	public String toString() {
 		return "GsrsInfo{" +
 				"unii='" + unii + '\'' +
-				", primaryRxcui='" + primaryRxcui + '\'' +
-				", alternativeRxcui=" + Arrays.toString(alternativeRxcui) +
+				", rxcui=" + Arrays.toString(rxcui) +
 				'}';
 	}
 }

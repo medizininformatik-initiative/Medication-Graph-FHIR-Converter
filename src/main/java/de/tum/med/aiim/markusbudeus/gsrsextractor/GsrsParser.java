@@ -9,25 +9,42 @@ import java.util.List;
 
 public class GsrsParser {
 
-	public static GsrsObject constructFromQueryResponse(JsonElement queryResponse) {
+	public static GsrsSearchResult constructFromQueryResponse(String cas, JsonElement queryResponse) {
+		JsonObject root = queryResponse.getAsJsonObject();
+		JsonArray content = root.getAsJsonArray("content");
+		if (content.isEmpty()) return null;
+		if (content.size() > 1) {
+			return parseToMultiMatch(cas, content);
+		} else {
+			return parseToSingleMatch(cas, root, content);
+		}
+	}
 
-			JsonObject root = queryResponse.getAsJsonObject();
-			JsonArray content = root.getAsJsonArray("content");
-			if (content.isEmpty()) return null;
-			if (content.size() > 1) {
-				throw new IllegalArgumentException("Found multiple results in the given response!");
-			}
-			JsonObject contentObject = content.get(0).getAsJsonObject();
-			String unii = contentObject.get("approvalID").getAsString();
+	private static GsrsMultiMatch parseToMultiMatch(String cas, JsonArray content) {
+		List<String> uuids = new ArrayList<>();
+		for (JsonElement element : content) {
+			uuids.add(element.getAsJsonObject().get("uuid").getAsString());
+		}
+		return new GsrsMultiMatch(cas, uuids.toArray(new String[0]));
+	}
 
-			List<String> rxcui = findFacetLabelsByName("RXCUI", root.getAsJsonArray("facets"));
+	private static GsrsObject parseToSingleMatch(String cas, JsonObject root, JsonArray content) {
+		JsonObject contentObject = content.get(0).getAsJsonObject();
+		String uuid = getString(contentObject, "uuid");
+		String name = getString(contentObject, "_name");
+		String unii = getString(contentObject, "approvalID");
 
-			String primaryRxcui = rxcui == null || rxcui.isEmpty() ?
-					null : rxcui.get(0);
-			String[] alternativeRxcui = rxcui != null && rxcui.size() > 1 ?
-					rxcui.subList(1, rxcui.size()).toArray(new String[0]) : new String[0];
+		List<String> rxcui = findFacetLabelsByName("RXCUI", root.getAsJsonArray("facets"));
 
-			return new GsrsObject(unii, primaryRxcui, alternativeRxcui);
+		String[] alternativeRxcui = rxcui != null ? rxcui.toArray(new String[0]) : new String[0];
+
+		return new GsrsObject(uuid, name, cas, unii, alternativeRxcui);
+	}
+
+	private static String getString(JsonObject object, String member) {
+		JsonElement memberObj = object.get(member);
+		if (memberObj == null) return null;
+		return memberObj.getAsString();
 	}
 
 	private static List<String> findFacetLabelsByName(String facetName, JsonArray facets) {

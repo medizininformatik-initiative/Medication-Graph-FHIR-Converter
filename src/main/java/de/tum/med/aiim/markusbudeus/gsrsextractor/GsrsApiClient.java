@@ -33,11 +33,11 @@ public class GsrsApiClient {
 		return JsonParser.parseString(content);
 	}
 
-	public GsrsObject findSubstanceByCas(String cas) throws IOException, InterruptedException {
+	public GsrsSearchResult findSubstanceByCas(String cas) throws IOException, InterruptedException {
 		JsonElement response = makeRequestAndParse("substances/search?q=root_codes_CAS%3A%22" + cas + "%22");
 		try {
 
-			return GsrsParser.constructFromQueryResponse(response);
+			return GsrsParser.constructFromQueryResponse(cas, response);
 
 		} catch (IllegalArgumentException | IllegalStateException e) {
 			System.out.println("Failed to parse JSON object for CAS number " + cas + ": " + e.getMessage());
