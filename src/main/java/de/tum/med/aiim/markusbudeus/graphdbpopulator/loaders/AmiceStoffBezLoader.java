@@ -41,7 +41,9 @@ public class AmiceStoffBezLoader extends CsvLoader {
 						"(s:" + SUBSTANCE_LABEL + ") " +
 						"MERGE (c:" + CAS_LABEL + " {code: " + row(PRIMARY_CAS) + "}) " +
 						"ON CREATE SET c:" + CODE_LABEL + " " +
-						"CREATE (c)-[:" + CODE_REFERENCE_RELATIONSHIP_NAME + " {primary: true}]->(s)"
+						"MERGE (c)-[r:" + CODE_REFERENCE_RELATIONSHIP_NAME + "]->(s) " +
+						"ON CREATE SET r.primary = true " +
+						"ON MATCH SET r.primary = true"
 		));
 
 		// Load secondary CAS

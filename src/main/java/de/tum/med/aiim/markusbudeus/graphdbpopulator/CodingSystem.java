@@ -77,6 +77,24 @@ public enum CodingSystem {
 					"https://www.bfarm.de/DE/Arzneimittel/Arzneimittelinformationen/Arzneimittel-recherchieren/Stoffbezeichnungen/_node.html " +
 					"and has the version of the specified date.",
 			CAS_LABEL
+	),
+	UNII(
+			"https://www.fda.gov/industry/fda-data-standards-advisory-board/fdas-global-substance-registration-system",
+			"Unique Ingredient Identifier",
+			LocalDate.of(2023, 11, 30),
+			"v3.0.3",
+			"The data has been retrieved by querying the GSRS API using the already-known CAS codes of substances. " +
+					"This querying has been performed on the date specified on this node.",
+			UNII_LABEL
+	),
+	RXCUI(
+			"https://www.nlm.nih.gov/research/umls/rxnorm/overview.html",
+			"RxNorm concept unique identifier",
+			LocalDate.of(2023, 11, 30),
+			"v3.0.3",
+			"The data has been retrieved by querying the GSRS API using the already-known CAS codes of substances. " +
+					"This querying has been performed on the date specified on this node.",
+			RXCUI_LABEL
 	);
 
 	/**

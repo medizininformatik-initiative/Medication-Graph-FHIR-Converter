@@ -47,7 +47,7 @@ public class SubstanceLoader extends CsvLoader {
 						"WITH row, s " +
 						"WITH * WHERE NOT " + nullIfBlank(row(CAS)) + " IS null " +
 						"MERGE (c:" + CAS_LABEL + ":" + CODE_LABEL + " {code: " + row(CAS) + "}) " +
-						"CREATE (c)-[rc:" + CODE_REFERENCE_RELATIONSHIP_NAME + "]->(s)" +
+						"CREATE (c)-[rc:" + CODE_REFERENCE_RELATIONSHIP_NAME + " {primary: true}]->(s)" +
 						"}"
 		));
 	}

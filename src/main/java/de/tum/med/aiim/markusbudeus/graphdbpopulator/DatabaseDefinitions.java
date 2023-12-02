@@ -15,6 +15,7 @@ public class DatabaseDefinitions {
 	public static final String CAS_LABEL = "CAS";
 	public static final String INN_LABEL = "INN";
 	public static final String RXCUI_LABEL = "RXCUI";
+	public static final String UNII_LABEL = "UNII";
 	public static final String ATC_LABEL = "ATC";
 	public static final String ATC_HAS_PARENT_LABEL = "HAS_PARENT";
 	public static final String PZN_LABEL = "PZN";

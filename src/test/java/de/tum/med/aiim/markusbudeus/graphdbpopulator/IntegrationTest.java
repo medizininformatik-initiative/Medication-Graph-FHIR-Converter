@@ -38,7 +38,7 @@ public class IntegrationTest {
 		session = connection.createSession();
 		session.run(new Query("MATCH (n) DETACH DELETE n" )).consume(); // Delete everything
 		try {
-			Main.runMigrators(false);
+			Main.runMigrators();
 		} catch (IOException | InterruptedException e) {
 			throw new RuntimeException("Integration test failed!", e);
 		}
@@ -55,7 +55,7 @@ public class IntegrationTest {
 	@Test
 	public void midazolamCasCode() {
 		Result result = session.run(
-				"MATCH (a:" + CAS_LABEL + ")-[:" + CODE_REFERENCE_RELATIONSHIP_NAME + "]->(s:" + SUBSTANCE_LABEL + " {name: 'Midazolam'}) RETURN a.code" );
+				"MATCH (a:" + CAS_LABEL + ")-[:" + CODE_REFERENCE_RELATIONSHIP_NAME + " {primary: true}]->(s:" + SUBSTANCE_LABEL + " {name: 'Midazolam'}) RETURN a.code" );
 		assertEquals("59467-70-8", result.next().get(0).asString());
 		assertFalse(result.hasNext());
 	}

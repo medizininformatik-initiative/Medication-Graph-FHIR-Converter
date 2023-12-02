@@ -53,6 +53,8 @@ public class Main {
 			loaders.add(new DrugIngredientConnectionLoader(session));
 			// Relations between Drug nodes and ATC nodes
 			loaders.add(new DrugAtcConnectionLoader(session));
+			// GSRS UNIIs, RXCUIs, etc.
+			loaders.add(new UniiLoader(session));
 			// Coding System Nodes and connections to it
 			loaders.add(new CodingSystemNodeCreator(session));
 			// Corresponding ingredients and their amounts
