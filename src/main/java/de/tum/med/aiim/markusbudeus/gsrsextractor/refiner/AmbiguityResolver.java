@@ -13,10 +13,12 @@ import java.util.List;
 
 /**
  * This class searches the file produced by the {@link GsrsExtractor} for multi-matches, i.e. CAS codes which matches to
- * multiple GSRS substances. Then, it queries those substances to find out who uses the searched CAS code as its primary
- * code.
+ * multiple GSRS substances or those who match to multiple primary RXCUI.
+ * <p>
+ * For those matching to multiple GSRS substances, this class attempts to find the most fitting substance. For those
+ * only matching to multiple RXCUI, the primary and alternative RXCUI are separated.
  */
-public class UuidAmbiguityResolver {
+public class AmbiguityResolver {
 
 	private static final String OUT_FILE = "output" + File.separator + "gsrs_unambiguous.csv";
 
@@ -44,7 +46,7 @@ public class UuidAmbiguityResolver {
 //			}
 //		}
 
-		new UuidAmbiguityResolver().execute();
+		new AmbiguityResolver().execute();
 	}
 
 	protected void execute() throws IOException, InterruptedException {
@@ -55,7 +57,6 @@ public class UuidAmbiguityResolver {
 			int lineNo = 1;
 			for (String[] line : lines) {
 				System.out.print("\r" + lineNo + "/" + lines.size());
-				System.out.flush();
 				String[] result = process(line);
 				if (result != null) {
 					writer.write(process(line));
@@ -72,16 +73,15 @@ public class UuidAmbiguityResolver {
 					"MMIID", "UUID", "NAME", "CAS", "UNII", "RXCUI", "ALTCAS", "ALTRXCUI"
 			};
 		}
-		if (line[1].contains("|")) {
-			// Requires disambiguation
-			return disambiguate(line);
+		if (line[1].contains("|") || line[5].contains("|")) {
+			return loadGsrsSubstanceInfo(line);
 		} else {
 			// Nothing to do
 			return line;
 		}
 	}
 
-	private String[] disambiguate(String[] line) throws IOException, InterruptedException {
+	private String[] loadGsrsSubstanceInfo(String[] line) throws IOException, InterruptedException {
 		String[] uuids = line[1].split("\\|");
 
 		List<GsrsObject> matches = new ArrayList<>();
@@ -90,13 +90,13 @@ public class UuidAmbiguityResolver {
 			GsrsObject object = apiClient.getObject(uuid);
 			if (object == null) continue;
 
-			if (line[3].equals(object.primaryCas)) {
+			if (uuids.length == 1 || line[3].equals(object.primaryCas)) {
 				matches.add(object);
 			}
 		}
 
 		if (matches.size() != 1) {
-			matches.removeIf(object -> !"approved".equals(object.status));
+			matches.removeIf(object -> "non-approved".equals(object.status));
 		}
 		if (matches.size() != 1) {
 			matches.removeIf(object -> "concept".equals(object.substanceClass));
@@ -113,7 +113,7 @@ public class UuidAmbiguityResolver {
 				object.name,
 				line[3],
 				object.unii,
-				object.primaryRxcui,
+				String.join("|", object.primaryRxcui),
 				String.join("|", object.alternativeCas),
 				String.join("|", object.alternativeRxcui)
 		};

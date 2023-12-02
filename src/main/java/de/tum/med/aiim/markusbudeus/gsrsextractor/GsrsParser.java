@@ -8,6 +8,7 @@ import de.tum.med.aiim.markusbudeus.gsrsextractor.extractor.GsrsSearchResult;
 import de.tum.med.aiim.markusbudeus.gsrsextractor.extractor.GsrsSingleMatch;
 import de.tum.med.aiim.markusbudeus.gsrsextractor.refiner.GsrsObject;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -48,7 +49,7 @@ public class GsrsParser {
 		}
 
 		return new GsrsObject(uuid, name, unii,
-				assertAndGetAtMostOne(primaryRxcui),
+				primaryRxcui.toArray(new String[0]),
 				altRxcui.toArray(new String[0]),
 				assertAndGetAtMostOne(primaryCas),
 				altCas.toArray(new String[0]),
@@ -59,7 +60,14 @@ public class GsrsParser {
 	private static String assertAndGetAtMostOne(List<String> list) {
 		if (list.isEmpty()) return null;
 		if (list.size() > 1) {
-			throw new IllegalStateException("Object contains more than one primary code of the same code system!");
+			// Check edge case: Botulinum toxin has the primary CAS number given twice, but its the same value
+			// Therefore, we only throw if different values exist in the list
+			String value = list.get(0);
+			for (String entry : list) {
+				if (!entry.equals(value)) {
+					throw new IllegalStateException("Object contains more than one primary code of the same code system!");
+				}
+			}
 		}
 		return list.get(0);
 	}
@@ -88,6 +96,7 @@ public class GsrsParser {
 		String uuid = getString(contentObject, "uuid");
 		String name = getString(contentObject, "_name");
 		String unii = getString(contentObject, "approvalID");
+		if (unii == null) unii = getString(root, "_approvalIDDisplay");
 
 		List<String> rxcui = findFacetLabelsByName("RXCUI", root.getAsJsonArray("facets"));
 
