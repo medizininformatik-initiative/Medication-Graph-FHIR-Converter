@@ -36,7 +36,7 @@ public class IntegrationTest {
 	public void integrationTestSetup() {
 		connection = new DatabaseConnection();
 		session = connection.createSession();
-		session.run(new Query("MATCH (n) DETACH DELETE n" )).consume(); // Delete everything
+		session.run(new Query("MATCH (n) DETACH DELETE n")).consume(); // Delete everything
 		try {
 			Main.runMigrators();
 		} catch (IOException | InterruptedException e) {
@@ -47,7 +47,7 @@ public class IntegrationTest {
 	@Test
 	public void midazolamAskCode() {
 		Result result = session.run(
-				"MATCH (a:" + ASK_LABEL + ")-[:" + CODE_REFERENCE_RELATIONSHIP_NAME + "]->(s:" + SUBSTANCE_LABEL + " {name: 'Midazolam'}) RETURN a.code" );
+				"MATCH (a:" + ASK_LABEL + ")-[:" + CODE_REFERENCE_RELATIONSHIP_NAME + "]->(s:" + SUBSTANCE_LABEL + " {name: 'Midazolam'}) RETURN a.code");
 		assertEquals("22661", result.next().get(0).asString());
 		assertFalse(result.hasNext());
 	}
@@ -55,7 +55,7 @@ public class IntegrationTest {
 	@Test
 	public void midazolamCasCode() {
 		Result result = session.run(
-				"MATCH (a:" + CAS_LABEL + ")-[:" + CODE_REFERENCE_RELATIONSHIP_NAME + " {primary: true}]->(s:" + SUBSTANCE_LABEL + " {name: 'Midazolam'}) RETURN a.code" );
+				"MATCH (a:" + CAS_LABEL + ")-[:" + CODE_REFERENCE_RELATIONSHIP_NAME + " {primary: true}]->(s:" + SUBSTANCE_LABEL + " {name: 'Midazolam'}) RETURN a.code");
 		assertEquals("59467-70-8", result.next().get(0).asString());
 		assertFalse(result.hasNext());
 	}
@@ -93,7 +93,7 @@ public class IntegrationTest {
 			Record record = result.next();
 			int mmiId = record.get(0).asInt();
 			if (mmiIdIncluded[mmiId]) {
-				fail("The product with mmi_id " + mmiId + " was included twice in the result!" );
+				fail("The product with mmi_id " + mmiId + " was included twice in the result!");
 			}
 			mmiIdIncluded[mmiId] = true;
 		}
@@ -146,6 +146,21 @@ public class IntegrationTest {
 	}
 
 	@Test
+	public void midazolamUniiAndRxcui() {
+		Result result = session.run(
+				"MATCH (s:" + SUBSTANCE_LABEL + " {name: 'Midazolam'}) " +
+						"MATCH (s)--(c:" + UNII_LABEL + ") " +
+						"MATCH (s)--(r:" + RXCUI_LABEL + ") " +
+						"RETURN c.code, r.code"
+		);
+
+		Record record = result.next();
+		assertEquals("R60L0SM5BC", record.get(0).asString());
+		assertEquals("6960", record.get(1).asString());
+		assertFalse(result.hasNext());
+	}
+
+	@Test
 	public void atcHierarchy() {
 		Result result = session.run(
 				"MATCH (a:" + ATC_LABEL + ")-[:" + ATC_HAS_PARENT_LABEL + "]->(p:" + ATC_LABEL + " {code: 'A01AA'}) " +
@@ -160,7 +175,7 @@ public class IntegrationTest {
 			assertEquals("A01AA", record.get(1).asString());
 		}
 		assertFalse(result.hasNext());
-		assertEquals(Set.of("A01AA01", "A01AA02" ), childCodes);
+		assertEquals(Set.of("A01AA01", "A01AA02"), childCodes);
 	}
 
 	@Test
@@ -215,7 +230,7 @@ public class IntegrationTest {
 					assertEquals("ml", record.get(2).asString());
 					assertFalse(record.get(3).asBoolean());
 				}
-				default -> fail("Unexpected ingredient " + record.get(0).asString() + " found!" );
+				default -> fail("Unexpected ingredient " + record.get(0).asString() + " found!");
 			}
 		}
 		assertFalse(result.hasNext());
@@ -240,7 +255,7 @@ public class IntegrationTest {
 
 	private void checkProductMatchesIngredient(Record record) {
 		String name = record.get(1).asString();
-		if (name.equals("Dormicum V 5 mg/5 ml" )) {
+		if (name.equals("Dormicum V 5 mg/5 ml")) {
 			assertEquals("5", record.get(2).asString());
 		} else {
 			assertEquals("15", record.get(2).asString());

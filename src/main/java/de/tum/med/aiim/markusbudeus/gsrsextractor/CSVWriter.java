@@ -1,4 +1,4 @@
-package de.tum.med.aiim.markusbudeus.gsrsextractor.extractor;
+package de.tum.med.aiim.markusbudeus.gsrsextractor;
 
 import com.opencsv.CSVWriterBuilder;
 import com.opencsv.ICSVWriter;

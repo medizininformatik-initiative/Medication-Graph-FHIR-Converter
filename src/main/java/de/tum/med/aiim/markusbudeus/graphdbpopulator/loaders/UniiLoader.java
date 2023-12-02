@@ -19,7 +19,7 @@ public class UniiLoader extends CsvLoader {
 	private static final String RXCUI = "RXCUI";
 	private static final String CAS = "CAS";
 	private static final String ALTERNATIVE_CAS = "ALTCAS";
-	private static final String ALTERNATIV_RXCUI = "ALTRXCUI";
+	private static final String ALTERNATIVE_RXCUI = "ALTRXCUI";
 
 	public UniiLoader(Session session) throws IOException {
 		super(Path.of("gsrs_matches.csv"), session);
@@ -39,54 +39,59 @@ public class UniiLoader extends CsvLoader {
 
 		// Load GSRS UNII, Name and UUID
 		executeQuery(withLoadStatement(
-				"MATCH (s:" + SUBSTANCE_LABEL + " {mmiId: " + row(MMI_ID) + "}) " +
+				"MATCH (s:" + SUBSTANCE_LABEL + " {mmiId: " + intRow(MMI_ID) + "}) " +
 						"MERGE (c:" + UNII_LABEL + " {code: " + row(UNII) + "}) " +
 						"ON CREATE SET " +
 						"c:" + CODE_LABEL + ", " +
 						"c.gsrsUuid = " + row(UUID) + ", " +
-						"c.gsrsName = " + row(NAME)
+						"c.gsrsName = " + row(NAME) + " " +
+						"CREATE (c)-[:" + CODE_REFERENCE_RELATIONSHIP_NAME + "]->(s)"
 		));
 		// Add/Update primary CAS
 		executeQuery(withLoadStatement(
-				"MATCH (s:" + SUBSTANCE_LABEL + " {mmiId: " + row(MMI_ID) + "}) " +
-						"MERGE (c:" + CAS_LABEL + " {code: "+row(CAS)+"}) " +
+				"MATCH (s:" + SUBSTANCE_LABEL + " {mmiId: " + intRow(MMI_ID) + "}) " +
+						"MERGE (c:" + CAS_LABEL + " {code: " + row(CAS) + "}) " +
 						"ON CREATE SET " +
 						"c:" + CODE_LABEL + " " +
-						"MERGE (c)-[r:"+CODE_REFERENCE_RELATIONSHIP_NAME+"]->(s) " +
+						"MERGE (c)-[r:" + CODE_REFERENCE_RELATIONSHIP_NAME + "]->(s) " +
 						"ON CREATE SET r.primary = true " +
 						"ON MATCH SET r.primary = true"
 		));
 		// Add/Update secondary CAS
 		executeQuery(withLoadStatement(
-				"MATCH (s:" + SUBSTANCE_LABEL + " {mmiId: " + row(MMI_ID) + "}) " +
+				"MATCH (s:" + SUBSTANCE_LABEL + " {mmiId: " + intRow(MMI_ID) + "}) " +
 						"WITH s, split(" + row(ALTERNATIVE_CAS) + ", '|') as altCas " +
+						"WHERE " + nullIfBlank(row(ALTERNATIVE_CAS)) + " IS NOT NULL " +
 						"UNWIND altCas as cas " +
 						"MERGE (c:" + CAS_LABEL + " {code: cas}) " +
 						"ON CREATE SET " +
 						"c:" + CODE_LABEL + " " +
-						"MERGE (c)-[r:"+CODE_REFERENCE_RELATIONSHIP_NAME+"]->(s) " +
+						"MERGE (c)-[r:" + CODE_REFERENCE_RELATIONSHIP_NAME + "]->(s) " +
 						"ON CREATE SET r.primary = false " +
 						"ON MATCH SET r.primary = false"
 		));
 		// Add primary RXCUI
 		executeQuery(withLoadStatement(
-				"MATCH (s:" + SUBSTANCE_LABEL + " {mmiId: " + row(MMI_ID) + "}) " +
+				"MATCH (s:" + SUBSTANCE_LABEL + " {mmiId: " + intRow(MMI_ID) + "}) " +
 						"WITH s, split(" + row(RXCUI) + ", '|') as primaryRxcui " +
+						"WHERE " + nullIfBlank(row(RXCUI)) + " IS NOT NULL " +
 						"UNWIND primaryRxcui as rxcui " +
 						"MERGE (c:" + RXCUI_LABEL + " {code: rxcui}) " +
 						"ON CREATE SET " +
 						"c:" + CODE_LABEL + " " +
-						"CREATE (c)-[r:"+CODE_REFERENCE_RELATIONSHIP_NAME+" {primary: true}]->(s)"
+						"CREATE (c)-[r:" + CODE_REFERENCE_RELATIONSHIP_NAME + " {primary: true}]->(s)"
 		));
 		// Add secondary RXCUI
 		executeQuery(withLoadStatement(
-				"MATCH (s:" + SUBSTANCE_LABEL + " {mmiId: " + row(MMI_ID) + "}) " +
-						"WITH s, split(" + row(ALTERNATIV_RXCUI) + ", '|') as secondaryRxcui " +
+				"MATCH (s:" + SUBSTANCE_LABEL + " {mmiId: " + intRow(MMI_ID) + "}) " +
+						"WITH s, split(" + row(ALTERNATIVE_RXCUI) + ", '|') as secondaryRxcui " +
+						"WHERE " + nullIfBlank(row(ALTERNATIVE_RXCUI)) + " IS NOT NULL " +
+						"WITH s, secondaryRxcui " +
 						"UNWIND secondaryRxcui as rxcui " +
 						"MERGE (c:" + RXCUI_LABEL + " {code: rxcui}) " +
 						"ON CREATE SET " +
 						"c:" + CODE_LABEL + " " +
-						"CREATE (c)-[r:"+CODE_REFERENCE_RELATIONSHIP_NAME+" {primary: false}]->(s)"
+						"CREATE (c)-[r:" + CODE_REFERENCE_RELATIONSHIP_NAME + " {primary: false}]->(s)"
 		));
 	}
 }

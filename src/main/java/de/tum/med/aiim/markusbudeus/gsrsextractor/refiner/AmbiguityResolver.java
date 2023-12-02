@@ -2,7 +2,7 @@ package de.tum.med.aiim.markusbudeus.gsrsextractor.refiner;
 
 import de.tum.med.aiim.markusbudeus.graphdbpopulator.CSVReader;
 import de.tum.med.aiim.markusbudeus.gsrsextractor.GsrsApiClient;
-import de.tum.med.aiim.markusbudeus.gsrsextractor.extractor.CSVWriter;
+import de.tum.med.aiim.markusbudeus.gsrsextractor.CSVWriter;
 import de.tum.med.aiim.markusbudeus.gsrsextractor.extractor.GsrsExtractor;
 
 import java.io.File;

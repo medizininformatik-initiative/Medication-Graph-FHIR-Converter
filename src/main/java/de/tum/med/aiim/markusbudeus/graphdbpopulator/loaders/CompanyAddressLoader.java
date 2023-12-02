@@ -33,7 +33,6 @@ public class CompanyAddressLoader extends CsvLoader {
 				"WITH " + ROW_IDENTIFIER + " WHERE " + row(
 						ADDRESS_TYPE_CODE) + " = 'C' " + // Only allow 'Firmensitz' Addresses
 						"MATCH (c:" + COMPANY_LABEL + " {mmiId: " + intRow(COMPANY_ID) + "}) " +
-						"WITH " + ROW_IDENTIFIER + ", c " +
 						"CREATE (c)-[:" + COMPANY_HAS_ADDRESS_LABEL + "]->(a:" + ADDRESS_LABEL + " {" +
 						"countryCode: " + row(COUNTRY_CATALOG_CODE) + ", " +
 						"street: " + row(STREET) + ", " +
@@ -57,6 +56,7 @@ public class CompanyAddressLoader extends CsvLoader {
 
 		@Override
 		protected void executeLoad() {
+			// TODO This query is expensive! Can we optimize it?
 			executeQuery(withFilteredLoadStatement(COUNTRY_CODE_CATALOG_ID,
 					"MATCH (a:" + ADDRESS_LABEL + " {countryCode: " + row(CODE) + "})" +
 							" SET a.country = " + row(NAME) +
