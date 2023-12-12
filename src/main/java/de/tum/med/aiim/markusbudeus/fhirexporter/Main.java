@@ -27,7 +27,7 @@ public class Main {
 
 			exportToJsonFiles(new Neo4jSubstanceExporter(session), SUBSTANCE_OUT_PATH,
 					substance -> appendPart2UnlessNull(substance.identifier[0].value, substance.description));
-			exportToJsonFiles(new Neo4jMedicationExporter(session), MEDICATION_OUT_PATH,
+			exportToJsonFiles(new Neo4jMedicationExporter(session, false), MEDICATION_OUT_PATH,
 					medication -> appendPart2UnlessNull(medication.identifier[0].value,medication.code.text));
 			exportToJsonFiles(new Neo4jOrganizationExporter(session), ORGANIZATION_OUT_PATH,
 					organization -> {

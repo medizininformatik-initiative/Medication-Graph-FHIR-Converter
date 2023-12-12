@@ -29,7 +29,7 @@ public class DatabaseSynonymePreparer extends Loader {
 		addSubstanceNamesAsSynonymes();
 		addGsrsNamesAsSynonymes();
 		addInnAsSynonymes();
-		makeAllSynonymesLowerCase();
+//		makeAllSynonymesLowerCase();
 	}
 
 	void removeHtmlSynonymes() {

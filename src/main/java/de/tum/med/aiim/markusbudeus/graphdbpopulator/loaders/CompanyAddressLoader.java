@@ -56,12 +56,21 @@ public class CompanyAddressLoader extends CsvLoader {
 
 		@Override
 		protected void executeLoad() {
-			// TODO This query is expensive! Can we optimize it?
+			executeQuery(
+					"CREATE CONSTRAINT tempCountryCodes IF NOT EXISTS FOR (d:CountryCode) REQUIRE d.mmiCode IS UNIQUE"
+			);
 			executeQuery(withFilteredLoadStatement(COUNTRY_CODE_CATALOG_ID,
-					"MATCH (a:" + ADDRESS_LABEL + " {countryCode: " + row(CODE) + "})" +
-							" SET a.country = " + row(NAME) +
-							" SET a.countryCode = " + row(SHORT_NAME)
+					"CREATE (d:CountryCode {mmiCode: " + row(CODE) + ", " +
+							"country: " + row(NAME) + ", " +
+							"countryCode: " + row(SHORT_NAME) + "})"
 			));
+			executeQuery(
+					"MATCH (a:" + ADDRESS_LABEL + ") " +
+							"MATCH (c:CountryCode {mmiCode: a.countryCode}) " +
+							" SET a.country = c.country, a.countryCode = c.countryCode"
+			);
+			executeQuery("MATCH (c:CountryCode) DELETE c");
+			executeQuery("DROP CONSTRAINT tempCountryCodes");
 		}
 	}
 }

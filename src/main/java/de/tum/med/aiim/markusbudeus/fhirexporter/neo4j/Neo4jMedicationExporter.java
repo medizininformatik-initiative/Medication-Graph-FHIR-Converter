@@ -25,8 +25,11 @@ public class Neo4jMedicationExporter extends Neo4jExporter<Medication> {
 	private static final String SYSTEM_DATE = "date";
 	private static final String SYSTEM_VERSION = "version";
 
-	public Neo4jMedicationExporter(Session session) {
+	private final boolean allowMedicationsWithoutIngredients;
+
+	public Neo4jMedicationExporter(Session session, boolean allowMedicationsWithoutIngredients) {
 		super(session);
+		this.allowMedicationsWithoutIngredients = allowMedicationsWithoutIngredients;
 	}
 
 	/**
@@ -37,22 +40,23 @@ public class Neo4jMedicationExporter extends Neo4jExporter<Medication> {
 	public Stream<Medication> exportObjects() {
 		Result result = session.run(new Query(
 				// This is a complicated query. Sorry about that. :(
-				"MATCH (p:" + PRODUCT_LABEL + " {name: 'Dormicum® 15 mg/3 ml Injektionslösung'})-[:" + PRODUCT_CONTAINS_DRUG_LABEL + "]->(d:" + DRUG_LABEL + ")" +
-						"-[:" + DRUG_HAS_DOSE_FORM_LABEL + "]->(df:" + DOSE_FORM_LABEL + ") " +
+				"MATCH (p:" + PRODUCT_LABEL + " {name: 'Sol Arcana LM 24 Dilution'})-[:" + PRODUCT_CONTAINS_DRUG_LABEL + "]->(d:" + DRUG_LABEL + ")" +
+						"OPTIONAL MATCH (d)-[:" + DRUG_HAS_DOSE_FORM_LABEL + "]->(df:" + DOSE_FORM_LABEL + ") " +
 						"OPTIONAL MATCH (df)-[:" + DOSE_FORM_IS_EDQM + "]->(de:" + EDQM_LABEL + ")-[:" + BELONGS_TO_CODING_SYSTEM_LABEL + "]->(dfcs:" + CODING_SYSTEM_LABEL + ") " +
-						"MATCH (d)-[:" + DRUG_CONTAINS_INGREDIENT_LABEL + "]->(i:" + MMI_INGREDIENT_LABEL + ")-[:" + INGREDIENT_HAS_UNIT_LABEL + "]->(iu:" + UNIT_LABEL + ") " +
-						"MATCH (i)-[:" + INGREDIENT_IS_SUBSTANCE_LABEL + "]->(s:" + SUBSTANCE_LABEL + ") " +
+						(allowMedicationsWithoutIngredients ? "OPTIONAL " : "") +
+						"MATCH (d)-[:" + DRUG_CONTAINS_INGREDIENT_LABEL + "]->(i:" + MMI_INGREDIENT_LABEL + ")-[:" + INGREDIENT_IS_SUBSTANCE_LABEL + "]->(s:" + SUBSTANCE_LABEL + ") " +
+						"OPTIONAL MATCH (i)-[:" + INGREDIENT_HAS_UNIT_LABEL + "]->(iu:" + UNIT_LABEL + ") " +
 						"WITH p, d, df," +
 						"CASE WHEN de IS NOT NULL THEN " + groupCodingSystem("de", "dfcs", "name:de.name") +
 						" ELSE null END AS edqmDoseForm, " +
-						"collect({" +
+						"collect(CASE WHEN s IS NOT NULL THEN {" +
 						"substanceMmiId:s.mmiId," +
 						"substanceName:s.name," +
 						"isActive:i.isActive," +
 						"massFrom:i.massFrom," +
 						"massTo:i.massTo," +
 						"unit:iu" +
-						"}) AS ingredients " +
+						"} ELSE null END) AS ingredients " +
 						"OPTIONAL MATCH (d)-[:" + DRUG_MATCHES_ATC_CODE_LABEL + "]->(a:" + ATC_LABEL + ")-[:" + BELONGS_TO_CODING_SYSTEM_LABEL + "]->(acs:" + CODING_SYSTEM_LABEL + ") " +
 						"WITH p, d, df, ingredients, " +
 						"collect(" + groupCodingSystem("a", "acs", "description:a.description") +
@@ -170,7 +174,7 @@ public class Neo4jMedicationExporter extends Neo4jExporter<Medication> {
 			target.form.text = drug.mmiDoseForm;
 		}
 
-		target.amount = new Ratio(quantityFromMassAndUnit(drug.amount, drug.unit), Quantity.one());
+		target.amount = ratioFromMassAndUnit(drug.amount, null, drug.unit);
 
 		List<Ingredient> ingredients = drug.ingredients.stream().map(exportIngredient -> {
 			Ingredient ingredient = new Ingredient();
@@ -272,7 +276,7 @@ public class Neo4jMedicationExporter extends Neo4jExporter<Medication> {
 		}
 
 		public Ratio getStrength() {
-			return new Ratio(quantityFromMassFromToAndUnit(massFrom, massTo, unit), Quantity.one());
+			return ratioFromMassAndUnit(massFrom, massTo, unit);
 		}
 	}
 
@@ -364,6 +368,13 @@ public class Neo4jMedicationExporter extends Neo4jExporter<Medication> {
 				SYSTEM_DATE + ":" + codingSystemVariableName + ".date," +
 				SYSTEM_VERSION + ":" + codingSystemVariableName + ".version" +
 				"}";
+	}
+
+
+	private static Ratio ratioFromMassAndUnit(String massFrom, String massTo, Neo4jExportUnit unit) {
+		Quantity quantity = quantityFromMassFromToAndUnit(massFrom, massTo, unit);
+		if (quantity == null) return null;
+		return new Ratio(quantity, Quantity.one());
 	}
 
 	private static Quantity quantityFromMassFromToAndUnit(String massFrom, String massTo, Neo4jExportUnit unit) {

@@ -9,6 +9,7 @@ public class Quantity implements RatioOrQuantity {
 	public static Quantity one() {
 		Quantity quantity = new Quantity();
 		quantity.code = "1";
+		quantity.system = "http://unitsofmeasure.org";
 		quantity.value = BigDecimal.ONE;
 		return quantity;
 	}

@@ -46,9 +46,14 @@ public class IngredientLoader extends CsvLoader {
 		executeQuery(withLoadStatement(
 				"MATCH (i:" + MMI_INGREDIENT_LABEL + " {mmiId: " + intRow(ID) + "}) " +
 						"MATCH (s:" + SUBSTANCE_LABEL + " {mmiId: " + intRow(MOLECULE_ID) + "}) " +
+						"WITH i, s " +
+						"CREATE (i)-[:" + INGREDIENT_IS_SUBSTANCE_LABEL + "]->(s) "
+		));
+
+		executeQuery(withLoadStatement(
+				"MATCH (i:" + MMI_INGREDIENT_LABEL + " {mmiId: " + intRow(ID) + "}) " +
 						"MATCH (u:" + UNIT_LABEL + " {mmiCode: " + row(MOLECULE_UNIT_CODE) + "}) " +
-						"WITH i, s, u " +
-						"CREATE (i)-[:" + INGREDIENT_IS_SUBSTANCE_LABEL + "]->(s) " +
+						"WITH i, u " +
 						"CREATE (i)-[:" + INGREDIENT_HAS_UNIT_LABEL + "]->(u)"
 		));
 	}
