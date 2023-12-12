@@ -38,9 +38,9 @@ public class Neo4jMedicationExporter extends Neo4jExporter<Medication> {
 	 */
 	@Override
 	public Stream<Medication> exportObjects() {
-		Result result = session.run(new Query(
-				// This is a complicated query. Sorry about that. :(
-				"MATCH (p:" + PRODUCT_LABEL + " {name: 'Sol Arcana LM 24 Dilution'})-[:" + PRODUCT_CONTAINS_DRUG_LABEL + "]->(d:" + DRUG_LABEL + ")" +
+		// This is a complicated query. Sorry about that. :(
+		String query =
+				"MATCH (p:" + PRODUCT_LABEL + " {name: 'Sol Arcana LM 24 Dilution'})-[:" + PRODUCT_CONTAINS_DRUG_LABEL + "]->(d:" + DRUG_LABEL + ") " +
 						"OPTIONAL MATCH (d)-[:" + DRUG_HAS_DOSE_FORM_LABEL + "]->(df:" + DOSE_FORM_LABEL + ") " +
 						"OPTIONAL MATCH (df)-[:" + DOSE_FORM_IS_EDQM + "]->(de:" + EDQM_LABEL + ")-[:" + BELONGS_TO_CODING_SYSTEM_LABEL + "]->(dfcs:" + CODING_SYSTEM_LABEL + ") " +
 						(allowMedicationsWithoutIngredients ? "OPTIONAL " : "") +
@@ -77,8 +77,11 @@ public class Neo4jMedicationExporter extends Neo4jExporter<Medication> {
 						"c.mmiId AS companyMmiId," +
 						"c.name AS companyName," +
 						"collect(" + groupCodingSystem("pc", "pcs") + ") AS productCodes," +
-						"drugs"
-		));
+						"drugs";
+
+		System.out.println(query);
+
+		Result result = session.run(new Query(query));
 
 		return result.stream().flatMap(Neo4jMedicationExporter::toMedication).filter(Objects::nonNull);
 	}
