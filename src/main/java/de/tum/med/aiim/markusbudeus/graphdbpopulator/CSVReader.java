@@ -6,6 +6,9 @@ import com.opencsv.CSVReaderBuilder;
 import com.opencsv.exceptions.CsvException;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
@@ -19,12 +22,20 @@ public class CSVReader implements AutoCloseable {
 	}
 
 	public static CSVReader open(Path path) throws IOException {
+		return open(Files.newBufferedReader(path));
+	}
+
+	public static CSVReader open(InputStream inputStream) throws IOException {
+		return open(new InputStreamReader(inputStream));
+	}
+
+	public static CSVReader open(Reader reader) {
 		CSVParser parser = new CSVParserBuilder()
 				.withSeparator(';')
 				.build();
 
 		return new CSVReader(
-				new CSVReaderBuilder(Files.newBufferedReader(path))
+				new CSVReaderBuilder(reader)
 						.withCSVParser(parser)
 						.build()
 		);

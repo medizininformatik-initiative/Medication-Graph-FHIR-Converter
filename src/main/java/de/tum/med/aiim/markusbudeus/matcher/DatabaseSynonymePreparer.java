@@ -24,6 +24,7 @@ public class DatabaseSynonymePreparer extends Loader {
 
 	@Override
 	protected void executeLoad() {
+		removeHtmlSynonymes();
 		addProductNamesAsSynonymes();
 		addSubstanceNamesAsSynonymes();
 		addGsrsNamesAsSynonymes();
@@ -31,48 +32,54 @@ public class DatabaseSynonymePreparer extends Loader {
 		makeAllSynonymesLowerCase();
 	}
 
+	void removeHtmlSynonymes() {
+		executeQuery("MATCH (sy:" + SYNONYME_LABEL + ") " +
+				"WHERE sy.name CONTAINS '</' " +
+				"DETACH DELETE sy");
+	}
+
 	void addProductNamesAsSynonymes() {
 		executeQuery(
-				"MATCH (p:"+PRODUCT_LABEL+") " +
-						"MERGE (sy:"+SYNONYME_LABEL+" {name: p.name}) " +
-						"MERGE (sy)-[:"+SYNONYME_REFERENCES_NODE_LABEL+"]->(p)"
+				"MATCH (p:" + PRODUCT_LABEL + ") " +
+						"MERGE (sy:" + SYNONYME_LABEL + " {name: p.name}) " +
+						"MERGE (sy)-[:" + SYNONYME_REFERENCES_NODE_LABEL + "]->(p)"
 		);
 	}
 
 	void addSubstanceNamesAsSynonymes() {
 		executeQuery(
-				"MATCH (s:"+SUBSTANCE_LABEL+") " +
-						"MERGE (sy:"+SYNONYME_LABEL+" {name: s.name}) " +
-						"MERGE (sy)-[:"+SYNONYME_REFERENCES_NODE_LABEL+"]->(s)"
+				"MATCH (s:" + SUBSTANCE_LABEL + ") " +
+						"MERGE (sy:" + SYNONYME_LABEL + " {name: s.name}) " +
+						"MERGE (sy)-[:" + SYNONYME_REFERENCES_NODE_LABEL + "]->(s)"
 		);
 	}
 
 	void addGsrsNamesAsSynonymes() {
 		executeQuery(
-				"MATCH (g:"+UNII_LABEL+")-[:"+CODE_REFERENCE_RELATIONSHIP_NAME+"]->(s:"+SUBSTANCE_LABEL+") " +
-						"MERGE (sy:"+SYNONYME_LABEL+" {name: g.gsrsName}) " +
-						"MERGE (sy)-[:"+SYNONYME_REFERENCES_NODE_LABEL+"]->(s)"
+				"MATCH (g:" + UNII_LABEL + ")-[:" + CODE_REFERENCE_RELATIONSHIP_NAME + "]->(s:" + SUBSTANCE_LABEL + ") " +
+						"MERGE (sy:" + SYNONYME_LABEL + " {name: g.gsrsName}) " +
+						"MERGE (sy)-[:" + SYNONYME_REFERENCES_NODE_LABEL + "]->(s)"
 		);
 	}
 
 	void addInnAsSynonymes() {
 		executeQuery(
-				"MATCH (i:"+INN_LABEL+")-[:"+CODE_REFERENCE_RELATIONSHIP_NAME+"]->(s:"+SUBSTANCE_LABEL+") " +
-						"MERGE (sy:"+SYNONYME_LABEL+" {name: i.code}) " +
-						"MERGE (sy)-[:"+SYNONYME_REFERENCES_NODE_LABEL+"]->(s)"
+				"MATCH (i:" + INN_LABEL + ")-[:" + CODE_REFERENCE_RELATIONSHIP_NAME + "]->(s:" + SUBSTANCE_LABEL + ") " +
+						"MERGE (sy:" + SYNONYME_LABEL + " {name: i.code}) " +
+						"MERGE (sy)-[:" + SYNONYME_REFERENCES_NODE_LABEL + "]->(s)"
 		);
 	}
 
 	void makeAllSynonymesLowerCase() {
 		executeQuery(
-				"MATCH (sy:"+SYNONYME_LABEL+") " +
-						"MERGE (sy2:"+SYNONYME_LABEL+" {name: toLower(sy.name)}) " +
+				"MATCH (sy:" + SYNONYME_LABEL + ") " +
+						"MERGE (sy2:" + SYNONYME_LABEL + " {name: toLower(sy.name)}) " +
 						"WITH sy, sy2 " +
-						"MATCH (sy)-[r:"+SYNONYME_REFERENCES_NODE_LABEL+"]->(t) " +
-						"MERGE (sy2)-[:"+SYNONYME_REFERENCES_NODE_LABEL+"]->(t) "
+						"MATCH (sy)-[r:" + SYNONYME_REFERENCES_NODE_LABEL + "]->(t) " +
+						"MERGE (sy2)-[:" + SYNONYME_REFERENCES_NODE_LABEL + "]->(t) "
 		);
 		executeQuery(
-				"MATCH (sy:"+SYNONYME_LABEL+") " +
+				"MATCH (sy:" + SYNONYME_LABEL + ") " +
 						"WHERE sy.name <> toLower(sy.name) " +
 						"DETACH DELETE sy"
 		);

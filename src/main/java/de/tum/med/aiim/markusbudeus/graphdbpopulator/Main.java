@@ -55,10 +55,12 @@ public class Main {
 			loaders.add(new DrugAtcConnectionLoader(session));
 			// GSRS UNIIs, RXCUIs, etc.
 			loaders.add(new UniiLoader(session));
-			// Coding System Nodes and connections to it
-			loaders.add(new CodingSystemNodeCreator(session));
+			// Custom synonymes
+			loaders.add(new CustomSynonymeLoader(session));
 			// Corresponding ingredients and their amounts
 			loaders.add(new IngredientCorrespondenceLoader(session));
+			// Coding System Nodes and connections to it
+			loaders.add(new CodingSystemNodeCreator(session));
 
 			session.run("MATCH (n) DETACH DELETE n");
 			for (Loader loader : loaders) {
