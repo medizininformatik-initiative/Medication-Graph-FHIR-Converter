@@ -1,5 +1,7 @@
 package de.tum.med.aiim.markusbudeus.matcher.provider;
 
+import java.util.Objects;
+
 public class IdentifierTarget {
 
 	public final long mmiId;
@@ -17,4 +19,16 @@ public class IdentifierTarget {
 		SUBSTANCE
 	}
 
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+		IdentifierTarget that = (IdentifierTarget) o;
+		return mmiId == that.mmiId;
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(mmiId);
+	}
 }

@@ -1,16 +1,17 @@
 package de.tum.med.aiim.markusbudeus.matcher.provider;
 
-import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class Identifier<S> {
 
 	public final S identifier;
-	public final List<IdentifierTarget> targets;
+	public final Set<IdentifierTarget> targets;
 
 	public Identifier(S identifier) {
 		this.identifier = identifier;
-		this.targets = new ArrayList<>();
+		this.targets = new HashSet<>();
 	}
 
 	@Override
