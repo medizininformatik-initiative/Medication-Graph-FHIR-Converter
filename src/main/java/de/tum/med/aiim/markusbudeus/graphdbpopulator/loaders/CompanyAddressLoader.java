@@ -12,6 +12,7 @@ import static de.tum.med.aiim.markusbudeus.graphdbpopulator.DatabaseDefinitions.
  */
 public class CompanyAddressLoader extends CsvLoader {
 
+	private static final String MMI_ID = "ID";
 	private static final String COMPANY_ID = "COMPANYID";
 	private static final String COUNTRY_CATALOG_CODE = "COUNTRYCODE";
 	private static final String STREET = "STREET";
@@ -29,11 +30,15 @@ public class CompanyAddressLoader extends CsvLoader {
 
 	@Override
 	protected void executeLoad() {
+		executeQuery(
+				"CREATE CONSTRAINT addressMmiIdConstraint IF NOT EXISTS FOR (a:" + ADDRESS_LABEL + ") REQUIRE a.mmiId IS UNIQUE"
+		);
 		executeQuery(withLoadStatement(
 				"WITH " + ROW_IDENTIFIER + " WHERE " + row(
 						ADDRESS_TYPE_CODE) + " = 'C' " + // Only allow 'Firmensitz' Addresses
 						"MATCH (c:" + COMPANY_LABEL + " {mmiId: " + intRow(COMPANY_ID) + "}) " +
 						"CREATE (c)-[:" + COMPANY_HAS_ADDRESS_LABEL + "]->(a:" + ADDRESS_LABEL + " {" +
+						"mmiId: " + intRow(MMI_ID) + ", " +
 						"countryCode: " + row(COUNTRY_CATALOG_CODE) + ", " +
 						"street: " + row(STREET) + ", " +
 						"streetNumber: " + row(STREET_NUMBER) + ", " +
