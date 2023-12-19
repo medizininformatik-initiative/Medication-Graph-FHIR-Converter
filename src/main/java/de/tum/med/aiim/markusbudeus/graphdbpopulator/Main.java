@@ -21,7 +21,7 @@ public class Main {
 
 			List<Loader> loaders = new ArrayList<>();
 
-			// Unit nodes and UCUM definitions
+			// Unit nodes
 			loaders.add(new UnitLoader(session));
 			// MMI Dose forms
 			loaders.add(new DoseFormLoader(session));
@@ -55,6 +55,8 @@ public class Main {
 			loaders.add(new DrugIngredientConnectionLoader(session));
 			// Relations between Drug nodes and ATC nodes
 			loaders.add(new DrugAtcConnectionLoader(session));
+			// Unit UCUM definitions
+			loaders.add(new UcumLoader(session));
 			// GSRS UNIIs, RXCUIs, etc.
 			loaders.add(new UniiLoader(session));
 			// Custom synonymes

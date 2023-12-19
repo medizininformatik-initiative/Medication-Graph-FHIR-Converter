@@ -29,7 +29,8 @@ public class DatabaseDefinitions {
 	public static final String INGREDIENT_IS_SUBSTANCE_LABEL = "IS_SUBSTANCE";
 	public static final String INGREDIENT_CORRESPONDS_TO_LABEL = "CORRESPONDS_TO";
 	public static final String INGREDIENT_HAS_UNIT_LABEL = "HAS_UNIT";
-	public static final String DRUG_HAS_UNIT_LABEL = "HAS_UNIT";
+	//Do not change this label ideally, as it would break the UnitLoader, which only considers the INGREDIENT_HAS_UNIT_LABEL
+	public static final String DRUG_HAS_UNIT_LABEL = INGREDIENT_HAS_UNIT_LABEL;
 	public static final String DRUG_HAS_DOSE_FORM_LABEL = "HAS_DOSE_FORM";
 	public static final String UNIT_LABEL = "Unit";
 	public static final String DOSE_FORM_LABEL = "DoseForm";
