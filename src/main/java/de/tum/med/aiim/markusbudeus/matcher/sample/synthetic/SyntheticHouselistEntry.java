@@ -1,6 +1,8 @@
 package de.tum.med.aiim.markusbudeus.matcher.sample.synthetic;
 
-public class SyntheticHouselistEntry {
+import de.tum.med.aiim.markusbudeus.matcher.HouselistEntry;
+
+public class SyntheticHouselistEntry extends HouselistEntry {
 
 	public final String substanceName;
 	public final String atc;
@@ -14,5 +16,6 @@ public class SyntheticHouselistEntry {
 		this.ask = ask;
 		this.pzn = pzn;
 		this.noisySubstanceName = noisySubstanceName;
+		super.name = noisySubstanceName;
 	}
 }

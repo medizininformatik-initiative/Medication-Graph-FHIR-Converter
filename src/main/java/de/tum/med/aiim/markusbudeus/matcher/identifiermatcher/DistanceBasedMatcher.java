@@ -13,7 +13,7 @@ public abstract class DistanceBasedMatcher<S> extends IdentifierMatcher<S> {
 	}
 
 	@Override
-	public ScoreMultiMatch<S> findMatch(S searchTerm) {
+	public ScoreMultiMatch<S> findMatchWithoutTransformation(S searchTerm) {
 		Map<MappedIdentifier<S>, Integer> distances = new HashMap<>();
 		this.identifiers.values().forEach(identifier -> {
 			Integer distance = calculateDistance(searchTerm, identifier.identifier.getIdentifier());

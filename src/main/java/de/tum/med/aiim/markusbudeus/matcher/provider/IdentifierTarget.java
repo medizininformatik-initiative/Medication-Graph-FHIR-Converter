@@ -31,4 +31,9 @@ public class IdentifierTarget {
 	public int hashCode() {
 		return Objects.hash(mmiId);
 	}
+
+	@Override
+	public String toString() {
+		return name + " ("+type+")";
+	}
 }

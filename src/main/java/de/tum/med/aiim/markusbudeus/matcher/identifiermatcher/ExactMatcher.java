@@ -9,7 +9,7 @@ public class ExactMatcher extends IdentifierMatcher<String> {
 	}
 
 	@Override
-	public Match<String> findMatch(String searchTerm) {
+	public Match<String> findMatchWithoutTransformation(String searchTerm) {
 		return new SingleMatch<>(identifiers.get(searchTerm));
 	}
 

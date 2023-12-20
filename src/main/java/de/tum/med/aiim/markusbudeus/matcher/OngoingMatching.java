@@ -1,16 +1,12 @@
 package de.tum.med.aiim.markusbudeus.matcher;
 
-import de.tum.med.aiim.markusbudeus.matcher.identifiermatcher.Match;
-import de.tum.med.aiim.markusbudeus.matcher.provider.BaseProvider;
-import de.tum.med.aiim.markusbudeus.matcher.provider.MappedBaseIdentifier;
-import de.tum.med.aiim.markusbudeus.matcher.provider.MappedIdentifier;
+import de.tum.med.aiim.markusbudeus.matcher.provider.*;
 import de.tum.med.aiim.markusbudeus.matcher.resulttransformer.Filter;
 import de.tum.med.aiim.markusbudeus.matcher.resulttransformer.ResultTransformer;
 
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
-import java.util.function.Function;
+import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 
 public class OngoingMatching {
@@ -23,11 +19,24 @@ public class OngoingMatching {
 		this.currentMatches = baseProvider;
 	}
 
-	public void narrowDown(Function<BaseProvider, Set<MappedIdentifier<?>>> matcherInvocation) {
-		narrowDown(matcherInvocation.apply(currentMatches));
+	public boolean narrowDownUnlessEmpty(BiFunction<HouselistEntry, BaseProvider, Set<MappedIdentifier<?>>> matcherInvocation) {
+		return narrowDownUnlessEmpty(matcherInvocation.apply(entry, currentMatches));
 	}
 
-	public void narrowDown(Set<MappedIdentifier<?>> newIdentifiers) {
+	/**
+	 * Narrows down the matches to the given set of identifiers, unless it's empty.
+	 * @return true if the set of identifiers is not empty and thus the result was narrowed down, false otherwise
+	 */
+	public boolean narrowDownUnlessEmpty(Set<? extends MappedIdentifier<?>> newIdentifiers) {
+		if (newIdentifiers.isEmpty()) return false;
+		narrowDown(newIdentifiers);
+		return true;
+	}
+
+	/**
+	 * Narrows down the matches to the given set of identifiers, even if it's empty!
+	 */
+	public void narrowDown(Set<? extends MappedIdentifier<?>> newIdentifiers) {
 		currentMatches = BaseProvider.ofIdentifiers(
 				newIdentifiers.stream()
 				              .map(MappedIdentifier::toBaseIdentifier)
@@ -47,8 +56,14 @@ public class OngoingMatching {
 		transformResults(filter);
 	}
 
-	public BaseProvider getCurrentMatches() {
+	public BaseProvider getCurrentMatchesProvider() {
 		return currentMatches;
+	}
+
+	public Set<IdentifierTarget> getCurrentMatches() {
+		Set<IdentifierTarget> set = new HashSet<>();
+		currentMatches.identifiers.values().forEach(i -> set.addAll(i.targets));
+		return set;
 	}
 
 }

@@ -5,13 +5,13 @@ public interface IIdentifierMatcher<S> {
 	/**
 	 * Attempts to match the given identifier to known identifiers. Never returns null.
 	 */
-	Match<S> findMatch(S searchTerm);
+	Match<S> findMatchWithoutTransformation(S searchTerm);
 
 	/**
 	 * Attempts to match the given searchTerm to known identifiers. Never returns null.
 	 */
-	default Match<S> findMatchWithTransformation(String searchTerm) {
-		return findMatch(transform(searchTerm));
+	default Match<S> findMatch(String searchTerm) {
+		return findMatchWithoutTransformation(transform(searchTerm));
 	}
 
 	S transform(String name);

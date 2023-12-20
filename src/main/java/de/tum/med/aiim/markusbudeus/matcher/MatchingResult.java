@@ -1,13 +1,16 @@
 package de.tum.med.aiim.markusbudeus.matcher;
 
 import de.tum.med.aiim.markusbudeus.matcher.identifiermatcher.Match;
+import de.tum.med.aiim.markusbudeus.matcher.provider.IdentifierTarget;
 
-public class MatchingResult<T, S> {
+import java.util.List;
 
-	public final T searchTerm;
-	public final Match<S> result;
+public class MatchingResult {
 
-	public MatchingResult(T searchTerm, Match<S> result) {
+	public final HouselistEntry searchTerm;
+	public final List<IdentifierTarget> result;
+
+	public MatchingResult(HouselistEntry searchTerm, List<IdentifierTarget> result) {
 		this.searchTerm = searchTerm;
 		this.result = result;
 	}
