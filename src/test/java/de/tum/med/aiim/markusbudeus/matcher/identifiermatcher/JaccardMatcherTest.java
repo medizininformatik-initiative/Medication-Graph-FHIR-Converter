@@ -1,4 +1,4 @@
-package de.tum.med.aiim.markusbudeus.matcher.stringmatcher;
+package de.tum.med.aiim.markusbudeus.matcher.identifiermatcher;
 
 import org.junit.jupiter.api.Test;
 

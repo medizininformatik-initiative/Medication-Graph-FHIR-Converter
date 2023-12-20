@@ -1,18 +1,15 @@
 package de.tum.med.aiim.markusbudeus.matcher;
 
+/**
+ * Represents a houselist entry which shall be matched. Each field may be null if unspecified in the house list.
+ */
 public class HouselistEntry {
 
-	public final String substanceName;
-	public final String atc;
-	public final String ask;
-	public final String pzn;
-	public final String noisySubstanceName;
+	public String name;
+	public String substanceName;
+	public String productName;
+	public String pzn;
+	public Amount activeIngredientDosage;
+	public Amount drugAmount;
 
-	public HouselistEntry(String substanceName, String atc, String ask, String pzn, String noisySubstanceName) {
-		this.substanceName = substanceName;
-		this.atc = atc;
-		this.ask = ask;
-		this.pzn = pzn;
-		this.noisySubstanceName = noisySubstanceName;
-	}
 }

@@ -1,6 +1,4 @@
-package de.tum.med.aiim.markusbudeus.matcher.transformer;
-
-import de.tum.med.aiim.markusbudeus.matcher.transformer.Transformer;
+package de.tum.med.aiim.markusbudeus.matcher.stringtransformer;
 
 /**
  * This transformer makes the names lowercase.

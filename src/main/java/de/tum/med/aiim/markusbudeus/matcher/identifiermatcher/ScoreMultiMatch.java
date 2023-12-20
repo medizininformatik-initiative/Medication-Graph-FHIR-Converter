@@ -1,17 +1,23 @@
-package de.tum.med.aiim.markusbudeus.matcher;
+package de.tum.med.aiim.markusbudeus.matcher.identifiermatcher;
 
-import de.tum.med.aiim.markusbudeus.matcher.provider.Identifier;
+import de.tum.med.aiim.markusbudeus.matcher.provider.MappedIdentifier;
 
 import java.util.*;
 
 public class ScoreMultiMatch<S> implements Match<S> {
+
+	public static <S> ScoreMultiMatch<S> scoreByDistance(Map<MappedIdentifier<S>, Integer> distances) {
+		List<MatchWithScore<S>> list = new ArrayList<>(distances.size());
+		distances.forEach((identifier, distance) -> list.add(new MatchWithScore<>(identifier, 1.0 / (distance + 1))));
+		return new ScoreMultiMatch<>(list);
+	}
 
 	/**
 	 * The matches, ordered by their score in descending order.
 	 */
 	public final List<MatchWithScore<S>> matchesWithScore;
 
-	public ScoreMultiMatch(Map<Identifier<S>, Double> matchesWithScore) {
+	public ScoreMultiMatch(Map<MappedIdentifier<S>, Double> matchesWithScore) {
 		this.matchesWithScore = new ArrayList<>();
 		matchesWithScore.forEach((match, score) -> this.matchesWithScore.add(new MatchWithScore<S>(match, score)));
 		sortMatches();
@@ -27,8 +33,8 @@ public class ScoreMultiMatch<S> implements Match<S> {
 	}
 
 	@Override
-	public Set<Identifier<S>> getBestMatches() {
-		Set<Identifier<S>> bestMatches = new HashSet<>();
+	public Set<MappedIdentifier<S>> getBestMatches() {
+		Set<MappedIdentifier<S>> bestMatches = new HashSet<>();
 		if (matchesWithScore.isEmpty()) return bestMatches;
 		double topScore = matchesWithScore.get(0).score;
 		for (MatchWithScore<S> match : matchesWithScore) {
@@ -39,10 +45,10 @@ public class ScoreMultiMatch<S> implements Match<S> {
 	}
 
 	public static class MatchWithScore<S> {
-		final Identifier<S> match;
+		final MappedIdentifier<S> match;
 		final double score;
 
-		public MatchWithScore(Identifier<S> match, double score) {
+		public MatchWithScore(MappedIdentifier<S> match, double score) {
 			this.match = match;
 			this.score = score;
 		}

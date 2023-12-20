@@ -1,5 +1,7 @@
 package de.tum.med.aiim.markusbudeus.matcher;
 
+import de.tum.med.aiim.markusbudeus.matcher.identifiermatcher.Match;
+
 public class MatchingResult<T, S> {
 
 	public final T searchTerm;

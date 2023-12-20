@@ -1,13 +1,13 @@
 package de.tum.med.aiim.markusbudeus.matcher.provider;
 
-import de.tum.med.aiim.markusbudeus.matcher.transformer.Transformer;
+import de.tum.med.aiim.markusbudeus.matcher.stringtransformer.Transformer;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public class TransformedProvider<S, T> implements IdentifierProvider<T> {
 
-	private final Map<T, Identifier<T>> synonymes;
+	private final Map<T, MappedIdentifier<T>> synonymes;
 	private final IdentifierProvider<S> base;
 	private final Transformer<S, T> transformer;
 
@@ -17,18 +17,19 @@ public class TransformedProvider<S, T> implements IdentifierProvider<T> {
 		this.synonymes = transform(base.getIdentifiers(), transformer);
 	}
 
-	private Map<T, Identifier<T>> transform(Map<S, Identifier<S>> sourceMap, Transformer<S, T> transformer) {
-		Map<T, Identifier<T>> result = new HashMap<>();
+	private Map<T, MappedIdentifier<T>> transform(Map<S, MappedIdentifier<S>> sourceMap, Transformer<S, T> transformer) {
+		Map<T, MappedIdentifier<T>> result = new HashMap<>();
 		sourceMap.forEach((name, synonyme) -> {
 			T newName = transformer.transform(name);
-			Identifier<T> target = result.computeIfAbsent(newName, Identifier::new);
+			MappedIdentifier<T> target = result.computeIfAbsent(newName, n ->
+					new MappedIdentifier<>(new TransformedIdentifier<>(newName, synonyme.identifier)));
 			target.targets.addAll(synonyme.targets);
 		});
 		return result;
 	}
 
 	@Override
-	public Map<T, Identifier<T>> getIdentifiers() {
+	public Map<T, MappedIdentifier<T>> getIdentifiers() {
 		return synonymes;
 	}
 

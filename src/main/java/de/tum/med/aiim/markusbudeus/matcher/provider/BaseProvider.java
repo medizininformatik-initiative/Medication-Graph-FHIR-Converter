@@ -9,26 +9,27 @@ import org.neo4j.driver.Value;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import static de.tum.med.aiim.markusbudeus.graphdbpopulator.DatabaseDefinitions.*;
 
 public class BaseProvider implements IdentifierProvider<String> {
 
-	public static BaseProvider instantiate() {
+	public static BaseProvider ofDatabaseSynonymes() {
 		try (DatabaseConnection connection = new DatabaseConnection();
 		     Session session = connection.createSession()) {
-			return new BaseProvider(session);
+			return new BaseProvider(downloadSynonymes(session));
 		}
 	}
 
-	public final Map<String, Identifier<String>> identifiers;
-
-	public BaseProvider(Session session) {
-		this.identifiers = downloadSynonymes(session);
+	public static BaseProvider ofIdentifiers(Set<MappedIdentifier<String>> identifiers) {
+		Map<String, MappedIdentifier<String>> map = new HashMap<>();
+		identifiers.forEach(i -> map.put(i.identifier.getIdentifier(), i));
+		return new BaseProvider(map);
 	}
 
-	private Map<String, Identifier<String>> downloadSynonymes(Session session) {
-		Map<String, Identifier<String>> result = new HashMap<>();
+	private static Map<String, MappedIdentifier<String>> downloadSynonymes(Session session) {
+		Map<String, MappedIdentifier<String>> result = new HashMap<>();
 		Result res = session.run(
 				"MATCH (sy:" + SYNONYME_LABEL + ")--(t) " +
 						"RETURN sy.name, t.mmiId, t.name, labels(t)"
@@ -36,7 +37,7 @@ public class BaseProvider implements IdentifierProvider<String> {
 
 		res.forEachRemaining(record -> {
 			String synonymeName = record.get(0).asString();
-			Identifier<String> identifier = result.computeIfAbsent(synonymeName, Identifier::new);
+			MappedIdentifier<String> identifier = result.computeIfAbsent(synonymeName, MappedBaseIdentifier::new);
 			IdentifierTarget target = toSynonymeTarget(record);
 			if (target != null) identifier.targets.add(target);
 		});
@@ -44,7 +45,7 @@ public class BaseProvider implements IdentifierProvider<String> {
 		return result;
 	}
 
-	private IdentifierTarget toSynonymeTarget(Record record) {
+	private static IdentifierTarget toSynonymeTarget(Record record) {
 		long mmiId = record.get(1).asLong();
 		String name = record.get(2).asString();
 		List<String> labels = record.get(3).asList(Value::asString);
@@ -64,8 +65,14 @@ public class BaseProvider implements IdentifierProvider<String> {
 		return new IdentifierTarget(mmiId, name, type);
 	}
 
+	public final Map<String, MappedIdentifier<String>> identifiers;
+
+	public BaseProvider(Map<String, MappedIdentifier<String>> identifiers) {
+		this.identifiers = identifiers;
+	}
+
 	@Override
-	public Map<String, Identifier<String>> getIdentifiers() {
+	public Map<String, MappedIdentifier<String>> getIdentifiers() {
 		return identifiers;
 	}
 

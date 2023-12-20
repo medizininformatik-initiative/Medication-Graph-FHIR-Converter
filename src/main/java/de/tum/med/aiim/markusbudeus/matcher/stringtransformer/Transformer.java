@@ -1,4 +1,4 @@
-package de.tum.med.aiim.markusbudeus.matcher.transformer;
+package de.tum.med.aiim.markusbudeus.matcher.stringtransformer;
 
 /**
  * A transformer is meant to transform synonyme names.

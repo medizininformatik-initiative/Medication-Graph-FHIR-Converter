@@ -6,16 +6,15 @@ import static de.tum.med.aiim.markusbudeus.graphdbpopulator.DatabaseDefinitions.
 
 public enum CodingSystem {
 
-	EDQM(
-			"https://standardterms.edqm.eu",
-			"EDQM Standard Terms database",
-			LocalDate.of(2023, 10, 16),
+	ASK(
+			"http://fhir.de/CodeSystem/ask",
+			"Arzneistoffkatalog",
+			LocalDate.now(),
 			null,
-			"Data is taken from the EDQM Standard Terms database and is reproduced with permission " +
-					"of the European Directorate for the Quality of Medicines & HealthCare, Council of Europe (EDQM). " +
-					"The data has been retrieved at the date given by the date property. Since the EDQM Standard " +
-					"Terms database is not a static list, this data may not be up to date.",
-			EDQM_LABEL
+			"The ASK data has been retrieved from raw MMI PharmIndex data when this database was created. " +
+					"The database creation date is specified as date property on this node. However, the raw " +
+					"data used to instantiate this database may have been older than that.",
+			ASK_LABEL
 	),
 	ATC(
 			"http://fhir.de/CodeSystem/bfarm/atc",
@@ -28,46 +27,6 @@ public enum CodingSystem {
 					"older than what the date suggests.",
 			ATC_LABEL
 	),
-	PZN(
-			"http://fhir.de/CodeSystem/ifa/pzn",
-			"Pharmazentralnummer",
-			LocalDate.now(),
-			null,
-			"The PZN data has been retrieved from raw MMI PharmIndex data when this database was created. " +
-					"The database creation date is specified as date property on this node. However, the raw " +
-					"data used to instantiate this database may have been older than that.",
-			PZN_LABEL
-	),
-	ASK(
-			"http://fhir.de/CodeSystem/ask",
-			"Arzneistoffkatalog",
-			LocalDate.now(),
-			null,
-			"The ASK data has been retrieved from raw MMI PharmIndex data when this database was created. " +
-					"The database creation date is specified as date property on this node. However, the raw " +
-					"data used to instantiate this database may have been older than that.",
-			ASK_LABEL
-	),
-	//		INN(
-//			"https://www.who.int/teams/health-product-and-policy-standards/inn",
-//			"International Nonproprietary Name",
-//			LocalDate.of(2023, 8, 28),
-//			null,
-//			"The INN data has been retrieved from " +
-//					"https://www.wcoomd.org/en/topics/nomenclature/instrument-and-tools/tools-to-assist-with-the-classification-in-the-hs/hs_classification-decisions/inn-table.aspx " +
-//					"on the specified date.",
-//			INN_LABEL
-//	);
-	INN(
-			"https://www.who.int/teams/health-product-and-policy-standards/inn",
-			"International Nonproprietary Name",
-			LocalDate.of(2023, 1, 17),
-			null,
-			"The INN data has been retrieved from " +
-					"https://www.bfarm.de/DE/Arzneimittel/Arzneimittelinformationen/Arzneimittel-recherchieren/Stoffbezeichnungen/_node.html " +
-					"and has the version of the specified date.",
-			INN_LABEL
-	),
 	CAS(
 			"https://www.cas.org/cas-data/cas-registry",
 			"Chemical Abstracts Service Registry Number®",
@@ -78,14 +37,36 @@ public enum CodingSystem {
 					"and has the version of the specified date.",
 			CAS_LABEL
 	),
-	UNII(
-			"https://www.fda.gov/industry/fda-data-standards-advisory-board/fdas-global-substance-registration-system",
-			"Unique Ingredient Identifier",
-			LocalDate.of(2023, 11, 30),
-			"v3.0.3",
-			"The data has been retrieved by querying the GSRS API using the already-known CAS codes of substances. " +
-					"This querying has been performed on the date specified on this node.",
-			UNII_LABEL
+	EDQM(
+			"https://standardterms.edqm.eu",
+			"EDQM Standard Terms database",
+			LocalDate.of(2023, 10, 16),
+			null,
+			"Data is taken from the EDQM Standard Terms database and is reproduced with permission " +
+					"of the European Directorate for the Quality of Medicines & HealthCare, Council of Europe (EDQM). " +
+					"The data has been retrieved at the date given by the date property. Since the EDQM Standard " +
+					"Terms database is not a static list, this data may not be up to date.",
+			EDQM_LABEL
+	),
+	INN(
+			"https://www.who.int/teams/health-product-and-policy-standards/inn",
+			"International Nonproprietary Name",
+			LocalDate.of(2023, 1, 17),
+			null,
+			"The INN data has been retrieved from " +
+					"https://www.bfarm.de/DE/Arzneimittel/Arzneimittelinformationen/Arzneimittel-recherchieren/Stoffbezeichnungen/_node.html " +
+					"and has the version of the specified date.",
+			INN_LABEL
+	),
+	PZN(
+			"http://fhir.de/CodeSystem/ifa/pzn",
+			"Pharmazentralnummer",
+			LocalDate.now(),
+			null,
+			"The PZN data has been retrieved from raw MMI PharmIndex data when this database was created. " +
+					"The database creation date is specified as date property on this node. However, the raw " +
+					"data used to instantiate this database may have been older than that.",
+			PZN_LABEL
 	),
 	RXCUI(
 			"https://www.nlm.nih.gov/research/umls/rxnorm/overview.html",
@@ -95,6 +76,15 @@ public enum CodingSystem {
 			"The data has been retrieved by querying the GSRS API using the already-known CAS codes of substances. " +
 					"This querying has been performed on the date specified on this node.",
 			RXCUI_LABEL
+	),
+	UNII(
+			"https://www.fda.gov/industry/fda-data-standards-advisory-board/fdas-global-substance-registration-system",
+			"Unique Ingredient Identifier",
+			LocalDate.of(2023, 11, 30),
+			"v3.0.3",
+			"The data has been retrieved by querying the GSRS API using the already-known CAS codes of substances. " +
+					"This querying has been performed on the date specified on this node.",
+			UNII_LABEL
 	);
 
 	/**

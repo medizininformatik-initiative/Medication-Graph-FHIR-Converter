@@ -1,13 +1,15 @@
 package de.tum.med.aiim.markusbudeus.matcher;
 
 import de.tum.med.aiim.markusbudeus.matcher.provider.BaseProvider;
-import de.tum.med.aiim.markusbudeus.matcher.provider.Identifier;
+import de.tum.med.aiim.markusbudeus.matcher.provider.MappedIdentifier;
 import de.tum.med.aiim.markusbudeus.matcher.provider.IdentifierProvider;
-import de.tum.med.aiim.markusbudeus.matcher.stringmatcher.JaccardMatcher;
-import de.tum.med.aiim.markusbudeus.matcher.transformer.ListToSet;
-import de.tum.med.aiim.markusbudeus.matcher.transformer.ToLowerCase;
-import de.tum.med.aiim.markusbudeus.matcher.stringmatcher.IStringMatcher;
-import de.tum.med.aiim.markusbudeus.matcher.transformer.WhitespaceTokenizer;
+import de.tum.med.aiim.markusbudeus.matcher.identifiermatcher.JaccardMatcher;
+import de.tum.med.aiim.markusbudeus.matcher.sample.synthetic.HouselistMatcher;
+import de.tum.med.aiim.markusbudeus.matcher.sample.synthetic.SyntheticHouselistEntry;
+import de.tum.med.aiim.markusbudeus.matcher.stringtransformer.ListToSet;
+import de.tum.med.aiim.markusbudeus.matcher.stringtransformer.ToLowerCase;
+import de.tum.med.aiim.markusbudeus.matcher.identifiermatcher.IIdentifierMatcher;
+import de.tum.med.aiim.markusbudeus.matcher.stringtransformer.WhitespaceTokenizer;
 
 import java.io.IOException;
 import java.text.DecimalFormat;
@@ -21,7 +23,7 @@ public class Main {
 
 	public static void main(String[] args) throws IOException {
 		IdentifierProvider<Set<String>> provider = BaseProvider
-				.instantiate()
+				.ofDatabaseSynonymes()
 				.transform(new ToLowerCase())
 				.transform(new WhitespaceTokenizer())
 				.transform(new ListToSet());
@@ -34,13 +36,13 @@ public class Main {
 
 	public static <S, T> void makeMatchingRun(
 			IdentifierProvider<S> provider,
-			Function<IdentifierProvider<S>, IStringMatcher<S>> matcherConstructor)
+			Function<IdentifierProvider<S>, IIdentifierMatcher<S>> matcherConstructor)
 	throws IOException {
 
-		IStringMatcher<S> matcher = matcherConstructor.apply(provider);
+		IIdentifierMatcher<S> matcher = matcherConstructor.apply(provider);
 
-		List<HouselistEntry> entries = HouselistMatcher.loadHouselist();
-		Stream<MatchingResult<HouselistEntry, S>> resultStream = performMatching(entries,
+		List<SyntheticHouselistEntry> entries = HouselistMatcher.loadHouselist();
+		Stream<MatchingResult<SyntheticHouselistEntry, S>> resultStream = performMatching(entries,
 				houselistEntry -> houselistEntry.noisySubstanceName,
 				matcher);
 
@@ -50,7 +52,7 @@ public class Main {
 		AtomicInteger unmatched = new AtomicInteger();
 		resultStream.forEach(result -> {
 			total.getAndIncrement();
-			Set<Identifier<S>> bestMatches = result.result.getBestMatches();
+			Set<MappedIdentifier<S>> bestMatches = result.result.getBestMatches();
 
 			if (bestMatches.size() == 1 && bestMatches.iterator().next().targets.size() == 1) {
 				unique.getAndIncrement();
@@ -73,13 +75,13 @@ public class Main {
 
 	public static <T, S> Stream<MatchingResult<T, S>> performMatching(List<T> searchTerms,
 	                                                                  Function<T, String> searchTermMapper,
-	                                                                  IStringMatcher<S> matcher) {
+	                                                                  IIdentifierMatcher<S> matcher) {
 		return performMatching(searchTerms.stream(), searchTermMapper, matcher);
 	}
 
 	public static <T, S> Stream<MatchingResult<T, S>> performMatching(Stream<T> searchTerms,
 	                                                                  Function<T, String> searchTermMapper,
-	                                                                  IStringMatcher<S> matcher) {
+	                                                                  IIdentifierMatcher<S> matcher) {
 		return performMatchingWithoutPreTransform(searchTerms,
 				t -> matcher.transform(searchTermMapper.apply(t)),
 				matcher);
@@ -87,7 +89,7 @@ public class Main {
 
 	public static <T, S> Stream<MatchingResult<T, S>> performMatchingWithoutPreTransform(Stream<T> searchTerms,
 	                                                                                     Function<T, S> searchTermMapper,
-	                                                                                     IStringMatcher<S> matcher) {
+	                                                                                     IIdentifierMatcher<S> matcher) {
 		return searchTerms.map(term -> new MatchingResult<>(term, matcher.findMatch(searchTermMapper.apply(term))));
 	}
 

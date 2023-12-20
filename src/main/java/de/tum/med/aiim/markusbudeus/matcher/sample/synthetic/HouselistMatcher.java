@@ -1,4 +1,4 @@
-package de.tum.med.aiim.markusbudeus.matcher;
+package de.tum.med.aiim.markusbudeus.matcher.sample.synthetic;
 
 import de.tum.med.aiim.markusbudeus.graphdbpopulator.CSVReader;
 import de.tum.med.aiim.markusbudeus.graphdbpopulator.DatabaseConnection;
@@ -32,9 +32,9 @@ public class HouselistMatcher {
 		DatabaseConnection.runSession(session -> {
 			HouselistMatcher matcher = new HouselistMatcher(session);
 			try {
-				List<HouselistEntry> houselist = HouselistMatcher.loadHouselist();
+				List<SyntheticHouselistEntry> houselist = HouselistMatcher.loadHouselist();
 				houselist.removeIf(entry -> entry.noisySubstanceName.equals(entry.substanceName));
-				Map<HouselistEntry, SubstanceMatch> matches = matcher.performMatching(houselist);
+				Map<SyntheticHouselistEntry, SubstanceMatch> matches = matcher.performMatching(houselist);
 				houselist.forEach(houselistEntry -> {
 					SubstanceMatch match = matches.get(houselistEntry);
 					System.out.print("[" + houselistEntry.noisySubstanceName + " ("+houselistEntry.substanceName +")]->");
@@ -60,7 +60,7 @@ public class HouselistMatcher {
 		this.substanceSynonymes = downloadSynonymes();
 	}
 
-	private OptionalLong match(HouselistEntry entry) {
+	private OptionalLong match(SyntheticHouselistEntry entry) {
 		Long match = substanceSynonymes.get(entry.noisySubstanceName.toLowerCase());
 		return match != null ? OptionalLong.of(match) : OptionalLong.empty();
 	}
@@ -77,9 +77,9 @@ public class HouselistMatcher {
 		return result;
 	}
 
-	public Map<HouselistEntry, SubstanceMatch> performMatching(List<HouselistEntry> entries) throws IOException {
-		Map<HouselistEntry, Long> matchMap = new HashMap<>();
-		for (HouselistEntry entry : entries) {
+	public Map<SyntheticHouselistEntry, SubstanceMatch> performMatching(List<SyntheticHouselistEntry> entries) throws IOException {
+		Map<SyntheticHouselistEntry, Long> matchMap = new HashMap<>();
+		for (SyntheticHouselistEntry entry : entries) {
 			OptionalLong match = match(entry);
 			if (match.isPresent()) {
 				matchMap.put(entry, match.getAsLong());
@@ -88,8 +88,8 @@ public class HouselistMatcher {
 
 		Map<Long, SubstanceMatch> substances = resolveSubstances(new ArrayList<>(matchMap.values()));
 
-		Map<HouselistEntry, SubstanceMatch> result = new HashMap<>();
-		for (Map.Entry<HouselistEntry, Long> entry : matchMap.entrySet()) {
+		Map<SyntheticHouselistEntry, SubstanceMatch> result = new HashMap<>();
+		for (Map.Entry<SyntheticHouselistEntry, Long> entry : matchMap.entrySet()) {
 			SubstanceMatch match = substances.get(entry.getValue());
 			if (match != null) {
 				result.put(entry.getKey(), match);
@@ -117,17 +117,17 @@ public class HouselistMatcher {
 	}
 
 	@SuppressWarnings("ConstantConditions")
-	public static List<HouselistEntry> loadHouselist() throws IOException {
+	public static List<SyntheticHouselistEntry> loadHouselist() throws IOException {
 		try (InputStream inputStream = HouselistMatcher.class.getClassLoader().getResourceAsStream(HOUSELIST);
 		     InputStreamReader reader = new InputStreamReader(inputStream)) {
 			CSVReader csvReader = CSVReader.open(reader);
 
 			csvReader.readNext(); // Skip headline
 
-			List<HouselistEntry> list = new ArrayList<>();
+			List<SyntheticHouselistEntry> list = new ArrayList<>();
 			String[] line;
 			while ((line = csvReader.readNext()) != null) {
-				list.add(new HouselistEntry(
+				list.add(new SyntheticHouselistEntry(
 						line[0],
 						line[1],
 						line[2],

@@ -1,22 +1,14 @@
 package de.tum.med.aiim.markusbudeus.matcher.provider;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+/**
+ * An Identifier is a "name" for something. It may be a transformed version of a {@link BaseIdentifier} or its a
+ * {@link BaseIdentifier} itself.
+ * @param <S> the type of the identifier
+ */
+public interface Identifier<S> {
 
-public class Identifier<S> {
+	S getIdentifier();
 
-	public final S identifier;
-	public final Set<IdentifierTarget> targets;
+	BaseIdentifier getBaseIdentifier();
 
-	public Identifier(S identifier) {
-		this.identifier = identifier;
-		this.targets = new HashSet<>();
-	}
-
-	@Override
-	public String toString() {
-		List<String> names = targets.stream().map(t -> t.name).toList();
-		return identifier.toString() + ": " + String.join("/", names.toArray(new String[0]));
-	}
 }

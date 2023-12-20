@@ -1,4 +1,4 @@
-package de.tum.med.aiim.markusbudeus.matcher.transformer;
+package de.tum.med.aiim.markusbudeus.matcher.stringtransformer;
 
 import java.util.HashSet;
 import java.util.List;

@@ -1,4 +1,4 @@
-package de.tum.med.aiim.markusbudeus.matcher;
+package de.tum.med.aiim.markusbudeus.matcher.sample.synthetic;
 
 import java.util.Objects;
 

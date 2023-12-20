@@ -1,24 +1,23 @@
-package de.tum.med.aiim.markusbudeus.matcher.stringmatcher;
+package de.tum.med.aiim.markusbudeus.matcher.identifiermatcher;
 
-import de.tum.med.aiim.markusbudeus.matcher.ScoreMultiMatch;
-import de.tum.med.aiim.markusbudeus.matcher.provider.Identifier;
+import de.tum.med.aiim.markusbudeus.matcher.provider.MappedIdentifier;
 import de.tum.med.aiim.markusbudeus.matcher.provider.IdentifierProvider;
 
 import java.util.*;
 
-public class JaccardMatcher extends StringMatcher<Set<String>> {
+public class JaccardMatcher extends IdentifierMatcher<Set<String>> {
 
 	public JaccardMatcher(IdentifierProvider<Set<String>> provider) {
 		super(provider);
 	}
 
 	@Override
-	public ScoreMultiMatch<Set<String>> findMatch(Set<String> name) {
-		Collection<Identifier<Set<String>>> allIdentifiers = identifiers.values();
+	public ScoreMultiMatch<Set<String>> findMatch(Set<String> searchTerm) {
+		Collection<MappedIdentifier<Set<String>>> allIdentifiers = identifiers.values();
 		List<ScoreMultiMatch.MatchWithScore<Set<String>>> scores = new ArrayList<>();
 
 		allIdentifiers.forEach(identifier -> {
-			double jaccard = getJaccardCoefficient(name, identifier.identifier);
+			double jaccard = getJaccardCoefficient(searchTerm, identifier.identifier);
 			if (jaccard > 0) scores.add(new ScoreMultiMatch.MatchWithScore<>(identifier, jaccard));
 		});
 		return new ScoreMultiMatch<>(scores);
