@@ -3,16 +3,17 @@ package de.tum.med.aiim.markusbudeus.matcher.tools;
 import de.tum.med.aiim.markusbudeus.matcher.Amount;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 public class DosageDetector {
 
 	// No, the two "µ" signs in there are not the same. They just look the same.
-	private static final Set<String> KNOWN_UNITS = Set.of("mg", "g", "ml", "μg", "µg", "dl", "mikrogramm");
-	private static final Set<Character> TERMINATOR_SIGNS = Set.of(',', ' ', '.', '/');
-	private static final Set<Character> DECIMAL_SEPARATOR_SIGNS = Set.of(',', '.');
+	// Also, all units in there must be lowercase, as only lowercase comparison is performed!
+	private static final Set<String> KNOWN_UNITS = Set.of("mg", "g", "ml", "μg", "µg", "dl", "mikrogramm", "i.e.",
+			"beutel", "spruehstoss", "sprühstoss", "spruehstoß", "sprühstoß", "ampulle", "tablette", "zäpfchen",
+			"zaepfchen", "vaginaltablette");
+	private static final Set<Character> TERMINATOR_SIGNS = Set.of(',', ' ', '/', '(', ')');
+	private static final Set<Character> DECIMAL_OR_THOUSANDS_SEPARATOR_SIGNS = Set.of(',', '.');
 	private static final BigDecimal MIN_NUMBER_FOR_UNITLESS_DOSAGE = BigDecimal.TEN;
 
 	public static List<Dosage> detectDosages(String value) {
@@ -108,6 +109,14 @@ public class DosageDetector {
 			result.nominatorQualifier = qualifier;
 			result.amountDemoninator = detDenominator.amount;
 			result.length = detDenominator.endIndex - startIndex;
+		} else {
+			// This is relevant if we have something like 40 mg/ml, where the denominator is implicitly 1
+			String unitOnlyDenominator = detectUnit(currentIndex);
+			if (unitOnlyDenominator != null) {
+				result.nominatorQualifier = qualifier;
+				result.amountDemoninator = new Amount(BigDecimal.ONE, unitOnlyDenominator);
+				result.length = (currentIndex + unitOnlyDenominator.length()) - startIndex;
+			}
 		}
 		return result;
 	}
@@ -117,11 +126,10 @@ public class DosageDetector {
 	 * considered to be an amount.
 	 */
 	private DetectedAmount detectAmount(int startIndex) {
-		readNumberIntoBuffer(startIndex);
-		if (buffer.isEmpty()) {
+		BigDecimal value = readNumberIntoBufferAndParse(startIndex);
+		if (value == null) {
 			return null;
 		}
-		BigDecimal value = new BigDecimal(buffer.toString());
 		int currentIndex = startIndex + buffer.length();
 		buffer.setLength(0);
 
@@ -141,31 +149,75 @@ public class DosageDetector {
 	}
 
 	/**
-	 * Starts reading digits starting at the specified index and writing them into the buffer until no more digits
-	 * appear. If it encounters one decimal separator, it also reads in a dot. (No matter which kind of separator was
-	 * identified.) However, this happens at most once and only if the decimal separator is not at the start or end of
-	 * the sequence. Negative numbers are never read.
+	 * Attempts to recognize a number at the given index. The parsed number is returned or null if no number was
+	 * identified. If a number was identified, the parsed sequence is written in the buffer, otherwise the buffer will
+	 * be empty.
 	 */
-	private void readNumberIntoBuffer(int startIndex) {
+	private BigDecimal readNumberIntoBufferAndParse(int startIndex) {
 		int currentIndex = startIndex;
-		boolean includesSeparator = false;
+		List<Character> separatorsRead = new ArrayList<>();
 		char currentChar = '0';
 		while (currentIndex < length) {
 			currentChar = value.charAt(currentIndex);
 			if (Character.isDigit(currentChar)) {
 				buffer.append(currentChar);
 				currentIndex++;
-			} else if (!includesSeparator
-					&& currentIndex > startIndex
-					&& (DECIMAL_SEPARATOR_SIGNS.contains(currentChar))) {
-				buffer.append('.');
-				includesSeparator = true;
+			} else if (currentIndex > startIndex
+					&& (DECIMAL_OR_THOUSANDS_SEPARATOR_SIGNS.contains(currentChar))) {
+				buffer.append(currentChar);
+				separatorsRead.add(currentChar);
 				currentIndex++;
 			} else break;
 		}
 		// Remove separator if it was the last character to be read
-		if (includesSeparator && DECIMAL_SEPARATOR_SIGNS.contains(currentChar)) {
+		if (DECIMAL_OR_THOUSANDS_SEPARATOR_SIGNS.contains(currentChar)) {
 			buffer.deleteCharAt(currentIndex - 1);
+		}
+		BigDecimal decimal = parseBufferToBigDecimal(separatorsRead);
+		if (decimal == null) {
+			buffer.setLength(0);
+		}
+		return decimal;
+	}
+
+	private BigDecimal parseBufferToBigDecimal(List<Character> separatorsRead) {
+		if (buffer.isEmpty()) return null;
+		if (separatorsRead.isEmpty()) {
+			return new BigDecimal(buffer.toString());
+		} else {
+			// We need to find out which separator was used as comma and which as thousands separator.
+			String number = buffer.toString();
+			if (new HashSet<>(separatorsRead).size() > 1) {
+				// Two different separators appear, so we have both a decimal and thousand separator
+				// The last thing must be the decimal separator
+				char decimalSep = separatorsRead.get(separatorsRead.size() - 1);
+				for (int i = 0; i < separatorsRead.size() - 2; i++) {
+					if (separatorsRead.get(i) == decimalSep) {
+						// The decimal separator appears multiple times! This is not a number any more IMO.
+						return null;
+					}
+				}
+				char thousandsSep = separatorsRead.get(0);
+				return new BigDecimal(number.replace("" + thousandsSep, "").replace(decimalSep, '.'));
+			} else if (separatorsRead.size() > 1) {
+				// It occurs multiple times, so its a thousands separator
+				return new BigDecimal(number.replace("" + separatorsRead.get(0), ""));
+			} else {
+				// Thing occurs only once, it could be both a decimal or a thousands separator
+				char sep = separatorsRead.get(0);
+				if (number.length() >= 5
+						&& number.length() <= 7
+						&& number.charAt(number.length() - 4) == sep
+						&& number.charAt(number.length() - 1) == '0') {
+					// Number is 4 to 6 digits (5-7 characters including separator), has exactly 3 digits after
+					// the thousands separator and the last character is a zero, which makes little sense for a decimal
+					// Well, I guess it's a thousands separator
+					return new BigDecimal(number.replace("" + sep, ""));
+				} else {
+					// I guess it's a decimal separator
+					return new BigDecimal(number.replace(sep, '.'));
+				}
+			}
 		}
 	}
 
