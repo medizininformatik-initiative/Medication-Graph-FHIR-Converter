@@ -9,7 +9,8 @@ public class DosageDetector {
 
 	// No, the two "µ" signs in there are not the same. They just look the same.
 	// Also, all units in there must be lowercase, as only lowercase comparison is performed!
-	private static final Set<String> KNOWN_UNITS = Set.of("mg", "g", "ml", "μg", "µg", "dl", "mikrogramm", "i.e.",
+	private static final Set<String> KNOWN_UNITS = Set.of("mg", "g", "μg", "µg", "ml", "dl", "l", "mikrogramm", "i.e.",
+			"i.u.",
 			"beutel", "spruehstoss", "sprühstoss", "spruehstoß", "sprühstoß", "ampulle", "tablette", "zäpfchen",
 			"zaepfchen", "vaginaltablette");
 	private static final Set<Character> TERMINATOR_SIGNS = Set.of(',', ' ', '/', '(', ')');
@@ -87,12 +88,17 @@ public class DosageDetector {
 			// Separator is far away! Search for a qualifier.
 			for (int index = currentIndex; index < separatorIndex; index++) {
 				char current = value.charAt(index);
-				buffer.append(current);
-				if (TERMINATOR_SIGNS.contains(value.charAt(index))) {
+				if (TERMINATOR_SIGNS.contains(current)) {
+					if (index == separatorIndex - 1 && current == ' ') {
+						// A space between the separator and the qualifier is allowed
+						break;
+					}
 					// There is another terminator between us and the separator. We assume the separator does not
 					// belong to this dosage.
 					buffer.setLength(0);
 					return result;
+				} else {
+					buffer.append(current);
 				}
 			}
 			// We have a qualifier candidate, but only apply it if an actual denominator exists!
