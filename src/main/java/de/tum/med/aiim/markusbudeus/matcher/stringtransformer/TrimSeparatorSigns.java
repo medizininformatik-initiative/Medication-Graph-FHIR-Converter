@@ -12,9 +12,12 @@ public class TrimSeparatorSigns implements Transformer<List<String>, List<String
 
 	@Override
 	public List<String> transform(List<String> source) {
-		return source.stream().map(this::trimSeperators)
+		List<String> result = source.stream().map(this::trimSeperators)
 		             .filter(s -> !s.isBlank())
 		             .toList();
+		if (result.isEmpty())
+			System.err.println("Warning! List "+ source +" became empty after trimming separators!");
+		return result;
 	}
 
 	private String trimSeperators(String s) {

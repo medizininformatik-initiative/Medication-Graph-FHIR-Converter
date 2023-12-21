@@ -13,7 +13,6 @@ import de.tum.med.aiim.markusbudeus.matcher.stringtransformer.WhitespaceTokenize
 
 import java.util.List;
 import java.util.Set;
-import java.util.regex.Matcher;
 
 public class SampleAlgorithm implements MatchingAlgorithm {
 
