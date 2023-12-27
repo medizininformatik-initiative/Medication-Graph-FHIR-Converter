@@ -9,11 +9,10 @@ import de.tum.med.aiim.markusbudeus.matcher.provider.IdentifierProvider;
 import de.tum.med.aiim.markusbudeus.matcher.provider.IdentifierTarget;
 import de.tum.med.aiim.markusbudeus.matcher.resulttransformer.DosageFilter;
 import de.tum.med.aiim.markusbudeus.matcher.resulttransformer.ProductOnlyFilter;
-import de.tum.med.aiim.markusbudeus.matcher.resulttransformer.SubstanceOnlyFilter;
 import de.tum.med.aiim.markusbudeus.matcher.resulttransformer.SubstanceToProductResolver;
 import de.tum.med.aiim.markusbudeus.matcher.stringtransformer.ListToSet;
 import de.tum.med.aiim.markusbudeus.matcher.stringtransformer.ToLowerCase;
-import de.tum.med.aiim.markusbudeus.matcher.stringtransformer.TrimSeparatorSigns;
+import de.tum.med.aiim.markusbudeus.matcher.stringtransformer.TrimSpecialSuffixSymbols;
 import de.tum.med.aiim.markusbudeus.matcher.stringtransformer.WhitespaceTokenizer;
 import org.neo4j.driver.Session;
 
@@ -24,7 +23,7 @@ public class SampleAlgorithm implements MatchingAlgorithm {
 
 	private final BaseProvider baseProvider = BaseProvider.ofDatabaseSynonymes();
 	private final ExactMatcher exactMatcher;
-	private final ModifiedJaccardMatcher jaccardMatcher;
+	private final UnionSizeMatcher unionSizeMatcher;
 	private final LevenshteinMatcher levenshteinMatcher;
 	private final LevenshteinSetMatcher levenshteinSetMatcher;
 
@@ -37,9 +36,9 @@ public class SampleAlgorithm implements MatchingAlgorithm {
 		IdentifierProvider<String> lowerCaseProvider = baseProvider.transform(new ToLowerCase());
 		IdentifierProvider<Set<String>> setMatcherProvider = lowerCaseProvider
 				.transform(new WhitespaceTokenizer())
-				.transform(new TrimSeparatorSigns())
+				.transform(new TrimSpecialSuffixSymbols())
 				.transform(new ListToSet());
-		jaccardMatcher = new ModifiedJaccardMatcher(setMatcherProvider);
+		unionSizeMatcher = new UnionSizeMatcher(setMatcherProvider);
 		levenshteinSetMatcher = new LevenshteinSetMatcher(setMatcherProvider);
 		exactMatcher = new ExactMatcher(lowerCaseProvider);
 		levenshteinMatcher = new LevenshteinMatcher(lowerCaseProvider);
@@ -62,6 +61,10 @@ public class SampleAlgorithm implements MatchingAlgorithm {
 		// to products.
 		if (!matching.transformResults(productOnlyFilter, true)) {
 			matching.transformResults(substanceToProductResolver);
+
+			// Since we now resolved substances into products, we once again prefer products whose name also
+			// matches the search term.
+			narrowDownUnlessEmpty(matching, unionSizeMatcher);
 		}
 		matching.transformResults(dosageFilter, true);
 
@@ -71,7 +74,7 @@ public class SampleAlgorithm implements MatchingAlgorithm {
 	private void doMatchingSteps(OngoingMatching matching) {
 		if (narrowDownUnlessEmpty(matching, exactMatcher))
 			return;
-		if (narrowDownUnlessEmpty(matching, jaccardMatcher))
+		if (narrowDownUnlessEmpty(matching, unionSizeMatcher))
 			return;
 		if (narrowDownUnlessEmpty(matching, levenshteinMatcher))
 			return;

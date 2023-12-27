@@ -27,7 +27,7 @@ public class UnitLoader extends CatalogEntryLoader {
 		);
 		executeQuery(withFilteredLoadStatement(UNIT_CATALOG_ID,
 						"CREATE (u:" + UNIT_LABEL +
-						" {mmiCode: " + row(CODE) + ", mmiName: " + row(NAME) + "})"
+						" {mmiCode: " + row(CODE) + ", mmiName: " + row(NAME) + ", print: " + row(NAME) + "})"
 		));
 	}
 

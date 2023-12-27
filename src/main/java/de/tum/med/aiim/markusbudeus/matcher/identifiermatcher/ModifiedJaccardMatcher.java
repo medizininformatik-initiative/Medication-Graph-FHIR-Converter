@@ -27,6 +27,10 @@ public class ModifiedJaccardMatcher extends ScoreBasedMatcher<Set<String>> {
 		Set<String> union = new HashSet<>(set1);
 		union.addAll(set2);
 
+		if (set2.contains("desferal")) {
+			System.err.println("What?");
+		}
+
 		// If it only matches on a digit, drop the match
 		if (intersection.size() == 1) {
 			String inBoth = intersection.iterator().next();

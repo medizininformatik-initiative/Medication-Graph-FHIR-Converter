@@ -7,7 +7,9 @@ import de.tum.med.aiim.markusbudeus.matcher.provider.IdentifierTarget;
 import de.tum.med.aiim.markusbudeus.matcher.sample.synthetic.HouselistMatcher;
 import de.tum.med.aiim.markusbudeus.matcher.sample.synthetic.SyntheticHouselistEntry;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.text.DecimalFormat;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -17,17 +19,43 @@ public class Main {
 
 	public static void main(String[] args) throws IOException {
 
+		if (args.length > 0) {
+			if ("interactive".equals(args[0])) {
+				interactive();
+				return;
+			}
+		}
 		List<SyntheticHouselistEntry> entries = HouselistMatcher.loadHouselist();
-
 
 		DatabaseConnection.runSession(session -> {
 			MatchingAlgorithm algorithm = new SampleAlgorithm(session);
 
 			processStreamAndPrintResults(entries.stream()
-			                                    .parallel()
+//			                                    .parallel()
 			                                    .map(e -> new MatchingResult(e, algorithm.match(e))));
 		});
 
+	}
+
+	public static void interactive() {
+		BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+
+		DatabaseConnection.runSession(session -> {
+			MatchingAlgorithm algorithm = new SampleAlgorithm(session);
+
+			while (!Thread.interrupted()) {
+				try {
+					System.out.print("> ");
+					String line = reader.readLine();
+					HouselistEntry entry = new HouselistEntry();
+					entry.name = line;
+					List<IdentifierTarget> resultList = algorithm.match(entry);
+					printLinewise(resultList);
+				} catch (IOException e) {
+					throw new RuntimeException(e);
+				}
+			}
+		});
 	}
 
 	private static void processStreamAndPrintResults(Stream<MatchingResult> stream) {
@@ -59,7 +87,7 @@ public class Main {
 		System.out.println(unmatched.get() + " unmatched (" + f.format(100.0 * unmatched.get() / total.get()) + "%)");
 	}
 
-	private static void printLinewise(List<? extends Object> objects) {
+	private static void printLinewise(List<?> objects) {
 		System.out.println("[");
 		for (int i = 0; i < objects.size(); i++) {
 			System.out.print("    ");

@@ -52,20 +52,23 @@ class DosageDetectorTest {
 
 	@Test
 	public void nominatorAndDenominator() {
-		List<DosageDetector.DetectedDosage> dosages = DosageDetector.detectDosages("Endo-Paractol® 0,526 g/100 ml Emulsion");
+		List<DosageDetector.DetectedDosage> dosages = DosageDetector.detectDosages(
+				"Endo-Paractol® 0,526 g/100 ml Emulsion");
 		assertSingleMatch(dosages, 15, 14, new BigDecimal("0.526"), "g", null, BigDecimal.valueOf(100), "ml");
 	}
 
 	@Test
 	public void withQualifier() {
-		List<DosageDetector.DetectedDosage> dosages = DosageDetector.detectDosages("Ferrum Hausmann® 10 mg Eisen/1 ml, Sirup");
+		List<DosageDetector.DetectedDosage> dosages = DosageDetector.detectDosages(
+				"Ferrum Hausmann® 10 mg Eisen/1 ml, Sirup");
 
 		assertSingleMatch(dosages, 17, 16, 10, "mg", "Eisen", 1, "ml");
 	}
 
 	@Test
 	public void withSpaceAfterQualifier() {
-		List<DosageDetector.DetectedDosage> dosages = DosageDetector.detectDosages("Lanicor® Ampullen 0,25 mg Digoxin / ml Injektionslösung");
+		List<DosageDetector.DetectedDosage> dosages = DosageDetector.detectDosages(
+				"Lanicor® Ampullen 0,25 mg Digoxin / ml Injektionslösung");
 		assertSingleMatch(dosages, 18, 20, new BigDecimal("0.25"), "mg", "Digoxin", BigDecimal.ONE, "ml");
 	}
 
@@ -93,7 +96,7 @@ class DosageDetectorTest {
 	public void otherUnit() {
 		List<DosageDetector.DetectedDosage> dosages = DosageDetector.detectDosages(
 				"Berotec® N 100 µg Dosier-Aerosol, Druckgasinhalation, Lösung");
-		assertSingleMatch(dosages, 11, 6, 100, "µg", null, null, null);
+		assertSingleMatch(dosages, 11, 6, 100, "μg", null, null, null);
 	}
 
 	@Test
@@ -111,14 +114,16 @@ class DosageDetectorTest {
 
 	@Test
 	public void badUnitSpacing() {
-		List<DosageDetector.DetectedDosage> dosages = DosageDetector.detectDosages("Medication I invented 100 µg/ ml oof");
-		assertSingleMatch(dosages, 22, 10, 100, "µg", null, 1, "ml");
+		List<DosageDetector.DetectedDosage> dosages = DosageDetector.detectDosages(
+				"Medication I invented 100 µg/ ml oof");
+		assertSingleMatch(dosages, 22, 10, 100, "μg", null, 1, "ml");
 	}
 
 	@Test
 	public void moreBadUnitSpacing() {
-		List<DosageDetector.DetectedDosage> dosages = DosageDetector.detectDosages("Medication I invented 100µg/10 ml oof");
-		assertSingleMatch(dosages, 22, 11, 100, "µg", null, 10, "ml");
+		List<DosageDetector.DetectedDosage> dosages = DosageDetector.detectDosages(
+				"Medication I invented 100µg/10 ml oof");
+		assertSingleMatch(dosages, 22, 11, 100, "μg", null, 10, "ml");
 	}
 
 	@Test
@@ -130,8 +135,17 @@ class DosageDetectorTest {
 
 	@Test
 	public void lotsOfSpacing() {
+		List<DosageDetector.DetectedDosage> dosages = DosageDetector.detectDosages(
+				"talvosilen forte 500 mg / 30 ml Hartkapseln");
+		assertSingleMatch(dosages, 17, 14, 500, "mg", null, 30, "ml");
+	}
+
+	@Test
+	public void multiDosageTablets() {
 		List<DosageDetector.DetectedDosage> dosages = DosageDetector.detectDosages("talvosilen forte 500 mg / 30 mg Hartkapseln");
-		assertSingleMatch(dosages, 17, 14, 500, "mg", null, 30, "mg");
+		assertEquals(2, dosages.size());
+		assertMatch(dosages.get(0), 17, 6, BigDecimal.valueOf(500), "mg", null, null, null);
+		assertMatch(dosages.get(1), 26, 5, BigDecimal.valueOf(30), "mg", null, null, null);
 	}
 
 	@Test
@@ -174,24 +188,26 @@ class DosageDetectorTest {
 
 	@Test
 	public void internationalUnitAndDotIsNotAComma() {
-		List<DosageDetector.DetectedDosage> dosages = DosageDetector.detectDosages("D3-Vicotrat®, 100.000 I.E./1 ml Injektionslösung");
+		List<DosageDetector.DetectedDosage> dosages = DosageDetector.detectDosages(
+				"D3-Vicotrat®, 100.000 I.E./1 ml Injektionslösung");
 		assertSingleMatch(dosages, 14, 17, 100000, "I.E.", null, 1, "ml");
 	}
 
 	@Test
 	public void threeDosages() {
 		List<DosageDetector.DetectedDosage> dosages = DosageDetector.detectDosages(
-"Polyspectran® Tropfen, 7500 I.E./ml 3500 I.E./ml 20 µg/ml Augen- und Ohrentropfen, Lösung");
+				"Polyspectran® Tropfen, 7500 I.E./ml 3500 I.E./ml 20 µg/ml Augen- und Ohrentropfen, Lösung");
 
 		assertEquals(3, dosages.size());
 		assertMatch(dosages.get(0), 23, 12, BigDecimal.valueOf(7500), "I.E.", null, BigDecimal.ONE, "ml");
 		assertMatch(dosages.get(1), 36, 12, BigDecimal.valueOf(3500), "I.E.", null, BigDecimal.ONE, "ml");
-		assertMatch(dosages.get(2), 49, 8, BigDecimal.valueOf(20), "µg", null, BigDecimal.ONE, "ml");
+		assertMatch(dosages.get(2), 49, 8, BigDecimal.valueOf(20), "μg", null, BigDecimal.ONE, "ml");
 	}
 
 	@Test
 	public void negativeTest() {
-		List<DosageDetector.DetectedDosage> dosages = DosageDetector.detectDosages("ISOPTO-MAX®, Augentropfensuspension");
+		List<DosageDetector.DetectedDosage> dosages = DosageDetector.detectDosages(
+				"ISOPTO-MAX®, Augentropfensuspension");
 		assertTrue(dosages.isEmpty());
 	}
 
@@ -203,7 +219,8 @@ class DosageDetectorTest {
 
 	@Test
 	public void confusingComma() {
-		List<DosageDetector.DetectedDosage> dosages = DosageDetector.detectDosages("Imeron® 350, 350 mg Iod/ml, Injektionslösung, Infusionslösung, 200 ml");
+		List<DosageDetector.DetectedDosage> dosages = DosageDetector.detectDosages(
+				"Imeron® 350, 350 mg Iod/ml, Injektionslösung, Infusionslösung, 200 ml");
 		assertEquals(3, dosages.size());
 		assertMatch(dosages.get(0), 8, 3, BigDecimal.valueOf(350), null, null, null, null);
 		assertMatch(dosages.get(1), 13, 13, BigDecimal.valueOf(350), "mg", "Iod", BigDecimal.ONE, "ml");

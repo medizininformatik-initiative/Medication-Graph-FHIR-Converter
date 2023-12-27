@@ -4,19 +4,58 @@ import de.tum.med.aiim.markusbudeus.matcher.Amount;
 import de.tum.med.aiim.markusbudeus.matcher.Dosage;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 public class DosageDetector {
 
 	// No, the two "µ" signs in there are not the same. They just look the same.
 	// Also, all units in there must be lowercase, as only lowercase comparison is performed!
-	private static final Set<String> KNOWN_UNITS = Set.of("mg", "g", "μg", "µg", "ml", "dl", "l", "mikrogramm", "i.e.",
-			"i.u.",
-			"beutel", "spruehstoss", "sprühstoss", "spruehstoß", "sprühstoß", "ampulle", "tablette", "zäpfchen",
-			"zaepfchen", "vaginaltablette", "tbl", "filmtablette", "filmtbl");
+
+	/**
+	 * The units allowed as nominator units and the normalized units they are translated to.
+	 */
+	private static final Map<String, String> KNOWN_NOMINATOR_UNITS = new HashMap<>();
+	/**
+	 * The units allowed as denominator units and the normalized units they are translated to.
+	 */
+	private static final Map<String, String> KNOWN_DENOMINATOR_UNITS = new HashMap<>();
+
+	static {
+		Map<String, String> validUnits = new HashMap<>();
+		KNOWN_NOMINATOR_UNITS.put("mg", "mg");
+		KNOWN_NOMINATOR_UNITS.put("ng", "ng");
+		KNOWN_NOMINATOR_UNITS.put("g", "g");
+		KNOWN_NOMINATOR_UNITS.put("μg", "μg");
+		KNOWN_NOMINATOR_UNITS.put("µg", "μg");
+		KNOWN_NOMINATOR_UNITS.put("mmol", "mmol");
+		KNOWN_NOMINATOR_UNITS.put("mikrogramm", "μg");
+		KNOWN_NOMINATOR_UNITS.put("i.e.", "I.E.");
+		KNOWN_NOMINATOR_UNITS.put("i.u.", "I.E.");
+		validUnits.put("ml", "ml");
+		validUnits.put("nl", "nl");
+		validUnits.put("dl", "dl");
+		validUnits.put("l", "l");
+		validUnits.put("μl", "μl");
+		validUnits.put("µl", "μl");
+		validUnits.put("beutel", "Beutel");
+		validUnits.put("spruehstoss", "Sprühstoß");
+		validUnits.put("sprühstoss", "Sprühstoß");
+		validUnits.put("spruehstoß", "Sprühstoß");
+		validUnits.put("sprühstoß", "Sprühstoß");
+		validUnits.put("ampulle", "Ampulle");
+		validUnits.put("tablette", "Tablette");
+		validUnits.put("zäpfchen", "Zäpfchen");
+		validUnits.put("zaepfchen", "Zäpfchen");
+		validUnits.put("vaginaltablette", "Vaginaltablette");
+		validUnits.put("tbl", "Tablette");
+		validUnits.put("filmtablette", "Filmtablette");
+		validUnits.put("filmtbl", "Filmtablette");
+
+		KNOWN_NOMINATOR_UNITS.putAll(validUnits);
+		KNOWN_DENOMINATOR_UNITS.putAll(validUnits);
+
+	}
+
 	private static final Set<Character> TERMINATOR_SIGNS = Set.of(',', ' ', '/', '(', ')');
 	private static final Set<Character> DECIMAL_OR_THOUSANDS_SEPARATOR_SIGNS = Set.of(',', '.');
 	private static final BigDecimal MIN_NUMBER_FOR_UNITLESS_DOSAGE = BigDecimal.TEN;
@@ -61,7 +100,7 @@ public class DosageDetector {
 		if (startIndex != 0 && !TERMINATOR_SIGNS.contains(value.charAt(startIndex - 1)))
 			return null;
 
-		DetectedAmount detNominator = detectAmount(startIndex);
+		DetectedAmount detNominator = detectAmount(startIndex, KNOWN_NOMINATOR_UNITS);
 		if (detNominator == null) return null;
 
 		DetectingDosage result = new DetectingDosage();
@@ -117,14 +156,16 @@ public class DosageDetector {
 		if (currentIndex < length && value.charAt(currentIndex) == ' ') {
 			currentIndex++;
 		}
-		DetectedAmount detDenominator = detectAmount(currentIndex);
+		DetectedAmount detDenominator = detectAmount(currentIndex, KNOWN_DENOMINATOR_UNITS);
 		if (detDenominator != null) {
-			result.nominatorQualifier = qualifier;
-			result.amountDenominator = detDenominator.amount;
-			result.length = detDenominator.endIndex - startIndex;
+			if (detDenominator.amount.unit != null) { // Denominator must always have a unit to be recognized as such
+				result.nominatorQualifier = qualifier;
+				result.amountDenominator = detDenominator.amount;
+				result.length = detDenominator.endIndex - startIndex;
+			}
 		} else {
 			// This is relevant if we have something like 40 mg/ml, where the denominator is implicitly 1
-			String unitOnlyDenominator = detectUnit(currentIndex);
+			String unitOnlyDenominator = detectUnit(currentIndex, KNOWN_DENOMINATOR_UNITS);
 			if (unitOnlyDenominator != null) {
 				result.nominatorQualifier = qualifier;
 				result.amountDenominator = new Amount(BigDecimal.ONE, unitOnlyDenominator);
@@ -138,7 +179,7 @@ public class DosageDetector {
 	 * Attempts to read a value with a unit at a given start index. If no unit is present, the value will still be
 	 * considered to be an amount.
 	 */
-	private DetectedAmount detectAmount(int startIndex) {
+	private DetectedAmount detectAmount(int startIndex, Map<String, String> knownUnits) {
 		BigDecimal value = readNumberIntoBufferAndParse(startIndex);
 		if (value == null) {
 			return null;
@@ -146,12 +187,12 @@ public class DosageDetector {
 		int currentIndex = startIndex + buffer.length();
 		buffer.setLength(0);
 
-		String unit = detectUnit(currentIndex);
+		String unit = detectUnit(currentIndex, knownUnits);
 		if (unit == null &&
 				currentIndex < length &&
 				this.value.charAt(currentIndex) == ' ') {
 			// The unit may be separated by a space, in that case retry
-			unit = detectUnit(currentIndex + 1);
+			unit = detectUnit(currentIndex + 1, knownUnits);
 			if (unit != null) currentIndex++;
 		}
 		if (unit != null) {
@@ -242,7 +283,7 @@ public class DosageDetector {
 	 * empty and overwrites it. It always leaves the buffer empty when returning. If no unit is detected, this method
 	 * returns null.
 	 */
-	private String detectUnit(int startIndex) {
+	private String detectUnit(int startIndex, Map<String, String> knownUnits) {
 		int currentIndex = startIndex;
 		char currentChar = '0';
 		while (currentIndex < length) {
@@ -254,8 +295,9 @@ public class DosageDetector {
 		}
 		String unit = buffer.toString();
 		buffer.setLength(0);
-		if (KNOWN_UNITS.contains(unit.toLowerCase())) {
-			return unit;
+		String parsedUnit = knownUnits.get(unit.toLowerCase());
+		if (parsedUnit != null) {
+			return parsedUnit;
 		}
 		return null;
 	}

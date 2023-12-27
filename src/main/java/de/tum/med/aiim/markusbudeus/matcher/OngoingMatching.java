@@ -1,6 +1,9 @@
 package de.tum.med.aiim.markusbudeus.matcher;
 
-import de.tum.med.aiim.markusbudeus.matcher.provider.*;
+import de.tum.med.aiim.markusbudeus.matcher.provider.BaseProvider;
+import de.tum.med.aiim.markusbudeus.matcher.provider.IdentifierTarget;
+import de.tum.med.aiim.markusbudeus.matcher.provider.MappedBaseIdentifier;
+import de.tum.med.aiim.markusbudeus.matcher.provider.MappedIdentifier;
 import de.tum.med.aiim.markusbudeus.matcher.resulttransformer.Filter;
 import de.tum.med.aiim.markusbudeus.matcher.resulttransformer.ResultTransformer;
 
@@ -9,6 +12,8 @@ import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 
 public class OngoingMatching {
+
+	// TODO Support calling matchers with current matches again
 
 	public final HouselistEntry entry;
 	private BaseProvider currentMatches;
