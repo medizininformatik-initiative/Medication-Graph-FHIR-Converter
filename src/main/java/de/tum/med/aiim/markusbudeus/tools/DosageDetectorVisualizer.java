@@ -118,12 +118,12 @@ public class DosageDetectorVisualizer {
 	}
 
 	public static void detectAndPrintDosage(String product) {
-		List<DosageDetector.Dosage> dosages = DosageDetector.detectDosages(product);
+		List<DosageDetector.DetectedDosage> dosages = DosageDetector.detectDosages(product);
 
 		StringBuilder result = new StringBuilder(product);
 
 		int offset = 0;
-		for (DosageDetector.Dosage dosage : dosages) {
+		for (DosageDetector.DetectedDosage dosage : dosages) {
 			result.insert(dosage.getStartIndex() + offset, ANSI_GREEN);
 			offset += ANSI_GREEN.length();
 			result.insert(dosage.getStartIndex() + dosage.getLength() + offset, ANSI_RESET);

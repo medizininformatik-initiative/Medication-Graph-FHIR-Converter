@@ -1,6 +1,7 @@
 package de.tum.med.aiim.markusbudeus.matcher.tools;
 
 import de.tum.med.aiim.markusbudeus.matcher.Amount;
+import de.tum.med.aiim.markusbudeus.matcher.Dosage;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -20,7 +21,7 @@ public class DosageDetector {
 	private static final Set<Character> DECIMAL_OR_THOUSANDS_SEPARATOR_SIGNS = Set.of(',', '.');
 	private static final BigDecimal MIN_NUMBER_FOR_UNITLESS_DOSAGE = BigDecimal.TEN;
 
-	public static List<Dosage> detectDosages(String value) {
+	public static List<DetectedDosage> detectDosages(String value) {
 		return new DosageDetector(value).detectDosages();
 	}
 
@@ -34,9 +35,9 @@ public class DosageDetector {
 		length = value.length();
 	}
 
-	public List<Dosage> detectDosages() {
-		List<Dosage> result = new ArrayList<>();
-		Dosage next;
+	public List<DetectedDosage> detectDosages() {
+		List<DetectedDosage> result = new ArrayList<>();
+		DetectedDosage next;
 		int index = 0;
 		while ((next = detectNextDosage(index)) != null) {
 			result.add(next);
@@ -45,17 +46,17 @@ public class DosageDetector {
 		return result;
 	}
 
-	private Dosage detectNextDosage(int startIndex) {
+	private DetectedDosage detectNextDosage(int startIndex) {
 		int maxStartIndex = value.length() - 2; // A dosage should be at least two characters
 		int currentIndex = startIndex;
-		Dosage dosage = null;
+		DetectedDosage dosage = null;
 		while (currentIndex <= maxStartIndex && (dosage = detectDosageAt(currentIndex)) == null) {
 			currentIndex++;
 		}
 		return dosage;
 	}
 
-	private Dosage detectDosageAt(int startIndex) {
+	private DetectedDosage detectDosageAt(int startIndex) {
 		// The dosage must be preceded by the begin of the string or any terminator character
 		if (startIndex != 0 && !TERMINATOR_SIGNS.contains(value.charAt(startIndex - 1)))
 			return null;
@@ -63,7 +64,7 @@ public class DosageDetector {
 		DetectedAmount detNominator = detectAmount(startIndex);
 		if (detNominator == null) return null;
 
-		Dosage result = new Dosage();
+		DetectingDosage result = new DetectingDosage();
 		result.startIndex = startIndex;
 		result.amountNominator = detNominator.amount;
 		int currentIndex = detNominator.endIndex;
@@ -74,19 +75,19 @@ public class DosageDetector {
 			if (startIndex >= 3 && value.startsWith("LM ", startIndex - 3))
 				return null;
 			if (result.amountNominator.number.compareTo(MIN_NUMBER_FOR_UNITLESS_DOSAGE) >= 0)
-				return result;
+				return result.complete();
 			else return null;
 		}
 		// Only if the nominator actually has a unit, we search for a denominator.
 		int separatorIndex = value.indexOf('/', currentIndex);
 		if (separatorIndex == -1) {
-			return result;
+			return result.complete();
 		}
 
 		// If the separator is not the character directly after the nominator and the character directly after
 		// the nominator is not a space, we assume the separator does not belong to this dosage.
 		if (separatorIndex > currentIndex && value.charAt(currentIndex) != ' ') {
-			return result;
+			return result.complete();
 		}
 		currentIndex++;
 		String qualifier = null;
@@ -102,7 +103,7 @@ public class DosageDetector {
 					// There is another terminator between us and the separator. We assume the separator does not
 					// belong to this dosage.
 					buffer.setLength(0);
-					return result;
+					return result.complete();
 				} else {
 					buffer.append(current);
 				}
@@ -119,18 +120,18 @@ public class DosageDetector {
 		DetectedAmount detDenominator = detectAmount(currentIndex);
 		if (detDenominator != null) {
 			result.nominatorQualifier = qualifier;
-			result.amountDemoninator = detDenominator.amount;
+			result.amountDenominator = detDenominator.amount;
 			result.length = detDenominator.endIndex - startIndex;
 		} else {
 			// This is relevant if we have something like 40 mg/ml, where the denominator is implicitly 1
 			String unitOnlyDenominator = detectUnit(currentIndex);
 			if (unitOnlyDenominator != null) {
 				result.nominatorQualifier = qualifier;
-				result.amountDemoninator = new Amount(BigDecimal.ONE, unitOnlyDenominator);
+				result.amountDenominator = new Amount(BigDecimal.ONE, unitOnlyDenominator);
 				result.length = (currentIndex + unitOnlyDenominator.length()) - startIndex;
 			}
 		}
-		return result;
+		return result.complete();
 	}
 
 	/**
@@ -259,20 +260,30 @@ public class DosageDetector {
 		return null;
 	}
 
-	public static class Dosage {
+	private static class DetectingDosage {
 		int startIndex;
 		int length;
 
 		Amount amountNominator;
-		/**
-		 * An additional qualifier for the nominator's amount. For example, if the dosage were "1mg Iron/1ml", the
-		 * qualifier would be "Iron"
-		 */
 		String nominatorQualifier;
-		Amount amountDemoninator;
+		Amount amountDenominator;
 
-		private Dosage() {
+		DetectedDosage complete() {
+			return new DetectedDosage(startIndex, length, new Dosage(amountNominator, nominatorQualifier,
+					amountDenominator));
+		}
+	}
 
+	public static class DetectedDosage {
+		final int startIndex;
+		final int length;
+
+		final Dosage dosage;
+
+		private DetectedDosage(int startIndex, int length, Dosage dosage) {
+			this.startIndex = startIndex;
+			this.length = length;
+			this.dosage = dosage;
 		}
 
 		public int getStartIndex() {
@@ -283,12 +294,8 @@ public class DosageDetector {
 			return length;
 		}
 
-		public Amount getAmountNominator() {
-			return amountNominator;
-		}
-
-		public Amount getAmountDemoninator() {
-			return amountDemoninator;
+		public Dosage getDosage() {
+			return dosage;
 		}
 	}
 

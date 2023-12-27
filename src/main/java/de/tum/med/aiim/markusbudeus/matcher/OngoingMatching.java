@@ -4,8 +4,7 @@ import de.tum.med.aiim.markusbudeus.matcher.provider.*;
 import de.tum.med.aiim.markusbudeus.matcher.resulttransformer.Filter;
 import de.tum.med.aiim.markusbudeus.matcher.resulttransformer.ResultTransformer;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 
@@ -19,12 +18,14 @@ public class OngoingMatching {
 		this.currentMatches = baseProvider;
 	}
 
-	public boolean narrowDownUnlessEmpty(BiFunction<HouselistEntry, BaseProvider, Set<MappedIdentifier<?>>> matcherInvocation) {
+	public boolean narrowDownUnlessEmpty(
+			BiFunction<HouselistEntry, BaseProvider, Set<MappedIdentifier<?>>> matcherInvocation) {
 		return narrowDownUnlessEmpty(matcherInvocation.apply(entry, currentMatches));
 	}
 
 	/**
 	 * Narrows down the matches to the given set of identifiers, unless it's empty.
+	 *
 	 * @return true if the set of identifiers is not empty and thus the result was narrowed down, false otherwise
 	 */
 	public boolean narrowDownUnlessEmpty(Set<? extends MappedIdentifier<?>> newIdentifiers) {
@@ -44,12 +45,41 @@ public class OngoingMatching {
 	}
 
 	public void transformResults(ResultTransformer resultTransformer) {
+		transformResults(resultTransformer, false);
+	}
+
+	public boolean transformResults(ResultTransformer resultTransformer, boolean onlyIfNotEmpty) {
+		Map<IdentifierTarget, Set<IdentifierTarget>> transformationResults = new HashMap<>();
+		List<IdentifierTarget> allTargets = currentMatches
+				.identifiers
+				.values()
+				.stream()
+				.flatMap(stringMappedIdentifier -> stringMappedIdentifier.targets.stream())
+				.toList();
+		List<Set<IdentifierTarget>> transformedIdentifiers = resultTransformer.batchTransform(allTargets, entry);
+		for (int i = 0; i < allTargets.size(); i++) {
+			transformationResults.put(allTargets.get(i), transformedIdentifiers.get(i));
+		}
+
+		if (onlyIfNotEmpty) {
+			boolean empty = true;
+			for (Set<IdentifierTarget> targets : transformedIdentifiers) {
+				if (!targets.isEmpty()) {
+					empty = false;
+					break;
+				}
+			}
+			if (empty)
+				return false;
+		}
+
 		currentMatches.identifiers.replaceAll((identifierName, mappedIdentifier) -> {
 			MappedBaseIdentifier newIdentifier = new MappedBaseIdentifier(identifierName);
 			mappedIdentifier.targets.forEach(target ->
-					newIdentifier.targets.addAll(resultTransformer.transform(target, entry)));
+				newIdentifier.targets.addAll(transformationResults.get(target)));
 			return newIdentifier;
 		});
+		return true;
 	}
 
 	public void applyFilter(Filter filter) {

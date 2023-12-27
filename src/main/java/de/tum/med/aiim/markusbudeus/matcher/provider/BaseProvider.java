@@ -18,8 +18,12 @@ public class BaseProvider implements IdentifierProvider<String> {
 	public static BaseProvider ofDatabaseSynonymes() {
 		try (DatabaseConnection connection = new DatabaseConnection();
 		     Session session = connection.createSession()) {
-			return new BaseProvider(downloadSynonymes(session));
+			return BaseProvider.ofDatabaseSynonymes(session);
 		}
+	}
+
+	public static BaseProvider ofDatabaseSynonymes(Session session) {
+		return new BaseProvider(downloadSynonymes(session));
 	}
 
 	public static BaseProvider ofIdentifiers(Set<MappedIdentifier<String>> identifiers) {
