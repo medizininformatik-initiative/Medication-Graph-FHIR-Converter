@@ -3,7 +3,10 @@ package de.tum.med.aiim.markusbudeus.matcher.tools;
 import de.tum.med.aiim.markusbudeus.matcher.Amount;
 
 import java.math.BigDecimal;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 public class DosageDetector {
 
@@ -12,7 +15,7 @@ public class DosageDetector {
 	private static final Set<String> KNOWN_UNITS = Set.of("mg", "g", "μg", "µg", "ml", "dl", "l", "mikrogramm", "i.e.",
 			"i.u.",
 			"beutel", "spruehstoss", "sprühstoss", "spruehstoß", "sprühstoß", "ampulle", "tablette", "zäpfchen",
-			"zaepfchen", "vaginaltablette");
+			"zaepfchen", "vaginaltablette", "tbl", "filmtablette", "filmtbl");
 	private static final Set<Character> TERMINATOR_SIGNS = Set.of(',', ' ', '/', '(', ')');
 	private static final Set<Character> DECIMAL_OR_THOUSANDS_SEPARATOR_SIGNS = Set.of(',', '.');
 	private static final BigDecimal MIN_NUMBER_FOR_UNITLESS_DOSAGE = BigDecimal.TEN;
@@ -67,6 +70,9 @@ public class DosageDetector {
 		result.length = currentIndex - startIndex; // result.length will act as our current reading index
 
 		if (result.amountNominator.unit == null) {
+			// Ignore numbers without unit preceded by "LM "
+			if (startIndex >= 3 && value.startsWith("LM ", startIndex - 3))
+				return null;
 			if (result.amountNominator.number.compareTo(MIN_NUMBER_FOR_UNITLESS_DOSAGE) >= 0)
 				return result;
 			else return null;
@@ -176,8 +182,11 @@ public class DosageDetector {
 			} else break;
 		}
 		// Remove separator if it was the last character to be read
-		if (DECIMAL_OR_THOUSANDS_SEPARATOR_SIGNS.contains(currentChar)) {
-			buffer.deleteCharAt(currentIndex - 1);
+		if (buffer.isEmpty())
+			return null;
+		int lastIndex = buffer.length() - 1;
+		if (DECIMAL_OR_THOUSANDS_SEPARATOR_SIGNS.contains(buffer.charAt(lastIndex))) {
+			buffer.deleteCharAt(lastIndex);
 		}
 		BigDecimal decimal = parseBufferToBigDecimal(separatorsRead);
 		if (decimal == null) {
@@ -234,7 +243,7 @@ public class DosageDetector {
 	 */
 	private String detectUnit(int startIndex) {
 		int currentIndex = startIndex;
-		char currentChar;
+		char currentChar = '0';
 		while (currentIndex < length) {
 			currentChar = value.charAt(currentIndex);
 			if (TERMINATOR_SIGNS.contains(currentChar))

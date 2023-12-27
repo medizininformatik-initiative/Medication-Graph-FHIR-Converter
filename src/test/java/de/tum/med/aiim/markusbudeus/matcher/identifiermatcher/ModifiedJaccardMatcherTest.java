@@ -6,11 +6,11 @@ import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class JaccardMatcherTest {
+class ModifiedJaccardMatcherTest {
 
 	@Test
 	void perfectMatch() {
-		assertEquals(1, JaccardMatcher.getJaccardCoefficient(
+		assertEquals(1, ModifiedJaccardMatcher.getJaccardCoefficient(
 				Set.of("A", "C", "Apfel"),
 				Set.of("C", "Apfel", "A")
 		));
@@ -18,7 +18,7 @@ class JaccardMatcherTest {
 
 	@Test
 	void noMatch() {
-		assertEquals(0, JaccardMatcher.getJaccardCoefficient(
+		assertEquals(0, ModifiedJaccardMatcher.getJaccardCoefficient(
 				Set.of("A", "C", "Apfel"),
 				Set.of("Haus", "Eier")
 		));
@@ -26,7 +26,7 @@ class JaccardMatcherTest {
 
 	@Test
 	void someMatch() {
-		assertEquals(0.25, JaccardMatcher.getJaccardCoefficient(
+		assertEquals(0.25, ModifiedJaccardMatcher.getJaccardCoefficient(
 				Set.of("A", "C", "Apfel"),
 				Set.of("C", "Haus")
 		), 0.01);

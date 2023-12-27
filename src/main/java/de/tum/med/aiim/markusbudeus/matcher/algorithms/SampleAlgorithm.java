@@ -18,7 +18,7 @@ public class SampleAlgorithm implements MatchingAlgorithm {
 
 	private final BaseProvider baseProvider = BaseProvider.ofDatabaseSynonymes();
 	private final ExactMatcher exactMatcher;
-	private final JaccardMatcher jaccardMatcher;
+	private final ModifiedJaccardMatcher jaccardMatcher;
 	private final LevenshteinMatcher levenshteinMatcher;
 	private final LevenshteinSetMatcher levenshteinSetMatcher;
 
@@ -28,7 +28,7 @@ public class SampleAlgorithm implements MatchingAlgorithm {
 				.transform(new WhitespaceTokenizer())
 				.transform(new TrimSeparatorSigns())
 				.transform(new ListToSet());
-		jaccardMatcher = new JaccardMatcher(setMatcherProvider);
+		jaccardMatcher = new ModifiedJaccardMatcher(setMatcherProvider);
 		levenshteinSetMatcher = new LevenshteinSetMatcher(setMatcherProvider);
 		exactMatcher = new ExactMatcher(lowerCaseProvider);
 		levenshteinMatcher = new LevenshteinMatcher(lowerCaseProvider);

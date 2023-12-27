@@ -195,6 +195,21 @@ class DosageDetectorTest {
 		assertTrue(dosages.isEmpty());
 	}
 
+	@Test
+	public void lmIgnored() {
+		List<DosageDetector.Dosage> dosages = DosageDetector.detectDosages("Kalium chloricum LM 90");
+		assertTrue(dosages.isEmpty());
+	}
+
+	@Test
+	public void confusingComma() {
+		List<DosageDetector.Dosage> dosages = DosageDetector.detectDosages("Imeron® 350, 350 mg Iod/ml, Injektionslösung, Infusionslösung, 200 ml");
+		assertEquals(3, dosages.size());
+		assertMatch(dosages.get(0), 8, 3, BigDecimal.valueOf(350), null, null, null, null);
+		assertMatch(dosages.get(1), 13, 13, BigDecimal.valueOf(350), "mg", "Iod", BigDecimal.ONE, "ml");
+		assertMatch(dosages.get(2), 63, 6, BigDecimal.valueOf(200), "ml", null, null, null);
+	}
+
 	public void assertSingleMatch(List<DosageDetector.Dosage> list,
 	                              int startIndex,
 	                              int length,
