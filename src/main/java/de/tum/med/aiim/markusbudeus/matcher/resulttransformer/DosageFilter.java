@@ -137,15 +137,12 @@ public class DosageFilter implements Filter {
 				if (d.matchesAbsolute(dosage))
 					return true;
 			}
-			// If it doesn't match the ingredients, it may still match the total drug amount
+			// If it doesn't match the ingredients, it may still match the total drug amount,
+			// but only if a unit is given!
 			if (amount != null && amount.amount != null) {
 				if (!DosageFilter.matchesAbsolute(amount.amount, null, dosage.amountNominator.number,
 						BigDecimal.ZERO)) return false;
-
-				// If a unit is given, it must match
-				if (dosage.amountNominator.unit != null)
-					return Objects.equals(dosage.amountNominator.unit, amount.unit);
-				return true;
+				return Objects.equals(dosage.amountNominator.unit, amount.unit);
 			}
 			return false;
 		}
