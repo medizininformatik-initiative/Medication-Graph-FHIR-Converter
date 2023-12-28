@@ -1,31 +1,32 @@
 package de.tum.med.aiim.markusbudeus.matcher;
 
-import de.tum.med.aiim.markusbudeus.matcher.provider.BaseProvider;
-import de.tum.med.aiim.markusbudeus.matcher.provider.IdentifierTarget;
-import de.tum.med.aiim.markusbudeus.matcher.provider.MappedBaseIdentifier;
-import de.tum.med.aiim.markusbudeus.matcher.provider.MappedIdentifier;
+import de.tum.med.aiim.markusbudeus.matcher.identifiermatcher.IIdentifierMatcher;
+import de.tum.med.aiim.markusbudeus.matcher.provider.*;
 import de.tum.med.aiim.markusbudeus.matcher.resulttransformer.Filter;
 import de.tum.med.aiim.markusbudeus.matcher.resulttransformer.ResultTransformer;
+import de.tum.med.aiim.markusbudeus.matcher.stringtransformer.Transformer;
 
 import java.util.*;
-import java.util.function.BiFunction;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public class OngoingMatching {
 
-	// TODO Support calling matchers with current matches again
-
 	public final HouselistEntry entry;
-	private BaseProvider currentMatches;
+	private IdentifierProvider<String> currentMatches;
 
-	public OngoingMatching(HouselistEntry entry, BaseProvider baseProvider) {
+	public OngoingMatching(HouselistEntry entry, IdentifierProvider<String> baseProvider) {
 		this.entry = entry;
 		this.currentMatches = baseProvider;
 	}
 
-	public boolean narrowDownUnlessEmpty(
-			BiFunction<HouselistEntry, BaseProvider, Set<MappedIdentifier<?>>> matcherInvocation) {
-		return narrowDownUnlessEmpty(matcherInvocation.apply(entry, currentMatches));
+	public boolean narrowDownUnlessEmpty(Function<IdentifierProvider<String>, IIdentifierMatcher<String>> matcherConstructor) {
+		return narrowDownUnlessEmpty(Transformer.IDENTITY, matcherConstructor);
+	}
+
+	public <S> boolean narrowDownUnlessEmpty(Transformer<String, S> transformer, Function<IdentifierProvider<S>, IIdentifierMatcher<S>> matcherConstructor) {
+		IIdentifierMatcher<S> matcher = matcherConstructor.apply(currentMatches.transform(transformer));
+		return narrowDownUnlessEmpty(matcher.findMatch(entry.name).getBestMatches());
 	}
 
 	/**
@@ -56,7 +57,7 @@ public class OngoingMatching {
 	public boolean transformResults(ResultTransformer resultTransformer, boolean onlyIfNotEmpty) {
 		Map<IdentifierTarget, Set<IdentifierTarget>> transformationResults = new HashMap<>();
 		List<IdentifierTarget> allTargets = currentMatches
-				.identifiers
+				.getIdentifiers()
 				.values()
 				.stream()
 				.flatMap(stringMappedIdentifier -> stringMappedIdentifier.targets.stream())
@@ -78,7 +79,7 @@ public class OngoingMatching {
 				return false;
 		}
 
-		currentMatches.identifiers.replaceAll((identifierName, mappedIdentifier) -> {
+		currentMatches.getIdentifiers().replaceAll((identifierName, mappedIdentifier) -> {
 			MappedBaseIdentifier newIdentifier = new MappedBaseIdentifier(identifierName);
 			mappedIdentifier.targets.forEach(target ->
 				newIdentifier.targets.addAll(transformationResults.get(target)));
@@ -91,13 +92,13 @@ public class OngoingMatching {
 		transformResults(filter);
 	}
 
-	public BaseProvider getCurrentMatchesProvider() {
+	public IdentifierProvider<String> getCurrentMatchesProvider() {
 		return currentMatches;
 	}
 
 	public Set<IdentifierTarget> getCurrentMatches() {
 		Set<IdentifierTarget> set = new HashSet<>();
-		currentMatches.identifiers.values().forEach(i -> set.addAll(i.targets));
+		currentMatches.getIdentifiers().values().forEach(i -> set.addAll(i.targets));
 		return set;
 	}
 

@@ -4,16 +4,11 @@ import de.tum.med.aiim.markusbudeus.matcher.HouselistEntry;
 import de.tum.med.aiim.markusbudeus.matcher.OngoingMatching;
 import de.tum.med.aiim.markusbudeus.matcher.houselisttransformer.DosageFromNameIdentifier;
 import de.tum.med.aiim.markusbudeus.matcher.identifiermatcher.*;
-import de.tum.med.aiim.markusbudeus.matcher.provider.BaseProvider;
-import de.tum.med.aiim.markusbudeus.matcher.provider.IdentifierProvider;
-import de.tum.med.aiim.markusbudeus.matcher.provider.IdentifierTarget;
+import de.tum.med.aiim.markusbudeus.matcher.provider.*;
 import de.tum.med.aiim.markusbudeus.matcher.resulttransformer.DosageFilter;
 import de.tum.med.aiim.markusbudeus.matcher.resulttransformer.ProductOnlyFilter;
 import de.tum.med.aiim.markusbudeus.matcher.resulttransformer.SubstanceToProductResolver;
-import de.tum.med.aiim.markusbudeus.matcher.stringtransformer.ListToSet;
-import de.tum.med.aiim.markusbudeus.matcher.stringtransformer.ToLowerCase;
-import de.tum.med.aiim.markusbudeus.matcher.stringtransformer.TrimSpecialSuffixSymbols;
-import de.tum.med.aiim.markusbudeus.matcher.stringtransformer.WhitespaceTokenizer;
+import de.tum.med.aiim.markusbudeus.matcher.stringtransformer.*;
 import org.neo4j.driver.Session;
 
 import java.util.List;
@@ -21,7 +16,15 @@ import java.util.Set;
 
 public class SampleAlgorithm implements MatchingAlgorithm {
 
-	private final BaseProvider baseProvider = BaseProvider.ofDatabaseSynonymes();
+	private static final Transformer<String, String> STRING_TRANSFORMER = new ToLowerCase()
+			.and(new RemoveDosageInformation());
+	private static final Transformer<String, Set<String>> TOKEN_TRANSFORMER = STRING_TRANSFORMER
+			.and(new WhitespaceTokenizer())
+			.and(new TrimSpecialSuffixSymbols())
+			.and(new RemoveBlankStrings())
+			.and(new ListToSet());
+
+	private final IdentifierProvider<String> baseProvider = new TransformationCache<>(BaseProvider.ofDatabaseSynonymes());
 	private final ExactMatcher exactMatcher;
 	private final UnionSizeMatcher unionSizeMatcher;
 	private final LevenshteinMatcher levenshteinMatcher;
@@ -33,11 +36,8 @@ public class SampleAlgorithm implements MatchingAlgorithm {
 	private final ProductOnlyFilter productOnlyFilter;
 
 	public SampleAlgorithm(Session session) {
-		IdentifierProvider<String> lowerCaseProvider = baseProvider.transform(new ToLowerCase());
-		IdentifierProvider<Set<String>> setMatcherProvider = lowerCaseProvider
-				.transform(new WhitespaceTokenizer())
-				.transform(new TrimSpecialSuffixSymbols())
-				.transform(new ListToSet());
+		IdentifierProvider<String> lowerCaseProvider = baseProvider.transform(STRING_TRANSFORMER);
+		IdentifierProvider<Set<String>> setMatcherProvider = baseProvider.transform(TOKEN_TRANSFORMER);
 		unionSizeMatcher = new UnionSizeMatcher(setMatcherProvider);
 		levenshteinSetMatcher = new LevenshteinSetMatcher(setMatcherProvider);
 		exactMatcher = new ExactMatcher(lowerCaseProvider);
@@ -64,7 +64,7 @@ public class SampleAlgorithm implements MatchingAlgorithm {
 
 			// Since we now resolved substances into products, we once again prefer products whose name also
 			// matches the search term.
-			narrowDownUnlessEmpty(matching, unionSizeMatcher);
+			matching.narrowDownUnlessEmpty(TOKEN_TRANSFORMER, UnionSizeMatcher::new);
 		}
 		matching.transformResults(dosageFilter, true);
 
