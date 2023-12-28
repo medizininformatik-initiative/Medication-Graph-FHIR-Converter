@@ -25,4 +25,9 @@ public class Amount {
 	public int hashCode() {
 		return Objects.hash(number, unit);
 	}
+
+	@Override
+	public String toString() {
+		return number + unit;
+	}
 }

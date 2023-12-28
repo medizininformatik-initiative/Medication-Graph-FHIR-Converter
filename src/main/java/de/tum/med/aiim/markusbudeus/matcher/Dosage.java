@@ -32,4 +32,10 @@ public class Dosage {
 	public int hashCode() {
 		return Objects.hash(amountNominator, nominatorQualifier, amountDenominator);
 	}
+
+	@Override
+	public String toString() {
+		String nominator = nominatorQualifier != null ? amountNominator + " " + nominatorQualifier : amountNominator.toString();
+		return amountDenominator != null ? nominator + "/" + amountDenominator : nominator;
+	}
 }
