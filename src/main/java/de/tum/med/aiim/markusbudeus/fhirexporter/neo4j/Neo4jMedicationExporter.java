@@ -70,14 +70,17 @@ public class Neo4jMedicationExporter extends Neo4jExporter<Medication> {
 						"amount:d.amount," +
 						"unit:du" +
 						"}) AS drugs " +
-						"MATCH (pcs:" + CODING_SYSTEM_LABEL + ")<-[:" + BELONGS_TO_CODING_SYSTEM_LABEL + "]-(pc:" + CODE_LABEL + ")-->(p) " +
+						"OPTIONAL MATCH (p)<-[:" + PACKAGE_BELONGS_TO_PRODUCT_LABEL + "]-(pk:" + PACKAGE_LABEL + ") " +
+						"WITH p, drugs, collect(pk) as packages " +
+						"MATCH (pcs:" + CODING_SYSTEM_LABEL + ")<-[:" + BELONGS_TO_CODING_SYSTEM_LABEL + "]-(pc:" + CODE_LABEL + ")-->(p) " + // This also catches package PZN codes
 						"OPTIONAL MATCH (c:" + COMPANY_LABEL + ")-[:" + MANUFACTURES_LABEL + "]->(p) " +
 						"RETURN p.name AS productName," +
 						"p.mmiId AS mmiId," +
 						"c.mmiId AS companyMmiId," +
 						"c.name AS companyName," +
-						"collect(" + groupCodingSystem("pc", "pcs") + ") AS productCodes," +
-						"drugs";
+						"collect(" + groupCodingSystem("pc", "pcs") + ") AS productCodes, " +
+						"drugs, " +
+						"packages";
 
 		System.out.println(query);
 
@@ -222,6 +225,7 @@ public class Neo4jMedicationExporter extends Neo4jExporter<Medication> {
 		final String companyName;
 		final List<Neo4jExportCode> codes;
 		final List<Neo4jExportDrug> drugs;
+		final List<Neo4jExportPackage> packages;
 
 		Neo4jExportProduct(MapAccessorWithDefaultValue value) {
 			name = value.get("productName", (String) null);
@@ -230,6 +234,21 @@ public class Neo4jMedicationExporter extends Neo4jExporter<Medication> {
 			companyName = value.get("companyName", (String) null);
 			codes = value.get("productCodes").asList(Neo4jExportCode::new);
 			drugs = value.get("drugs").asList(Neo4jExportDrug::new);
+			packages = value.get("packages").asList(Neo4jExportPackage::new);
+		}
+	}
+
+	private static class Neo4jExportPackage {
+		final String name;
+		final BigDecimal amount;
+		final String pzn;
+		final LocalDate onMarketDate;
+
+		Neo4jExportPackage(MapAccessorWithDefaultValue value) {
+			name = value.get("name").asString(null);
+			amount = toBigDecimal(value.get("amount").asString(null));
+			pzn = value.get("pzn").asString(null);
+			onMarketDate = value.get("onMarketDate").asLocalDate(null);
 		}
 	}
 
@@ -238,7 +257,7 @@ public class Neo4jMedicationExporter extends Neo4jExporter<Medication> {
 		final List<Neo4jExportAtc> atcCodes;
 		final String mmiDoseForm;
 		final Neo4jExportEdqm edqmDoseForm;
-		final String amount;
+		final BigDecimal amount;
 		final Neo4jExportUnit unit;
 
 		Neo4jExportDrug(MapAccessorWithDefaultValue value) {
@@ -247,7 +266,7 @@ public class Neo4jMedicationExporter extends Neo4jExporter<Medication> {
 			mmiDoseForm = value.get("mmiDoseForm", (String) null);
 			Value edqm = value.get("edqmDoseForm");
 			edqmDoseForm = edqm.isNull() ? null : new Neo4jExportEdqm(edqm);
-			amount = value.get("amount", (String) null);
+			amount = toBigDecimal(value.get("amount", (String) null));
 			Value vUnit = value.get("unit");
 			unit = vUnit.isNull() ? null : new Neo4jExportUnit(vUnit);
 		}
@@ -256,8 +275,8 @@ public class Neo4jMedicationExporter extends Neo4jExporter<Medication> {
 	private static class Neo4jExportIngredient {
 		final long substanceMmiId;
 		final String substanceName;
-		final String massFrom;
-		final String massTo;
+		final BigDecimal massFrom;
+		final BigDecimal massTo;
 		final boolean isActive;
 		final Neo4jExportUnit unit;
 
@@ -265,17 +284,10 @@ public class Neo4jMedicationExporter extends Neo4jExporter<Medication> {
 			substanceMmiId = value.get("substanceMmiId").asLong();
 			substanceName = value.get("substanceName").asString();
 			isActive = value.get("isActive").asBoolean();
-			massFrom = replaceDecimalSeparator(value.get("massFrom", (String) null));
-			massTo = replaceDecimalSeparator(value.get("massTo", (String) null));
+			massFrom = toBigDecimal(value.get("massFrom", (String) null));
+			massTo = toBigDecimal(value.get("massTo", (String) null));
 			Value vUnit = value.get("unit");
 			unit = vUnit.isNull() ? null : new Neo4jExportUnit(vUnit);
-		}
-
-		private String replaceDecimalSeparator(String value) {
-			if (value != null) {
-				return value.replace(',', '.');
-			}
-			return value;
 		}
 
 		public Ratio getStrength() {
@@ -374,13 +386,13 @@ public class Neo4jMedicationExporter extends Neo4jExporter<Medication> {
 	}
 
 
-	private static Ratio ratioFromMassAndUnit(String massFrom, String massTo, Neo4jExportUnit unit) {
+	private static Ratio ratioFromMassAndUnit(BigDecimal massFrom, BigDecimal massTo, Neo4jExportUnit unit) {
 		Quantity quantity = quantityFromMassFromToAndUnit(massFrom, massTo, unit);
 		if (quantity == null) return null;
 		return new Ratio(quantity, Quantity.one());
 	}
 
-	private static Quantity quantityFromMassFromToAndUnit(String massFrom, String massTo, Neo4jExportUnit unit) {
+	private static Quantity quantityFromMassFromToAndUnit(BigDecimal massFrom, BigDecimal massTo, Neo4jExportUnit unit) {
 		Quantity quantity;
 		if (massFrom == null) {
 			if (massTo == null) {
@@ -400,13 +412,13 @@ public class Neo4jMedicationExporter extends Neo4jExporter<Medication> {
 		return quantity;
 	}
 
-	private static Quantity quantityFromMassAndUnit(String mass, Neo4jExportUnit unit) {
+	private static Quantity quantityFromMassAndUnit(BigDecimal mass, Neo4jExportUnit unit) {
 		if (mass == null && unit == null) return null;
 
 		Quantity quantity = new Quantity();
 
 		if (mass != null) {
-			quantity.value = new BigDecimal(mass);
+			quantity.value = mass;
 			quantity.setComparator(Quantity.Comparator.EXACT);
 		}
 
@@ -419,6 +431,11 @@ public class Neo4jMedicationExporter extends Neo4jExporter<Medication> {
 			}
 		}
 		return quantity;
+	}
+
+	private static BigDecimal toBigDecimal(String germanValue) {
+		if (germanValue == null) return null;
+		return new BigDecimal(germanValue.replace(',', '.'));
 	}
 
 }
