@@ -9,6 +9,7 @@ import org.neo4j.driver.Result;
 import org.neo4j.driver.Session;
 
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -233,6 +234,20 @@ public class IntegrationTest {
 				default -> fail("Unexpected ingredient " + record.get(0).asString() + " found!");
 			}
 		}
+		assertFalse(result.hasNext());
+	}
+
+	@Test
+	public void packageInfo() {
+		Result result = session.run(
+				"MATCH (p:"+PRODUCT_LABEL+" {mmiId: 0})<-[:"+PACKAGE_BELONGS_TO_PRODUCT_LABEL+"]-(pk:"+PACKAGE_LABEL+")--(pz:" + PZN_LABEL+")" +
+						"RETURN pk.onMarketDate, pz.code "
+		);
+
+		assertTrue(result.hasNext());
+		Record r = result.next();
+		assertEquals(LocalDate.of(2022,1,12), r.get(0).asLocalDate());
+		assertEquals("51465", r.get(1).asString());
 		assertFalse(result.hasNext());
 	}
 

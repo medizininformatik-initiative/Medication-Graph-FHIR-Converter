@@ -80,13 +80,18 @@ public class PackageLoader extends CsvLoader {
 						"SET p.onMarketDate = date(dateParts[2]+'-'+dateParts[1]+'-'+dateParts[0])"
 		);
 
-		startSubtask("Cleaning up");
-		// Assign PZN and Code labels if required
+		startSubtask("Creating PZN nodes");
 		executeQuery(
 				"MATCH (p:" + PACKAGE_LABEL + ") WHERE NOT p.pzn IS NULL " +
-						"SET p:" + PZN_LABEL + ", p:" + CODE_LABEL + ", p.code = p.pzn"
+						"CREATE (c:" + PZN_LABEL + ":" +CODE_LABEL +" {" +
+						"code: p.pzn, " +
+						"pznOriginal: p.pznOriginal, " +
+						"pznSuccessor: p.pznSuccessor" +
+						"}) " +
+						"CREATE (c)-[:"+CODE_REFERENCE_RELATIONSHIP_NAME+"]->(p)"
 		);
 
+		startSubtask("Interconnecting PZN nodes");
 		// Connect successors
 		executeQuery("MATCH (p1:"+PZN_LABEL+") " +
 				"MATCH (p2:"+PZN_LABEL+" {code: p1.pznSuccessor}) " +
@@ -97,7 +102,9 @@ public class PackageLoader extends CsvLoader {
 				"MATCH (p2:"+PZN_LABEL+" {code: p1.pznOriginal}) " +
 				"CREATE (p1)-[:"+PZN_IS_ORIGINALLY+"]->(p2)");
 
+		startSubtask("Cleaning up");
 		// Remove obsolete fields
-		executeQuery("MATCH (p:"+PACKAGE_LABEL+") REMOVE p.productId, p.pznSuccessor");
+		executeQuery("MATCH (p:"+PACKAGE_LABEL+") REMOVE p.productId, p.pzn, p.pznOriginal, p.pznSuccessor");
+		executeQuery("MATCH (p:"+PZN_LABEL+") REMOVE p.pznOriginal, p.pznSuccessor");
 	}
 }

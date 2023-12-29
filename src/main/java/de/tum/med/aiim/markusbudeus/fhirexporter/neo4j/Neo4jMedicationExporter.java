@@ -40,7 +40,7 @@ public class Neo4jMedicationExporter extends Neo4jExporter<Medication> {
 	public Stream<Medication> exportObjects() {
 		// This is a complicated query. Sorry about that. :(
 		String query =
-				"MATCH (p:" + PRODUCT_LABEL + " {name: 'Sol Arcana LM 24 Dilution'})-[:" + PRODUCT_CONTAINS_DRUG_LABEL + "]->(d:" + DRUG_LABEL + ") " +
+				"MATCH (p:" + PRODUCT_LABEL + " {name: 'Methylprednisolut® 1000 mg, Pulver und Lösungsmittel zur Herstellung einer Injektions-/Infusionslösung'})-[:" + PRODUCT_CONTAINS_DRUG_LABEL + "]->(d:" + DRUG_LABEL + ") " +
 						"OPTIONAL MATCH (d)-[:" + DRUG_HAS_DOSE_FORM_LABEL + "]->(df:" + DOSE_FORM_LABEL + ") " +
 						"OPTIONAL MATCH (df)-[:" + DOSE_FORM_IS_EDQM + "]->(de:" + EDQM_LABEL + ")-[:" + BELONGS_TO_CODING_SYSTEM_LABEL + "]->(dfcs:" + CODING_SYSTEM_LABEL + ") " +
 						(allowMedicationsWithoutIngredients ? "OPTIONAL " : "") +
@@ -71,8 +71,15 @@ public class Neo4jMedicationExporter extends Neo4jExporter<Medication> {
 						"unit:du" +
 						"}) AS drugs " +
 						"OPTIONAL MATCH (p)<-[:" + PACKAGE_BELONGS_TO_PRODUCT_LABEL + "]-(pk:" + PACKAGE_LABEL + ") " +
-						"WITH p, drugs, collect(pk) as packages " +
-						"MATCH (pcs:" + CODING_SYSTEM_LABEL + ")<-[:" + BELONGS_TO_CODING_SYSTEM_LABEL + "]-(pc:" + CODE_LABEL + ")-->(p) " + // This also catches package PZN codes
+						"OPTIONAL MATCH (pkcs:" + CODING_SYSTEM_LABEL + ")<-[:" + BELONGS_TO_CODING_SYSTEM_LABEL + "]-(pkc:" + CODE_LABEL + ")-->(pk) " +
+						"WITH p, drugs, pk, collect("+groupCodingSystem("pkc", "pkcs")+") as packageCodes " +
+						"WITH p, drugs, collect({" +
+						"name:pk.name,"+
+						"amount:pk.amount,"+
+						"onMarketDate:pk.onMarketDate," +
+						"codes:packageCodes"+
+						"}) as packages " +
+						"OPTIONAL MATCH (pcs:" + CODING_SYSTEM_LABEL + ")<-[:" + BELONGS_TO_CODING_SYSTEM_LABEL + "]-(pc:" + CODE_LABEL + ")-->(p) " +
 						"OPTIONAL MATCH (c:" + COMPANY_LABEL + ")-[:" + MANUFACTURES_LABEL + "]->(p) " +
 						"RETURN p.name AS productName," +
 						"p.mmiId AS mmiId," +
@@ -158,7 +165,8 @@ public class Neo4jMedicationExporter extends Neo4jExporter<Medication> {
 
 	private static void applyProductInfoToMedication(Neo4jExportProduct product, Medication target) {
 		List<Coding> codings = getCodings(target);
-		codings.addAll(product.codes.stream().map(Neo4jExportCode::toCoding).toList());
+		codings.addAll(product.codes.stream().map(Neo4jExportCode::toCoding).toList()); // Add product codes
+		product.packages.forEach(p -> codings.addAll(p.codes.stream().map(Neo4jExportCode::toCoding).toList())); // Add package codes
 		applyCodings(codings, target);
 
 		target.code.text = product.name;
@@ -241,14 +249,14 @@ public class Neo4jMedicationExporter extends Neo4jExporter<Medication> {
 	private static class Neo4jExportPackage {
 		final String name;
 		final BigDecimal amount;
-		final String pzn;
 		final LocalDate onMarketDate;
+		final List<Neo4jExportCode> codes;
 
 		Neo4jExportPackage(MapAccessorWithDefaultValue value) {
 			name = value.get("name").asString(null);
 			amount = toBigDecimal(value.get("amount").asString(null));
-			pzn = value.get("pzn").asString(null);
 			onMarketDate = value.get("onMarketDate").asLocalDate(null);
+			codes = value.get("codes").asList(Neo4jExportCode::new);
 		}
 	}
 
