@@ -19,6 +19,10 @@ public class DatabaseDefinitions {
 	public static final String ATC_LABEL = "ATC";
 	public static final String ATC_HAS_PARENT_LABEL = "HAS_PARENT";
 	public static final String PZN_LABEL = "PZN";
+	public static final String PACKAGE_LABEL = "Package";
+	public static final String PZN_HAS_SUCCESSOR_LABEL = "HAS_SUCCESSOR";
+	public static final String PZN_IS_ORIGINALLY = "IS_ORIGINALLY";
+	public static final String PACKAGE_BELONGS_TO_PRODUCT_LABEL = "BELONGS_TO";
 	public static final String COMPANY_LABEL = "Company";
 	public static final String ADDRESS_LABEL = "Address";
 	public static final String COMPANY_HAS_ADDRESS_LABEL = "HAS_ADDRESS";

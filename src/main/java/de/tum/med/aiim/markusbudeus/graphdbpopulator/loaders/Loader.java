@@ -19,6 +19,9 @@ public abstract class Loader {
 
 	protected final Session session;
 
+	private boolean usingSubtasks = false;
+	private long subtaskStartTime = -1L;
+
 	public Loader(Session session) {
 		this.session = session;
 	}
@@ -49,7 +52,31 @@ public abstract class Loader {
 		System.out.print("Running " + getClass().getSimpleName() + "...");
 		long time = System.currentTimeMillis();
 		executeLoad();
+		completeSubtask();
 		System.out.println("done (" + (System.currentTimeMillis() - time) + "ms)");
+	}
+
+	/**
+	 * Prints information to the console that a subtask has been started. Subtasks do not support nesting, starting
+	 * a new subtask without completing the old one will complete the old one.
+	 */
+	protected void startSubtask(String subtask) {
+		if (subtaskStartTime != -1) {
+			completeSubtask();
+		} else if (!usingSubtasks) {
+			System.out.println();
+		}
+		System.out.print("    " + subtask + "...");
+		subtaskStartTime = System.currentTimeMillis();
+	}
+
+	/**
+	 * Prints information to the console that the last subtask is complete.
+	 */
+	protected void completeSubtask() {
+		if (subtaskStartTime == -1) return;
+		System.out.println("done ("+(System.currentTimeMillis() - subtaskStartTime)+"ms)");
+		subtaskStartTime = -1;
 	}
 
 	protected abstract void executeLoad();

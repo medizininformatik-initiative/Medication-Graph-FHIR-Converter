@@ -33,6 +33,7 @@ public class CompanyAddressLoader extends CsvLoader {
 		executeQuery(
 				"CREATE CONSTRAINT addressMmiIdConstraint IF NOT EXISTS FOR (a:" + ADDRESS_LABEL + ") REQUIRE a.mmiId IS UNIQUE"
 		);
+		startSubtask("Loading CSV file");
 		executeQuery(withLoadStatement(
 				"WITH " + ROW_IDENTIFIER + " WHERE " + row(
 						ADDRESS_TYPE_CODE) + " = 'C' " + // Only allow 'Firmensitz' Addresses
@@ -47,6 +48,7 @@ public class CompanyAddressLoader extends CsvLoader {
 						"})"
 		));
 
+		startSubtask("Assigning correct country codes");
 		// Replace MMI country code by values from catalog
 		countryLoader.executeLoad();
 	}

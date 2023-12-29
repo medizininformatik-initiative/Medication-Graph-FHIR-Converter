@@ -37,8 +37,8 @@ public class Main {
 			loaders.add(new ProductLoader(session));
 			// Delete all products which are not pharmaceuticals
 			loaders.add(new ProductFilter(session));
-			// PZN nodes and their relations with Product nodes
-			loaders.add(new PznLoader(session));
+			// Package nodes and their relations with Product nodes
+			loaders.add(new PackageLoader(session));
 			// INN and CAS nodes
 			loaders.add(new AmiceStoffBezLoader(session));
 			// Manufacturer nodes
