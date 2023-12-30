@@ -25,7 +25,7 @@ public class SampleAlgorithm implements MatchingAlgorithm {
 			.and(new RemoveBlankStrings())
 			.and(new ListToSet());
 
-	private final IdentifierProvider<String> baseProvider = new TransformationCache<>(BaseProvider.ofDatabaseSynonymes());
+	private final IdentifierProvider<String> baseProvider;
 	private final ExactMatcher exactMatcher;
 	private final UnionSizeMatcher unionSizeMatcher;
 	private final LevenshteinMatcher levenshteinMatcher;
@@ -37,6 +37,7 @@ public class SampleAlgorithm implements MatchingAlgorithm {
 	private final ProductOnlyFilter productOnlyFilter;
 
 	public SampleAlgorithm(Session session) {
+		baseProvider = new TransformationCache<>(BaseProvider.ofDatabaseSynonymes(session));
 		IdentifierProvider<String> lowerCaseProvider = baseProvider.transform(STRING_TRANSFORMER);
 		IdentifierProvider<Set<String>> setMatcherProvider = baseProvider.transform(TOKEN_TRANSFORMER);
 		unionSizeMatcher = new UnionSizeMatcher(setMatcherProvider);

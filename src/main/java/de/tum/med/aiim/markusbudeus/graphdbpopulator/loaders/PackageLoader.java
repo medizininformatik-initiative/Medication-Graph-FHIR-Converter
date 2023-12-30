@@ -92,6 +92,8 @@ public class PackageLoader extends CsvLoader {
 		);
 
 		startSubtask("Interconnecting Package nodes");
+		// We connect indirectly by querying the PZN nodes, because those have indexes on them and are thus queried
+		// much faster.
 		// Connect successors
 		executeQuery(
 				"MATCH (p1:" + PZN_LABEL + ")-[:" + CODE_REFERENCE_RELATIONSHIP_NAME + "]->(pk1:" + PACKAGE_LABEL + ") " +
