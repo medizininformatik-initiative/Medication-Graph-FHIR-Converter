@@ -11,6 +11,7 @@ import de.tum.med.aiim.markusbudeus.matcher.resulttransformer.SubstanceToProduct
 import de.tum.med.aiim.markusbudeus.matcher.stringtransformer.*;
 import org.neo4j.driver.Session;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -55,12 +56,22 @@ public class SampleAlgorithm implements MatchingAlgorithm {
 
 		doMatchingSteps(matching);
 
+		if (matching.getCurrentMatches().size() == 1) {
+			List<IdentifierTarget> resultList = new ArrayList<>(matching.getCurrentMatches());
+			if (resultList.get(0).type == IdentifierTarget.Type.PRODUCT) {
+				return resultList;
+			}
+		}
+
 		dosageFromNameIdentifier.transform(matching.entry);
 
 		// Only use product matches, unless this leaves us without a result. In that case, transform substances
 		// to products.
 		if (!matching.transformResults(productOnlyFilter, true)) {
 			matching.transformResults(substanceToProductResolver);
+
+			// Replace products being identified by their substance name by an identifier for the product name
+			matching.reassignIdentifiers(target -> target.name);
 
 			// Since we now resolved substances into products, we once again prefer products whose name also
 			// matches the search term.

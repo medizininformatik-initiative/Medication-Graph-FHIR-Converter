@@ -20,11 +20,13 @@ public class OngoingMatching {
 		this.currentMatches = baseProvider;
 	}
 
-	public boolean narrowDownUnlessEmpty(Function<IdentifierProvider<String>, IIdentifierMatcher<String>> matcherConstructor) {
+	public boolean narrowDownUnlessEmpty(
+			Function<IdentifierProvider<String>, IIdentifierMatcher<String>> matcherConstructor) {
 		return narrowDownUnlessEmpty(Transformer.IDENTITY, matcherConstructor);
 	}
 
-	public <S> boolean narrowDownUnlessEmpty(Transformer<String, S> transformer, Function<IdentifierProvider<S>, IIdentifierMatcher<S>> matcherConstructor) {
+	public <S> boolean narrowDownUnlessEmpty(Transformer<String, S> transformer,
+	                                         Function<IdentifierProvider<S>, IIdentifierMatcher<S>> matcherConstructor) {
 		IIdentifierMatcher<S> matcher = matcherConstructor.apply(currentMatches.transform(transformer));
 		return narrowDownUnlessEmpty(matcher.findMatch(entry.name).getBestMatches());
 	}
@@ -82,7 +84,7 @@ public class OngoingMatching {
 		currentMatches.getIdentifiers().replaceAll((identifierName, mappedIdentifier) -> {
 			MappedBaseIdentifier newIdentifier = new MappedBaseIdentifier(identifierName);
 			mappedIdentifier.targets.forEach(target ->
-				newIdentifier.targets.addAll(transformationResults.get(target)));
+					newIdentifier.targets.addAll(transformationResults.get(target)));
 			return newIdentifier;
 		});
 		return true;
@@ -94,6 +96,23 @@ public class OngoingMatching {
 
 	public IdentifierProvider<String> getCurrentMatchesProvider() {
 		return currentMatches;
+	}
+
+	/**
+	 * Takes all current {@link IdentifierTarget}s indirectly stored in the matching and assigns each one to a
+	 * completely new identifier. For example, if you had the identifier "Tranexamsäure" pointing to that very substance
+	 * and then you transform the {@link IdentifierTarget}s which are substances to products, then you are left with a
+	 * "Tranexamsäure"-identifier, which points to a set of products. But now you may want to have these products
+	 * identified by their name, not the substance name. Thus, you use this function and pass a function which extracts
+	 * the product name.
+	 */
+	public void reassignIdentifiers(Function<IdentifierTarget, String> identifierExtractor) {
+		currentMatches = BaseProvider.ofIdentifiers(
+				getCurrentMatches()
+						.stream()
+						.map(target -> new MappedBaseIdentifier(identifierExtractor.apply(target), target))
+						.collect(Collectors.toSet())
+		);
 	}
 
 	public Set<IdentifierTarget> getCurrentMatches() {

@@ -17,4 +17,9 @@ public class BaseIdentifier implements Identifier<String> {
 	public BaseIdentifier getBaseIdentifier() {
 		return this;
 	}
+
+	@Override
+	public String toString() {
+		return identifier;
+	}
 }
