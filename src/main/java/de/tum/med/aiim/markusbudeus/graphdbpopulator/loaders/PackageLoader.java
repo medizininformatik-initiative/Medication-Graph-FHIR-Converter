@@ -58,24 +58,24 @@ public class PackageLoader extends CsvLoader {
 						"})"
 		));
 
-		startSubtask("Connecting "+PACKAGE_LABEL+" to "+PRODUCT_LABEL+" nodes");
+		startSubtask("Connecting " + PACKAGE_LABEL + " to " + PRODUCT_LABEL + " nodes");
 		executeQuery(
-				"MATCH (p:" + PACKAGE_LABEL +") " +
+				"MATCH (p:" + PACKAGE_LABEL + ") " +
 						"MATCH (i:" + PRODUCT_LABEL + " {mmiId: p.productId}) " +
 						"CREATE (p)-[:" + PACKAGE_BELONGS_TO_PRODUCT_LABEL + "]->(i) "
 		);
 
-		startSubtask("Deleting unmatched "+PACKAGE_LABEL+" nodes");
+		startSubtask("Deleting unmatched " + PACKAGE_LABEL + " nodes");
 		executeQuery(
-				"MATCH (p:"+PACKAGE_LABEL+") " +
-						"WHERE NOT (p)-[:"+PACKAGE_BELONGS_TO_PRODUCT_LABEL+"]->(:"+PRODUCT_LABEL+") " +
+				"MATCH (p:" + PACKAGE_LABEL + ") " +
+						"WHERE NOT (p)-[:" + PACKAGE_BELONGS_TO_PRODUCT_LABEL + "]->(:" + PRODUCT_LABEL + ") " +
 						"DELETE p"
 		);
 
 		startSubtask("Parsing onMarketDate");
 		// Parse onMarketDate
 		executeQuery(
-				"MATCH (p:"+PACKAGE_LABEL+") WHERE NOT p.onMarketDate IS NULL " +
+				"MATCH (p:" + PACKAGE_LABEL + ") WHERE NOT p.onMarketDate IS NULL " +
 						"WITH p, split(p.onMarketDate, '.') AS dateParts " +
 						"SET p.onMarketDate = date(dateParts[2]+'-'+dateParts[1]+'-'+dateParts[0])"
 		);
@@ -83,28 +83,29 @@ public class PackageLoader extends CsvLoader {
 		startSubtask("Creating PZN nodes");
 		executeQuery(
 				"MATCH (p:" + PACKAGE_LABEL + ") WHERE NOT p.pzn IS NULL " +
-						"CREATE (c:" + PZN_LABEL + ":" +CODE_LABEL +" {" +
+						"CREATE (c:" + PZN_LABEL + ":" + CODE_LABEL + " {" +
 						"code: p.pzn, " +
 						"pznOriginal: p.pznOriginal, " +
 						"pznSuccessor: p.pznSuccessor" +
 						"}) " +
-						"CREATE (c)-[:"+CODE_REFERENCE_RELATIONSHIP_NAME+"]->(p)"
+						"CREATE (c)-[:" + CODE_REFERENCE_RELATIONSHIP_NAME + "]->(p)"
 		);
 
-		startSubtask("Interconnecting PZN nodes");
+		startSubtask("Interconnecting Package nodes");
 		// Connect successors
-		executeQuery("MATCH (p1:"+PZN_LABEL+") " +
-				"MATCH (p2:"+PZN_LABEL+" {code: p1.pznSuccessor}) " +
-				"CREATE (p1)-[:"+PZN_HAS_SUCCESSOR_LABEL+"]->(p2)");
+		executeQuery(
+				"MATCH (p1:" + PZN_LABEL + ")-[:" + CODE_REFERENCE_RELATIONSHIP_NAME + "]->(pk1:" + PACKAGE_LABEL + ") " +
+						"MATCH (p2:" + PZN_LABEL + " {code: p1.pznSuccessor})-[:" + CODE_REFERENCE_RELATIONSHIP_NAME + "]->(pk2:" + PACKAGE_LABEL + ") " +
+						"CREATE (pk1)-[:" + PACKAGE_HAS_SUCCESSOR_LABEL + "]->(pk2)");
 
 		// Connect originals
-		executeQuery("MATCH (p1:"+PZN_LABEL+") " +
-				"MATCH (p2:"+PZN_LABEL+" {code: p1.pznOriginal}) " +
-				"CREATE (p1)-[:"+PZN_IS_ORIGINALLY+"]->(p2)");
+		executeQuery("MATCH (p1:" + PZN_LABEL + ")-[:" + CODE_REFERENCE_RELATIONSHIP_NAME + "]->(pk1:" + PACKAGE_LABEL + ") " +
+				"MATCH (p2:" + PZN_LABEL + " {code: p1.pznOriginal})-[:" + CODE_REFERENCE_RELATIONSHIP_NAME + "]->(pk2:" + PACKAGE_LABEL + ") " +
+				"CREATE (pk1)-[:" + PACKAGE_IS_ORIGINALLY + "]->(pk2)");
 
 		startSubtask("Cleaning up");
 		// Remove obsolete fields
-		executeQuery("MATCH (p:"+PACKAGE_LABEL+") REMOVE p.productId, p.pzn, p.pznOriginal, p.pznSuccessor");
-		executeQuery("MATCH (p:"+PZN_LABEL+") REMOVE p.pznOriginal, p.pznSuccessor");
+		executeQuery("MATCH (p:" + PACKAGE_LABEL + ") REMOVE p.productId, p.pzn, p.pznOriginal, p.pznSuccessor");
+		executeQuery("MATCH (p:" + PZN_LABEL + ") REMOVE p.pznOriginal, p.pznSuccessor");
 	}
 }
