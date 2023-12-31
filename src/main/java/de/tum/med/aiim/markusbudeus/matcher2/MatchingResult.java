@@ -3,8 +3,6 @@ package de.tum.med.aiim.markusbudeus.matcher2;
 import de.tum.med.aiim.markusbudeus.matcher2.data.SubSortingTree;
 import de.tum.med.aiim.markusbudeus.matcher2.model.MatchingTarget;
 
-import java.util.List;
-
 public class MatchingResult {
 
 	public final HouselistEntry searchTerm;

@@ -1,10 +1,8 @@
 package de.tum.med.aiim.markusbudeus.matcher2.data;
 
-import java.util.*;
-import java.util.function.Consumer;
-import java.util.function.Function;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
 
 /**
  * This class represents a list of objects, which can be repeatedly sorted by different metrics. Meaning you can sort

@@ -9,6 +9,7 @@ import de.tum.med.aiim.markusbudeus.matcher2.matchers.MatcherConfiguration;
 import de.tum.med.aiim.markusbudeus.matcher2.matchers.model.ScoreMultiMatch;
 import de.tum.med.aiim.markusbudeus.matcher2.model.MatchingTarget;
 import de.tum.med.aiim.markusbudeus.matcher2.provider.BaseProvider;
+import de.tum.med.aiim.markusbudeus.matcher2.resultranker.MatchJudge;
 import de.tum.med.aiim.markusbudeus.matcher2.resulttransformer.ResultTransformer;
 import de.tum.med.aiim.markusbudeus.matcher2.stringtransformer.Transformer;
 
@@ -32,6 +33,16 @@ public class OngoingMatching {
 				MatchingTarget::getName);
 		MatcherConfiguration<S,S> configuration = MatcherConfiguration.usingTransformations(transformer, baseProvider);
 		applySortingStep(name, matcher.findMatch(entry, configuration), retainThreshold);
+	}
+
+	public void applySortingStep(String name, MatchJudge judge, Double retainThreshold) {
+		List<MatchingTarget> targets = currentMatches.getContents();
+		List<Double> scores = judge.batchJudge(targets, entry);
+		Map<MatchingTarget, Double> assignedScores = new HashMap<>();
+		for (int i = 0; i < targets.size(); i++) {
+			assignedScores.put(targets.get(i), scores.get(i));
+		}
+		applySortingStep(new ScoreSortDirective<>(name, assignedScores::get, retainThreshold));
 	}
 
 	public void applySortingStep(String name, ScoreMultiMatch<?> match, Double retainThreshold) {

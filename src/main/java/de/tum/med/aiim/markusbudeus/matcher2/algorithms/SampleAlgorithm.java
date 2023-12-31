@@ -12,6 +12,7 @@ import de.tum.med.aiim.markusbudeus.matcher2.model.MatchingTarget;
 import de.tum.med.aiim.markusbudeus.matcher2.provider.BaseProvider;
 import de.tum.med.aiim.markusbudeus.matcher2.provider.IdentifierProvider;
 import de.tum.med.aiim.markusbudeus.matcher2.provider.MappedIdentifier;
+import de.tum.med.aiim.markusbudeus.matcher2.resultranker.DosageMatchJudge;
 import de.tum.med.aiim.markusbudeus.matcher2.resulttransformer.DosageFilter;
 import de.tum.med.aiim.markusbudeus.matcher2.resulttransformer.ProductOnlyFilter;
 import de.tum.med.aiim.markusbudeus.matcher2.resulttransformer.SubstanceToProductResolver;
@@ -45,6 +46,8 @@ public class SampleAlgorithm implements MatchingAlgorithm {
 	private final SubstanceToProductResolver substanceToProductResolver;
 	private final ProductOnlyFilter productOnlyFilter;
 
+	private final DosageMatchJudge dosageMatchJudge;
+
 	public SampleAlgorithm(Session session) {
 		baseProvider = BaseProvider.ofDatabaseSynonymes(session);
 		unionSizeMatcher = new UnionSizeMatcher();
@@ -55,6 +58,7 @@ public class SampleAlgorithm implements MatchingAlgorithm {
 		dosageFilter = new DosageFilter(session);
 		substanceToProductResolver = new SubstanceToProductResolver(session);
 		productOnlyFilter = new ProductOnlyFilter();
+		dosageMatchJudge = new DosageMatchJudge(session);
 	}
 
 	@Override
@@ -87,6 +91,7 @@ public class SampleAlgorithm implements MatchingAlgorithm {
 					0.0);
 		}
 		matching.transformResults(dosageFilter, true);
+		matching.applySortingStep("Dosage Match Score", dosageMatchJudge, null);
 
 		return matching.getCurrentMatchesTree();
 	}
