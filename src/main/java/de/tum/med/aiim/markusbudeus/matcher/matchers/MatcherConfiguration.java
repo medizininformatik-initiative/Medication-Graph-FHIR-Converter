@@ -21,7 +21,7 @@ public class MatcherConfiguration<S, T> {
 	 * matches against the identifiers of the given {@link IdentifierProvider}.
 	 */
 	public static <S> MatcherConfiguration<String, S> getBareboneConfig(IdentifierProvider<S> provider) {
-		return new MatcherConfiguration<>(e -> e.name, provider);
+		return new MatcherConfiguration<>(e -> e.searchTerm, provider);
 	}
 
 	/**
@@ -33,7 +33,7 @@ public class MatcherConfiguration<S, T> {
 	 */
 	public static <S> MatcherConfiguration<S, S> usingTransformations(Transformer<String, S> transformer,
 	                                                                  IdentifierProvider<String> provider) {
-		return usingTransformations(e -> e.name, provider, transformer);
+		return usingTransformations(e -> e.searchTerm, provider, transformer);
 	}
 
 	/**

@@ -8,7 +8,7 @@ import java.util.Set;
  * However, as a small modification: If two sets of strings only match on a single string and that single string
  * only consits of digits, it is not considered to be a match.
  */
-public class ModifiedJaccardMatcher extends ScoreBasedMatcher<Set<String>> {
+public class ModifiedJaccardMatcher extends ScoreBasedMatcher<Set<String>, Set<String>> {
 
 	@Override
 	public double getScore(Set<String> searchTerm, Set<String> target) {

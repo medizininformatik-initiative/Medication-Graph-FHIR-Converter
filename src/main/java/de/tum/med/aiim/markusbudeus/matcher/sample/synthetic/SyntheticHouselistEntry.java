@@ -16,6 +16,6 @@ public class SyntheticHouselistEntry extends HouselistEntry {
 		this.ask = ask;
 		this.pzn = pzn;
 		this.noisySubstanceName = noisySubstanceName;
-		super.name = noisySubstanceName;
+		super.searchTerm = noisySubstanceName;
 	}
 }

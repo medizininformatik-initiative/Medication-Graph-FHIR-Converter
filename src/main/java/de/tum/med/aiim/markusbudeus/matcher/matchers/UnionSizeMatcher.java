@@ -3,7 +3,7 @@ package de.tum.med.aiim.markusbudeus.matcher.matchers;
 import java.util.HashSet;
 import java.util.Set;
 
-public class UnionSizeMatcher extends ScoreBasedMatcher<Set<String>> {
+public class UnionSizeMatcher extends ScoreBasedMatcher<Set<String>, Set<String>> {
 
 	@Override
 	public double getScore(Set<String> searchTerm, Set<String> target) {

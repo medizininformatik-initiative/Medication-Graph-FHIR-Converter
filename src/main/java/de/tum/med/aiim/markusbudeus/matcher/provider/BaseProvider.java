@@ -38,6 +38,11 @@ public class BaseProvider<S> implements IdentifierProvider<S> {
 		return new BaseProvider<>(targets.map(t -> new MappedIdentifier<>(identifierExtractor.apply(t), t)).toList());
 	}
 
+
+	public static BaseProvider<String> ofMatchingTargetNames(Collection<MatchingTarget> targets) {
+		return BaseProvider.ofMatchingTargets(targets, MatchingTarget::getName);
+	}
+
 	public static <S> BaseProvider<S> ofMatchingTargets(Collection<MatchingTarget> targets,
 	                                                    Function<MatchingTarget, S> identifierExtractor) {
 		List<MappedIdentifier<S>> resultList = new ArrayList<>(targets.size());

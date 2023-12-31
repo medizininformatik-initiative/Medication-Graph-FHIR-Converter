@@ -4,14 +4,12 @@ import de.tum.med.aiim.markusbudeus.matcher.HouselistEntry;
 import de.tum.med.aiim.markusbudeus.matcher.OngoingMatching;
 import de.tum.med.aiim.markusbudeus.matcher.data.SubSortingTree;
 import de.tum.med.aiim.markusbudeus.matcher.houselisttransformer.DosageFromNameIdentifier;
-import de.tum.med.aiim.markusbudeus.matcher.matchers.LevenshteinMatcher;
-import de.tum.med.aiim.markusbudeus.matcher.matchers.LevenshteinSetMatcher;
-import de.tum.med.aiim.markusbudeus.matcher.matchers.MatcherConfiguration;
-import de.tum.med.aiim.markusbudeus.matcher.matchers.UnionSizeMatcher;
+import de.tum.med.aiim.markusbudeus.matcher.matchers.*;
 import de.tum.med.aiim.markusbudeus.matcher.model.MatchingTarget;
 import de.tum.med.aiim.markusbudeus.matcher.provider.BaseProvider;
 import de.tum.med.aiim.markusbudeus.matcher.provider.IdentifierProvider;
 import de.tum.med.aiim.markusbudeus.matcher.provider.MappedIdentifier;
+import de.tum.med.aiim.markusbudeus.matcher.provider.TransformedProvider;
 import de.tum.med.aiim.markusbudeus.matcher.resultranker.DosageMatchJudge;
 import de.tum.med.aiim.markusbudeus.matcher.resulttransformer.DosageFilter;
 import de.tum.med.aiim.markusbudeus.matcher.resulttransformer.ProductOnlyFilter;
@@ -45,14 +43,15 @@ public class SampleAlgorithm implements MatchingAlgorithm {
 	private final DosageFilter dosageFilter;
 	private final SubstanceToProductResolver substanceToProductResolver;
 	private final ProductOnlyFilter productOnlyFilter;
-
 	private final DosageMatchJudge dosageMatchJudge;
+	private final SubstringPresenceMatcher substringPresenceMatcher;
 
 	public SampleAlgorithm(Session session) {
 		baseProvider = BaseProvider.ofDatabaseSynonymes(session);
 		unionSizeMatcher = new UnionSizeMatcher();
 		levenshteinSetMatcher = new LevenshteinSetMatcher();
 		levenshteinMatcher = new LevenshteinMatcher();
+		substringPresenceMatcher = new SubstringPresenceMatcher();
 
 		dosageFromNameIdentifier = new DosageFromNameIdentifier();
 		dosageFilter = new DosageFilter(session);
@@ -93,6 +92,8 @@ public class SampleAlgorithm implements MatchingAlgorithm {
 		matching.transformResults(dosageFilter, true);
 		matching.applySortingStep("Dosage Match Score", dosageMatchJudge, null);
 
+		sortBySubsequencesFound(matching);
+
 		return matching.getCurrentMatchesTree();
 	}
 
@@ -117,6 +118,24 @@ public class SampleAlgorithm implements MatchingAlgorithm {
 			return new ArrayList<>();
 		}
 		return result.stream().map(i -> i.target).collect(Collectors.toList());
+	}
+
+	private void sortBySubsequencesFound(OngoingMatching matching) {
+		Transformer<String, String> stringTransformer2 = new ToLowerCase();
+		Transformer<String, Set<String>> setTransformer2 = stringTransformer2
+				.and(new WhitespaceTokenizer())
+				.and(new TrimSpecialSuffixSymbols())
+				.and(new RemoveBlankStrings())
+				.and(new ListToSet());
+
+		MatcherConfiguration<Set<String>, String> configuration = new MatcherConfiguration<>(
+				e -> setTransformer2.transform(e.searchTerm),
+				new TransformedProvider<>(BaseProvider.ofMatchingTargetNames(matching.getCurrentMatches()),
+						stringTransformer2)
+		);
+		matching.applySortingStep("Substrings found",
+				substringPresenceMatcher.findMatch(matching.getHouselistEntry(), configuration),
+				null);
 	}
 
 }

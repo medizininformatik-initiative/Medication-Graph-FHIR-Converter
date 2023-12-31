@@ -29,8 +29,7 @@ public class OngoingMatching {
 									   Transformer<String, S> transformer,
 									   IMatcher<S, S, ? extends ScoreMultiMatch<S>> matcher,
 	                                   Double retainThreshold) {
-		BaseProvider<String> baseProvider = BaseProvider.ofMatchingTargets(currentMatches.getContents(),
-				MatchingTarget::getName);
+		BaseProvider<String> baseProvider = BaseProvider.ofMatchingTargetNames(currentMatches.getContents());
 		MatcherConfiguration<S,S> configuration = MatcherConfiguration.usingTransformations(transformer, baseProvider);
 		applySortingStep(name, matcher.findMatch(entry, configuration), retainThreshold);
 	}

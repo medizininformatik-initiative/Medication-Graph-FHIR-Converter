@@ -49,7 +49,7 @@ public class Main {
 					System.out.print("> ");
 					String line = reader.readLine();
 					HouselistEntry entry = new HouselistEntry();
-					entry.name = line;
+					entry.searchTerm = line;
 					SubSortingTree<MatchingTarget> resultTree = algorithm.match(entry);
 					List<MatchingTarget> topContents = resultTree.getTopContents();
 					List<MatchingTarget> contents = resultTree.getContents();
@@ -81,7 +81,7 @@ public class Main {
 				ambiguous.getAndIncrement();
 			}
 
-			System.out.print(result.searchTerm.name + " -> ");
+			System.out.print(result.searchTerm.searchTerm + " -> ");
 			printLinewise(bestMatches);
 		});
 

@@ -10,7 +10,7 @@ import java.util.List;
  */
 public class HouselistEntry {
 
-	public String name;
+	public String searchTerm;
 	public String substanceName;
 	public String productName;
 	public String pzn;
