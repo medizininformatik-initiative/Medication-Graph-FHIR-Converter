@@ -1,12 +1,12 @@
-package de.tum.med.aiim.markusbudeus.matcher.resulttransformer;
+package de.tum.med.aiim.markusbudeus.matcher2.resulttransformer;
 
 import de.tum.med.aiim.markusbudeus.graphdbpopulator.DatabaseConnection;
-import de.tum.med.aiim.markusbudeus.matcher.Amount;
-import de.tum.med.aiim.markusbudeus.matcher.Dosage;
-import de.tum.med.aiim.markusbudeus.matcher.HouselistEntry;
-import de.tum.med.aiim.markusbudeus.matcher.provider.BaseProvider;
-import de.tum.med.aiim.markusbudeus.matcher.provider.IdentifierTarget;
-import de.tum.med.aiim.markusbudeus.matcher.provider.MappedIdentifier;
+import de.tum.med.aiim.markusbudeus.matcher2.HouselistEntry;
+import de.tum.med.aiim.markusbudeus.matcher2.model.Amount;
+import de.tum.med.aiim.markusbudeus.matcher2.model.Dosage;
+import de.tum.med.aiim.markusbudeus.matcher2.model.MatchingTarget;
+import de.tum.med.aiim.markusbudeus.matcher2.provider.BaseProvider;
+import de.tum.med.aiim.markusbudeus.matcher2.provider.MappedIdentifier;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -16,13 +16,14 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.NoSuchElementException;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class DosageFilterTest {
 
 	private static DatabaseConnection connection;
 	private static Session session;
-	private static BaseProvider provider;
+	private static BaseProvider<String> provider;
 
 	private static DosageFilter sut;
 
@@ -36,7 +37,7 @@ class DosageFilterTest {
 
 	@Test
 	public void testAbsolute() {
-		IdentifierTarget target = getProductByName(
+		MatchingTarget target = getProductByName(
 				"Methylprednisolut® 1000 mg, Pulver und Lösungsmittel zur Herstellung einer Injektions-/Infusionslösung");
 		HouselistEntry sampleEntry = new HouselistEntry();
 		sampleEntry.activeIngredientDosages = List.of(new Dosage(new Amount(new BigDecimal(1000), "mg"), null, null));
@@ -45,7 +46,7 @@ class DosageFilterTest {
 
 	@Test
 	public void testAbsolute2() {
-		IdentifierTarget target = getProductByName(
+		MatchingTarget target = getProductByName(
 				"Methylprednisolut® 1000 mg, Pulver und Lösungsmittel zur Herstellung einer Injektions-/Infusionslösung");
 		HouselistEntry sampleEntry = new HouselistEntry();
 		sampleEntry.activeIngredientDosages = List.of(new Dosage(new Amount(new BigDecimal(900), "mg"), null, null));
@@ -54,7 +55,7 @@ class DosageFilterTest {
 
 	@Test
 	public void testAbsolute3() {
-		IdentifierTarget target = getProductByName(
+		MatchingTarget target = getProductByName(
 				"Methylprednisolut® 1000 mg, Pulver und Lösungsmittel zur Herstellung einer Injektions-/Infusionslösung");
 		HouselistEntry sampleEntry = new HouselistEntry();
 		sampleEntry.activeIngredientDosages = List.of(new Dosage(new Amount(new BigDecimal(1000), "ml"), null, null));
@@ -63,7 +64,7 @@ class DosageFilterTest {
 
 	@Test
 	public void testRelative() {
-		IdentifierTarget target = getProductByName("Berberil® N Augentropfen, 0,5 mg/ml");
+		MatchingTarget target = getProductByName("Berberil® N Augentropfen, 0,5 mg/ml");
 		HouselistEntry sampleEntry = new HouselistEntry();
 		sampleEntry.activeIngredientDosages = List.of(
 				new Dosage(new Amount(new BigDecimal("0.5"), "mg"), null, new Amount(BigDecimal.ONE, "ml")));
@@ -72,7 +73,7 @@ class DosageFilterTest {
 
 	@Test
 	public void testRelative2() {
-		IdentifierTarget target = getProductByName("Berberil® N Augentropfen, 0,5 mg/ml");
+		MatchingTarget target = getProductByName("Berberil® N Augentropfen, 0,5 mg/ml");
 		HouselistEntry sampleEntry = new HouselistEntry();
 		sampleEntry.activeIngredientDosages = List.of(
 				new Dosage(new Amount(new BigDecimal("0.5"), "mg"), null, new Amount(BigDecimal.TEN, "ml")));
@@ -81,7 +82,7 @@ class DosageFilterTest {
 
 	@Test
 	public void testRelative3() {
-		IdentifierTarget target = getProductByName("Berberil® N Augentropfen, 0,5 mg/ml");
+		MatchingTarget target = getProductByName("Berberil® N Augentropfen, 0,5 mg/ml");
 		HouselistEntry sampleEntry = new HouselistEntry();
 		sampleEntry.activeIngredientDosages = List.of(
 				new Dosage(new Amount(new BigDecimal("0.5"), "mg"), null, new Amount(BigDecimal.ONE, "mg")));
@@ -90,7 +91,7 @@ class DosageFilterTest {
 
 	@Test
 	public void testRelative4() {
-		IdentifierTarget target = getProductByName("Tranexamsäure Carinopharm 100 mg/ml Injektionslösung, 5 ml");
+		MatchingTarget target = getProductByName("Tranexamsäure Carinopharm 100 mg/ml Injektionslösung, 5 ml");
 		HouselistEntry sampleEntry = new HouselistEntry();
 		sampleEntry.activeIngredientDosages = List.of(
 				new Dosage(new Amount(new BigDecimal("500"), "mg"), null, new Amount(new BigDecimal("5"), "ml")));
@@ -99,7 +100,7 @@ class DosageFilterTest {
 
 	@Test
 	public void testRelative5() {
-		IdentifierTarget target = getProductByName("Tranexamsäure Carinopharm 100 mg/ml Injektionslösung, 5 ml");
+		MatchingTarget target = getProductByName("Tranexamsäure Carinopharm 100 mg/ml Injektionslösung, 5 ml");
 		HouselistEntry sampleEntry = new HouselistEntry();
 		sampleEntry.activeIngredientDosages = List.of(
 				new Dosage(new Amount(new BigDecimal("100"), "mg"), null, new Amount(BigDecimal.ONE, "ml")));
@@ -108,7 +109,7 @@ class DosageFilterTest {
 
 	@Test
 	public void matchesDrugAmount() {
-		IdentifierTarget target = getProductByName("Tranexamsäure Carinopharm 100 mg/ml Injektionslösung, 10 ml");
+		MatchingTarget target = getProductByName("Tranexamsäure Carinopharm 100 mg/ml Injektionslösung, 10 ml");
 		HouselistEntry sampleEntry = new HouselistEntry();
 		sampleEntry.activeIngredientDosages = List.of(
 				new Dosage(new Amount(new BigDecimal("10"), "ml"), null, null)
@@ -118,7 +119,7 @@ class DosageFilterTest {
 
 	@Test
 	public void allMustMatchPositive() {
-		IdentifierTarget target = getProductByName("Tranexamsäure Carinopharm 100 mg/ml Injektionslösung, 10 ml");
+		MatchingTarget target = getProductByName("Tranexamsäure Carinopharm 100 mg/ml Injektionslösung, 10 ml");
 		HouselistEntry sampleEntry = new HouselistEntry();
 		sampleEntry.activeIngredientDosages = List.of(
 				new Dosage(new Amount(new BigDecimal("100"), "mg"), null, new Amount(BigDecimal.ONE, "ml")),
@@ -129,7 +130,7 @@ class DosageFilterTest {
 
 	@Test
 	public void allMustMatchNegative() {
-		IdentifierTarget target = getProductByName("Tranexamsäure Carinopharm 100 mg/ml Injektionslösung, 5 ml");
+		MatchingTarget target = getProductByName("Tranexamsäure Carinopharm 100 mg/ml Injektionslösung, 5 ml");
 		HouselistEntry sampleEntry = new HouselistEntry();
 		sampleEntry.activeIngredientDosages = List.of(
 				new Dosage(new Amount(new BigDecimal("100"), "mg"), null, new Amount(BigDecimal.ONE, "ml")),
@@ -144,11 +145,13 @@ class DosageFilterTest {
 		connection.close();
 	}
 
-	private IdentifierTarget getProductByName(String name) {
-		MappedIdentifier<String> identifier = provider.identifiers.get(name);
-		if (identifier == null) throw new NoSuchElementException();
-		if (identifier.targets.size() != 1) throw new NoSuchElementException("Product name is not unique!");
-		return identifier.targets.iterator().next();
+	private MatchingTarget getProductByName(String name) {
+
+		List<MappedIdentifier<String>> results = provider.identifiers
+				.stream().filter(i -> i.identifier.equals(name)).toList();
+
+		if (results.size() != 1) throw new NoSuchElementException("Product name is not unique!");
+		return results.get(0).target;
 	}
 
 }

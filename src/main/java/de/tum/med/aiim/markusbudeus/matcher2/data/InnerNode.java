@@ -12,8 +12,8 @@ class InnerNode<S> extends Node<S> {
 	private final String sortingGroup;
 	private final SortDirective<S> appliedSortDirective;
 
-	InnerNode(List<Node<S>> children, String sortingGroup, SortDirective<S> appliedSortDirective) {
-		this.children = children;
+	InnerNode(List<? extends Node<S>> children, String sortingGroup, SortDirective<S> appliedSortDirective) {
+		this.children = new ArrayList<>(children);
 		this.sortingGroup = sortingGroup;
 		this.appliedSortDirective = appliedSortDirective;
 	}

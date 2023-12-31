@@ -1,13 +1,9 @@
 package de.tum.med.aiim.markusbudeus.matcher2.provider;
 
-import de.tum.med.aiim.markusbudeus.matcher.provider.Identifier;
-import de.tum.med.aiim.markusbudeus.matcher.provider.MappedBaseIdentifier;
 import de.tum.med.aiim.markusbudeus.matcher2.model.MatchingTarget;
 
-import java.util.List;
-
 /**
- * This is an {@link Identifier} mapped to a set of identifier targets, which are whatever the corresponding identifier
+ * This is an identifier mapped to a specific target, which is whatever the corresponding identifier
  * describes.
  */
 public class MappedIdentifier<S> {

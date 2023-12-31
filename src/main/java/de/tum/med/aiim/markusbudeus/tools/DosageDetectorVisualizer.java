@@ -1,6 +1,6 @@
 package de.tum.med.aiim.markusbudeus.tools;
 
-import de.tum.med.aiim.markusbudeus.matcher.tools.DosageDetector;
+import de.tum.med.aiim.markusbudeus.matcher2.tools.DosageDetector;
 
 import java.util.List;
 

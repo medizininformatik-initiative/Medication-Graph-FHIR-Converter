@@ -1,10 +1,10 @@
-package de.tum.med.aiim.markusbudeus.matcher.identifiermatcher;
+package de.tum.med.aiim.markusbudeus.matcher2.matchers;
 
 import org.junit.jupiter.api.Test;
 
 import java.util.Set;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class ModifiedJaccardMatcherTest {
 
