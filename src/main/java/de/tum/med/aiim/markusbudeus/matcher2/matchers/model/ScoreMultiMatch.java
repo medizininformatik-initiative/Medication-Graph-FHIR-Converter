@@ -1,5 +1,6 @@
 package de.tum.med.aiim.markusbudeus.matcher2.matchers.model;
 
+import de.tum.med.aiim.markusbudeus.matcher2.data.ScoreSortDirective;
 import de.tum.med.aiim.markusbudeus.matcher2.provider.MappedIdentifier;
 
 import java.util.*;
@@ -45,8 +46,8 @@ public class ScoreMultiMatch<S> implements Match<S> {
 	}
 
 	public static class MatchWithScore<S> {
-		final MappedIdentifier<S> match;
-		final double score;
+		public final MappedIdentifier<S> match;
+		public final double score;
 
 		public MatchWithScore(MappedIdentifier<S> match, double score) {
 			this.match = match;

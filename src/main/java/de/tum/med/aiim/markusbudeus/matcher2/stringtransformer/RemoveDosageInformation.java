@@ -9,18 +9,17 @@ import java.util.List;
  */
 public class RemoveDosageInformation implements Transformer<String, String> {
 
-	private final StringBuilder sb = new StringBuilder();
-
 	@Override
 	public String transform(String source) {
 		List<DosageDetector.DetectedDosage> detectedDosageList = DosageDetector.detectDosages(source);
 
 		if (detectedDosageList.isEmpty()) return source;
 
-		sb.append(source);
+		StringBuilder sb = new StringBuilder(source);
 		for (int i = detectedDosageList.size() - 1; i >= 0; i--) {
 			DosageDetector.DetectedDosage dosage = detectedDosageList.get(i);
-			sb.delete(dosage.getStartIndex(), dosage.getStartIndex() + dosage.getLength());
+			int start = dosage.getStartIndex();
+			sb.delete(start, start + dosage.getLength());
 		}
 
 		String result = sb.toString();

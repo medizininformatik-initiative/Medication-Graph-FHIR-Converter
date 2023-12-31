@@ -8,10 +8,10 @@ import de.tum.med.aiim.markusbudeus.matcher2.provider.MappedIdentifier;
 import java.util.HashMap;
 import java.util.Map;
 
-public abstract class DistanceBasedMatcher<S> extends SimpleMatcher<S> {
+public abstract class DistanceBasedMatcher<S> extends SimpleMatcher<S, ScoreMultiMatch<S>> {
 
 	@Override
-	protected Match<S> findMatch(S searchTerm, IdentifierProvider<S> identifierProvider) {
+	protected ScoreMultiMatch<S> findMatch(S searchTerm, IdentifierProvider<S> identifierProvider) {
 		Map<MappedIdentifier<S>, Integer> distances = new HashMap<>();
 		identifierProvider.getIdentifiers().forEach(identifier -> {
 			Integer distance = calculateDistance(searchTerm, identifier.identifier);

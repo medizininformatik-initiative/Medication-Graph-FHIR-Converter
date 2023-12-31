@@ -1,6 +1,6 @@
 package de.tum.med.aiim.markusbudeus.matcher2.matchers.model;
 
-import de.tum.med.aiim.markusbudeus.matcher.provider.MappedIdentifier;
+import de.tum.med.aiim.markusbudeus.matcher2.provider.MappedIdentifier;
 
 import java.util.Set;
 

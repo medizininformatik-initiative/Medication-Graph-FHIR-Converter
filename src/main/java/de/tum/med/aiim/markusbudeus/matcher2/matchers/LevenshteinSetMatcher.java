@@ -14,11 +14,11 @@ import java.util.Set;
 /**
  * This matcher uses Levenshtein Distance to compare sets of strings. Using it is very expensive :(
  */
-public class LevenshteinSetMatcher extends SimpleMatcher<Set<String>> {
+public class LevenshteinSetMatcher extends SimpleMatcher<Set<String>, ScoreMultiMatch<Set<String>>> {
 	private final LevenshteinDistance distance = new LevenshteinDistance(2);
 
 	@Override
-	protected Match<Set<String>> findMatch(Set<String> searchTerm, IdentifierProvider<Set<String>> identifierProvider) {
+	protected ScoreMultiMatch<Set<String>> findMatch(Set<String> searchTerm, IdentifierProvider<Set<String>> identifierProvider) {
 		Collection<MappedIdentifier<Set<String>>> allIdentifiers = identifierProvider.getIdentifiers();
 		List<ScoreMultiMatch.MatchWithScore<Set<String>>> scores = new ArrayList<>();
 		final List<String> terms1 = new ArrayList<>();

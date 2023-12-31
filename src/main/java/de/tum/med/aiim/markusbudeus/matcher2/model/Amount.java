@@ -28,6 +28,6 @@ public class Amount {
 
 	@Override
 	public String toString() {
-		return number + unit;
+		return number + (unit != null ? unit : "");
 	}
 }
