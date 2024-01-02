@@ -1,16 +1,14 @@
 package de.tum.med.aiim.markusbudeus.matcher.resulttransformer;
 
-import de.tum.med.aiim.markusbudeus.graphdbpopulator.DatabaseConnection;
 import de.tum.med.aiim.markusbudeus.matcher.HouselistEntry;
+import de.tum.med.aiim.markusbudeus.matcher.TestWithSession;
 import de.tum.med.aiim.markusbudeus.matcher.model.Amount;
 import de.tum.med.aiim.markusbudeus.matcher.model.Dosage;
 import de.tum.med.aiim.markusbudeus.matcher.model.MatchingTarget;
 import de.tum.med.aiim.markusbudeus.matcher.provider.BaseProvider;
 import de.tum.med.aiim.markusbudeus.matcher.provider.MappedIdentifier;
-import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.neo4j.driver.Session;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -19,18 +17,14 @@ import java.util.NoSuchElementException;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-class DosageFilterTest {
+class DosageFilterTest extends TestWithSession {
 
-	private static DatabaseConnection connection;
-	private static Session session;
 	private static BaseProvider<String> provider;
 
 	private static DosageFilter sut;
 
 	@BeforeAll
 	public static void setupAll() {
-		connection = new DatabaseConnection();
-		session = connection.createSession();
 		provider = BaseProvider.ofDatabaseSynonymes(session);
 		sut = new DosageFilter(session);
 	}
@@ -137,12 +131,6 @@ class DosageFilterTest {
 				new Dosage(new Amount(new BigDecimal("10"), "ml"), null, null)
 		);
 		assertFalse(sut.passesFilter(target, sampleEntry));
-	}
-
-	@AfterAll
-	public static void tearDownAll() {
-		session.close();
-		connection.close();
 	}
 
 	private MatchingTarget getProductByName(String name) {

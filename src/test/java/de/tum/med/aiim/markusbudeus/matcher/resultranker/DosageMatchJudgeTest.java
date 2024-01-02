@@ -1,35 +1,28 @@
 package de.tum.med.aiim.markusbudeus.matcher.resultranker;
 
-import de.tum.med.aiim.markusbudeus.graphdbpopulator.DatabaseConnection;
 import de.tum.med.aiim.markusbudeus.matcher.HouselistEntry;
+import de.tum.med.aiim.markusbudeus.matcher.TestWithSession;
 import de.tum.med.aiim.markusbudeus.matcher.model.Amount;
 import de.tum.med.aiim.markusbudeus.matcher.model.Dosage;
 import de.tum.med.aiim.markusbudeus.matcher.model.MatchingTarget;
 import de.tum.med.aiim.markusbudeus.matcher.provider.BaseProvider;
 import de.tum.med.aiim.markusbudeus.matcher.provider.MappedIdentifier;
-import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.neo4j.driver.Session;
 
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.NoSuchElementException;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-class DosageMatchJudgeTest {
-
-	private static DatabaseConnection connection;
-	private static Session session;
+class DosageMatchJudgeTest extends TestWithSession {
 	private static BaseProvider<String> provider;
 
 	private static DosageMatchJudge sut;
 
 	@BeforeAll
 	public static void setupAll() {
-		connection = new DatabaseConnection();
-		session = connection.createSession();
 		provider = BaseProvider.ofDatabaseSynonymes(session);
 		sut = new DosageMatchJudge(session);
 	}
@@ -136,12 +129,6 @@ class DosageMatchJudgeTest {
 				new Dosage(new Amount(new BigDecimal("10"), "ml"), null, null)
 		);
 		assertEquals(DosageMatchJudge.PERFECT_RELATIVE_MATCH_SCORE, sut.judge(target, sampleEntry));
-	}
-
-	@AfterAll
-	public static void tearDownAll() {
-		session.close();
-		connection.close();
 	}
 
 	private MatchingTarget getProductByName(String name) {
