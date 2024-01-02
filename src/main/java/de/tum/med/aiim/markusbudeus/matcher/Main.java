@@ -1,8 +1,11 @@
 package de.tum.med.aiim.markusbudeus.matcher;
 
+import de.tum.med.aiim.markusbudeus.BestResultFinder;
 import de.tum.med.aiim.markusbudeus.graphdbpopulator.DatabaseConnection;
-import de.tum.med.aiim.markusbudeus.matcher.algorithm.IMatchingAlgorithm;
+import de.tum.med.aiim.markusbudeus.matcher.algorithm.MatchingAlgorithm;
 import de.tum.med.aiim.markusbudeus.matcher.algorithm.SampleAlgorithm;
+import de.tum.med.aiim.markusbudeus.matcher.data.SubSortingTree;
+import de.tum.med.aiim.markusbudeus.matcher.model.FinalMatchingTarget;
 import de.tum.med.aiim.markusbudeus.matcher.model.HouselistEntry;
 import de.tum.med.aiim.markusbudeus.matcher.model.MatchingTarget;
 import de.tum.med.aiim.markusbudeus.matcher.sample.synthetic.HouselistMatcher;
@@ -29,11 +32,13 @@ public class Main {
 		List<SyntheticHouselistEntry> entries = HouselistMatcher.loadHouselist();
 
 		DatabaseConnection.runSession(session -> {
-			IMatchingAlgorithm algorithm = new SampleAlgorithm(session);
+			MatchingAlgorithm algorithm = new SampleAlgorithm(session);
+			BestResultFinder bestResultFinder = new BestResultFinder(session);
 
 			processStreamAndPrintResults(entries.stream()
 			                                    .parallel()
-			                                    .map(algorithm::match));
+			                                    .map(e -> new MatchingResult(e, algorithm.match(e))),
+					bestResultFinder);
 		});
 
 	}
@@ -42,7 +47,8 @@ public class Main {
 		BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
 
 		DatabaseConnection.runSession(session -> {
-			IMatchingAlgorithm algorithm = new SampleAlgorithm(session);
+			MatchingAlgorithm algorithm = new SampleAlgorithm(session);
+			BestResultFinder bestResultFinder = new BestResultFinder(session);
 
 			while (!Thread.interrupted()) {
 				try {
@@ -50,13 +56,18 @@ public class Main {
 					String line = reader.readLine();
 					HouselistEntry entry = new HouselistEntry();
 					entry.searchTerm = line;
-					MatchingResult result = algorithm.match(entry);
+					SubSortingTree<MatchingTarget> result = algorithm.match(entry);
+					List<MatchingTarget> topResults = result.getTopContents();
+					List<MatchingTarget> otherResults = result.getContents();
+					otherResults = otherResults.subList(topResults.size(), otherResults.size());
+					FinalMatchingTarget best = bestResultFinder.findBest(topResults);
+					topResults.remove(best);
 					System.out.println("-------- Best match: --------");
-					System.out.println(result.topResult);
+					System.out.println(best);
 					System.out.println("-------- Good results: --------");
-					printLinewise(result.goodResults);
+					printLinewise(topResults);
 					System.out.println("-------- Other results: --------");
-					printLinewise(result.otherResults);
+					printLinewise(otherResults);
 				} catch (IOException e) {
 					throw new RuntimeException(e);
 				}
@@ -64,14 +75,14 @@ public class Main {
 		});
 	}
 
-	private static void processStreamAndPrintResults(Stream<MatchingResult> stream) {
+	private static void processStreamAndPrintResults(Stream<MatchingResult> stream, BestResultFinder bestResultFinder) {
 		AtomicInteger total = new AtomicInteger();
 		AtomicInteger unique = new AtomicInteger();
 		AtomicInteger ambiguous = new AtomicInteger();
 		AtomicInteger unmatched = new AtomicInteger();
 		stream.forEach(result -> {
 			total.getAndIncrement();
-			List<MatchingTarget> bestMatches = result.goodResults;
+			List<MatchingTarget> bestMatches = result.result.getTopContents();
 
 			if (bestMatches.size() == 1) {
 				unique.getAndIncrement();
@@ -81,8 +92,7 @@ public class Main {
 				ambiguous.getAndIncrement();
 			}
 
-			System.out.print(result.searchTerm.searchTerm + " -> ");
-			printLinewise(bestMatches);
+			System.out.println(result.searchTerm.searchTerm + " -> " + bestResultFinder.findBest(bestMatches));
 		});
 
 		DecimalFormat f = new DecimalFormat("0.0");

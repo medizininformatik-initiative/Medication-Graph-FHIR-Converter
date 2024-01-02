@@ -22,7 +22,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public class SampleAlgorithm extends MatchingAlgorithm {
+public class SampleAlgorithm implements MatchingAlgorithm {
 
 	private static final Transformer<String, String> STRING_TRANSFORMER =
 			new ToLowerCase()
@@ -62,7 +62,7 @@ public class SampleAlgorithm extends MatchingAlgorithm {
 	}
 
 	@Override
-	protected SubSortingTree<MatchingTarget> matchInternal(HouselistEntry entry) {
+	public SubSortingTree<MatchingTarget> match(HouselistEntry entry) {
 		List<MatchingTarget> initialList = findInitialMatchingTargets(entry);
 
 		if (initialList.isEmpty()) new SubSortingTree<>(initialList);
@@ -90,19 +90,13 @@ public class SampleAlgorithm extends MatchingAlgorithm {
 					unionSizeMatcher,
 					0.0);
 		}
-		matching.applySortingStep("Dosage Match Score", dosageMatchJudge, 0.1);
+		matching.applySortingStep("Dosage Match Score", dosageMatchJudge, 0.1, true);
 
 		sortBySubsequencesFound(matching);
 
 		matching.applySortingStep("Prefer products without successor", filterProductsWithoutSuccessor);
 
 		return matching.getCurrentMatchesTree();
-	}
-
-	@Override
-	protected MatchingTarget selectBest(List<MatchingTarget> list) {
-
-		return null;
 	}
 
 	private List<MatchingTarget> findInitialMatchingTargets(HouselistEntry entry) {

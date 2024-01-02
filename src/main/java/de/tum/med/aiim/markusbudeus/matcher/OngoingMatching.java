@@ -37,14 +37,23 @@ public class OngoingMatching {
 		applySortingStep(name, matcher.findMatch(entry, configuration), retainThreshold);
 	}
 
-	public void applySortingStep(String name, MatchJudge judge, Double retainThreshold) {
+	public boolean applySortingStep(String name, MatchJudge judge, Double retainThreshold, boolean unlessEmpty) {
 		List<MatchingTarget> targets = currentMatches.getContents();
 		List<Double> scores = judge.batchJudge(targets, entry);
 		Map<MatchingTarget, Double> assignedScores = new HashMap<>();
+		boolean empty = true;
 		for (int i = 0; i < targets.size(); i++) {
-			assignedScores.put(targets.get(i), scores.get(i));
+			double score = scores.get(i);
+			assignedScores.put(targets.get(i), score);
+			if (retainThreshold != null && score >= retainThreshold) {
+				empty = false;
+			}
+		}
+		if (unlessEmpty && empty) {
+			return false;
 		}
 		applySortingStep(new ScoreSortDirective<>(name, assignedScores::get, retainThreshold));
+		return true;
 	}
 
 	public void applySortingStep(String name, ScoreMultiMatch<?> match, Double retainThreshold) {
