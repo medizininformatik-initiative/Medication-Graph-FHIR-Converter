@@ -10,13 +10,13 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class FilterProductsWithoutSuccessorProductTest extends TestWithSession {
+class FilterProductsWithoutSuccessorTest extends TestWithSession {
 
-	private static FilterProductsWithoutSuccessorProduct sut;
+	private static FilterProductsWithoutSuccessor sut;
 
 	@BeforeAll
 	public static void setUpAll() {
-		sut = new FilterProductsWithoutSuccessorProduct(session);
+		sut = new FilterProductsWithoutSuccessor(session);
 	}
 
 	@Test
@@ -36,7 +36,7 @@ class FilterProductsWithoutSuccessorProductTest extends TestWithSession {
 
 	@Test
 	public void testNonProduct() {
-		assertEquals(FilterProductsWithoutSuccessorProduct.ALLOW_NON_PRODUCTS,
+		assertEquals(FilterProductsWithoutSuccessor.ALLOW_NON_PRODUCTS,
 				sut.passesFilter(new Substance(1L, ""), null));
 	}
 
@@ -48,7 +48,7 @@ class FilterProductsWithoutSuccessorProductTest extends TestWithSession {
 				new Product(444968L, ""),
 				new Substance(1L, "")
 		), null);
-		assertEquals(List.of(true, false, true, FilterProductsWithoutSuccessorProduct.ALLOW_NON_PRODUCTS), results);
+		assertEquals(List.of(true, false, true, FilterProductsWithoutSuccessor.ALLOW_NON_PRODUCTS), results);
 	}
 
 }

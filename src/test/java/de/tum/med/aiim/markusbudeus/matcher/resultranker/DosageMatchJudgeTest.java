@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.NoSuchElementException;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class DosageMatchJudgeTest extends TestWithSession {
 	private static BaseProvider<String> provider;
@@ -129,6 +130,18 @@ class DosageMatchJudgeTest extends TestWithSession {
 				new Dosage(new Amount(new BigDecimal("10"), "ml"), null, null)
 		);
 		assertEquals(DosageMatchJudge.PERFECT_RELATIVE_MATCH_SCORE, sut.judge(target, sampleEntry));
+	}
+
+	@Test
+	@SuppressWarnings("ConstantConditions")
+	public void minScoreIsValid() {
+		assertTrue(DosageMatchJudge.DOSAGELESS_SCORE >= DosageMatchJudge.MIN_SCORE_ON_MATCH);
+		assertTrue(DosageMatchJudge.PERFECT_RELATIVE_MATCH_SCORE >= DosageMatchJudge.MIN_SCORE_ON_MATCH);
+		assertTrue(DosageMatchJudge.NORMALIZED_RELATIVE_MATCH_SCORE >= DosageMatchJudge.MIN_SCORE_ON_MATCH);
+		assertTrue(DosageMatchJudge.ABSOLUTE_MATCH_SCORE >= DosageMatchJudge.MIN_SCORE_ON_MATCH);
+		assertTrue(DosageMatchJudge.DRUG_AMOUNT_MATCH_SCORE >= DosageMatchJudge.MIN_SCORE_ON_MATCH);
+		assertTrue(DosageMatchJudge.NO_PRODUCT_SCORE >= DosageMatchJudge.MIN_SCORE_ON_MATCH);
+		assertTrue(DosageMatchJudge.MIN_SCORE_ON_MATCH > 0);
 	}
 
 	private MatchingTarget getProductByName(String name) {

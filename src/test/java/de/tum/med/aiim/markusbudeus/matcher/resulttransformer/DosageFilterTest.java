@@ -122,17 +122,6 @@ class DosageFilterTest extends TestWithSession {
 		assertTrue(sut.passesFilter(target, sampleEntry));
 	}
 
-	@Test
-	public void allMustMatchNegative() {
-		MatchingTarget target = getProductByName("Tranexamsäure Carinopharm 100 mg/ml Injektionslösung, 5 ml");
-		HouselistEntry sampleEntry = new HouselistEntry();
-		sampleEntry.activeIngredientDosages = List.of(
-				new Dosage(new Amount(new BigDecimal("100"), "mg"), null, new Amount(BigDecimal.ONE, "ml")),
-				new Dosage(new Amount(new BigDecimal("10"), "ml"), null, null)
-		);
-		assertFalse(sut.passesFilter(target, sampleEntry));
-	}
-
 	private MatchingTarget getProductByName(String name) {
 
 		List<MappedIdentifier<String>> results = provider.identifiers

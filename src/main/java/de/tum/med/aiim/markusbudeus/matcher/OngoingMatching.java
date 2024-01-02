@@ -1,5 +1,6 @@
 package de.tum.med.aiim.markusbudeus.matcher;
 
+import de.tum.med.aiim.markusbudeus.matcher.data.BinarySortDirective;
 import de.tum.med.aiim.markusbudeus.matcher.data.ScoreSortDirective;
 import de.tum.med.aiim.markusbudeus.matcher.data.SortDirective;
 import de.tum.med.aiim.markusbudeus.matcher.data.SubSortingTree;
@@ -10,6 +11,7 @@ import de.tum.med.aiim.markusbudeus.matcher.matchers.model.ScoreMultiMatch;
 import de.tum.med.aiim.markusbudeus.matcher.model.MatchingTarget;
 import de.tum.med.aiim.markusbudeus.matcher.provider.BaseProvider;
 import de.tum.med.aiim.markusbudeus.matcher.resultranker.MatchJudge;
+import de.tum.med.aiim.markusbudeus.matcher.resulttransformer.Filter;
 import de.tum.med.aiim.markusbudeus.matcher.resulttransformer.ResultTransformer;
 import de.tum.med.aiim.markusbudeus.matcher.stringtransformer.Transformer;
 
@@ -26,11 +28,11 @@ public class OngoingMatching {
 	}
 
 	public <S> void applySimpleSortingStep(String name,
-									   Transformer<String, S> transformer,
-									   IMatcher<S, S, ? extends ScoreMultiMatch<S>> matcher,
-	                                   Double retainThreshold) {
+	                                       Transformer<String, S> transformer,
+	                                       IMatcher<S, S, ? extends ScoreMultiMatch<S>> matcher,
+	                                       Double retainThreshold) {
 		BaseProvider<String> baseProvider = BaseProvider.ofMatchingTargetNames(currentMatches.getContents());
-		MatcherConfiguration<S,S> configuration = MatcherConfiguration.usingTransformations(transformer, baseProvider);
+		MatcherConfiguration<S, S> configuration = MatcherConfiguration.usingTransformations(transformer, baseProvider);
 		applySortingStep(name, matcher.findMatch(entry, configuration), retainThreshold);
 	}
 
@@ -54,6 +56,20 @@ public class OngoingMatching {
 		));
 	}
 
+	/**
+	 * Applies a binary sorting step, preferring matching targets who pass the given filter. If you want to eliminate
+	 * results which do not pass the filter, use {@link #transformResults(ResultTransformer)} instead.
+	 */
+	public void applySortingStep(String name, Filter filter) {
+		List<MatchingTarget> targetList = currentMatches.getContents();
+		List<Boolean> resultList = filter.batchPassesFilter(targetList, entry);
+		SortDirective<MatchingTarget> directive = new BinarySortDirective<>(
+				name,
+				target -> resultList.get(targetList.indexOf(target)),
+				false
+		);
+	}
+
 	public void applySortingStep(SortDirective<MatchingTarget> sortDirective) {
 		currentMatches.applySortingStep(sortDirective);
 	}
@@ -68,10 +84,12 @@ public class OngoingMatching {
 
 	/**
 	 * Transforms the current {@link MatchingTarget}s using the given {@link ResultTransformer}.
+	 *
 	 * @param resultTransformer the result transformer to apply
-	 * @param onlyIfNotEmpty if true, the transformation will not be applied if it would eliminate all {@link MatchingTarget}s
-	 * @return true if the transformation was applied, false if onlyIfNotEmpty was true and caused the transformation
-	 * to not be applied
+	 * @param onlyIfNotEmpty    if true, the transformation will not be applied if it would eliminate all
+	 *                          {@link MatchingTarget}s
+	 * @return true if the transformation was applied, false if onlyIfNotEmpty was true and caused the transformation to
+	 * not be applied
 	 */
 	public boolean transformResults(ResultTransformer resultTransformer, boolean onlyIfNotEmpty) {
 		Map<MatchingTarget, List<MatchingTarget>> transformationResults = new HashMap<>();

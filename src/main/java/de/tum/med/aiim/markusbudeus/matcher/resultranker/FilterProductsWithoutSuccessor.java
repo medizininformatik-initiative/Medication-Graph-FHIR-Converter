@@ -14,7 +14,7 @@ import java.util.stream.Stream;
 import static de.tum.med.aiim.markusbudeus.graphdbpopulator.DatabaseDefinitions.*;
 import static org.neo4j.driver.Values.parameters;
 
-public class FilterProductsWithoutSuccessorProduct implements Filter {
+public class FilterProductsWithoutSuccessor implements Filter {
 
 	/**
 	 * If true, {@link MatchingTarget}s which are not products pass this filter.
@@ -23,7 +23,7 @@ public class FilterProductsWithoutSuccessorProduct implements Filter {
 
 	private final Session session;
 
-	public FilterProductsWithoutSuccessorProduct(Session session) {
+	public FilterProductsWithoutSuccessor(Session session) {
 		this.session = session;
 	}
 

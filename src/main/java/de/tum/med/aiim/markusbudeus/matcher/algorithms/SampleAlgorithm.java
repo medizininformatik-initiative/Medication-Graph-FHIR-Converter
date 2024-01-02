@@ -11,7 +11,7 @@ import de.tum.med.aiim.markusbudeus.matcher.provider.IdentifierProvider;
 import de.tum.med.aiim.markusbudeus.matcher.provider.MappedIdentifier;
 import de.tum.med.aiim.markusbudeus.matcher.provider.TransformedProvider;
 import de.tum.med.aiim.markusbudeus.matcher.resultranker.DosageMatchJudge;
-import de.tum.med.aiim.markusbudeus.matcher.resulttransformer.DosageFilter;
+import de.tum.med.aiim.markusbudeus.matcher.resultranker.FilterProductsWithoutSuccessor;
 import de.tum.med.aiim.markusbudeus.matcher.resulttransformer.ProductOnlyFilter;
 import de.tum.med.aiim.markusbudeus.matcher.resulttransformer.SubstanceToProductResolver;
 import de.tum.med.aiim.markusbudeus.matcher.stringtransformer.*;
@@ -40,11 +40,12 @@ public class SampleAlgorithm implements MatchingAlgorithm {
 	private final LevenshteinSetMatcher levenshteinSetMatcher;
 
 	private final DosageFromNameIdentifier dosageFromNameIdentifier;
-	private final DosageFilter dosageFilter;
 	private final SubstanceToProductResolver substanceToProductResolver;
 	private final ProductOnlyFilter productOnlyFilter;
 	private final DosageMatchJudge dosageMatchJudge;
 	private final SubstringPresenceMatcher substringPresenceMatcher;
+
+	private final FilterProductsWithoutSuccessor filterProductsWithoutSuccessor;
 
 	public SampleAlgorithm(Session session) {
 		baseProvider = BaseProvider.ofDatabaseSynonymes(session);
@@ -54,10 +55,10 @@ public class SampleAlgorithm implements MatchingAlgorithm {
 		substringPresenceMatcher = new SubstringPresenceMatcher();
 
 		dosageFromNameIdentifier = new DosageFromNameIdentifier();
-		dosageFilter = new DosageFilter(session);
 		substanceToProductResolver = new SubstanceToProductResolver(session);
 		productOnlyFilter = new ProductOnlyFilter();
 		dosageMatchJudge = new DosageMatchJudge(session);
+		filterProductsWithoutSuccessor = new FilterProductsWithoutSuccessor(session);
 	}
 
 	@Override
@@ -89,10 +90,11 @@ public class SampleAlgorithm implements MatchingAlgorithm {
 					unionSizeMatcher,
 					0.0);
 		}
-		matching.transformResults(dosageFilter, true);
-		matching.applySortingStep("Dosage Match Score", dosageMatchJudge, null);
+		matching.applySortingStep("Dosage Match Score", dosageMatchJudge, 0.1);
 
 		sortBySubsequencesFound(matching);
+
+		matching.applySortingStep("Prefer products without successor", filterProductsWithoutSuccessor);
 
 		return matching.getCurrentMatchesTree();
 	}

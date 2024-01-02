@@ -17,28 +17,30 @@ import static org.neo4j.driver.Values.parameters;
 public class DosageMatchJudge implements MatchJudge {
 
 	/**
+	 * The score to assign if the given matching target is not a product.
+	 */
+	public static final double NO_PRODUCT_SCORE = 0.0;
+	/**
 	 * The score to assign if a houselist entry simply does not specify any dosage information which could be used for
 	 * judging.
 	 */
 	public static final double DOSAGELESS_SCORE = 0.2;
 	/**
-	 * The score to assign if an ingredient amount relative to a drug amount is given and matches perfectly
-	 * with both the ingredient amount and the drug amount.
-	 * For example, this would be assigned to the value "200μg/10ml" if we have a drug containing 200μg Fentanyl in
-	 * a 10 ml ampoule.
+	 * The score to assign if an ingredient amount relative to a drug amount is given and matches perfectly with both
+	 * the ingredient amount and the drug amount. For example, this would be assigned to the value "200μg/10ml" if we
+	 * have a drug containing 200μg Fentanyl in a 10 ml ampoule.
 	 */
 	public static final double PERFECT_RELATIVE_MATCH_SCORE = 1.5;
 	/**
-	 * The score to assign if an ingredient amount relative to a drug amount is given and matches, but does not
-	 * contain the exact values.
-	 * For example, this would be assigned to the value "20μg/ml" if we have a drug containing 200μg Fentanyl in
-	 * a 10 ml ampoule.
+	 * The score to assign if an ingredient amount relative to a drug amount is given and matches, but does not contain
+	 * the exact values. For example, this would be assigned to the value "20μg/ml" if we have a drug containing 200μg
+	 * Fentanyl in a 10 ml ampoule.
 	 */
 	public static final double NORMALIZED_RELATIVE_MATCH_SCORE = 0.8;
 	/**
 	 * The score to assign if an absolute ingredient amount is given and matches at least one active ingredient's
-	 * amount. For example, this would be assigned to the value "20ug" if we have a drug containing 200μg Fentanyl in
-	 * a 10 ml ampoule.
+	 * amount. For example, this would be assigned to the value "20ug" if we have a drug containing 200μg Fentanyl in a
+	 * 10 ml ampoule.
 	 */
 	public static final double ABSOLUTE_MATCH_SCORE = 1;
 	/**
@@ -46,6 +48,11 @@ public class DosageMatchJudge implements MatchJudge {
 	 * "10 ml" if we have a drug containing 200μg Fentanyl in a 10 ml ampoule.
 	 */
 	public static final double DRUG_AMOUNT_MATCH_SCORE = 0.7;
+
+	/**
+	 * The minimun score which is applied if there is any kind of match. Without any match, the score is zero.
+	 */
+	public static final double MIN_SCORE_ON_MATCH = DOSAGELESS_SCORE;
 
 	private final Session session;
 
@@ -65,7 +72,7 @@ public class DosageMatchJudge implements MatchJudge {
 
 		List<Double> resultList = new ArrayList<>(targets.size());
 		for (int i = 0; i < targets.size(); i++) {
-			resultList.add(0.0);
+			resultList.add(NO_PRODUCT_SCORE);
 		}
 
 		while (result.hasNext()) {

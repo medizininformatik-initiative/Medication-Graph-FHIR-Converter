@@ -12,7 +12,7 @@ public class BinarySortDirective<S> extends SortDirective<S> {
 	private final Predicate<S> filterPredicate;
 	private final boolean eliminateNegatives;
 
-	protected BinarySortDirective(String name, Predicate<S> filterPredicate, boolean eliminateNegatives) {
+	public BinarySortDirective(String name, Predicate<S> filterPredicate, boolean eliminateNegatives) {
 		super(name);
 		this.filterPredicate = filterPredicate;
 		this.eliminateNegatives = eliminateNegatives;
