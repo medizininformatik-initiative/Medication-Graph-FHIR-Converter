@@ -1,6 +1,6 @@
-package de.tum.med.aiim.markusbudeus.matcher.resultranker;
+package de.tum.med.aiim.markusbudeus.matcher.judge;
 
-import de.tum.med.aiim.markusbudeus.matcher.HouselistEntry;
+import de.tum.med.aiim.markusbudeus.matcher.model.HouselistEntry;
 import de.tum.med.aiim.markusbudeus.matcher.model.Amount;
 import de.tum.med.aiim.markusbudeus.matcher.model.Dosage;
 import de.tum.med.aiim.markusbudeus.matcher.model.MatchingTarget;

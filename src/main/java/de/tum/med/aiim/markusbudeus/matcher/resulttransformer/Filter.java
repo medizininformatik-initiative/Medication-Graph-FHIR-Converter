@@ -1,6 +1,6 @@
 package de.tum.med.aiim.markusbudeus.matcher.resulttransformer;
 
-import de.tum.med.aiim.markusbudeus.matcher.HouselistEntry;
+import de.tum.med.aiim.markusbudeus.matcher.model.HouselistEntry;
 import de.tum.med.aiim.markusbudeus.matcher.model.MatchingTarget;
 
 import java.util.ArrayList;

@@ -1,4 +1,4 @@
-package de.tum.med.aiim.markusbudeus.matcher.resultranker;
+package de.tum.med.aiim.markusbudeus.matcher.judge;
 
 import de.tum.med.aiim.markusbudeus.matcher.TestWithSession;
 import de.tum.med.aiim.markusbudeus.matcher.model.Product;

@@ -1,9 +1,9 @@
 package de.tum.med.aiim.markusbudeus.matcher;
 
 import de.tum.med.aiim.markusbudeus.graphdbpopulator.DatabaseConnection;
-import de.tum.med.aiim.markusbudeus.matcher.algorithms.MatchingAlgorithm;
-import de.tum.med.aiim.markusbudeus.matcher.algorithms.SampleAlgorithm;
-import de.tum.med.aiim.markusbudeus.matcher.data.SubSortingTree;
+import de.tum.med.aiim.markusbudeus.matcher.algorithm.IMatchingAlgorithm;
+import de.tum.med.aiim.markusbudeus.matcher.algorithm.SampleAlgorithm;
+import de.tum.med.aiim.markusbudeus.matcher.model.HouselistEntry;
 import de.tum.med.aiim.markusbudeus.matcher.model.MatchingTarget;
 import de.tum.med.aiim.markusbudeus.matcher.sample.synthetic.HouselistMatcher;
 import de.tum.med.aiim.markusbudeus.matcher.sample.synthetic.SyntheticHouselistEntry;
@@ -29,11 +29,11 @@ public class Main {
 		List<SyntheticHouselistEntry> entries = HouselistMatcher.loadHouselist();
 
 		DatabaseConnection.runSession(session -> {
-			MatchingAlgorithm algorithm = new SampleAlgorithm(session);
+			IMatchingAlgorithm algorithm = new SampleAlgorithm(session);
 
 			processStreamAndPrintResults(entries.stream()
 			                                    .parallel()
-			                                    .map(e -> new MatchingResult(e, algorithm.match(e))));
+			                                    .map(algorithm::match));
 		});
 
 	}
@@ -42,7 +42,7 @@ public class Main {
 		BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
 
 		DatabaseConnection.runSession(session -> {
-			MatchingAlgorithm algorithm = new SampleAlgorithm(session);
+			IMatchingAlgorithm algorithm = new SampleAlgorithm(session);
 
 			while (!Thread.interrupted()) {
 				try {
@@ -50,13 +50,13 @@ public class Main {
 					String line = reader.readLine();
 					HouselistEntry entry = new HouselistEntry();
 					entry.searchTerm = line;
-					SubSortingTree<MatchingTarget> resultTree = algorithm.match(entry);
-					List<MatchingTarget> topContents = resultTree.getTopContents();
-					List<MatchingTarget> contents = resultTree.getContents();
-					System.out.println("-------- Top results: --------");
-					printLinewise(topContents);
+					MatchingResult result = algorithm.match(entry);
+					System.out.println("-------- Best match: --------");
+					System.out.println(result.topResult);
+					System.out.println("-------- Good results: --------");
+					printLinewise(result.goodResults);
 					System.out.println("-------- Other results: --------");
-					printLinewise(contents.subList(topContents.size(), contents.size()));
+					printLinewise(result.otherResults);
 				} catch (IOException e) {
 					throw new RuntimeException(e);
 				}
@@ -71,7 +71,7 @@ public class Main {
 		AtomicInteger unmatched = new AtomicInteger();
 		stream.forEach(result -> {
 			total.getAndIncrement();
-			List<MatchingTarget> bestMatches = result.result.getTopContents();
+			List<MatchingTarget> bestMatches = result.goodResults;
 
 			if (bestMatches.size() == 1) {
 				unique.getAndIncrement();

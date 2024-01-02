@@ -1,8 +1,6 @@
 package de.tum.med.aiim.markusbudeus.matcher;
 
 import de.tum.med.aiim.markusbudeus.graphdbpopulator.DatabaseConnection;
-import de.tum.med.aiim.markusbudeus.matcher.provider.BaseProvider;
-import de.tum.med.aiim.markusbudeus.matcher.resultranker.DosageMatchJudge;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.neo4j.driver.Session;

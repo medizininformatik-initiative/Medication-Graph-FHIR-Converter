@@ -1,17 +1,17 @@
-package de.tum.med.aiim.markusbudeus.matcher.algorithms;
+package de.tum.med.aiim.markusbudeus.matcher.algorithm;
 
-import de.tum.med.aiim.markusbudeus.matcher.HouselistEntry;
+import de.tum.med.aiim.markusbudeus.matcher.model.HouselistEntry;
 import de.tum.med.aiim.markusbudeus.matcher.OngoingMatching;
 import de.tum.med.aiim.markusbudeus.matcher.data.SubSortingTree;
 import de.tum.med.aiim.markusbudeus.matcher.houselisttransformer.DosageFromNameIdentifier;
-import de.tum.med.aiim.markusbudeus.matcher.matchers.*;
+import de.tum.med.aiim.markusbudeus.matcher.matcher.*;
 import de.tum.med.aiim.markusbudeus.matcher.model.MatchingTarget;
 import de.tum.med.aiim.markusbudeus.matcher.provider.BaseProvider;
 import de.tum.med.aiim.markusbudeus.matcher.provider.IdentifierProvider;
 import de.tum.med.aiim.markusbudeus.matcher.provider.MappedIdentifier;
 import de.tum.med.aiim.markusbudeus.matcher.provider.TransformedProvider;
-import de.tum.med.aiim.markusbudeus.matcher.resultranker.DosageMatchJudge;
-import de.tum.med.aiim.markusbudeus.matcher.resultranker.FilterProductsWithoutSuccessor;
+import de.tum.med.aiim.markusbudeus.matcher.judge.DosageMatchJudge;
+import de.tum.med.aiim.markusbudeus.matcher.judge.FilterProductsWithoutSuccessor;
 import de.tum.med.aiim.markusbudeus.matcher.resulttransformer.ProductOnlyFilter;
 import de.tum.med.aiim.markusbudeus.matcher.resulttransformer.SubstanceToProductResolver;
 import de.tum.med.aiim.markusbudeus.matcher.stringtransformer.*;
@@ -22,7 +22,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public class SampleAlgorithm implements MatchingAlgorithm {
+public class SampleAlgorithm extends MatchingAlgorithm {
 
 	private static final Transformer<String, String> STRING_TRANSFORMER =
 			new ToLowerCase()
@@ -62,7 +62,7 @@ public class SampleAlgorithm implements MatchingAlgorithm {
 	}
 
 	@Override
-	public SubSortingTree<MatchingTarget> match(HouselistEntry entry) {
+	protected SubSortingTree<MatchingTarget> matchInternal(HouselistEntry entry) {
 		List<MatchingTarget> initialList = findInitialMatchingTargets(entry);
 
 		if (initialList.isEmpty()) new SubSortingTree<>(initialList);
@@ -97,6 +97,12 @@ public class SampleAlgorithm implements MatchingAlgorithm {
 		matching.applySortingStep("Prefer products without successor", filterProductsWithoutSuccessor);
 
 		return matching.getCurrentMatchesTree();
+	}
+
+	@Override
+	protected MatchingTarget selectBest(List<MatchingTarget> list) {
+
+		return null;
 	}
 
 	private List<MatchingTarget> findInitialMatchingTargets(HouselistEntry entry) {

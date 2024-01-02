@@ -1,6 +1,6 @@
-package de.tum.med.aiim.markusbudeus.matcher.matchers;
+package de.tum.med.aiim.markusbudeus.matcher.matcher;
 
-import de.tum.med.aiim.markusbudeus.matcher.matchers.model.ScoreMultiMatch;
+import de.tum.med.aiim.markusbudeus.matcher.matcher.model.ScoreMultiMatch;
 import de.tum.med.aiim.markusbudeus.matcher.provider.IdentifierProvider;
 import de.tum.med.aiim.markusbudeus.matcher.provider.MappedIdentifier;
 

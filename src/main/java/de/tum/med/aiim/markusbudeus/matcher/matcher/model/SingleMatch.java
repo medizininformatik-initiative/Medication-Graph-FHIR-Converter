@@ -1,4 +1,4 @@
-package de.tum.med.aiim.markusbudeus.matcher.matchers.model;
+package de.tum.med.aiim.markusbudeus.matcher.matcher.model;
 
 import de.tum.med.aiim.markusbudeus.matcher.provider.MappedIdentifier;
 

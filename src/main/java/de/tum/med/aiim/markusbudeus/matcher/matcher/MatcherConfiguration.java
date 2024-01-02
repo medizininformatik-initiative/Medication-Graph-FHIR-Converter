@@ -1,7 +1,7 @@
-package de.tum.med.aiim.markusbudeus.matcher.matchers;
+package de.tum.med.aiim.markusbudeus.matcher.matcher;
 
 
-import de.tum.med.aiim.markusbudeus.matcher.HouselistEntry;
+import de.tum.med.aiim.markusbudeus.matcher.model.HouselistEntry;
 import de.tum.med.aiim.markusbudeus.matcher.provider.IdentifierProvider;
 import de.tum.med.aiim.markusbudeus.matcher.provider.TransformedProvider;
 import de.tum.med.aiim.markusbudeus.matcher.stringtransformer.Transformer;

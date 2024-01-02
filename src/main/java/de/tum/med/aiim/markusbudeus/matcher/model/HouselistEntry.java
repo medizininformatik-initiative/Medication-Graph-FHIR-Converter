@@ -1,4 +1,4 @@
-package de.tum.med.aiim.markusbudeus.matcher;
+package de.tum.med.aiim.markusbudeus.matcher.model;
 
 import de.tum.med.aiim.markusbudeus.matcher.model.Amount;
 import de.tum.med.aiim.markusbudeus.matcher.model.Dosage;

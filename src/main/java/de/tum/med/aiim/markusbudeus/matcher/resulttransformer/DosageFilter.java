@@ -1,20 +1,12 @@
 package de.tum.med.aiim.markusbudeus.matcher.resulttransformer;
 
-import de.tum.med.aiim.markusbudeus.matcher.HouselistEntry;
-import de.tum.med.aiim.markusbudeus.matcher.model.Amount;
-import de.tum.med.aiim.markusbudeus.matcher.model.Dosage;
+import de.tum.med.aiim.markusbudeus.matcher.model.HouselistEntry;
 import de.tum.med.aiim.markusbudeus.matcher.model.MatchingTarget;
-import de.tum.med.aiim.markusbudeus.matcher.resultranker.DosageMatchJudge;
-import org.neo4j.driver.Record;
+import de.tum.med.aiim.markusbudeus.matcher.judge.DosageMatchJudge;
 import org.neo4j.driver.*;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.*;
 import java.util.stream.Collectors;
-
-import static de.tum.med.aiim.markusbudeus.graphdbpopulator.DatabaseDefinitions.*;
-import static org.neo4j.driver.Values.parameters;
 
 public class DosageFilter implements Filter {
 

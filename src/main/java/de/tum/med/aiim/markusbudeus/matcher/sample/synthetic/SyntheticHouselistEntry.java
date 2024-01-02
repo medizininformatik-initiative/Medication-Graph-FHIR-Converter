@@ -1,6 +1,6 @@
 package de.tum.med.aiim.markusbudeus.matcher.sample.synthetic;
 
-import de.tum.med.aiim.markusbudeus.matcher.HouselistEntry;
+import de.tum.med.aiim.markusbudeus.matcher.model.HouselistEntry;
 
 public class SyntheticHouselistEntry extends HouselistEntry {
 
