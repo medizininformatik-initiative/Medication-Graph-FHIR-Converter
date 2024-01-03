@@ -227,6 +227,13 @@ class DosageDetectorTest {
 		assertMatch(dosages.get(2), 63, 6, BigDecimal.valueOf(200), "ml", null, null, null);
 	}
 
+	@Test
+	public void denominatorOnlyUnit() {
+		// "Tablette" is not allowed as nominator unit!
+		List<DosageDetector.DetectedDosage> dosages = DosageDetector.detectDosages("Aspirin 100 Tablette");
+		assertSingleMatch(dosages, 8, 3, BigDecimal.valueOf(100), null, null, null, null);
+	}
+
 	public void assertSingleMatch(List<DosageDetector.DetectedDosage> list,
 	                              int startIndex,
 	                              int length,

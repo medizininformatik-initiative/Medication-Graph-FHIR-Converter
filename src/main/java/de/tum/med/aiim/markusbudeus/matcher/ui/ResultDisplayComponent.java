@@ -1,7 +1,6 @@
 package de.tum.med.aiim.markusbudeus.matcher.ui;
 
 import de.tum.med.aiim.markusbudeus.matcher.model.FinalMatchingTarget;
-import de.tum.med.aiim.markusbudeus.matcher.model.MatchingTarget;
 
 import javax.swing.*;
 import javax.swing.border.Border;
@@ -9,10 +8,7 @@ import java.awt.*;
 
 public class ResultDisplayComponent {
 
-	private static final Color BEST_MATCH_COLOR = Color.yellow;
-	private static final Color HIGHLIGHT_COLOR = new Color(0x91, 0xff, 0xff);
-
-	public static JPanel construct(MatchingTarget target, boolean highlight) {
+	public static JPanel construct(FinalMatchingTarget target, Color highlightColor) {
 		JPanel outerPanel = new JPanel();
 		outerPanel.setLayout(new BorderLayout());
 		Border border = BorderFactory.createLineBorder(Color.black, 2);
@@ -24,14 +20,10 @@ public class ResultDisplayComponent {
 
 		JLabel nameLabel = new JLabel(target.getName());
 		JLabel mmiIdLabel = new JLabel("MMI ID: " + target.getMmiId());
-		String pzn = "";
-		if (target instanceof FinalMatchingTarget p) {
-			pzn = "PZN: " + p.getPzn();
-			contentPanel.setBackground(BEST_MATCH_COLOR);
-		} else if (highlight) {
-			contentPanel.setBackground(HIGHLIGHT_COLOR);
+		if (highlightColor != null) {
+			contentPanel.setBackground(highlightColor);
 		}
-		JLabel pznLabel = new JLabel(pzn);
+		JLabel pznLabel = new JLabel("PZN: " + target.getPzn());
 		nameLabel.setFont(new Font("Monospaced", Font.BOLD, 14));
 		nameLabel.setForeground(Color.black);
 		mmiIdLabel.setFont(new Font("Monospaced", Font.PLAIN, 11));
@@ -40,8 +32,8 @@ public class ResultDisplayComponent {
 		nameLabel.setForeground(Color.black);
 
 		contentPanel.add(nameLabel, BorderLayout.PAGE_START);
-		contentPanel.add(mmiIdLabel, BorderLayout.LINE_START);
-		contentPanel.add(pznLabel, BorderLayout.LINE_END);
+		contentPanel.add(mmiIdLabel, BorderLayout.LINE_END);
+		contentPanel.add(pznLabel, BorderLayout.LINE_START);
 
 		outerPanel.add(contentPanel, BorderLayout.CENTER);
 		outerPanel.setMaximumSize(new Dimension(2000, 60));

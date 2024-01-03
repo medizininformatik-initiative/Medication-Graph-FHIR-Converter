@@ -1,6 +1,6 @@
 package de.tum.med.aiim.markusbudeus.matcher;
 
-import de.tum.med.aiim.markusbudeus.BestResultFinder;
+import de.tum.med.aiim.markusbudeus.FinalTransformer;
 import de.tum.med.aiim.markusbudeus.graphdbpopulator.DatabaseConnection;
 import de.tum.med.aiim.markusbudeus.matcher.algorithm.MatchingAlgorithm;
 import de.tum.med.aiim.markusbudeus.matcher.algorithm.SampleAlgorithm;
@@ -18,7 +18,9 @@ import java.io.InputStreamReader;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class Main {
@@ -38,12 +40,12 @@ public class Main {
 
 					DatabaseConnection.runSession(session -> {
 						MatchingAlgorithm algorithm = new SampleAlgorithm(session);
-						BestResultFinder bestResultFinder = new BestResultFinder(session);
+						FinalTransformer finalTransformer = new FinalTransformer(session);
 
 						processStreamAndPrintResults(entries.stream()
 						                                    .parallel()
 						                                    .map(e -> new MatchingResult(e, algorithm.match(e))),
-								bestResultFinder);
+								finalTransformer);
 					});
 				}
 			}
@@ -55,7 +57,7 @@ public class Main {
 
 		DatabaseConnection.runSession(session -> {
 			MatchingAlgorithm algorithm = new SampleAlgorithm(session);
-			BestResultFinder bestResultFinder = new BestResultFinder(session);
+			FinalTransformer finalTransformer = new FinalTransformer(session);
 
 			while (!Thread.interrupted()) {
 				try {
@@ -64,7 +66,7 @@ public class Main {
 					HouselistEntry entry = new HouselistEntry();
 					entry.searchTerm = line;
 					SubSortingTree<MatchingTarget> result = algorithm.match(entry);
-					ResultSet resultSet = toResultSet(result, bestResultFinder);
+					ResultSet resultSet = toResultSet(result, finalTransformer);
 					System.out.println("-------- Best match: --------");
 					System.out.println(resultSet.bestResult);
 					System.out.println("-------- Good results: --------");
@@ -84,22 +86,18 @@ public class Main {
 
 			DatabaseConnection.runSession(session -> {
 				MatchingAlgorithm algorithm = new SampleAlgorithm(session);
-				BestResultFinder bestResultFinder = new BestResultFinder(session);
+				FinalTransformer finalTransformer = new FinalTransformer(session);
 				HouselistEntry entry = new HouselistEntry();
 				entry.searchTerm = searchTerm;
 				SubSortingTree<MatchingTarget> result = algorithm.match(entry);
-				ResultSet resultSet = toResultSet(result, bestResultFinder);
-				List<MatchingTarget> goodResults = new ArrayList<>();
-				if (resultSet.bestResult != null)
-					goodResults.add(resultSet.bestResult);
-				goodResults.addAll(resultSet.goodResults);
-				dialog.applyResults(goodResults, resultSet.otherResults);
+				ResultSet resultSet = toResultSet(result, finalTransformer);
+				dialog.applyResults(resultSet);
 			});
 
 		});
 	}
 
-	private static void processStreamAndPrintResults(Stream<MatchingResult> stream, BestResultFinder bestResultFinder) {
+	private static void processStreamAndPrintResults(Stream<MatchingResult> stream, FinalTransformer finalTransformer) {
 		AtomicInteger total = new AtomicInteger();
 		AtomicInteger unique = new AtomicInteger();
 		AtomicInteger ambiguous = new AtomicInteger();
@@ -116,7 +114,7 @@ public class Main {
 				ambiguous.getAndIncrement();
 			}
 
-			System.out.println(result.searchTerm.searchTerm + " -> " + bestResultFinder.findBest(bestMatches));
+			System.out.println(result.searchTerm.searchTerm + " -> " + finalTransformer.reorderAndTransform(bestMatches));
 		});
 
 		DecimalFormat f = new DecimalFormat("0.0");
@@ -139,22 +137,45 @@ public class Main {
 		System.out.println("]");
 	}
 
-	public static ResultSet toResultSet(SubSortingTree<MatchingTarget> results, BestResultFinder bestResultFinder) {
+	public static ResultSet toResultSet(SubSortingTree<MatchingTarget> results, FinalTransformer finalTransformer) {
 		List<MatchingTarget> topResults = results.getTopContents();
 		List<MatchingTarget> otherResults = results.getContents();
+
+		if (otherResults.isEmpty()) return new ResultSet(null, List.of(), List.of());
+
 		otherResults = otherResults.subList(topResults.size(), otherResults.size());
-		FinalMatchingTarget best = bestResultFinder.findBest(topResults);
-		topResults.removeIf(c -> c.getMmiId() == best.getMmiId());
-		return new ResultSet(best, topResults, otherResults);
+		List<FinalMatchingTarget> transformedTargets = finalTransformer.reorderAndTransform(results.getContents());
+
+		Set<Long> topMmiIds = topResults.stream().map(MatchingTarget::getMmiId).collect(Collectors.toSet());
+
+		List<FinalMatchingTarget> sortedTransformedTopTargets = new ArrayList<>(topResults.size());
+		for (FinalMatchingTarget target: transformedTargets) {
+			if (topMmiIds.contains(target.getMmiId())) {
+				sortedTransformedTopTargets.add(target);
+			}
+		}
+		List<FinalMatchingTarget> transformedOtherTargets = new ArrayList<>(otherResults.size());
+		for (MatchingTarget target: otherResults) {
+			for (FinalMatchingTarget t: transformedTargets) {
+				if (t.getMmiId() == target.getMmiId()) {
+					transformedOtherTargets.add(t);
+				}
+			}
+		}
+
+		FinalMatchingTarget best = sortedTransformedTopTargets.get(0);
+		sortedTransformedTopTargets.remove(0);
+
+		return new ResultSet(best, sortedTransformedTopTargets, transformedOtherTargets);
 	}
 
-	private static class ResultSet {
-		final FinalMatchingTarget bestResult;
-		final List<MatchingTarget> goodResults;
-		final List<MatchingTarget> otherResults;
+	public static class ResultSet {
+		public final FinalMatchingTarget bestResult;
+		public final List<FinalMatchingTarget> goodResults;
+		public final List<FinalMatchingTarget> otherResults;
 
-		private ResultSet(FinalMatchingTarget bestResult, List<MatchingTarget> goodResults,
-		                  List<MatchingTarget> otherResults) {
+		private ResultSet(FinalMatchingTarget bestResult, List<FinalMatchingTarget> goodResults,
+		                  List<FinalMatchingTarget> otherResults) {
 			this.bestResult = bestResult;
 			this.goodResults = goodResults;
 			this.otherResults = otherResults;

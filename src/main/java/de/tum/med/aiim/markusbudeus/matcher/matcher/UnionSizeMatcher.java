@@ -11,11 +11,6 @@ public class UnionSizeMatcher extends ScoreBasedMatcher<Set<String>, Set<String>
 	}
 
 	static double getUnionSize(Set<String> set1, Set<String> set2) {
-
-		if (set2.equals(Set.of("KCl"))) {
-			System.err.println("WTF??");
-		}
-
 		Set<String> intersection = new HashSet<>(set1);
 		intersection.removeIf(o -> !set2.contains(o));
 

@@ -1,6 +1,7 @@
 package de.tum.med.aiim.markusbudeus.matcher.ui;
 
-import de.tum.med.aiim.markusbudeus.matcher.model.MatchingTarget;
+import de.tum.med.aiim.markusbudeus.matcher.Main;
+import de.tum.med.aiim.markusbudeus.matcher.model.FinalMatchingTarget;
 
 import javax.swing.*;
 import java.awt.*;
@@ -13,6 +14,9 @@ import java.util.concurrent.Executors;
 import java.util.function.BiConsumer;
 
 public class SearchDialog extends JSplitPane {
+
+	private static final Color BEST_MATCH_COLOR = Color.yellow;
+	private static final Color GOOD_MATCH_COLOR = new Color(0x91, 0xff, 0xff);
 
 	private final JTextField searchField;
 	private final JPanel bottom;
@@ -82,14 +86,17 @@ public class SearchDialog extends JSplitPane {
 		});
 	}
 
-	public void applyResults(java.util.List<MatchingTarget> goodResults, java.util.List<MatchingTarget> otherResults) {
+	public void applyResults(Main.ResultSet resultSet) {
 		EventQueue.invokeLater(() -> {
 			bottom.removeAll();
-			for (MatchingTarget t : goodResults) {
-				bottom.add(ResultDisplayComponent.construct(t, true));
+			if (resultSet.bestResult != null) {
+				bottom.add(ResultDisplayComponent.construct(resultSet.bestResult, BEST_MATCH_COLOR));
 			}
-			for (MatchingTarget t : otherResults) {
-				bottom.add(ResultDisplayComponent.construct(t, false));
+			for (FinalMatchingTarget t : resultSet.goodResults) {
+				bottom.add(ResultDisplayComponent.construct(t, GOOD_MATCH_COLOR));
+			}
+			for (FinalMatchingTarget t : resultSet.otherResults) {
+				bottom.add(ResultDisplayComponent.construct(t, null));
 			}
 			bottom.revalidate();
 			bottom.repaint();
@@ -103,7 +110,7 @@ public class SearchDialog extends JSplitPane {
 			frame.add(new SearchDialog(onSearch));
 
 			frame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
-			frame.setSize(600, 400);
+			frame.setSize(800, 400);
 			frame.setVisible(true);
 		});
 	}
