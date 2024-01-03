@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static de.tum.med.aiim.markusbudeus.graphdbpopulator.DatabaseDefinitions.*;
@@ -26,7 +27,7 @@ public class BaseProvider<S> implements IdentifierProvider<S> {
 	}
 
 	public static BaseProvider<String> ofDatabaseSynonymes(Session session) {
-		return BaseProvider.ofMatchingTargets(downloadSynonymes(session), MatchingTarget::getName);
+		return BaseProvider.ofIdentifiers(downloadSynonymes(session).collect(Collectors.toSet()));
 	}
 
 	public static <S> BaseProvider<S> ofIdentifiers(Collection<MappedIdentifier<S>> identifiers) {
@@ -50,8 +51,7 @@ public class BaseProvider<S> implements IdentifierProvider<S> {
 		return new BaseProvider<>(resultList);
 	}
 
-	private static Stream<MatchingTarget> downloadSynonymes(Session session) {
-		List<MappedIdentifier<String>> result = new ArrayList<>();
+	private static Stream<MappedIdentifier<String>> downloadSynonymes(Session session) {
 		return session.run(
 				              "MATCH (sy:" + SYNONYME_LABEL + ")--(t) " +
 						              "RETURN sy.name, t.mmiId, t.name, labels(t)"
@@ -60,7 +60,7 @@ public class BaseProvider<S> implements IdentifierProvider<S> {
 		              .map(BaseProvider::toSynonymeTarget);
 	}
 
-	private static MatchingTarget toSynonymeTarget(Record record) {
+	private static MappedIdentifier<String> toSynonymeTarget(Record record) {
 		long mmiId = record.get(1).asLong();
 		String name = record.get(2).asString();
 		List<String> labels = record.get(3).asList(Value::asString);
@@ -77,7 +77,7 @@ public class BaseProvider<S> implements IdentifierProvider<S> {
 			System.err.println("Unexpected label on synonyme target: " + labels.get(0));
 			return null;
 		}
-		return target;
+		return new MappedIdentifier<>(record.get(0).asString(), target);
 	}
 
 	public final List<MappedIdentifier<S>> identifiers;

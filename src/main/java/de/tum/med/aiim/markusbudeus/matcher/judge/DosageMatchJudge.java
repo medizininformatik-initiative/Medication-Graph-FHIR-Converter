@@ -70,18 +70,22 @@ public class DosageMatchJudge implements MatchJudge {
 
 		Result result = queryEffectiveDosagesForProductIds(new ArrayList<>(targetIds.keySet()));
 
-		List<Double> resultList = new ArrayList<>(targets.size());
-		for (int i = 0; i < targets.size(); i++) {
-			resultList.add(NO_PRODUCT_SCORE);
-		}
+		Map<MatchingTarget, Double> scoreMap = new HashMap<>();
 
 		while (result.hasNext()) {
 			Record record = result.next();
 			long productId = record.get(0).asLong();
 			MatchingTarget target = targetIds.get(productId);
 			if (target != null) {
-				resultList.set(targets.indexOf(target), judge(record, entry));
+				scoreMap.put(target, judge(record, entry));
 			}
+		}
+
+		List<Double> resultList = new ArrayList<>(targets.size());
+		for (MatchingTarget target : targets) {
+			Double score = scoreMap.get(target);
+			if (score == null) score = NO_PRODUCT_SCORE;
+			resultList.add(score);
 		}
 
 		return resultList;
@@ -89,7 +93,7 @@ public class DosageMatchJudge implements MatchJudge {
 
 	@Override
 	public double judge(MatchingTarget target, HouselistEntry entry) {
-		if (target.getType() != MatchingTarget.Type.PRODUCT) return 0.0;
+		if (target.getType() != MatchingTarget.Type.PRODUCT) return NO_PRODUCT_SCORE;
 
 		Result result = queryEffectiveDosagesForProductIds(List.of(target.getMmiId()));
 		if (!result.hasNext()) return 0.0;
@@ -97,7 +101,7 @@ public class DosageMatchJudge implements MatchJudge {
 	}
 
 	private double judge(Record record, HouselistEntry entry) {
-		if (entry.activeIngredientDosages == null) return DOSAGELESS_SCORE;
+		if (entry.activeIngredientDosages == null || entry.activeIngredientDosages.isEmpty()) return DOSAGELESS_SCORE;
 		List<Dosage> unmatchedDosages = new ArrayList<>(entry.activeIngredientDosages);
 		List<ExportDrugDosage> drugDosages = parse(record);
 		double score = 0;

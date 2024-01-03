@@ -26,6 +26,7 @@ public class OngoingMatching {
 	public OngoingMatching(HouselistEntry entry, List<MatchingTarget> initialMatches) {
 		this.entry = entry;
 		this.currentMatches = new SubSortingTree<>(initialMatches);
+//		this.currentMatches.clearDuplicates();
 	}
 
 	public <S> void applySimpleSortingStep(String name,
