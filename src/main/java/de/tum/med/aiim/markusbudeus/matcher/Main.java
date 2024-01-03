@@ -10,11 +10,13 @@ import de.tum.med.aiim.markusbudeus.matcher.model.HouselistEntry;
 import de.tum.med.aiim.markusbudeus.matcher.model.MatchingTarget;
 import de.tum.med.aiim.markusbudeus.matcher.sample.synthetic.HouselistMatcher;
 import de.tum.med.aiim.markusbudeus.matcher.sample.synthetic.SyntheticHouselistEntry;
+import de.tum.med.aiim.markusbudeus.matcher.ui.SearchDialog;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Stream;
@@ -24,23 +26,28 @@ public class Main {
 	public static void main(String[] args) throws IOException {
 
 		if (args.length > 0) {
-			if ("interactive".equals(args[0])) {
-				interactive();
-				return;
+			switch (args[0]) {
+				case "interactive" -> {
+					interactive();
+				}
+				case "ui" -> {
+					withUi();
+				}
+				default -> {
+					List<SyntheticHouselistEntry> entries = HouselistMatcher.loadHouselist();
+
+					DatabaseConnection.runSession(session -> {
+						MatchingAlgorithm algorithm = new SampleAlgorithm(session);
+						BestResultFinder bestResultFinder = new BestResultFinder(session);
+
+						processStreamAndPrintResults(entries.stream()
+						                                    .parallel()
+						                                    .map(e -> new MatchingResult(e, algorithm.match(e))),
+								bestResultFinder);
+					});
+				}
 			}
 		}
-		List<SyntheticHouselistEntry> entries = HouselistMatcher.loadHouselist();
-
-		DatabaseConnection.runSession(session -> {
-			MatchingAlgorithm algorithm = new SampleAlgorithm(session);
-			BestResultFinder bestResultFinder = new BestResultFinder(session);
-
-			processStreamAndPrintResults(entries.stream()
-			                                    .parallel()
-			                                    .map(e -> new MatchingResult(e, algorithm.match(e))),
-					bestResultFinder);
-		});
-
 	}
 
 	public static void interactive() {
@@ -57,21 +64,38 @@ public class Main {
 					HouselistEntry entry = new HouselistEntry();
 					entry.searchTerm = line;
 					SubSortingTree<MatchingTarget> result = algorithm.match(entry);
-					List<MatchingTarget> topResults = result.getTopContents();
-					List<MatchingTarget> otherResults = result.getContents();
-					otherResults = otherResults.subList(topResults.size(), otherResults.size());
-					FinalMatchingTarget best = bestResultFinder.findBest(topResults);
-					topResults.remove(best);
+					ResultSet resultSet = toResultSet(result, bestResultFinder);
 					System.out.println("-------- Best match: --------");
-					System.out.println(best);
+					System.out.println(resultSet.bestResult);
 					System.out.println("-------- Good results: --------");
-					printLinewise(topResults);
+					printLinewise(resultSet.goodResults);
 					System.out.println("-------- Other results: --------");
-					printLinewise(otherResults);
+					printLinewise(resultSet.otherResults);
 				} catch (IOException e) {
 					throw new RuntimeException(e);
 				}
 			}
+		});
+	}
+
+	public static void withUi() {
+
+		SearchDialog.createFrame((dialog, searchTerm) -> {
+
+			DatabaseConnection.runSession(session -> {
+				MatchingAlgorithm algorithm = new SampleAlgorithm(session);
+				BestResultFinder bestResultFinder = new BestResultFinder(session);
+				HouselistEntry entry = new HouselistEntry();
+				entry.searchTerm = searchTerm;
+				SubSortingTree<MatchingTarget> result = algorithm.match(entry);
+				ResultSet resultSet = toResultSet(result, bestResultFinder);
+				List<MatchingTarget> goodResults = new ArrayList<>();
+				if (resultSet.bestResult != null)
+					goodResults.add(resultSet.bestResult);
+				goodResults.addAll(resultSet.goodResults);
+				dialog.applyResults(goodResults, resultSet.otherResults);
+			});
+
 		});
 	}
 
@@ -113,6 +137,28 @@ public class Main {
 			System.out.println();
 		}
 		System.out.println("]");
+	}
+
+	public static ResultSet toResultSet(SubSortingTree<MatchingTarget> results, BestResultFinder bestResultFinder) {
+		List<MatchingTarget> topResults = results.getTopContents();
+		List<MatchingTarget> otherResults = results.getContents();
+		otherResults = otherResults.subList(topResults.size(), otherResults.size());
+		FinalMatchingTarget best = bestResultFinder.findBest(topResults);
+		topResults.removeIf(c -> c.getMmiId() == best.getMmiId());
+		return new ResultSet(best, topResults, otherResults);
+	}
+
+	private static class ResultSet {
+		final FinalMatchingTarget bestResult;
+		final List<MatchingTarget> goodResults;
+		final List<MatchingTarget> otherResults;
+
+		private ResultSet(FinalMatchingTarget bestResult, List<MatchingTarget> goodResults,
+		                  List<MatchingTarget> otherResults) {
+			this.bestResult = bestResult;
+			this.goodResults = goodResults;
+			this.otherResults = otherResults;
+		}
 	}
 
 }
