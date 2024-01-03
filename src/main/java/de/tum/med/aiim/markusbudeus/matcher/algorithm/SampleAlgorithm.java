@@ -88,7 +88,7 @@ public class SampleAlgorithm implements MatchingAlgorithm {
 			matching.applySimpleSortingStep("Prefer partial name matches",
 					TOKEN_TRANSFORMER,
 					unionSizeMatcher,
-					0.0);
+					null);
 		}
 		matching.applySortingStep("Dosage Match Score", dosageMatchJudge, 0.1, true);
 
