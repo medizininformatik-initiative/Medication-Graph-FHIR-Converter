@@ -82,14 +82,8 @@ public class SampleAlgorithm implements MatchingAlgorithm {
 		// to products.
 		if (!matching.transformResults(productOnlyFilter, true)) {
 			matching.transformResults(substanceToProductResolver);
-
-			// Since we now resolved substances into products, we once again prefer products whose name also
-			// matches the search term.
-			matching.applySimpleSortingStep("Prefer partial name matches",
-					TOKEN_TRANSFORMER,
-					unionSizeMatcher,
-					null);
 		}
+
 		matching.applySortingStep("Dosage Match Score", dosageMatchJudge, 0.1, true);
 
 		sortBySubsequencesFound(matching);
