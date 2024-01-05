@@ -26,30 +26,30 @@ import java.util.stream.Stream;
 public class Main {
 
 	public static void main(String[] args) throws IOException {
-
 		if (args.length > 0) {
 			switch (args[0]) {
 				case "interactive" -> {
 					interactive();
+					return;
 				}
 				case "ui" -> {
 					withUi();
-				}
-				default -> {
-					List<SyntheticHouselistEntry> entries = HouselistMatcher.loadHouselist();
-
-					DatabaseConnection.runSession(session -> {
-						MatchingAlgorithm algorithm = new SampleAlgorithm(session);
-						FinalTransformer finalTransformer = new FinalTransformer(session);
-
-						processStreamAndPrintResults(entries.stream()
-						                                    .parallel()
-						                                    .map(e -> new MatchingResult(e, algorithm.match(e))),
-								finalTransformer);
-					});
+					return;
 				}
 			}
 		}
+
+		List<SyntheticHouselistEntry> entries = HouselistMatcher.loadHouselist();
+
+		DatabaseConnection.runSession(session -> {
+			MatchingAlgorithm algorithm = new SampleAlgorithm(session);
+			FinalTransformer finalTransformer = new FinalTransformer(session);
+
+			processStreamAndPrintResults(entries.stream()
+			                                    .parallel()
+			                                    .map(e -> new MatchingResult(e, algorithm.match(e))),
+					finalTransformer);
+		});
 	}
 
 	public static void interactive() {

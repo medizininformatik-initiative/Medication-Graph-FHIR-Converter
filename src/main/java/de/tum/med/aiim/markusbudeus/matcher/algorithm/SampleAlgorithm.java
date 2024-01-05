@@ -76,13 +76,13 @@ public class SampleAlgorithm implements MatchingAlgorithm {
 			}
 		}
 
-		dosageFromNameIdentifier.transform(matching.getHouselistEntry());
-
 		// Only use product matches, unless this leaves us without a result. In that case, transform substances
 		// to products.
 		if (!matching.transformResults(productOnlyFilter, true)) {
 			matching.transformResults(substanceToProductResolver);
 		}
+
+		dosageFromNameIdentifier.transform(matching.getHouselistEntry());
 
 		matching.applySortingStep("Dosage Match Score", dosageMatchJudge, 0.1, true);
 
@@ -100,13 +100,6 @@ public class SampleAlgorithm implements MatchingAlgorithm {
 				baseProvider
 		);
 		result = unionSizeMatcher.findMatch(entry, setConfig).getBestMatches();
-		if (result.isEmpty()) {
-			MatcherConfiguration<String, String> stringConfig = MatcherConfiguration.usingTransformations(
-					STRING_TRANSFORMER,
-					baseProvider
-			);
-			result = levenshteinMatcher.findMatch(entry, stringConfig).getBestMatches();
-		}
 		if (result.isEmpty()) {
 			result = levenshteinSetMatcher.findMatch(entry, setConfig).getBestMatches();
 		}
