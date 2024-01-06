@@ -1,4 +1,4 @@
-package de.tum.med.aiim.markusbudeus;
+package de.tum.med.aiim.markusbudeus.matcher;
 
 import de.tum.med.aiim.markusbudeus.matcher.model.FinalMatchingTarget;
 import de.tum.med.aiim.markusbudeus.matcher.model.MatchingTarget;

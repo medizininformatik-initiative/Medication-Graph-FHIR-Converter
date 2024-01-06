@@ -1,7 +1,6 @@
-package de.tum.med.aiim.markusbudeus.matcher;
+package de.tum.med.aiim.markusbudeus.graphdbpopulator.loaders;
 
 import de.tum.med.aiim.markusbudeus.graphdbpopulator.DatabaseConnection;
-import de.tum.med.aiim.markusbudeus.graphdbpopulator.loaders.Loader;
 import org.neo4j.driver.Session;
 
 import static de.tum.med.aiim.markusbudeus.graphdbpopulator.DatabaseDefinitions.*;
@@ -24,12 +23,16 @@ public class DatabaseSynonymePreparer extends Loader {
 
 	@Override
 	protected void executeLoad() {
+		startSubtask("Remove synonymes with HTML content");
 		removeHtmlSynonymes();
+		startSubtask("Create synonyme nodes for product names");
 		addProductNamesAsSynonymes();
+		startSubtask("Create synonyme nodes for substance names");
 		addSubstanceNamesAsSynonymes();
+		startSubtask("Create synonyme nodes for GSRS names");
 		addGsrsNamesAsSynonymes();
+		startSubtask("Create synonyme nodes for INNs");
 		addInnAsSynonymes();
-//		makeAllSynonymesLowerCase();
 	}
 
 	void removeHtmlSynonymes() {

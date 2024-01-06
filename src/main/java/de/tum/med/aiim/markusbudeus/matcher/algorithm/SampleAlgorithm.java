@@ -36,7 +36,6 @@ public class SampleAlgorithm implements MatchingAlgorithm {
 
 	private final IdentifierProvider<String> baseProvider;
 	private final UnionSizeMatcher unionSizeMatcher;
-	private final LevenshteinMatcher levenshteinMatcher;
 	private final LevenshteinSetMatcher levenshteinSetMatcher;
 
 	private final DosageFromNameIdentifier dosageFromNameIdentifier;
@@ -51,7 +50,6 @@ public class SampleAlgorithm implements MatchingAlgorithm {
 		baseProvider = BaseProvider.ofDatabaseSynonymes(session);
 		unionSizeMatcher = new UnionSizeMatcher();
 		levenshteinSetMatcher = new LevenshteinSetMatcher();
-		levenshteinMatcher = new LevenshteinMatcher();
 		substringPresenceMatcher = new SubstringPresenceMatcher();
 
 		dosageFromNameIdentifier = new DosageFromNameIdentifier();

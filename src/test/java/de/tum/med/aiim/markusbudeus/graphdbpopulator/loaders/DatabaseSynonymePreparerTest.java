@@ -1,4 +1,4 @@
-package de.tum.med.aiim.markusbudeus.matcher;
+package de.tum.med.aiim.markusbudeus.graphdbpopulator.loaders;
 
 import de.tum.med.aiim.markusbudeus.graphdbpopulator.DatabaseConnection;
 import org.apache.commons.lang3.tuple.Pair;

@@ -52,7 +52,8 @@ public class SubstanceToProductResolver implements ResultTransformer {
 	@Override
 	public List<MatchingTarget> transform(MatchingTarget target, HouselistEntry entry) {
 		if (target.getType() == MatchingTarget.Type.PRODUCT) return List.of(target);
-		return new ArrayList<>(queryAndParseProductsForSubstanceMmiIds(List.of(target.getMmiId())).get(target.getMmiId()));
+		return new ArrayList<>(
+				queryAndParseProductsForSubstanceMmiIds(List.of(target.getMmiId())).get(target.getMmiId()));
 	}
 
 	private Map<Long, List<MatchingTarget>> queryAndParseProductsForSubstanceMmiIds(List<Long> substanceMmiIds) {
@@ -74,7 +75,7 @@ public class SubstanceToProductResolver implements ResultTransformer {
 						"MATCH (s)<-[:" + INGREDIENT_IS_SUBSTANCE_LABEL + "]-(ci:Ingredient)\n" +
 						"OPTIONAL MATCH (ci)<-[:" + INGREDIENT_CORRESPONDS_TO_LABEL + "]-(i:" + MMI_INGREDIENT_LABEL + ")\n" +
 						"WITH s, CASE WHEN i IS NULL THEN ci ELSE i END AS ingredient WHERE ingredient.isActive\n" +
-						"MATCH (ingredient)<-[:" + DRUG_CONTAINS_INGREDIENT_LABEL + "]-(drug:Drug)<-[:" + PRODUCT_CONTAINS_DRUG_LABEL + "]-(p:Product)\n" +
+						"MATCH (ingredient)<-[:" + DRUG_CONTAINS_INGREDIENT_LABEL + "]-(drug:" + DRUG_LABEL + ")<-[:" + PRODUCT_CONTAINS_DRUG_LABEL + "]-(p:Product)\n" +
 						"RETURN s.mmiId, p.mmiId, p.name",
 				parameters("mmiIds", substanceMmiIds)
 		));

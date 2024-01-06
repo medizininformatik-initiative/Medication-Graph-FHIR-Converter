@@ -1,6 +1,5 @@
 package de.tum.med.aiim.markusbudeus.matcher;
 
-import de.tum.med.aiim.markusbudeus.FinalTransformer;
 import de.tum.med.aiim.markusbudeus.graphdbpopulator.DatabaseConnection;
 import de.tum.med.aiim.markusbudeus.matcher.algorithm.MatchingAlgorithm;
 import de.tum.med.aiim.markusbudeus.matcher.algorithm.SampleAlgorithm;
