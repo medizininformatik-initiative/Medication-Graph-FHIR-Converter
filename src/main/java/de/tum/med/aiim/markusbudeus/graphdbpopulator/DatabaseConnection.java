@@ -9,7 +9,18 @@ import java.util.function.Consumer;
 
 public class DatabaseConnection implements AutoCloseable {
 
+	public static void setConnection(String uri, String user, char[] password) {
+		DatabaseConnection.uri = uri;
+		DatabaseConnection.user = user;
+		DatabaseConnection.password = password;
+	}
+
+	public static String uri = "neo4j://localhost:7687";
+	public static String user = "neo4j";
+	private static char[] password = "aiim-experimentation".toCharArray();
+
 	private final Driver driver;
+
 
 	/**
 	 * Creates a new connection and a session, which are both automatically closed when the given action exits.
@@ -22,7 +33,7 @@ public class DatabaseConnection implements AutoCloseable {
 
 	public DatabaseConnection() {
 		this(
-				"neo4j://localhost:7687",
+				uri,
 				"neo4j",
 				"aiim-experimentation".toCharArray()
 		);
