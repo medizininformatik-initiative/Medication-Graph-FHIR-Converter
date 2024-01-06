@@ -13,14 +13,14 @@ import java.awt.event.MouseEvent;
 
 import static java.awt.GridBagConstraints.*;
 
-public class ConnectionDialog extends JPanel {
+public class ConnectionDialog extends GridBagFrame {
 
 	public static void main(String[] args) {
 		EventQueue.invokeLater(() -> {
 			JFrame frame = new JFrame();
-			frame.add(new ConnectionDialog());
+			frame.add(new ConnectionDialog(null));
 			frame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
-			frame.setSize(400, 400);
+			frame.setSize(400, 180);
 			frame.setVisible(true);
 		});
 	}
@@ -30,14 +30,8 @@ public class ConnectionDialog extends JPanel {
 	private final JPasswordField txtPassword;
 	private final JLabel errorLabel = new JLabel();
 
-	public Runnable completionCallback;
-
-	public ConnectionDialog() {
-		GridBagLayout layout = new GridBagLayout();
-		GridBagConstraints gbc = new GridBagConstraints();
-		layout.setConstraints(this, gbc);
-		setLayout(layout);
-
+	public ConnectionDialog(Runnable completionCallback) {
+		super(completionCallback);
 		gbc.gridx = 0;
 		gbc.anchor = EAST;
 		gbc.gridy = 0;
@@ -89,6 +83,9 @@ public class ConnectionDialog extends JPanel {
 		add(buttonConfirm, gbc);
 
 		gbc.gridy = 6;
+		add(Box.createVerticalStrut(10), gbc);
+
+		gbc.gridy = 7;
 		errorLabel.setForeground(Color.red);
 		add(errorLabel, gbc);
 	}
@@ -107,8 +104,7 @@ public class ConnectionDialog extends JPanel {
 			connection.close();
 			DatabaseConnection.setConnection(uri, user, password);
 
-			if (completionCallback != null)
-				completionCallback.run();
+			complete();
 		} catch (IllegalArgumentException e) {
 			errorLabel.setText("Connection String invalid!");
 			e.printStackTrace();
