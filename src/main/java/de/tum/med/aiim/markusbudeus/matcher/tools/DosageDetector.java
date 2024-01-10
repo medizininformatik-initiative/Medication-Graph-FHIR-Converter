@@ -24,19 +24,20 @@ public class DosageDetector {
 		Map<String, String> validUnits = new HashMap<>();
 		KNOWN_NOMINATOR_UNITS.put("mg", "mg");
 		KNOWN_NOMINATOR_UNITS.put("ng", "ng");
-		KNOWN_NOMINATOR_UNITS.put("g", "g");
 		KNOWN_NOMINATOR_UNITS.put("μg", "μg");
 		KNOWN_NOMINATOR_UNITS.put("µg", "μg");
+		KNOWN_NOMINATOR_UNITS.put("mol", "mol");
 		KNOWN_NOMINATOR_UNITS.put("mmol", "mmol");
 		KNOWN_NOMINATOR_UNITS.put("mikrogramm", "μg");
 		KNOWN_NOMINATOR_UNITS.put("i.e.", "I.E.");
 		KNOWN_NOMINATOR_UNITS.put("i.u.", "I.E.");
+		validUnits.put("g", "g");
 		validUnits.put("ml", "ml");
 		validUnits.put("nl", "nl");
 		validUnits.put("dl", "dl");
 		validUnits.put("l", "l");
 		validUnits.put("μl", "μl");
-		validUnits.put("µl", "μl");
+		validUnits.put("µl", "μl"); // Yes, this is a different mu symbol. Check the bytes if you don't believe me.
 		KNOWN_DENOMINATOR_UNITS.put("beutel", "Beutel");
 		KNOWN_DENOMINATOR_UNITS.put("spruehstoss", "Sprühstoß");
 		KNOWN_DENOMINATOR_UNITS.put("sprühstoss", "Sprühstoß");
@@ -56,7 +57,7 @@ public class DosageDetector {
 
 	}
 
-	private static final Set<Character> TERMINATOR_SIGNS = Set.of(',', ' ', '/', '(', ')');
+	private static final Set<Character> TERMINATOR_SIGNS = Set.of(';', ',', ' ', '/', '(', ')');
 	private static final Set<Character> DECIMAL_OR_THOUSANDS_SEPARATOR_SIGNS = Set.of(',', '.');
 	private static final BigDecimal MIN_NUMBER_FOR_UNITLESS_DOSAGE = BigDecimal.TEN;
 
@@ -245,7 +246,7 @@ public class DosageDetector {
 			// We need to find out which separator was used as comma and which as thousands separator.
 			String number = buffer.toString();
 			if (new HashSet<>(separatorsRead).size() > 1) {
-				// Two different separators appear, so we have both a decimal and thousand separator
+				// Two different separators appear, so we have both a decimal and thousands separator
 				// The last thing must be the decimal separator
 				char decimalSep = separatorsRead.get(separatorsRead.size() - 1);
 				for (int i = 0; i < separatorsRead.size() - 2; i++) {
@@ -257,10 +258,10 @@ public class DosageDetector {
 				char thousandsSep = separatorsRead.get(0);
 				return new BigDecimal(number.replace("" + thousandsSep, "").replace(decimalSep, '.'));
 			} else if (separatorsRead.size() > 1) {
-				// It occurs multiple times, so its a thousands separator
+				// It occurs multiple times, so it's a thousands separator
 				return new BigDecimal(number.replace("" + separatorsRead.get(0), ""));
 			} else {
-				// Thing occurs only once, it could be both a decimal or a thousands separator
+				// Thing occurs only once, it could be both a decimal or thousands separator
 				char sep = separatorsRead.get(0);
 				if (number.length() >= 5
 						&& number.length() <= 7
@@ -295,11 +296,7 @@ public class DosageDetector {
 		}
 		String unit = buffer.toString();
 		buffer.setLength(0);
-		String parsedUnit = knownUnits.get(unit.toLowerCase());
-		if (parsedUnit != null) {
-			return parsedUnit;
-		}
-		return null;
+		return knownUnits.get(unit.toLowerCase());
 	}
 
 	private static class DetectingDosage {

@@ -22,7 +22,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public class SampleAlgorithm implements MatchingAlgorithm {
+public class MastersThesisAlgorithm implements MatchingAlgorithm {
 
 	private static final Transformer<String, String> STRING_TRANSFORMER =
 			new ToLowerCase()
@@ -46,7 +46,7 @@ public class SampleAlgorithm implements MatchingAlgorithm {
 
 	private final FilterProductsWithoutSuccessor filterProductsWithoutSuccessor;
 
-	public SampleAlgorithm(Session session) {
+	public MastersThesisAlgorithm(Session session) {
 		baseProvider = BaseProvider.ofDatabaseSynonymes(session);
 		unionSizeMatcher = new UnionSizeMatcher();
 		levenshteinSetMatcher = new LevenshteinSetMatcher();

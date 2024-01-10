@@ -66,7 +66,12 @@ public class Main {
 			// Coding System Nodes and connections to it
 			loaders.add(new CodingSystemNodeCreator(session));
 
-			session.run("MATCH (n) DETACH DELETE n");
+			long tDel0 = System.currentTimeMillis();
+			System.out.print("Deleting database...");
+			session.run("MATCH ()-[r]->() CALL { WITH r DELETE r } IN TRANSACTIONS OF 50000 ROWS");
+			session.run("MATCH (n) CALL { WITH n DETACH DELETE n } IN TRANSACTIONS OF 50000 ROWS");
+			System.out.println("done (" + (System.currentTimeMillis() - tDel0) + "ms)");
+
 			for (Loader loader : loaders) {
 				loader.execute();
 			}

@@ -251,7 +251,7 @@ public class DosageMatchJudge implements MatchJudge {
 		 * If no such match is achieved, zero is returned.
 		 */
 		private double judgeRelative(Dosage dosage, ExportAmount drugAmount) {
-			if (!Objects.equals(dosage.amountDenominator.unit, drugAmount.unit)) return 0;
+			if (drugAmount.unit != null && !Objects.equals(dosage.amountDenominator.unit, drugAmount.unit)) return 0;
 			if (!Objects.equals(dosage.amountNominator.unit, unit)) return 0;
 
 			if (DosageMatchJudge.matchesAbsolute(amountFrom, amountTo, dosage.amountNominator.number, BigDecimal.ZERO)

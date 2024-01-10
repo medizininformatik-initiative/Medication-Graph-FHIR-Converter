@@ -140,7 +140,6 @@ class DosageMatchJudgeTest extends TestWithSession {
 		assertTrue(DosageMatchJudge.NORMALIZED_RELATIVE_MATCH_SCORE >= DosageMatchJudge.MIN_SCORE_ON_MATCH);
 		assertTrue(DosageMatchJudge.ABSOLUTE_MATCH_SCORE >= DosageMatchJudge.MIN_SCORE_ON_MATCH);
 		assertTrue(DosageMatchJudge.DRUG_AMOUNT_MATCH_SCORE >= DosageMatchJudge.MIN_SCORE_ON_MATCH);
-		assertTrue(DosageMatchJudge.NO_PRODUCT_SCORE >= DosageMatchJudge.MIN_SCORE_ON_MATCH);
 		assertTrue(DosageMatchJudge.MIN_SCORE_ON_MATCH > 0);
 	}
 

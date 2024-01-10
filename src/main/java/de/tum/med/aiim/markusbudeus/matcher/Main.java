@@ -2,7 +2,7 @@ package de.tum.med.aiim.markusbudeus.matcher;
 
 import de.tum.med.aiim.markusbudeus.graphdbpopulator.DatabaseConnection;
 import de.tum.med.aiim.markusbudeus.matcher.algorithm.MatchingAlgorithm;
-import de.tum.med.aiim.markusbudeus.matcher.algorithm.SampleAlgorithm;
+import de.tum.med.aiim.markusbudeus.matcher.algorithm.MastersThesisAlgorithm;
 import de.tum.med.aiim.markusbudeus.matcher.data.SubSortingTree;
 import de.tum.med.aiim.markusbudeus.matcher.model.FinalMatchingTarget;
 import de.tum.med.aiim.markusbudeus.matcher.model.HouselistEntry;
@@ -41,7 +41,7 @@ public class Main {
 		List<SyntheticHouselistEntry> entries = HouselistMatcher.loadHouselist();
 
 		DatabaseConnection.runSession(session -> {
-			MatchingAlgorithm algorithm = new SampleAlgorithm(session);
+			MatchingAlgorithm algorithm = new MastersThesisAlgorithm(session);
 			FinalTransformer finalTransformer = new FinalTransformer(session);
 
 			processStreamAndPrintResults(entries.stream()
@@ -55,7 +55,7 @@ public class Main {
 		BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
 
 		DatabaseConnection.runSession(session -> {
-			MatchingAlgorithm algorithm = new SampleAlgorithm(session);
+			MatchingAlgorithm algorithm = new MastersThesisAlgorithm(session);
 			FinalTransformer finalTransformer = new FinalTransformer(session);
 
 			while (!Thread.interrupted()) {
@@ -84,7 +84,7 @@ public class Main {
 		SearchDialog.createFrame((dialog, searchTerm) -> {
 
 			DatabaseConnection.runSession(session -> {
-				MatchingAlgorithm algorithm = new SampleAlgorithm(session);
+				MatchingAlgorithm algorithm = new MastersThesisAlgorithm(session);
 				FinalTransformer finalTransformer = new FinalTransformer(session);
 				HouselistEntry entry = new HouselistEntry();
 				entry.searchTerm = searchTerm;
