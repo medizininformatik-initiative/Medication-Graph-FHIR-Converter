@@ -3,6 +3,7 @@ package de.tum.med.aiim.markusbudeus.ui;
 import de.tum.med.aiim.markusbudeus.graphdbpopulator.DatabaseConnection;
 import org.neo4j.driver.Session;
 import org.neo4j.driver.exceptions.AuthenticationException;
+import org.neo4j.driver.exceptions.ServiceUnavailableException;
 
 import javax.swing.*;
 import java.awt.*;
@@ -28,10 +29,13 @@ public class ConnectionDialog extends GridBagFrame {
 	private final JTextField txtConnection;
 	private final JTextField txtUser;
 	private final JPasswordField txtPassword;
-	private final JLabel errorLabel = new JLabel();
+	private final JLabel errorLabel = new JLabel(" ");
 
 	public ConnectionDialog(Runnable completionCallback) {
 		super(completionCallback);
+
+		setBorder(BorderFactory.createEmptyBorder(8, 8, 8, 8));
+
 		gbc.gridx = 0;
 		gbc.anchor = EAST;
 		gbc.gridy = 0;
@@ -47,6 +51,8 @@ public class ConnectionDialog extends GridBagFrame {
 		gbc.gridy = 0;
 		gbc.anchor = WEST;
 		gbc.insets.right = 0;
+		gbc.weightx = 1;
+		gbc.fill = GridBagConstraints.HORIZONTAL;
 		int columns = 20;
 		txtConnection = new JTextField(columns);
 		txtConnection.setText(DatabaseConnection.uri);
@@ -55,7 +61,7 @@ public class ConnectionDialog extends GridBagFrame {
 		txtPassword = new JPasswordField(columns);
 		txtPassword.addKeyListener(new KeyAdapter() {
 			@Override
-			public void keyTyped(KeyEvent e) {
+			public void keyReleased(KeyEvent e) {
 				if (e.getKeyCode() == KeyEvent.VK_ENTER)
 					apply();
 			}
@@ -73,6 +79,8 @@ public class ConnectionDialog extends GridBagFrame {
 		add(Box.createVerticalStrut(10), gbc);
 
 		gbc.gridy = 5;
+		gbc.weightx = 0;
+		gbc.fill = GridBagConstraints.NONE;
 		JButton buttonConfirm = new JButton("OK");
 		buttonConfirm.addMouseListener(new MouseAdapter() {
 			@Override
@@ -83,6 +91,8 @@ public class ConnectionDialog extends GridBagFrame {
 		add(buttonConfirm, gbc);
 
 		gbc.gridy = 6;
+		gbc.weightx = 1;
+		gbc.fill = GridBagConstraints.HORIZONTAL;
 		add(Box.createVerticalStrut(10), gbc);
 
 		gbc.gridy = 7;
@@ -91,7 +101,7 @@ public class ConnectionDialog extends GridBagFrame {
 	}
 
 	private void apply() {
-		errorLabel.setText("");
+		errorLabel.setText(" ");
 		String uri = txtConnection.getText();
 		String user = txtUser.getText();
 		char[] password = txtPassword.getPassword();
@@ -110,6 +120,8 @@ public class ConnectionDialog extends GridBagFrame {
 			e.printStackTrace();
 		} catch (AuthenticationException e) {
 			errorLabel.setText("Authentication failed!");
+		} catch (ServiceUnavailableException e) {
+			errorLabel.setText("Failed to connect to Neo4j. Is the service running?");
 		}
 	}
 

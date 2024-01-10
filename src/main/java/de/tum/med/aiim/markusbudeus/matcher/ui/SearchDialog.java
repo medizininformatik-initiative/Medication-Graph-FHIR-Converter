@@ -60,6 +60,9 @@ public class SearchDialog extends JSplitPane {
 				ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
 				ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 
+		scrollPane.setMinimumSize(new Dimension(400, 400));
+		scrollPane.setPreferredSize(new Dimension(750, 400));
+
 		setTopComponent(top);
 		setBottomComponent(scrollPane);
 	}
