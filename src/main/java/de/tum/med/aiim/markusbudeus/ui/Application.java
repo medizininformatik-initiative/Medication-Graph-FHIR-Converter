@@ -15,6 +15,7 @@ public class Application extends JFrame {
 	}
 
 	public Application() {
+		setTitle("MII Medication Graph Database Tool");
 		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 	}
 
