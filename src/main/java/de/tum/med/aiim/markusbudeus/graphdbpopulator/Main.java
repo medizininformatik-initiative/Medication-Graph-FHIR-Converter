@@ -65,6 +65,8 @@ public class Main {
 			loaders.add(new IngredientCorrespondenceLoader(session));
 			// Coding System Nodes and connections to it
 			loaders.add(new CodingSystemNodeCreator(session));
+			// Synonymes from other nodes
+			loaders.add(new DatabaseSynonymePreparer(session));
 
 			long tDel0 = System.currentTimeMillis();
 			System.out.print("Deleting database...");

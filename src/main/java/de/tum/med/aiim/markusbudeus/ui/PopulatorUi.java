@@ -8,6 +8,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URISyntaxException;
 import java.nio.file.AccessDeniedException;
 import java.nio.file.Files;
@@ -85,9 +86,8 @@ public class PopulatorUi extends GridBagFrame {
 		gbc.insets.right = 0;
 
 		Font font = new Font("Monospaced", Font.PLAIN, 14);
-		// TODO Remove defaults
-		txtMmiPharmindexData = new JTextField("/wshare/Markus/Uni/Module/Semester10/Masterarbeit/workspace/mmi_pharmindex", 40);
-		txtNeo4jImportDirectory = new JTextField("/var/lib/neo4j/import", 40);
+		txtMmiPharmindexData = new JTextField("", 40);
+		txtNeo4jImportDirectory = new JTextField("", 40);
 		txtMmiPharmindexData.setFont(font);
 		txtNeo4jImportDirectory.setFont(font);
 		gbc.gridx = 1;
@@ -254,9 +254,9 @@ public class PopulatorUi extends GridBagFrame {
 		// Copy other files
 		target = targetDir.toPath();
 		for (String resource : REQUIRED_RESOURCE_FILES) {
-			Path resPath = Path.of(Objects.requireNonNull(getClass().getResource("/" + resource)).toURI());
+			InputStream stream = Objects.requireNonNull(getClass().getResourceAsStream("/" + resource));
 			Path targetPath = target.resolve(resource);
-			Files.copy(resPath, targetPath, StandardCopyOption.REPLACE_EXISTING);
+			Files.copy(stream, targetPath, StandardCopyOption.REPLACE_EXISTING);
 		}
 		return true;
 	}

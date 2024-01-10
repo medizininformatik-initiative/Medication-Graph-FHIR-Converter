@@ -6,6 +6,7 @@ import org.neo4j.driver.exceptions.AuthenticationException;
 import org.neo4j.driver.exceptions.ServiceUnavailableException;
 
 import javax.swing.*;
+import javax.xml.crypto.Data;
 import java.awt.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
@@ -59,6 +60,7 @@ public class ConnectionDialog extends GridBagFrame {
 		txtUser = new JTextField(columns);
 		txtUser.setText(DatabaseConnection.user);
 		txtPassword = new JPasswordField(columns);
+		txtPassword.setText(new String(DatabaseConnection.password));
 		txtPassword.addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyReleased(KeyEvent e) {

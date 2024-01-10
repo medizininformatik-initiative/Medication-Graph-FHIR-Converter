@@ -22,3 +22,14 @@ dependencies {
 test {
     useJUnitPlatform()
 }
+
+jar {
+    manifest {
+        attributes 'Main-Class': 'de.tum.med.aiim.markusbudeus.ui.Application'
+    }
+    duplicatesStrategy = DuplicatesStrategy.WARN
+
+    from {
+        configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+}
