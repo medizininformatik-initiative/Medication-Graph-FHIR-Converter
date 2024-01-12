@@ -21,13 +21,7 @@ import static java.awt.GridBagConstraints.*;
 public class PopulatorUi extends GridBagFrame {
 
 	public static void main(String[] args) {
-		EventQueue.invokeLater(() -> {
-			JFrame frame = new JFrame();
-			frame.add(new PopulatorUi(null));
-			frame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
-			frame.pack();
-			frame.setVisible(true);
-		});
+		Tools.createFrame(PopulatorUi::new);
 	}
 
 	private static final String[] REQUIRED_FILES = new String[]{
@@ -103,7 +97,7 @@ public class PopulatorUi extends GridBagFrame {
 		gbc.weightx = 0.0;
 		JButton browseMmiPharmIndex = new JButton("Browse");
 		browseMmiPharmIndex.addActionListener(e -> {
-			File f = selectDirectory();
+			File f = Tools.selectDirectory(this);
 			if (f != null)
 				txtMmiPharmindexData.setText(f.getAbsolutePath());
 		});
@@ -111,7 +105,7 @@ public class PopulatorUi extends GridBagFrame {
 		gbc.gridy = 2;
 		JButton browseNeo4jImport = new JButton("Browse");
 		browseNeo4jImport.addActionListener(e -> {
-			File f = selectDirectory();
+			File f = Tools.selectDirectory(this);
 			if (f != null)
 				txtNeo4jImportDirectory.setText(f.getAbsolutePath());
 		});
@@ -275,18 +269,6 @@ public class PopulatorUi extends GridBagFrame {
 		}
 
 		Files.delete(mmiTargetDir);
-	}
-
-	private File selectDirectory() {
-		final JFileChooser fc = new JFileChooser();
-		fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-		int returnVal = fc.showOpenDialog(this);
-
-		if (returnVal == JFileChooser.APPROVE_OPTION) {
-			return fc.getSelectedFile();
-		} else {
-			return null;
-		}
 	}
 
 }

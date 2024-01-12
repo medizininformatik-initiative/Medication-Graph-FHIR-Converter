@@ -40,7 +40,7 @@ public class Neo4jMedicationExporter extends Neo4jExporter<Medication> {
 	public Stream<Medication> exportObjects() {
 		// This is a complicated query. Sorry about that. :(
 		String query =
-				"MATCH (p:" + PRODUCT_LABEL + " {name: 'Methylprednisolut® 1000 mg, Pulver und Lösungsmittel zur Herstellung einer Injektions-/Infusionslösung'})-[:" + PRODUCT_CONTAINS_DRUG_LABEL + "]->(d:" + DRUG_LABEL + ") " +
+				"MATCH (p:" + PRODUCT_LABEL + ")-[:" + PRODUCT_CONTAINS_DRUG_LABEL + "]->(d:" + DRUG_LABEL + ") " +
 						"OPTIONAL MATCH (d)-[:" + DRUG_HAS_DOSE_FORM_LABEL + "]->(df:" + DOSE_FORM_LABEL + ") " +
 						"OPTIONAL MATCH (df)-[:" + DOSE_FORM_IS_EDQM + "]->(de:" + EDQM_LABEL + ")-[:" + BELONGS_TO_CODING_SYSTEM_LABEL + "]->(dfcs:" + CODING_SYSTEM_LABEL + ") " +
 						(allowMedicationsWithoutIngredients ? "OPTIONAL " : "") +
@@ -88,8 +88,6 @@ public class Neo4jMedicationExporter extends Neo4jExporter<Medication> {
 						"collect(" + groupCodingSystem("pc", "pcs") + ") AS productCodes, " +
 						"drugs, " +
 						"packages";
-
-		System.out.println(query);
 
 		Result result = session.run(new Query(query));
 

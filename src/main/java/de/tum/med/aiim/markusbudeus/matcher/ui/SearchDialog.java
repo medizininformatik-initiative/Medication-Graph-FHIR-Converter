@@ -18,10 +18,25 @@ public class SearchDialog extends JSplitPane {
 	private static final Color BEST_MATCH_COLOR = Color.yellow;
 	private static final Color GOOD_MATCH_COLOR = new Color(0x91, 0xff, 0xff);
 
+	public static void createFrame(BiConsumer<SearchDialog, String> onSearch) {
+		EventQueue.invokeLater(() -> {
+			JFrame frame = new JFrame("MII Medication Matcher");
+
+			frame.add(new SearchDialog(onSearch));
+
+			frame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+			frame.setSize(800, 400);
+			frame.setVisible(true);
+		});
+	}
+
 	private final JTextField searchField;
 	private final JPanel bottom;
 	private final JButton searchButton;
+	private final JButton returnButton;
 	private final BiConsumer<SearchDialog, String> onSearch;
+
+	private Runnable onReturn;
 
 	private boolean searching = false;
 
@@ -34,6 +49,9 @@ public class SearchDialog extends JSplitPane {
 
 		JPanel top = new JPanel();
 
+		returnButton = new JButton("Exit");
+		returnButton.setVisible(false);
+		top.add(returnButton);
 		searchField = new JTextField(null, 40);
 		searchField.setFont(new Font("Monospaced", Font.PLAIN, 18));
 		top.add(searchField);
@@ -52,6 +70,11 @@ public class SearchDialog extends JSplitPane {
 				if (e.getKeyCode() == KeyEvent.VK_ENTER)
 					considerSearch();
 			}
+		});
+
+		returnButton.addActionListener(e -> {
+			if (onReturn != null)
+				onReturn.run();
 		});
 
 		bottom = new JPanel();
@@ -106,16 +129,9 @@ public class SearchDialog extends JSplitPane {
 		});
 	}
 
-	public static void createFrame(BiConsumer<SearchDialog, String> onSearch) {
-		EventQueue.invokeLater(() -> {
-			JFrame frame = new JFrame("MII Medication Matcher");
-
-			frame.add(new SearchDialog(onSearch));
-
-			frame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
-			frame.setSize(800, 400);
-			frame.setVisible(true);
-		});
+	public void setOnReturn(Runnable onReturn) {
+		returnButton.setVisible(true);
+		this.onReturn = onReturn;
 	}
 
 }

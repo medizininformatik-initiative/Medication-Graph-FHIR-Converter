@@ -33,7 +33,7 @@ public class Neo4jSubstanceExporter extends Neo4jExporter<Substance> {
 	@Override
 	public Stream<Substance> exportObjects() {
 		Result result = session.run(new Query(
-				"MATCH (s:" + SUBSTANCE_LABEL + " {name: 'Midazolam hydrochlorid'}) " +
+				"MATCH (s:" + SUBSTANCE_LABEL + ") " +
 						"MATCH (cs:" + CODING_SYSTEM_LABEL + ")<-[:" + BELONGS_TO_CODING_SYSTEM_LABEL + "]-(c:" + CODE_LABEL + ")-->(s) " +
 						"WITH s, collect({" +
 						CODE + ":c.code," +

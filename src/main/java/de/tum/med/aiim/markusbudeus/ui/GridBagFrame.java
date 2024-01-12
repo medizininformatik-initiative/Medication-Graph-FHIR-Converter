@@ -11,6 +11,11 @@ public class GridBagFrame extends ApplicationFrame {
 
 		GridBagLayout layout = new GridBagLayout();
 		gbc = new GridBagConstraints();
+
+		gbc.weightx = 1;
+		gbc.weighty = 1;
+		gbc.insets = new Insets(2, 2, 2, 2);
+
 		layout.setConstraints(this, gbc);
 		setLayout(layout);
 

@@ -19,6 +19,7 @@ public class TextOutputArea extends JScrollPane {
 	}
 
 	private final JTextArea textArea;
+	private boolean pendingLinefeed = false;
 
 	private TextOutputArea() {
 		super(null, VERTICAL_SCROLLBAR_AS_NEEDED, HORIZONTAL_SCROLLBAR_NEVER);
@@ -30,10 +31,44 @@ public class TextOutputArea extends JScrollPane {
 		this.setViewportView(textArea);
 	}
 
+	public synchronized void clear() {
+		pendingLinefeed = false;
+		this.textArea.setText("");
+	}
+
+	public synchronized void appendNewline() {
+		if (!pendingLinefeed) {
+			pendingLinefeed = true;
+		} else {
+			append("");
+			pendingLinefeed = true;
+		}
+	}
+
+	public synchronized void append(String text) {
+		if (pendingLinefeed) {
+			text = "\n" + text;
+			pendingLinefeed = false;
+		}
+		final String t = text;
+
+		Integer caretPositionFromEnd = null;
+		int lastLinefeed = t.lastIndexOf('\n');
+		if (lastLinefeed != -1) {
+			caretPositionFromEnd = t.length() - lastLinefeed - 1;
+		}
+		final Integer finalCaretPositionFromEnd = caretPositionFromEnd;
+
+		EventQueue.invokeLater(() -> {
+			textArea.append(t);
+			if (finalCaretPositionFromEnd != null)
+				textArea.setCaretPosition(textArea.getDocument().getLength() - finalCaretPositionFromEnd);
+		});
+	}
+
 	private static class TextOutputAreaPrintStream extends PrintStream {
 
 		private final TextOutputArea toa;
-		private boolean pendingNewline = false;
 
 		public TextOutputAreaPrintStream(OutputStream out, TextOutputArea toa) {
 			super(out);
@@ -71,24 +106,11 @@ public class TextOutputArea extends JScrollPane {
 		}
 
 		private void addNewline() {
-			if (!pendingNewline) {
-				pendingNewline = true;
-			} else {
-				append("");
-				pendingNewline = true;
-			}
+			toa.appendNewline();
 		}
 
 		private void append(String text) {
-			if (pendingNewline) {
-				text = "\n" + text;
-				pendingNewline = false;
-			}
-			final String t = text;
-			EventQueue.invokeLater(() -> {
-				toa.textArea.append(t);
-				toa.textArea.setCaretPosition(toa.textArea.getDocument().getLength());
-			});
+			toa.append(text);
 		}
 	}
 

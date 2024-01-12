@@ -26,7 +26,7 @@ public class Neo4jOrganizationExporter extends Neo4jExporter<Organization> {
 	@Override
 	public Stream<Organization> exportObjects() {
 		Result result = session.run(new Query(
-				"MATCH (s:" + COMPANY_LABEL + "{mmiId: 16227}) " +
+				"MATCH (s:" + COMPANY_LABEL + ") " +
 						"OPTIONAL MATCH (s)-[:" + COMPANY_HAS_ADDRESS_LABEL + "]-(a:" + ADDRESS_LABEL + ") " +
 						"RETURN s.mmiId AS mmiId, s.name AS name, s.shortName AS shortName, collect({" +
 						"street:a.street," +

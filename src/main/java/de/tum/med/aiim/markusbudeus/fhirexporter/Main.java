@@ -24,19 +24,9 @@ public class Main {
 	public static void main(String[] args) throws IOException {
 		try (DatabaseConnection connection = new DatabaseConnection();
 		     Session session = connection.createSession()) {
-
-			exportToJsonFiles(new Neo4jSubstanceExporter(session), SUBSTANCE_OUT_PATH,
-					substance -> appendPart2UnlessNull(substance.identifier[0].value, substance.description));
-			exportToJsonFiles(new Neo4jMedicationExporter(session, false), MEDICATION_OUT_PATH,
-					medication -> appendPart2UnlessNull(medication.identifier[0].value,medication.code.text));
-			exportToJsonFiles(new Neo4jOrganizationExporter(session), ORGANIZATION_OUT_PATH,
-					organization -> {
-						String name;
-						if (organization.alias != null && organization.alias.length > 0) {
-							name = organization.alias[0];
-						} else name = organization.name;
-						return appendPart2UnlessNull(organization.identifier.value, name);
-					});
+			exportSubstances(session, OUT_PATH.resolve(SUBSTANCE_OUT_PATH));
+			exportMedications(session, OUT_PATH.resolve(MEDICATION_OUT_PATH));
+			exportOrganizations(session, OUT_PATH.resolve(ORGANIZATION_OUT_PATH));
 		}
 	}
 
@@ -45,17 +35,35 @@ public class Main {
 		return part1 + " " + part2;
 	}
 
+	public static void exportSubstances(Session session, Path outPath) throws IOException {
+		exportToJsonFiles(new Neo4jSubstanceExporter(session), outPath,
+				substance -> appendPart2UnlessNull(substance.identifier[0].value, substance.description));
+	}
+	public static void exportMedications(Session session, Path outPath) throws IOException {
+		exportToJsonFiles(new Neo4jMedicationExporter(session, false), outPath,
+				medication -> appendPart2UnlessNull(medication.identifier[0].value,medication.code.text));
+	}
+	public static void exportOrganizations(Session session, Path outPath) throws IOException {
+		exportToJsonFiles(new Neo4jOrganizationExporter(session), outPath,
+				organization -> {
+					String name;
+					if (organization.alias != null && organization.alias.length > 0) {
+						name = organization.alias[0];
+					} else name = organization.name;
+					return appendPart2UnlessNull(organization.identifier.value, name);
+				});
+	}
+
 	/**
 	 * Exports all objects using the specified exporter and writes them into .json-files.
 	 *
 	 * @param exporter         the exporter whose objects to convert to json
-	 * @param outFolder        the folder inside the {@link #OUT_PATH} where to put the files
 	 * @param filenameProvider a function which provides a filename for each exported object - the .json-suffix will be
 	 *                         appended automatically!
 	 */
-	private static <T> void exportToJsonFiles(Neo4jExporter<T> exporter, String outFolder,
+	private static <T> void exportToJsonFiles(Neo4jExporter<T> exporter, Path outPath,
 	                                          Function<T, String> filenameProvider) throws IOException {
-		JsonExporter jsonExporter = new GsonExporter(OUT_PATH.resolve(outFolder));
+		JsonExporter jsonExporter = new GsonExporter(outPath);
 		exporter.exportObjects().forEach(object -> {
 			try {
 				String filename = filenameProvider.apply(object);

@@ -19,7 +19,7 @@ public class SearchFrame extends ApplicationFrame {
 	public SearchFrame(Runnable completionCallback) {
 		super(completionCallback);
 
-		add(new SearchDialog((dialog, searchTerm) -> {
+		SearchDialog d = new SearchDialog((dialog, searchTerm) -> {
 			DatabaseConnection.runSession(session -> {
 				MatchingAlgorithm algorithm = new MastersThesisAlgorithm(session);
 				FinalTransformer finalTransformer = new FinalTransformer(session);
@@ -29,8 +29,10 @@ public class SearchFrame extends ApplicationFrame {
 				Main.ResultSet resultSet = toResultSet(result, finalTransformer);
 				dialog.applyResults(resultSet);
 			});
+		});
 
-		}));
+		add(d);
+		d.setOnReturn(this::complete);
 	}
 
 }

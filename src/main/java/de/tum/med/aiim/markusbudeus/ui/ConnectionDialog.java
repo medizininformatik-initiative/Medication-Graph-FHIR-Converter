@@ -17,13 +17,7 @@ import static java.awt.GridBagConstraints.*;
 public class ConnectionDialog extends GridBagFrame {
 
 	public static void main(String[] args) {
-		EventQueue.invokeLater(() -> {
-			JFrame frame = new JFrame();
-			frame.add(new ConnectionDialog(null));
-			frame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
-			frame.setSize(400, 180);
-			frame.setVisible(true);
-		});
+		Tools.createFrame(ConnectionDialog::new);
 	}
 
 	private final JTextField txtConnection;

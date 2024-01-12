@@ -33,6 +33,7 @@ public class Application extends JFrame {
 		mainMenu.setOnSelectConnectionOptions(() -> navigateTo(ConnectionDialog::new));
 		mainMenu.setOnSelectGraphPopulator(() -> navigateTo(PopulatorUi::new));
 		mainMenu.setOnSelectSearchDialog(() -> navigateTo(SearchFrame::new));
+		mainMenu.setOnSelectExportDialog(() -> navigateTo(FhirExporterFrame::new));
 		navigateTo(mainMenu);
 		setSize(600, 400);
 	}
