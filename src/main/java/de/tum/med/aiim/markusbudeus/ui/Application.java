@@ -2,6 +2,8 @@ package de.tum.med.aiim.markusbudeus.ui;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.util.function.Function;
 
 public class Application extends JFrame {
@@ -17,6 +19,12 @@ public class Application extends JFrame {
 	public Application() {
 		setTitle("MII Medication Graph Database Tool");
 		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+		addWindowListener(new WindowAdapter() {
+			@Override
+			public void windowClosing(WindowEvent e) {
+				exit();
+			}
+		});
 	}
 
 	private void navigateTo(Function<Runnable, ApplicationFrame> frameConstructor) {
@@ -29,13 +37,18 @@ public class Application extends JFrame {
 	}
 
 	private void navigateToMainMenu() {
-		MainMenu mainMenu = new MainMenu(this::dispose);
+		MainMenu mainMenu = new MainMenu(this::exit);
 		mainMenu.setOnSelectConnectionOptions(() -> navigateTo(ConnectionDialog::new));
 		mainMenu.setOnSelectGraphPopulator(() -> navigateTo(PopulatorUi::new));
 		mainMenu.setOnSelectSearchDialog(() -> navigateTo(SearchFrame::new));
 		mainMenu.setOnSelectExportDialog(() -> navigateTo(FhirExporterFrame::new));
 		navigateTo(mainMenu);
 		setSize(600, 400);
+	}
+
+	private void exit() {
+		this.dispose();
+		System.exit(0);
 	}
 
 }
