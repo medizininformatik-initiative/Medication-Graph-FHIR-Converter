@@ -9,6 +9,7 @@ import static de.tum.med.aiim.markusbudeus.graphdbpopulator.DatabaseDefinitions.
 
 /**
  * This loader reads the ITEM_COMPOSITIONELEMENT table and uses it to connect existing Ingredient and Drug nodes.
+ * Ingredient nodes without a connection will be deleted.
  */
 public class DrugIngredientConnectionLoader extends CsvLoader {
 
@@ -27,5 +28,9 @@ public class DrugIngredientConnectionLoader extends CsvLoader {
 						COMPOSITION_ELEMENT_ID) + "}) " +
 						"CREATE (d)-[:" + DRUG_CONTAINS_INGREDIENT_LABEL + "]->(i) "
 		));
+
+		executeQuery("MATCH (i:"+MMI_INGREDIENT_LABEL+") " +
+				"WHERE NOT (:"+DRUG_LABEL+")-[:"+DRUG_CONTAINS_INGREDIENT_LABEL+"]->(i) " +
+				"DETACH DELETE i");
 	}
 }

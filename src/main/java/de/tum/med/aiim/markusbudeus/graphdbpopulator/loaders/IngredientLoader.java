@@ -34,27 +34,35 @@ public class IngredientLoader extends CsvLoader {
 				"CREATE CONSTRAINT mmiIngredientIdConstraint IF NOT EXISTS FOR (i:" + MMI_INGREDIENT_LABEL + ") REQUIRE i.mmiId IS UNIQUE"
 		);
 
+		startSubtask("Loading nodes");
 		executeQuery(withLoadStatement(
 				"CREATE (i:" + MMI_INGREDIENT_LABEL + ":" + INGREDIENT_LABEL +
 						" {mmiId: " + intRow(ID) +
 						", massFrom: " + row(MASS_FROM) +
 						", massTo: " + row(MASS_TO) +
 						", isActive: (" + row(MOLECULE_TYPE_CODE) + " = '" + ACTIVE_INGREDIENT_TYPE_CODE + "')" +
+						", substanceId: " + intRow(MOLECULE_ID) +
+						", unitCode: " + row(MOLECULE_UNIT_CODE) +
 						"}) "
 		));
 
-		executeQuery(withLoadStatement(
-				"MATCH (i:" + MMI_INGREDIENT_LABEL + " {mmiId: " + intRow(ID) + "}) " +
-						"MATCH (s:" + SUBSTANCE_LABEL + " {mmiId: " + intRow(MOLECULE_ID) + "}) " +
+		startSubtask("Connecting to substance nodes");
+		executeQuery("MATCH (i:" + MMI_INGREDIENT_LABEL + ") " +
+						"MATCH (s:" + SUBSTANCE_LABEL + " {mmiId: i.substanceId}) " +
 						"WITH i, s " +
 						"CREATE (i)-[:" + INGREDIENT_IS_SUBSTANCE_LABEL + "]->(s) "
-		));
+		);
 
-		executeQuery(withLoadStatement(
-				"MATCH (i:" + MMI_INGREDIENT_LABEL + " {mmiId: " + intRow(ID) + "}) " +
-						"MATCH (u:" + UNIT_LABEL + " {mmiCode: " + row(MOLECULE_UNIT_CODE) + "}) " +
+		startSubtask("Connecting to unit nodes");
+		executeQuery(
+				"MATCH (i:" + MMI_INGREDIENT_LABEL + ") " +
+						"MATCH (u:" + UNIT_LABEL + " {mmiCode: i.unitCode}) " +
 						"WITH i, u " +
 						"CREATE (i)-[:" + INGREDIENT_HAS_UNIT_LABEL + "]->(u)"
-		));
+		);
+
+		startSubtask("Cleaning up");
+		executeQuery("MATCH (i:"+MMI_INGREDIENT_LABEL+") " +
+				"REMOVE i.substanceId, i.unitCode");
 	}
 }

@@ -26,9 +26,9 @@ public class IntegrationTest {
 	// This test will completely overwrite the target database
 
 	// Command to load test data:
-	// sudo mv /var/lib/neo4j/import/mmi_pharmindex /var/lib/neo4j/import/mmi_pharmindex-2; sudo mkdir /var/lib/neo4j/import/mmi_pharmindex; sudo cp src/test/resources/sample/*.CSV /var/lib/neo4j/import/mmi_pharmindex
+	// sudo mkdir /var/lib/neo4j/import/mmi_pharmindex; sudo cp src/test/resources/sample/*.CSV /var/lib/neo4j/import/mmi_pharmindex; sudo cp src/main/resources/*.csv /var/lib/neo4j/import
 	// Command to unload test data:
-	// sudo rm -rf /var/lib/neo4j/import/mmi_pharmindex; sudo mv /var/lib/neo4j/import/mmi_pharmindex-2 /var/lib/neo4j/import/mmi_pharmindex
+	// sudo rm -rf /var/lib/neo4j/import/mmi_pharmindex; sudo rm /var/lib/neo4j/import/*.csv
 
 	private DatabaseConnection connection;
 	private Session session;

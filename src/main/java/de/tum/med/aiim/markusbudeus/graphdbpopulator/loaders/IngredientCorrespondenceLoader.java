@@ -26,6 +26,8 @@ public class IngredientCorrespondenceLoader extends CsvLoader {
 
 	@Override
 	protected void executeLoad() {
+
+		startSubtask("Loading nodes");
 		executeQuery(withLoadStatement(
 				"CREATE (i:" + INGREDIENT_LABEL + ":" + CORRESPONDING_INGREDIENT_LABEL + " {parentId: " + intRow(
 						COMPOSITION_ELEMENT_ID)
@@ -35,6 +37,7 @@ public class IngredientCorrespondenceLoader extends CsvLoader {
 						+ ", massTo: " + row(MASS_TO) + "}) "
 		));
 
+		startSubtask("Connecting nodes");
 		executeQuery(
 				"MATCH (i:" + CORRESPONDING_INGREDIENT_LABEL + ") " +
 						"MATCH (p:" + MMI_INGREDIENT_LABEL + " {mmiId: i.parentId}) " +
@@ -49,6 +52,11 @@ public class IngredientCorrespondenceLoader extends CsvLoader {
 						"REMOVE i.unitCode " +
 						"REMOVE i:"+CORRESPONDING_INGREDIENT_LABEL
 		);
+
+		startSubtask("Removing orphans");
+		executeQuery("MATCH (i:"+CORRESPONDING_INGREDIENT_LABEL+") " +
+				"WHERE NOT (i)<-[:"+INGREDIENT_CORRESPONDS_TO_LABEL+"]-(:"+MMI_INGREDIENT_LABEL+") " +
+				"DELETE i");
 	}
 
 }

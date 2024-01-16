@@ -34,6 +34,7 @@ public class DrugLoader extends CsvLoader {
 		);
 
 		// Create Nodes
+		startSubtask("Creating nodes");
 		executeQuery(withLoadStatement(
 				"CREATE (d:" + DRUG_LABEL + " {mmiId: " + intRow(ID) + ", " +
 						"amount: " + nullIfBlank(row(AMOUNT)) + ", " +
@@ -41,6 +42,7 @@ public class DrugLoader extends CsvLoader {
 						"mmiDoseFormCode: " + nullIfBlank(row(DOSE_FORM_CODE)) + "})"
 		));
 
+		startSubtask("Connecting to product nodes");
 		// Connect to Product Nodes
 		executeQuery(withLoadStatement(
 				"MATCH (d:" + DRUG_LABEL + " {mmiId: " + intRow(ID) + "}) " +
@@ -49,6 +51,14 @@ public class DrugLoader extends CsvLoader {
 						"CREATE (p)-[r:" + PRODUCT_CONTAINS_DRUG_LABEL + "]->(d)"
 		));
 
+		startSubtask("Removing orphan drug nodes");
+		executeQuery(
+				"MATCH (d:"+DRUG_LABEL+") " +
+						"WHERE NOT (:"+PRODUCT_LABEL+")-[:"+PRODUCT_CONTAINS_DRUG_LABEL+"]->(d) " +
+						"DELETE d"
+		);
+
+		startSubtask("Connecting to unit nodes");
 		// Connect to Unit Nodes
 		executeQuery(
 				"MATCH (d:"+DRUG_LABEL+") WHERE d.mmiUnitCode IS NOT NULL " +
@@ -58,6 +68,7 @@ public class DrugLoader extends CsvLoader {
 						"SET d.mmiUnitCode = null"
 		);
 
+		startSubtask("Connecting to dose form nodes");
 		// Connect to Dose Form nodes
 		executeQuery(
 				"MATCH (d:"+DRUG_LABEL+") WHERE d.mmiDoseFormCode IS NOT NULL " +
