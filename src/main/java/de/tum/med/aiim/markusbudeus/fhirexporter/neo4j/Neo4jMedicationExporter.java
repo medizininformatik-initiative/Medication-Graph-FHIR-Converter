@@ -5,6 +5,7 @@ import de.tum.med.aiim.markusbudeus.fhirexporter.resource.medication.*;
 import de.tum.med.aiim.markusbudeus.fhirexporter.resource.organization.OrganizationReference;
 import de.tum.med.aiim.markusbudeus.fhirexporter.resource.substance.Substance;
 import de.tum.med.aiim.markusbudeus.fhirexporter.resource.substance.SubstanceReference;
+import de.tum.med.aiim.markusbudeus.graphdbpopulator.CodingSystem;
 import org.neo4j.driver.Record;
 import org.neo4j.driver.*;
 import org.neo4j.driver.types.MapAccessorWithDefaultValue;
@@ -14,6 +15,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Stream;
 
 import static de.tum.med.aiim.markusbudeus.graphdbpopulator.DatabaseDefinitions.*;
@@ -26,10 +28,14 @@ public class Neo4jMedicationExporter extends Neo4jExporter<Medication> {
 	private static final String SYSTEM_VERSION = "version";
 
 	private final boolean allowMedicationsWithoutIngredients;
+	private final boolean collectStatistics;
+	private Statistics statistics;
 
-	public Neo4jMedicationExporter(Session session, boolean allowMedicationsWithoutIngredients) {
+	public Neo4jMedicationExporter(Session session, boolean allowMedicationsWithoutIngredients,
+	                               boolean collectStatistics) {
 		super(session);
 		this.allowMedicationsWithoutIngredients = allowMedicationsWithoutIngredients;
+		this.collectStatistics = collectStatistics;
 	}
 
 	/**
@@ -38,6 +44,12 @@ public class Neo4jMedicationExporter extends Neo4jExporter<Medication> {
 	 */
 	@Override
 	public Stream<Medication> exportObjects() {
+		if (collectStatistics) {
+			this.statistics = new Statistics();
+		} else {
+			this.statistics = null;
+		}
+
 		// This is a complicated query. Sorry about that. :(
 		String query =
 				"MATCH (p:" + PRODUCT_LABEL + ")-[:" + PRODUCT_CONTAINS_DRUG_LABEL + "]->(d:" + DRUG_LABEL + ") " +
@@ -72,12 +84,12 @@ public class Neo4jMedicationExporter extends Neo4jExporter<Medication> {
 						"}) AS drugs " +
 						"OPTIONAL MATCH (p)<-[:" + PACKAGE_BELONGS_TO_PRODUCT_LABEL + "]-(pk:" + PACKAGE_LABEL + ") " +
 						"OPTIONAL MATCH (pkcs:" + CODING_SYSTEM_LABEL + ")<-[:" + BELONGS_TO_CODING_SYSTEM_LABEL + "]-(pkc:" + CODE_LABEL + ")-->(pk) " +
-						"WITH p, drugs, pk, collect("+groupCodingSystem("pkc", "pkcs")+") as packageCodes " +
+						"WITH p, drugs, pk, collect(" + groupCodingSystem("pkc", "pkcs") + ") as packageCodes " +
 						"WITH p, drugs, collect({" +
-						"name:pk.name,"+
-						"amount:pk.amount,"+
+						"name:pk.name," +
+						"amount:pk.amount," +
 						"onMarketDate:pk.onMarketDate," +
-						"codes:packageCodes"+
+						"codes:packageCodes" +
 						"}) as packages " +
 						"OPTIONAL MATCH (pcs:" + CODING_SYSTEM_LABEL + ")<-[:" + BELONGS_TO_CODING_SYSTEM_LABEL + "]-(pc:" + CODE_LABEL + ")-->(p) " +
 						"OPTIONAL MATCH (c:" + COMPANY_LABEL + ")-[:" + MANUFACTURES_LABEL + "]->(p) " +
@@ -91,7 +103,17 @@ public class Neo4jMedicationExporter extends Neo4jExporter<Medication> {
 
 		Result result = session.run(new Query(query));
 
-		return result.stream().flatMap(Neo4jMedicationExporter::toMedication).filter(Objects::nonNull);
+		Stream<Medication> stream = result.stream().flatMap(Neo4jMedicationExporter::toMedication)
+		                                  .filter(Objects::nonNull);
+		if (collectStatistics) {
+			stream = stream.map(this::addToStatistics);
+		}
+		return stream;
+	}
+
+	private Medication addToStatistics(Medication medication) {
+		statistics.add(medication);
+		return medication;
 	}
 
 	private static Stream<Medication> toMedication(Record record) {
@@ -164,7 +186,8 @@ public class Neo4jMedicationExporter extends Neo4jExporter<Medication> {
 	private static void applyProductInfoToMedication(Neo4jExportProduct product, Medication target) {
 		List<Coding> codings = getCodings(target);
 		codings.addAll(product.codes.stream().map(Neo4jExportCode::toCoding).toList()); // Add product codes
-		product.packages.forEach(p -> codings.addAll(p.codes.stream().map(Neo4jExportCode::toCoding).toList())); // Add package codes
+		product.packages.forEach(
+				p -> codings.addAll(p.codes.stream().map(Neo4jExportCode::toCoding).toList())); // Add package codes
 		applyCodings(codings, target);
 
 		target.code.text = product.name;
@@ -222,6 +245,10 @@ public class Neo4jMedicationExporter extends Neo4jExporter<Medication> {
 			medication.code = new CodeableConcept();
 		}
 		medication.code.coding = codings.toArray(new Coding[0]);
+	}
+
+	public void printStatistics() {
+		System.out.println(statistics);
 	}
 
 	private static class Neo4jExportProduct {
@@ -398,7 +425,8 @@ public class Neo4jMedicationExporter extends Neo4jExporter<Medication> {
 		return new Ratio(quantity, Quantity.one());
 	}
 
-	private static Quantity quantityFromMassFromToAndUnit(BigDecimal massFrom, BigDecimal massTo, Neo4jExportUnit unit) {
+	private static Quantity quantityFromMassFromToAndUnit(BigDecimal massFrom, BigDecimal massTo,
+	                                                      Neo4jExportUnit unit) {
 		Quantity quantity;
 		if (massFrom == null) {
 			if (massTo == null) {
@@ -442,6 +470,112 @@ public class Neo4jMedicationExporter extends Neo4jExporter<Medication> {
 	private static BigDecimal toBigDecimal(String germanValue) {
 		if (germanValue == null) return null;
 		return new BigDecimal(germanValue.replace(',', '.'));
+	}
+
+	private static class Statistics {
+
+		private final AtomicInteger simpleMedicationsTotal = new AtomicInteger();
+		private final AtomicInteger compositeMedicationsTotal = new AtomicInteger();
+		private final AtomicInteger compositeMedicationChildrenTotal = new AtomicInteger();
+		private final AtomicInteger compositeChildObjectsWithAtc = new AtomicInteger();
+		private final AtomicInteger atcOccurrencesInCompositeChildren = new AtomicInteger();
+		private final AtomicInteger simpleObjectsWithAtc = new AtomicInteger();
+		private final AtomicInteger atcOccurrencesInSimpleObjects = new AtomicInteger();
+		private final AtomicInteger objectsWithPzn = new AtomicInteger();
+		private final AtomicInteger pznOccurrences = new AtomicInteger();
+
+		private final AtomicInteger simpleObjectsWithDoseForm = new AtomicInteger();
+		private final AtomicInteger simpleObjectsWithEdqmDoseForm = new AtomicInteger();
+
+		private final AtomicInteger compositeChildrenWithDoseForm = new AtomicInteger();
+		private final AtomicInteger compositeChildrenWithEdqmDoseForm = new AtomicInteger();
+
+		public void add(Medication medication) {
+			if (medication == null) return;
+			Type type = inferObjectType(medication);
+
+			switch (type) {
+				case COMPOSITION_PARENT -> {
+					compositeMedicationsTotal.incrementAndGet();
+				}
+				case COMPOSITION_CHILD -> {
+					compositeMedicationChildrenTotal.incrementAndGet();
+					addDoseForm(medication, compositeChildrenWithDoseForm, compositeChildrenWithEdqmDoseForm);
+					addCodes(medication, CodingSystem.ATC.uri, compositeChildObjectsWithAtc,
+							atcOccurrencesInCompositeChildren);
+				}
+				case SIMPLE -> {
+					simpleMedicationsTotal.incrementAndGet();
+					addDoseForm(medication, simpleObjectsWithDoseForm, simpleObjectsWithEdqmDoseForm);
+					addCodes(medication, CodingSystem.ATC.uri, simpleObjectsWithAtc,
+							atcOccurrencesInSimpleObjects);
+				}
+			}
+
+			if (type == Type.SIMPLE || type == Type.COMPOSITION_PARENT) {
+				addCodes(medication, CodingSystem.PZN.uri, objectsWithPzn, pznOccurrences);
+			}
+		}
+
+		private Type inferObjectType(Medication medication) {
+			if (MedicationReference.TYPE.value.equals(medication.ingredient[0].itemReference.type)) {
+				return Type.COMPOSITION_PARENT;
+			} else if (medication.code.text != null) {
+				return Type.SIMPLE;
+			} else {
+				return Type.COMPOSITION_CHILD;
+			}
+		}
+
+		private void addCodes(Medication medication, String codeSystem, AtomicInteger objects,
+		                      AtomicInteger occurrences) {
+			boolean anyMatch = false;
+			for (Coding c : medication.code.coding) {
+				if (codeSystem.equals(c.system)) {
+					occurrences.getAndIncrement();
+					if (!anyMatch) {
+						objects.getAndIncrement();
+						anyMatch = true;
+					}
+				}
+			}
+		}
+
+		private void addDoseForm(Medication medication, AtomicInteger doseFormOnly, AtomicInteger edqmDoseForm) {
+			if (medication.form.coding == null) return;
+			if (medication.form.coding.length > 1) {
+				throw new IllegalStateException("Medication "+medication.identifier[0].value+" contains multiple dose forms!");
+			}
+			doseFormOnly.incrementAndGet();
+			if (CodingSystem.EDQM.uri.equals(medication.form.coding[0].system)) {
+				edqmDoseForm.incrementAndGet();
+			}
+		}
+
+		private enum Type {
+			COMPOSITION_PARENT,
+			COMPOSITION_CHILD,
+			SIMPLE,
+		}
+
+		@Override
+		public String toString() {
+			return "Statistics{" +
+					"simpleMedicationsTotal=" + simpleMedicationsTotal +
+					", compositeMedicationsTotal=" + compositeMedicationsTotal +
+					", compositeMedicationChildrenTotal=" + compositeMedicationChildrenTotal +
+					", compositeChildObjectsWithAtc=" + compositeChildObjectsWithAtc +
+					", atcOccurrencesInCompositeChildren=" + atcOccurrencesInCompositeChildren +
+					", simpleObjectsWithAtc=" + simpleObjectsWithAtc +
+					", atcOccurrencesInSimpleObjects=" + atcOccurrencesInSimpleObjects +
+					", objectsWithPzn=" + objectsWithPzn +
+					", pznOccurrences=" + pznOccurrences +
+					", simpleObjectsWithDoseForm=" + simpleObjectsWithDoseForm +
+					", simpleObjectsWithEdqmDoseForm=" + simpleObjectsWithEdqmDoseForm +
+					", compositeChildrenWithDoseForm=" + compositeChildrenWithDoseForm +
+					", compositeChildrenWithEdqmDoseForm=" + compositeChildrenWithEdqmDoseForm +
+					'}';
+		}
 	}
 
 }

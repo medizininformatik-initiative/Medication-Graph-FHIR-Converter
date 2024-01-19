@@ -6,8 +6,10 @@ import de.tum.med.aiim.markusbudeus.fhirexporter.resource.Uri;
 
 public class MedicationReference extends Reference {
 
+	public static final Uri TYPE = new Uri("http://hl7.org/fhir/StructureDefinition/Medication");
+
 	public MedicationReference(long parentMmiId, int childNo) {
-		super(new Uri("http://hl7.org/fhir/StructureDefinition/Medication"));
+		super(TYPE);
 		this.identifier = Identifier.combinedMedicalProductSubproductIdentifier(parentMmiId, childNo);
 	}
 

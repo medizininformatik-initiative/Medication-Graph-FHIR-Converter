@@ -120,6 +120,11 @@ public class ConnectionDialog extends GridBagFrame {
 		}
 	}
 
+	@Override
+	protected void onNavigateTo() {
+		txtPassword.requestFocus();
+	}
+
 	private JLabel createLabel(String text) {
 		return new JLabel(text);
 	}

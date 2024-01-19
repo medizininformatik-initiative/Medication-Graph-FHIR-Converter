@@ -4,6 +4,7 @@ import de.tum.med.aiim.markusbudeus.fhirexporter.resource.CodeableConcept;
 import de.tum.med.aiim.markusbudeus.fhirexporter.resource.Coding;
 import de.tum.med.aiim.markusbudeus.fhirexporter.resource.Identifier;
 import de.tum.med.aiim.markusbudeus.fhirexporter.resource.substance.Substance;
+import de.tum.med.aiim.markusbudeus.graphdbpopulator.CodingSystem;
 import org.neo4j.driver.Query;
 import org.neo4j.driver.Record;
 import org.neo4j.driver.Result;
@@ -11,6 +12,7 @@ import org.neo4j.driver.Session;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Stream;
 
 import static de.tum.med.aiim.markusbudeus.graphdbpopulator.DatabaseDefinitions.*;
@@ -22,8 +24,12 @@ public class Neo4jSubstanceExporter extends Neo4jExporter<Substance> {
 	private static final String SYSTEM_DATE = "date";
 	private static final String SYSTEM_VERSION = "version";
 
-	public Neo4jSubstanceExporter(Session session) {
+	protected final boolean collectStatistics;
+	private Statistics statistics;
+
+	public Neo4jSubstanceExporter(Session session, boolean collectStatistics) {
 		super(session);
+		this.collectStatistics = collectStatistics;
 	}
 
 	/**
@@ -32,6 +38,12 @@ public class Neo4jSubstanceExporter extends Neo4jExporter<Substance> {
 	 */
 	@Override
 	public Stream<Substance> exportObjects() {
+		if (collectStatistics) {
+			this.statistics = new Statistics();
+		} else {
+			this.statistics = null;
+		}
+
 		Result result = session.run(new Query(
 				"MATCH (s:" + SUBSTANCE_LABEL + ") " +
 						"MATCH (cs:" + CODING_SYSTEM_LABEL + ")<-[:" + BELONGS_TO_CODING_SYSTEM_LABEL + "]-(c:" + CODE_LABEL + ")-->(s) " +
@@ -44,8 +56,16 @@ public class Neo4jSubstanceExporter extends Neo4jExporter<Substance> {
 						"RETURN s.name, s.mmiId, codes"
 		));
 
-		return result.stream().map(Neo4jSubstanceExporter::toSubstance);
+		Stream<Substance> stream = result.stream().map(Neo4jSubstanceExporter::toSubstance);
+		if (collectStatistics) {
+			stream = stream.map(this::addToStatistics);
+		}
+		return stream;
+	}
 
+	private Substance addToStatistics(Substance substance) {
+		statistics.add(substance);
+		return substance;
 	}
 
 	private static Substance toSubstance(Record record) {
@@ -67,6 +87,61 @@ public class Neo4jSubstanceExporter extends Neo4jExporter<Substance> {
 		substance.code = codeableConcept;
 
 		return substance;
+	}
+
+	public void printStatistics() {
+		System.out.println(statistics);
+	}
+
+	private static class Statistics {
+		private final AtomicInteger uniiOccurrences = new AtomicInteger();
+		private final AtomicInteger objectsWithUnii = new AtomicInteger();
+		private final AtomicInteger casOccurrences = new AtomicInteger();
+		private final AtomicInteger objectsWithCas = new AtomicInteger();
+		private final AtomicInteger rxcuiOccurrences = new AtomicInteger();
+		private final AtomicInteger objectsWithRxcui = new AtomicInteger();
+		private final AtomicInteger askOccurrences = new AtomicInteger();
+		private final AtomicInteger objectsWithAsk = new AtomicInteger();
+		private final AtomicInteger innOccurrences = new AtomicInteger();
+		private final AtomicInteger objectsWithInn = new AtomicInteger();
+
+		public void add(Substance substance) {
+			if (substance == null || substance.code == null) return;
+			addCodes(substance, CodingSystem.UNII.uri, uniiOccurrences, objectsWithUnii);
+			addCodes(substance, CodingSystem.CAS.uri, casOccurrences, objectsWithCas);
+			addCodes(substance, CodingSystem.RXCUI.uri, rxcuiOccurrences, objectsWithRxcui);
+			addCodes(substance, CodingSystem.ASK.uri, askOccurrences, objectsWithAsk);
+			addCodes(substance, CodingSystem.INN.uri, innOccurrences, objectsWithInn);
+		}
+
+		private void addCodes(Substance substance, String codeSystem, AtomicInteger objects, AtomicInteger occurrences) {
+			boolean anyMatch = false;
+			for (Coding c: substance.code.coding) {
+				if (codeSystem.equals(c.system)) {
+					occurrences.getAndIncrement();
+					if (!anyMatch) {
+						objects.getAndIncrement();
+						anyMatch = true;
+					}
+				}
+			}
+		}
+
+		@Override
+		public String toString() {
+			return "Statistics{" +
+					"uniiOccurrences=" + uniiOccurrences +
+					", objectsWithUnii=" + objectsWithUnii +
+					", casOccurrences=" + casOccurrences +
+					", objectsWithCas=" + objectsWithCas +
+					", rxcuiOccurrences=" + rxcuiOccurrences +
+					", objectsWithRxcui=" + objectsWithRxcui +
+					", askOccurrences=" + askOccurrences +
+					", objectsWithAsk=" + objectsWithAsk +
+					", innOccurrences=" + innOccurrences +
+					", objectsWithInn=" + objectsWithInn +
+					'}';
+		}
 	}
 
 }

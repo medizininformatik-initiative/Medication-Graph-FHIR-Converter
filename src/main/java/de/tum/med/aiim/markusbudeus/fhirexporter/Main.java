@@ -16,6 +16,10 @@ import java.util.function.Function;
 
 public class Main {
 
+
+	// Medications: Statistics{simpleMedicationsTotal=66640, compositeMedicationsTotal=1947, compositeMedicationChildrenTotal=5604, compositeChildObjectsWithAtc=5546, atcOccurrencesInCompositeChildren=5548, simpleObjectsWithAtc=66606, atcOccurrencesInSimpleObjects=66693, objectsWithPzn=68586, pznOccurrences=109458, simpleObjectsWithDoseForm=52564, simpleObjectsWithEdqmDoseForm=52564, compositeChildrenWithDoseForm=4490, compositeChildrenWithEdqmDoseForm=4490}
+	// Substances: Statistics{uniiOccurrences=4319, objectsWithUnii=4319, casOccurrences=4740, objectsWithCas=7354, rxcuiOccurrences=3756, objectsWithRxcui=4051, askOccurrences=6361, objectsWithAsk=6361, innOccurrences=3230, objectsWithInn=3230}
+
 	private static final Path OUT_PATH = Path.of("output");
 	private static final String SUBSTANCE_OUT_PATH = "substance";
 	private static final String MEDICATION_OUT_PATH = "medication";
@@ -24,8 +28,8 @@ public class Main {
 	public static void main(String[] args) throws IOException {
 		try (DatabaseConnection connection = new DatabaseConnection();
 		     Session session = connection.createSession()) {
-			exportSubstances(session, OUT_PATH.resolve(SUBSTANCE_OUT_PATH));
-			exportMedications(session, OUT_PATH.resolve(MEDICATION_OUT_PATH));
+			exportSubstances(session, OUT_PATH.resolve(SUBSTANCE_OUT_PATH), true);
+			exportMedications(session, OUT_PATH.resolve(MEDICATION_OUT_PATH), true);
 			exportOrganizations(session, OUT_PATH.resolve(ORGANIZATION_OUT_PATH));
 		}
 	}
@@ -35,13 +39,19 @@ public class Main {
 		return part1 + " " + part2;
 	}
 
-	public static void exportSubstances(Session session, Path outPath) throws IOException {
-		exportToJsonFiles(new Neo4jSubstanceExporter(session), outPath,
+	public static void exportSubstances(Session session, Path outPath, boolean collectAndPrintStatistics) throws IOException {
+		Neo4jSubstanceExporter exporter = new Neo4jSubstanceExporter(session, collectAndPrintStatistics);
+		exportToJsonFiles(exporter, outPath,
 				substance -> appendPart2UnlessNull(substance.identifier[0].value, substance.description));
+		if (collectAndPrintStatistics)
+			exporter.printStatistics();
 	}
-	public static void exportMedications(Session session, Path outPath) throws IOException {
-		exportToJsonFiles(new Neo4jMedicationExporter(session, false), outPath,
+	public static void exportMedications(Session session, Path outPath, boolean collectAndPrintStatistics) throws IOException {
+		Neo4jMedicationExporter exporter = new Neo4jMedicationExporter(session, false, collectAndPrintStatistics);
+		exportToJsonFiles(exporter, outPath,
 				medication -> appendPart2UnlessNull(medication.identifier[0].value,medication.code.text));
+		if (collectAndPrintStatistics)
+			exporter.printStatistics();
 	}
 	public static void exportOrganizations(Session session, Path outPath) throws IOException {
 		exportToJsonFiles(new Neo4jOrganizationExporter(session), outPath,

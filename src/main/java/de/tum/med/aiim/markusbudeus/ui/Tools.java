@@ -20,6 +20,7 @@ public class Tools {
 	public static File selectDirectory(JComponent parent) {
 		final JFileChooser fc = new JFileChooser();
 		fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+		fc.setCurrentDirectory(new File(System.getProperty("user.dir")));
 		int returnVal = fc.showOpenDialog(parent);
 
 		if (returnVal == JFileChooser.APPROVE_OPTION) {

@@ -34,6 +34,7 @@ public class Application extends JFrame {
 	private void navigateTo(ApplicationFrame frame) {
 		setContentPane(frame);
 		pack();
+		frame.onNavigateTo();
 	}
 
 	private void navigateToMainMenu() {

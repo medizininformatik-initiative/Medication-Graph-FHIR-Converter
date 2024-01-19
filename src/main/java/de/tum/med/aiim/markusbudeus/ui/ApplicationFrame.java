@@ -10,6 +10,10 @@ public class ApplicationFrame extends JPanel {
 		this.completionCallback = completionCallback;
 	}
 
+	protected void onNavigateTo() {
+
+	}
+
 	protected void complete() {
 		if (completionCallback != null)
 			completionCallback.run();
