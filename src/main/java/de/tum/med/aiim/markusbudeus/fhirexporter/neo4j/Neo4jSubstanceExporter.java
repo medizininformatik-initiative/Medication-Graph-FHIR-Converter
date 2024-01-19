@@ -94,6 +94,9 @@ public class Neo4jSubstanceExporter extends Neo4jExporter<Substance> {
 	}
 
 	private static class Statistics {
+
+		private final AtomicInteger substancesTotal = new AtomicInteger();
+		private final AtomicInteger substancesWithAtLeastOneCode = new AtomicInteger();
 		private final AtomicInteger uniiOccurrences = new AtomicInteger();
 		private final AtomicInteger objectsWithUnii = new AtomicInteger();
 		private final AtomicInteger casOccurrences = new AtomicInteger();
@@ -106,15 +109,20 @@ public class Neo4jSubstanceExporter extends Neo4jExporter<Substance> {
 		private final AtomicInteger objectsWithInn = new AtomicInteger();
 
 		public void add(Substance substance) {
-			if (substance == null || substance.code == null) return;
-			addCodes(substance, CodingSystem.UNII.uri, uniiOccurrences, objectsWithUnii);
-			addCodes(substance, CodingSystem.CAS.uri, casOccurrences, objectsWithCas);
-			addCodes(substance, CodingSystem.RXCUI.uri, rxcuiOccurrences, objectsWithRxcui);
-			addCodes(substance, CodingSystem.ASK.uri, askOccurrences, objectsWithAsk);
-			addCodes(substance, CodingSystem.INN.uri, innOccurrences, objectsWithInn);
+			if (substance == null) return;
+			substancesTotal.incrementAndGet();
+			if (substance.code == null) return;
+			boolean anyCode = addCodes(substance, CodingSystem.UNII.uri, uniiOccurrences, objectsWithUnii);
+			anyCode = addCodes(substance, CodingSystem.CAS.uri, casOccurrences, objectsWithCas) | anyCode;
+			anyCode = addCodes(substance, CodingSystem.RXCUI.uri, rxcuiOccurrences, objectsWithRxcui) | anyCode;
+			anyCode = addCodes(substance, CodingSystem.ASK.uri, askOccurrences, objectsWithAsk) | anyCode;
+			anyCode = addCodes(substance, CodingSystem.INN.uri, innOccurrences, objectsWithInn) | anyCode;
+			if (anyCode) {
+				substancesWithAtLeastOneCode.incrementAndGet();
+			}
 		}
 
-		private void addCodes(Substance substance, String codeSystem, AtomicInteger objects, AtomicInteger occurrences) {
+		private boolean addCodes(Substance substance, String codeSystem, AtomicInteger objects, AtomicInteger occurrences) {
 			boolean anyMatch = false;
 			for (Coding c: substance.code.coding) {
 				if (codeSystem.equals(c.system)) {
@@ -125,12 +133,15 @@ public class Neo4jSubstanceExporter extends Neo4jExporter<Substance> {
 					}
 				}
 			}
+			return anyMatch;
 		}
 
 		@Override
 		public String toString() {
 			return "Statistics{" +
-					"uniiOccurrences=" + uniiOccurrences +
+					"substancesTotal=" + substancesTotal +
+					", substancesWithAtLeastOneCode=" + substancesWithAtLeastOneCode +
+					", uniiOccurrences=" + uniiOccurrences +
 					", objectsWithUnii=" + objectsWithUnii +
 					", casOccurrences=" + casOccurrences +
 					", objectsWithCas=" + objectsWithCas +

@@ -128,9 +128,9 @@ public class FhirExporterFrame extends GridBagFrame {
 		DatabaseConnection.runSession(session -> {
 			try {
 				System.out.println("Exporting substances...");
-				Main.exportSubstances(session, directory.resolve(SUBSTANCE_OUT), false);
+				Main.exportSubstances(session, directory.resolve(SUBSTANCE_OUT), true);
 				System.out.println("Exporting medications...");
-				Main.exportMedications(session, directory.resolve(MEDICATION_OUT), false);
+				Main.exportMedications(session, directory.resolve(MEDICATION_OUT), true);
 				System.out.println("Exporting organizations...");
 				Main.exportOrganizations(session, directory.resolve(COMPANY_OUT));
 			} catch (IOException e) {
