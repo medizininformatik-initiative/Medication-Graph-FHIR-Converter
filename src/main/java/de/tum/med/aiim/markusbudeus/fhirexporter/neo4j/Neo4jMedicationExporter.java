@@ -101,6 +101,8 @@ public class Neo4jMedicationExporter extends Neo4jExporter<Medication> {
 						"drugs, " +
 						"packages";
 
+//		System.out.println(query);
+
 		Result result = session.run(new Query(query));
 
 		Stream<Medication> stream = result.stream().flatMap(Neo4jMedicationExporter::toMedication)
@@ -143,6 +145,7 @@ public class Neo4jMedicationExporter extends Neo4jExporter<Medication> {
 				childMedication.identifier = new Identifier[]{
 						Identifier.combinedMedicalProductSubproductIdentifier(exportProduct.mmiId, childNo)
 				};
+				applyManufacturerInfoToMedication(exportProduct, childMedication);
 				applyDrugInfoToMedication(drugs.get(i), childMedication);
 
 				Ingredient childMedIngredient = new Ingredient();
@@ -191,9 +194,7 @@ public class Neo4jMedicationExporter extends Neo4jExporter<Medication> {
 		applyCodings(codings, target);
 
 		target.code.text = product.name;
-		if (product.companyMmiId != null) {
-			target.manufacturer = new OrganizationReference(product.companyMmiId, product.companyName);
-		}
+		applyManufacturerInfoToMedication(product, target);
 
 		target.identifier = new Identifier[]{Identifier.fromProductMmiId(product.mmiId)};
 	}
@@ -225,6 +226,12 @@ public class Neo4jMedicationExporter extends Neo4jExporter<Medication> {
 		List<Coding> codings = getCodings(target);
 		codings.addAll(drug.atcCodes.stream().map(Neo4jExportCode::toCoding).toList());
 		applyCodings(codings, target);
+	}
+
+	private static void applyManufacturerInfoToMedication(Neo4jExportProduct product, Medication target) {
+		if (product.companyMmiId != null) {
+			target.manufacturer = new OrganizationReference(product.companyMmiId, product.companyName);
+		}
 	}
 
 	private static List<Coding> getCodings(Medication medication) {
@@ -410,12 +417,12 @@ public class Neo4jMedicationExporter extends Neo4jExporter<Medication> {
 	 * value. Additionally, you can add more properties to the resulting object using the given "extra" parameter.
 	 */
 	private String groupCodingSystem(String codeVariableName, String codingSystemVariableName, String extra) {
-		return "{" + (extra != null ? extra + "," : "") +
+		return "CASE WHEN NOT "+codeVariableName +" IS NULL THEN {" + (extra != null ? extra + "," : "") +
 				CODE + ":" + codeVariableName + ".code," +
 				SYSTEM_URI + ":" + codingSystemVariableName + ".uri," +
 				SYSTEM_DATE + ":" + codingSystemVariableName + ".date," +
 				SYSTEM_VERSION + ":" + codingSystemVariableName + ".version" +
-				"}";
+				"} ELSE NULL END";
 	}
 
 
@@ -542,11 +549,15 @@ public class Neo4jMedicationExporter extends Neo4jExporter<Medication> {
 		}
 
 		private void addDoseForm(Medication medication, AtomicInteger doseFormOnly, AtomicInteger edqmDoseForm) {
-			if (medication.form.coding == null) return;
+			if (medication.form == null) return;
+			if (medication.form.text == null && medication.form.coding == null) return;
+			doseFormOnly.incrementAndGet();
+			if (medication.form.coding == null) {
+				return;
+			}
 			if (medication.form.coding.length > 1) {
 				throw new IllegalStateException("Medication "+medication.identifier[0].value+" contains multiple dose forms!");
 			}
-			doseFormOnly.incrementAndGet();
 			if (CodingSystem.EDQM.uri.equals(medication.form.coding[0].system)) {
 				edqmDoseForm.incrementAndGet();
 			}

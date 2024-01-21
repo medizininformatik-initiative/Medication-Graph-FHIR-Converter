@@ -122,7 +122,7 @@ public class Neo4jSubstanceExporter extends Neo4jExporter<Substance> {
 			}
 		}
 
-		private boolean addCodes(Substance substance, String codeSystem, AtomicInteger objects, AtomicInteger occurrences) {
+		private boolean addCodes(Substance substance, String codeSystem, AtomicInteger occurrences, AtomicInteger objects) {
 			boolean anyMatch = false;
 			for (Coding c: substance.code.coding) {
 				if (codeSystem.equals(c.system)) {

@@ -6,7 +6,6 @@ import de.tum.med.aiim.markusbudeus.fhirexporter.neo4j.Neo4jExporter;
 import de.tum.med.aiim.markusbudeus.fhirexporter.neo4j.Neo4jMedicationExporter;
 import de.tum.med.aiim.markusbudeus.fhirexporter.neo4j.Neo4jOrganizationExporter;
 import de.tum.med.aiim.markusbudeus.fhirexporter.neo4j.Neo4jSubstanceExporter;
-import de.tum.med.aiim.markusbudeus.fhirexporter.resource.medication.Medication;
 import de.tum.med.aiim.markusbudeus.graphdbpopulator.DatabaseConnection;
 import org.neo4j.driver.Session;
 
@@ -14,58 +13,58 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 
 public class Main {
 
-
-	// Medications: Statistics{simpleMedicationsTotal=66640, compositeMedicationsTotal=1947, compositeMedicationChildrenTotal=5604, compositeChildObjectsWithAtc=5546, atcOccurrencesInCompositeChildren=5548, simpleObjectsWithAtc=66606, atcOccurrencesInSimpleObjects=66693, objectsWithPzn=68586, pznOccurrences=109458, simpleObjectsWithDoseForm=52564, simpleObjectsWithEdqmDoseForm=52564, compositeChildrenWithDoseForm=4490, compositeChildrenWithEdqmDoseForm=4490}
+	// Medications: Statistics{simpleMedicationsTotal=66640, compositeMedicationsTotal=1947, compositeMedicationChildrenTotal=5604, compositeChildObjectsWithAtc=5546, atcOccurrencesInCompositeChildren=5548, simpleObjectsWithAtc=66606, atcOccurrencesInSimpleObjects=66693, objectsWithPzn=68586, pznOccurrences=109458, simpleObjectsWithDoseForm=66640, simpleObjectsWithEdqmDoseForm=52564, compositeChildrenWithDoseForm=5604, compositeChildrenWithEdqmDoseForm=4490}
 	// Found in file: [compositeMedicationChildrenTotal=5576]
-	// Substances: Statistics{substancesWithAtLeastOneCode=6361, uniiOccurrences=4319, objectsWithUnii=4319, casOccurrences=4740, objectsWithCas=7354, rxcuiOccurrences=3756, objectsWithRxcui=4051, askOccurrences=6361, objectsWithAsk=6361, innOccurrences=3230, objectsWithInn=3230}
+	// Substances: Statistics{substancesTotal=6361,
+	// substancesWithAtLeastOneCode=6361,
+	// uniiOccurrences=4319,
+	// objectsWithUnii=4319,
+	// casOccurrences=4740,
+	// objectsWithCas=7354,
+	// rxcuiOccurrences=3756,
+	// objectsWithRxcui=4051,
+	// askOccurrences=6361,
+	// objectsWithAsk=6361, innOccurrences=3230, objectsWithInn=3230}
 
 	private static final Path OUT_PATH = Path.of("output");
 	private static final String SUBSTANCE_OUT_PATH = "substance";
 	private static final String MEDICATION_OUT_PATH = "medication";
-	private static final String ORGANIZATION_OUT_PATH = "organization";
+	private static final String ORGANIZATION_OUT_PATH = "organisation";
 
 	public static void main(String[] args) throws IOException {
 		try (DatabaseConnection connection = new DatabaseConnection();
 		     Session session = connection.createSession()) {
-
-			Neo4jMedicationExporter exporter = new Neo4jMedicationExporter(session, false, true);
-			List<Medication> medications = exporter.exportObjects().toList();
-			List<String> names = medications.stream()
-			                               .map(medication -> appendPart2UnlessNull(medication.identifier[0].value,
-					                               medication.code.text)).toList();
-			System.out.println("Total: " + medications.size());
-			System.out.println("Total names: " + names.size());
-			Set<String> namesFound = new HashSet<>();
-			for (String name: names) {
-				if (!namesFound.add(name)) {
-					System.out.println("Name duplicate: "+name);
-				}
-			}
-
-
-//			exportSubstances(session, OUT_PATH.resolve(SUBSTANCE_OUT_PATH), true);
-//			exportMedications(session, OUT_PATH.resolve(MEDICATION_OUT_PATH), true);
-//			exportOrganizations(session, OUT_PATH.resolve(ORGANIZATION_OUT_PATH));
+			exportSubstances(session, OUT_PATH.resolve(SUBSTANCE_OUT_PATH), true);
+			exportMedications(session, OUT_PATH.resolve(MEDICATION_OUT_PATH), true);
+			exportOrganizations(session, OUT_PATH.resolve(ORGANIZATION_OUT_PATH));
 		}
 	}
 
-	private static String appendPart2UnlessNull(String part1, String part2) {
-		if (part2 == null) return part1;
-		return part1 + " " + part2;
+	private static String combine(String... parts) {
+		StringBuilder sb = new StringBuilder();
+		boolean first = true;
+		for (String s: parts) {
+			if (s != null) {
+				if (first)
+					first = false;
+				else
+					sb.append(" ");
+				sb.append(s);
+			}
+		}
+		return sb.toString();
 	}
 
 	public static void exportSubstances(Session session, Path outPath, boolean collectAndPrintStatistics)
 	throws IOException {
 		Neo4jSubstanceExporter exporter = new Neo4jSubstanceExporter(session, collectAndPrintStatistics);
 		exportToJsonFiles(exporter, outPath,
-				substance -> appendPart2UnlessNull(substance.identifier[0].value, substance.description));
+				substance -> combine(substance.identifier[0].value, substance.description));
 		if (collectAndPrintStatistics)
 			exporter.printStatistics();
 	}
@@ -74,7 +73,11 @@ public class Main {
 	throws IOException {
 		Neo4jMedicationExporter exporter = new Neo4jMedicationExporter(session, false, collectAndPrintStatistics);
 		exportToJsonFiles(exporter, outPath,
-				medication -> appendPart2UnlessNull(medication.identifier[0].value, medication.code.text));
+				medication -> combine(
+						medication.identifier[0].value,
+						medication.code.text,
+						medication.manufacturer.display
+				));
 		if (collectAndPrintStatistics)
 			exporter.printStatistics();
 	}
@@ -86,7 +89,7 @@ public class Main {
 					if (organization.alias != null && organization.alias.length > 0) {
 						name = organization.alias[0];
 					} else name = organization.name;
-					return appendPart2UnlessNull(organization.identifier.value, name);
+					return combine(organization.identifier.value, name);
 				});
 	}
 
@@ -100,9 +103,9 @@ public class Main {
 	private static <T> void exportToJsonFiles(Neo4jExporter<T> exporter, Path outPath,
 	                                          Function<T, String> filenameProvider) throws IOException {
 		JsonExporter jsonExporter = new GsonExporter(outPath);
+		final Set<String> filenamesUsed = new HashSet<>();
 		exporter.exportObjects().forEach(object -> {
 			try {
-				Set<String> filenamesUsed = new HashSet<>();
 				String filename = filenameProvider.apply(object);
 				if (!filenamesUsed.add(filename)) {
 					throw new IllegalArgumentException("A filename was generated twice: "+filename);

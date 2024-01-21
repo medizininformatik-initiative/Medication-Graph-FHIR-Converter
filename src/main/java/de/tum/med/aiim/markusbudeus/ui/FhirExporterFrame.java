@@ -20,8 +20,8 @@ import static java.awt.GridBagConstraints.*;
 public class FhirExporterFrame extends GridBagFrame {
 
 	private static final String MEDICATION_OUT = "medication";
-	private static final String SUBSTANCE_OUT = "substances";
-	private static final String COMPANY_OUT = "organisations";
+	private static final String SUBSTANCE_OUT = "substance";
+	private static final String COMPANY_OUT = "organisation";
 
 	public static void main(String[] args) {
 		Tools.createFrame(FhirExporterFrame::new);
@@ -29,6 +29,7 @@ public class FhirExporterFrame extends GridBagFrame {
 
 	private final JTextField txtOutputDir;
 	private final JButton buttonExport;
+	private final JButton buttonReturn;
 	private final JLabel errorText = new JLabel(" ");
 
 	private boolean exportUnderway = false;
@@ -78,7 +79,7 @@ public class FhirExporterFrame extends GridBagFrame {
 
 		gbc.gridx = 0;
 		gbc.anchor = WEST;
-		JButton buttonReturn = new JButton("Exit");
+		buttonReturn = new JButton("Exit");
 		buttonReturn.addActionListener(e -> this.complete());
 		add(buttonReturn, gbc);
 
@@ -98,6 +99,7 @@ public class FhirExporterFrame extends GridBagFrame {
 		errorText.setText(" ");
 		exportUnderway = true;
 		buttonExport.setEnabled(false);
+		buttonReturn.setEnabled(false);
 
 		new Thread(() -> {
 			System.out.println("Running export, this may take a while...");
@@ -120,6 +122,7 @@ public class FhirExporterFrame extends GridBagFrame {
 			} finally {
 				exportUnderway = false;
 				buttonExport.setEnabled(true);
+				buttonReturn.setEnabled(true);
 			}
 		}).start();
 	}
