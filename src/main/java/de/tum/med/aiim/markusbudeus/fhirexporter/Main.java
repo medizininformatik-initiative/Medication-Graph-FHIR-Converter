@@ -20,16 +20,7 @@ public class Main {
 
 	// Medications: Statistics{simpleMedicationsTotal=66640, compositeMedicationsTotal=1947, compositeMedicationChildrenTotal=5604, compositeChildObjectsWithAtc=5546, atcOccurrencesInCompositeChildren=5548, simpleObjectsWithAtc=66606, atcOccurrencesInSimpleObjects=66693, objectsWithPzn=68586, pznOccurrences=109458, simpleObjectsWithDoseForm=66640, simpleObjectsWithEdqmDoseForm=52564, compositeChildrenWithDoseForm=5604, compositeChildrenWithEdqmDoseForm=4490}
 	// Found in file: [compositeMedicationChildrenTotal=5576]
-	// Substances: Statistics{substancesTotal=6361,
-	// substancesWithAtLeastOneCode=6361,
-	// uniiOccurrences=4319,
-	// objectsWithUnii=4319,
-	// casOccurrences=4740,
-	// objectsWithCas=7354,
-	// rxcuiOccurrences=3756,
-	// objectsWithRxcui=4051,
-	// askOccurrences=6361,
-	// objectsWithAsk=6361, innOccurrences=3230, objectsWithInn=3230}
+	// Substances: Statistics{substancesTotal=6361, substancesWithAtLeastOneCode=6361, uniiOccurrences=4319, objectsWithUnii=4319, casOccurrences=4740, objectsWithCas=7354, rxcuiOccurrences=3756, objectsWithRxcui=4051, askOccurrences=6361, objectsWithAsk=6361, innOccurrences=3230, objectsWithInn=3230}
 
 	private static final Path OUT_PATH = Path.of("output");
 	private static final String SUBSTANCE_OUT_PATH = "substance";
@@ -75,8 +66,7 @@ public class Main {
 		exportToJsonFiles(exporter, outPath,
 				medication -> combine(
 						medication.identifier[0].value,
-						medication.code.text,
-						medication.manufacturer.display
+						medication.code.text
 				));
 		if (collectAndPrintStatistics)
 			exporter.printStatistics();

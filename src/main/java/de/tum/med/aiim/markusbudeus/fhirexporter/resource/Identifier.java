@@ -11,39 +11,29 @@ public class Identifier {
 		);
 	}
 
-	public static Identifier combinedMedicalProductSubproductIdentifier(long parentMmiId, int childNo) {
-		Identifier identifier = Identifier.temporaryId(parentMmiId + "-" + childNo);
-//		identifier.notice = "This is a temporary id assigned to a Medication object so it can be referenced by " +
-//				"another Medication object (which is a combined preparation) as its ingredient. " +
-//				"It is advised that after you uploaded all instances to the FHIR server, you remove this identifier " +
-//				"and replace all references to it by references to the object's URI on the server.";
-		return identifier;
+	public static Identifier combinedMedicalProductSubproductIdentifier(long parentMmiId, int childNo, Long organizationMmiId) {
+		return Identifier.temporaryId(rawStringIdFromProductAndOrganizationMmiId(parentMmiId, organizationMmiId) + "-" + childNo);
 	}
 
 	public static Identifier fromOrganizationMmiId(long mmiId) {
-		Identifier identifier = temporaryId(String.valueOf(mmiId));
-//		identifier.notice = "This is a temporary id assigned to an Organization object so it can be referenced by " +
-//				"Medication objects as manufacturer. " +
-//				"It is advised that after you uploaded all instances to the FHIR server, you remove this identifier " +
-//				"and replace all references to it by references to the object's URI on the server.";
-		return identifier;
+		return temporaryId(String.valueOf(mmiId));
 	}
 
 	public static Identifier fromSubstanceMmiId(long mmiId) {
-		Identifier identifier = temporaryId(String.valueOf(mmiId));
-//		identifier.notice = "This is a temporary id assigned to a Substance object so it can be referenced by " +
-//				"Medication objects as ingredient. " +
-//				"It is advised that after you uploaded all instances to the FHIR server, you remove this identifier " +
-//				"and replace all references to it by references to the object's URI on the server.";
-		return identifier;
+		return temporaryId(String.valueOf(mmiId));
 	}
 
-	public static Identifier fromProductMmiId(long mmiId) {
-		Identifier identifier = temporaryId(String.valueOf(mmiId));
-//		identifier.notice = "This is a temporary id assigned to a Medication object. " +
-//				"It contains the id of the corresponding product in the MMI PharmIndex PRODUCTS.CSV. You may remove " +
-//				"this identifier.";
-		return identifier;
+	public static Identifier fromProductAndOrganizationMmiId(long productMmiId, Long organizationMmiId) {
+		return temporaryId(rawStringIdFromProductAndOrganizationMmiId(productMmiId, organizationMmiId));
+	}
+
+	private static String rawStringIdFromProductAndOrganizationMmiId(long productMmiId, Long organizationMmiId) {
+		String productId = String.valueOf(productMmiId);
+		if (organizationMmiId != null) {
+			return productId + "-" + String.valueOf(organizationMmiId);
+		} else {
+			return productId;
+		}
 	}
 
 	private String use;

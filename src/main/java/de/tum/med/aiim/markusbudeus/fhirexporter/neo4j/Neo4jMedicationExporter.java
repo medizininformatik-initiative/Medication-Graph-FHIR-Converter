@@ -143,7 +143,8 @@ public class Neo4jMedicationExporter extends Neo4jExporter<Medication> {
 				int childNo = i + 1;
 				Medication childMedication = createMedication();
 				childMedication.identifier = new Identifier[]{
-						Identifier.combinedMedicalProductSubproductIdentifier(exportProduct.mmiId, childNo)
+						Identifier.combinedMedicalProductSubproductIdentifier(exportProduct.mmiId, childNo,
+								exportProduct.companyMmiId)
 				};
 				applyManufacturerInfoToMedication(exportProduct, childMedication);
 				applyDrugInfoToMedication(drugs.get(i), childMedication);
@@ -196,7 +197,8 @@ public class Neo4jMedicationExporter extends Neo4jExporter<Medication> {
 		target.code.text = product.name;
 		applyManufacturerInfoToMedication(product, target);
 
-		target.identifier = new Identifier[]{Identifier.fromProductMmiId(product.mmiId)};
+		target.identifier = new Identifier[]{Identifier.fromProductAndOrganizationMmiId(product.mmiId,
+				product.companyMmiId)};
 	}
 
 	private static void applyDrugInfoToMedication(Neo4jExportDrug drug, Medication target) {
@@ -417,7 +419,7 @@ public class Neo4jMedicationExporter extends Neo4jExporter<Medication> {
 	 * value. Additionally, you can add more properties to the resulting object using the given "extra" parameter.
 	 */
 	private String groupCodingSystem(String codeVariableName, String codingSystemVariableName, String extra) {
-		return "CASE WHEN NOT "+codeVariableName +" IS NULL THEN {" + (extra != null ? extra + "," : "") +
+		return "CASE WHEN NOT " + codeVariableName + " IS NULL THEN {" + (extra != null ? extra + "," : "") +
 				CODE + ":" + codeVariableName + ".code," +
 				SYSTEM_URI + ":" + codingSystemVariableName + ".uri," +
 				SYSTEM_DATE + ":" + codingSystemVariableName + ".date," +
@@ -556,7 +558,8 @@ public class Neo4jMedicationExporter extends Neo4jExporter<Medication> {
 				return;
 			}
 			if (medication.form.coding.length > 1) {
-				throw new IllegalStateException("Medication "+medication.identifier[0].value+" contains multiple dose forms!");
+				throw new IllegalStateException(
+						"Medication " + medication.identifier[0].value + " contains multiple dose forms!");
 			}
 			if (CodingSystem.EDQM.uri.equals(medication.form.coding[0].system)) {
 				edqmDoseForm.incrementAndGet();
