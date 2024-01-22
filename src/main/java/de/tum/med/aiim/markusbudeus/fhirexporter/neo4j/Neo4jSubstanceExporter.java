@@ -61,9 +61,10 @@ public class Neo4jSubstanceExporter extends Neo4jExporter<Substance> {
 
 	private static Substance toSubstance(Record record) {
 		Substance substance = new Substance();
+		String substanceName = record.get(0).asString();
 
 		substance.identifier = new Identifier[] { Identifier.fromSubstanceMmiId(record.get(1).asLong()) };
-		substance.description = record.get(0).asString(); // Substance name
+		substance.description = substanceName;
 
 		CodeableConcept codeableConcept = new CodeableConcept();
 		List<Coding> codings = record.get(2).asList(code -> CodingProvider.createCoding(
@@ -74,6 +75,16 @@ public class Neo4jSubstanceExporter extends Neo4jExporter<Substance> {
 				)
 		);
 		codeableConcept.coding = codings.toArray(new Coding[0]);
+
+		for (Coding coding : codings) {
+			if (CodingSystem.INN.uri.equals(coding.system)) {
+				codeableConcept.text = coding.code;
+				break;
+			}
+		}
+
+		if (codeableConcept.text == null)
+			codeableConcept.text = substanceName;
 
 		substance.code = codeableConcept;
 

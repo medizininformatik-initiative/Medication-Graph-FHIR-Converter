@@ -22,10 +22,10 @@ public class Main {
 	// Found in file: [compositeMedicationChildrenTotal=5576]
 	// Substances: Statistics{substancesTotal=15901, substancesWithAtLeastOneCode=6361, uniiOccurrences=4319, objectsWithUnii=4319, casOccurrences=7354, objectsWithCas=4740, rxcuiOccurrences=4051, objectsWithRxcui=3756, askOccurrences=6361, objectsWithAsk=6361, innOccurrences=3230, objectsWithInn=3230}
 
-	private static final Path OUT_PATH = Path.of("output");
-	private static final String SUBSTANCE_OUT_PATH = "substance";
-	private static final String MEDICATION_OUT_PATH = "medication";
-	private static final String ORGANIZATION_OUT_PATH = "organisation";
+	public static final Path OUT_PATH = Path.of("output");
+	public static final String SUBSTANCE_OUT_PATH = "substance";
+	public static final String MEDICATION_OUT_PATH = "medication";
+	public static final String ORGANIZATION_OUT_PATH = "organisation";
 
 	public static void main(String[] args) throws IOException {
 		try (DatabaseConnection connection = new DatabaseConnection();
