@@ -8,9 +8,9 @@ public class MedicationReference extends Reference {
 
 	public static final Uri TYPE = new Uri("http://hl7.org/fhir/StructureDefinition/Medication");
 
-	public MedicationReference(long parentMmiId, int childNo) {
+	public MedicationReference(long parentMmiId, int childNo, Long organizationMmiId) {
 		super(TYPE);
-		this.identifier = Identifier.combinedMedicalProductSubproductIdentifier(parentMmiId, childNo);
+		this.identifier = Identifier.combinedMedicalProductSubproductIdentifier(parentMmiId, childNo, organizationMmiId);
 	}
 
 }

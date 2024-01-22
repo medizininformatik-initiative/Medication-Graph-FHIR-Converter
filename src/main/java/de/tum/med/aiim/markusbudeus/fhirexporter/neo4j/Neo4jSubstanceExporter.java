@@ -15,14 +15,10 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Stream;
 
+import static de.tum.med.aiim.markusbudeus.fhirexporter.neo4j.Neo4jMedicationExporter.*;
 import static de.tum.med.aiim.markusbudeus.graphdbpopulator.DatabaseDefinitions.*;
 
 public class Neo4jSubstanceExporter extends Neo4jExporter<Substance> {
-
-	private static final String CODE = "code";
-	private static final String SYSTEM_URI = "uri";
-	private static final String SYSTEM_DATE = "date";
-	private static final String SYSTEM_VERSION = "version";
 
 	protected final boolean collectStatistics;
 	private Statistics statistics;
@@ -46,13 +42,8 @@ public class Neo4jSubstanceExporter extends Neo4jExporter<Substance> {
 
 		Result result = session.run(new Query(
 				"MATCH (s:" + SUBSTANCE_LABEL + ") " +
-						"MATCH (cs:" + CODING_SYSTEM_LABEL + ")<-[:" + BELONGS_TO_CODING_SYSTEM_LABEL + "]-(c:" + CODE_LABEL + ")-->(s) " +
-						"WITH s, collect({" +
-						CODE + ":c.code," +
-						SYSTEM_URI + ":cs.uri," +
-						SYSTEM_DATE + ":cs.date," +
-						SYSTEM_VERSION + ":cs.version" +
-						"}) AS codes " +
+						"OPTIONAL MATCH (cs:" + CODING_SYSTEM_LABEL + ")<-[:" + BELONGS_TO_CODING_SYSTEM_LABEL + "]-(c:" + CODE_LABEL + ")-->(s) " +
+						"WITH s, collect("+Neo4jMedicationExporter.groupCodingSystem("c", "cs")+") AS codes " +
 						"RETURN s.name, s.mmiId, codes"
 		));
 

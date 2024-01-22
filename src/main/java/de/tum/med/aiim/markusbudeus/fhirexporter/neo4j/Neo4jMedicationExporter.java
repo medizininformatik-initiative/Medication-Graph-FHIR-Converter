@@ -22,10 +22,10 @@ import static de.tum.med.aiim.markusbudeus.graphdbpopulator.DatabaseDefinitions.
 
 public class Neo4jMedicationExporter extends Neo4jExporter<Medication> {
 
-	private static final String CODE = "code";
-	private static final String SYSTEM_URI = "uri";
-	private static final String SYSTEM_DATE = "date";
-	private static final String SYSTEM_VERSION = "version";
+	public static final String CODE = "code";
+	public static final String SYSTEM_URI = "uri";
+	public static final String SYSTEM_DATE = "date";
+	public static final String SYSTEM_VERSION = "version";
 
 	private final boolean allowMedicationsWithoutIngredients;
 	private final boolean collectStatistics;
@@ -151,7 +151,8 @@ public class Neo4jMedicationExporter extends Neo4jExporter<Medication> {
 
 				Ingredient childMedIngredient = new Ingredient();
 				childMedIngredient.isActive = null;
-				childMedIngredient.itemReference = new MedicationReference(exportProduct.mmiId, childNo);
+				childMedIngredient.itemReference = new MedicationReference(exportProduct.mmiId, childNo,
+						exportProduct.companyMmiId);
 				ingredients.add(childMedIngredient);
 				childMedicationObjects.add(childMedication);
 			}
@@ -408,7 +409,7 @@ public class Neo4jMedicationExporter extends Neo4jExporter<Medication> {
 	 * codingSystemVariableName. The collection happens in a way that the {@link Neo4jExportCode} can read the resulting
 	 * value.
 	 */
-	private String groupCodingSystem(String codeVariableName, String codingSystemVariableName) {
+	public static String groupCodingSystem(String codeVariableName, String codingSystemVariableName) {
 		return groupCodingSystem(codeVariableName, codingSystemVariableName, null);
 	}
 
@@ -418,7 +419,7 @@ public class Neo4jMedicationExporter extends Neo4jExporter<Medication> {
 	 * codingSystemVariableName. The collection happens in a way that the {@link Neo4jExportCode} can read the resulting
 	 * value. Additionally, you can add more properties to the resulting object using the given "extra" parameter.
 	 */
-	private String groupCodingSystem(String codeVariableName, String codingSystemVariableName, String extra) {
+	public static String groupCodingSystem(String codeVariableName, String codingSystemVariableName, String extra) {
 		return "CASE WHEN NOT " + codeVariableName + " IS NULL THEN {" + (extra != null ? extra + "," : "") +
 				CODE + ":" + codeVariableName + ".code," +
 				SYSTEM_URI + ":" + codingSystemVariableName + ".uri," +
