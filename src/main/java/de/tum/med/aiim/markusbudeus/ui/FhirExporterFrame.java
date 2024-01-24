@@ -102,6 +102,7 @@ public class FhirExporterFrame extends GridBagFrame {
 		buttonReturn.setEnabled(false);
 
 		new Thread(() -> {
+			long time = System.currentTimeMillis();
 			System.out.println("Running export, this may take a while...");
 			try {
 				System.out.println("Preparing output directory...");
@@ -112,7 +113,7 @@ public class FhirExporterFrame extends GridBagFrame {
 				Files.copy(noticeInput, outputDir.resolve("NOTICE.TXT"), StandardCopyOption.REPLACE_EXISTING);
 
 				doExports(outputDir);
-				System.out.println("All done.");
+				System.out.println("All done. ("+(System.currentTimeMillis()-time)+"ms)");
 
 			} catch (AccessDeniedException e) {
 				errorText.setText("Access to output directory denied.");
@@ -131,9 +132,9 @@ public class FhirExporterFrame extends GridBagFrame {
 		DatabaseConnection.runSession(session -> {
 			try {
 				System.out.println("Exporting substances...");
-				Main.exportSubstances(session, directory.resolve(SUBSTANCE_OUT), true);
+				Main.exportSubstances(session, directory.resolve(SUBSTANCE_OUT), false);
 				System.out.println("Exporting medications...");
-				Main.exportMedications(session, directory.resolve(MEDICATION_OUT), true);
+				Main.exportMedications(session, directory.resolve(MEDICATION_OUT), false);
 				System.out.println("Exporting organizations...");
 				Main.exportOrganizations(session, directory.resolve(COMPANY_OUT));
 			} catch (IOException e) {

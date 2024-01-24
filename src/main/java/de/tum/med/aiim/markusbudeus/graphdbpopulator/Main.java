@@ -17,6 +17,33 @@ public class Main {
 		try (DatabaseConnection connection = new DatabaseConnection();
 		     Session session = connection.createSession()) {
 
+			long tDel0 = System.currentTimeMillis();
+			System.out.print("Clearing database...");
+			session.run("MATCH ()-[r]->() CALL { WITH r DELETE r } IN TRANSACTIONS OF 50000 ROWS");
+			session.run("MATCH (n) CALL { WITH n DETACH DELETE n } IN TRANSACTIONS OF 50000 ROWS");
+//			session.run("DROP CONSTRAINT addressMmiIdConstraint");
+//			session.run("DROP CONSTRAINT askCodeConstraint");
+//			session.run("DROP CONSTRAINT atcCodeConstraint");
+//			session.run("DROP CONSTRAINT casCodeConstraint");
+//			session.run("DROP CONSTRAINT companyMmiIdConstraint");
+//			session.run("DROP CONSTRAINT doseFormMmiCodeConstraint");
+//			session.run("DROP CONSTRAINT drugMmiIdConstraint");
+//			session.run("DROP CONSTRAINT edqmCodeConstraint");
+//			session.run("DROP CONSTRAINT edqmNameConstraint");
+//			session.run("DROP CONSTRAINT innCodeConstraint");
+//			session.run("DROP CONSTRAINT mmiIngredientIdConstraint");
+//			session.run("DROP CONSTRAINT packageMmiIdConstraint");
+//			session.run("DROP CONSTRAINT productMmiIdConstraint");
+//			session.run("DROP CONSTRAINT pznCodeConstraint");
+//			session.run("DROP CONSTRAINT pznConstraint");
+//			session.run("DROP CONSTRAINT rxcuiCodeConstraint");
+//			session.run("DROP CONSTRAINT substanceMmiIdConstraint");
+//			session.run("DROP CONSTRAINT synonymeConstraint");
+//			session.run("DROP CONSTRAINT uniiCodeConstraint");
+//			session.run("DROP CONSTRAINT uniiUuidConstraint");
+//			session.run("DROP CONSTRAINT unitMmiCodeConstraint");
+			System.out.println("done (" + (System.currentTimeMillis() - tDel0) + "ms)");
+
 			long time = System.currentTimeMillis();
 
 			List<Loader> loaders = new ArrayList<>();
@@ -67,12 +94,6 @@ public class Main {
 			loaders.add(new CodingSystemNodeCreator(session));
 			// Synonymes from other nodes
 			loaders.add(new DatabaseSynonymePreparer(session));
-
-			long tDel0 = System.currentTimeMillis();
-			System.out.print("Deleting database...");
-			session.run("MATCH ()-[r]->() CALL { WITH r DELETE r } IN TRANSACTIONS OF 50000 ROWS");
-			session.run("MATCH (n) CALL { WITH n DETACH DELETE n } IN TRANSACTIONS OF 50000 ROWS");
-			System.out.println("done (" + (System.currentTimeMillis() - tDel0) + "ms)");
 
 			for (Loader loader : loaders) {
 				loader.execute();
