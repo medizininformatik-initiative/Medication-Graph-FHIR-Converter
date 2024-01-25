@@ -1,6 +1,6 @@
 package de.tum.med.aiim.markusbudeus.matcher;
 
-import de.tum.med.aiim.markusbudeus.matcher.model.FinalMatchingTarget;
+import de.tum.med.aiim.markusbudeus.matcher.model.ProductWithPzn;
 import de.tum.med.aiim.markusbudeus.matcher.model.MatchingTarget;
 import org.neo4j.driver.Query;
 import org.neo4j.driver.Record;
@@ -13,15 +13,15 @@ import java.util.List;
 import static de.tum.med.aiim.markusbudeus.graphdbpopulator.DatabaseDefinitions.*;
 import static org.neo4j.driver.Values.parameters;
 
-public class FinalTransformer {
+public class BestMatchTransformer {
 
 	private final Session session;
 
-	public FinalTransformer(Session session) {
+	public BestMatchTransformer(Session session) {
 		this.session = session;
 	}
 
-	public synchronized List<FinalMatchingTarget> reorderAndTransform(List<MatchingTarget> targets) {
+	public synchronized List<ProductWithPzn> reorderAndTransform(List<MatchingTarget> targets) {
 		if (targets.isEmpty()) return null;
 
 		Result r = session.run(new Query(
@@ -35,15 +35,15 @@ public class FinalTransformer {
 				parameters("mmiIds", targets.stream().map(MatchingTarget::getMmiId).toList())
 		));
 
-		List<FinalMatchingTarget> finalMatchingTargets = new ArrayList<>();
+		List<ProductWithPzn> productWithPzns = new ArrayList<>();
 
 		while (r.hasNext()) {
 			Record record = r.next();
-			finalMatchingTargets.add(
-					new FinalMatchingTarget(record.get(0).asLong(), record.get(1).asString(), record.get(2).asString())
+			productWithPzns.add(
+					new ProductWithPzn(record.get(0).asLong(), record.get(1).asString(), record.get(2).asString())
 			);
 		}
-		return finalMatchingTargets;
+		return productWithPzns;
 	}
 
 }

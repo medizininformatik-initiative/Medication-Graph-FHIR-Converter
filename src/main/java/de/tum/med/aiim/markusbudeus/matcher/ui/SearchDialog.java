@@ -1,7 +1,7 @@
 package de.tum.med.aiim.markusbudeus.matcher.ui;
 
 import de.tum.med.aiim.markusbudeus.matcher.Main;
-import de.tum.med.aiim.markusbudeus.matcher.model.FinalMatchingTarget;
+import de.tum.med.aiim.markusbudeus.matcher.model.ProductWithPzn;
 
 import javax.swing.*;
 import java.awt.*;
@@ -118,10 +118,10 @@ public class SearchDialog extends JSplitPane {
 			if (resultSet.bestResult != null) {
 				bottom.add(ResultDisplayComponent.construct(resultSet.bestResult, BEST_MATCH_COLOR));
 			}
-			for (FinalMatchingTarget t : resultSet.goodResults) {
+			for (ProductWithPzn t : resultSet.goodResults) {
 				bottom.add(ResultDisplayComponent.construct(t, GOOD_MATCH_COLOR));
 			}
-			for (FinalMatchingTarget t : resultSet.otherResults) {
+			for (ProductWithPzn t : resultSet.otherResults) {
 				bottom.add(ResultDisplayComponent.construct(t, null));
 			}
 			bottom.revalidate();

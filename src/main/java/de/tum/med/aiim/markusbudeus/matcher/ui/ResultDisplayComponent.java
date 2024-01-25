@@ -1,6 +1,6 @@
 package de.tum.med.aiim.markusbudeus.matcher.ui;
 
-import de.tum.med.aiim.markusbudeus.matcher.model.FinalMatchingTarget;
+import de.tum.med.aiim.markusbudeus.matcher.model.ProductWithPzn;
 
 import javax.swing.*;
 import javax.swing.border.Border;
@@ -8,7 +8,7 @@ import java.awt.*;
 
 public class ResultDisplayComponent {
 
-	public static JPanel construct(FinalMatchingTarget target, Color highlightColor) {
+	public static JPanel construct(ProductWithPzn target, Color highlightColor) {
 		JPanel outerPanel = new JPanel();
 		outerPanel.setLayout(new BorderLayout());
 		Border border = BorderFactory.createLineBorder(Color.black, 2);
