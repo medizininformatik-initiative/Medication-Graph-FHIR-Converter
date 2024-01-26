@@ -22,7 +22,7 @@ public class Drug {
 		StringBuilder stringBuilder = new StringBuilder();
 
 		if (amount.unit != null)
-			stringBuilder.append(amount).append("\n");
+			stringBuilder.append(amount).append(" ");
 		stringBuilder.append(doseForm);
 		if (edqmDoseForm != null) {
 			stringBuilder.append(" (").append(edqmDoseForm).append(")");

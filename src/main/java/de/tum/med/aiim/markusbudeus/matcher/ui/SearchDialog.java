@@ -1,7 +1,8 @@
 package de.tum.med.aiim.markusbudeus.matcher.ui;
 
-import de.tum.med.aiim.markusbudeus.matcher.Main;
-import de.tum.med.aiim.markusbudeus.matcher.model.ProductWithPzn;
+import de.tum.med.aiim.markusbudeus.graphdbpopulator.DatabaseConnection;
+import de.tum.med.aiim.markusbudeus.matcher.model.FinalMatchingTarget;
+import de.tum.med.aiim.markusbudeus.matcher.model.ResultSet;
 
 import javax.swing.*;
 import java.awt.*;
@@ -48,6 +49,9 @@ public class SearchDialog extends JSplitPane {
 		this.onSearch = onSearch;
 
 		JPanel top = new JPanel();
+
+		// TODO REMOVE THIS OMG PLEASE
+		DatabaseConnection.setConnection(DatabaseConnection.uri, DatabaseConnection.user, "aiim-experimentation".toCharArray());
 
 		returnButton = new JButton("Exit");
 		returnButton.setVisible(false);
@@ -112,16 +116,16 @@ public class SearchDialog extends JSplitPane {
 		});
 	}
 
-	public void applyResults(Main.ResultSet resultSet) {
+	public void applyResults(ResultSet<FinalMatchingTarget> resultSet) {
 		EventQueue.invokeLater(() -> {
 			bottom.removeAll();
 			if (resultSet.bestResult != null) {
 				bottom.add(ResultDisplayComponent.construct(resultSet.bestResult, BEST_MATCH_COLOR));
 			}
-			for (ProductWithPzn t : resultSet.goodResults) {
+			for (FinalMatchingTarget t : resultSet.goodResults) {
 				bottom.add(ResultDisplayComponent.construct(t, GOOD_MATCH_COLOR));
 			}
-			for (ProductWithPzn t : resultSet.otherResults) {
+			for (FinalMatchingTarget t : resultSet.otherResults) {
 				bottom.add(ResultDisplayComponent.construct(t, null));
 			}
 			bottom.revalidate();

@@ -6,15 +6,19 @@ import org.neo4j.driver.Record;
 import org.neo4j.driver.*;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static de.tum.med.aiim.markusbudeus.graphdbpopulator.DatabaseDefinitions.*;
 import static org.neo4j.driver.Values.parameters;
 
 public class FinalResultTransformer {
+
+	private static final Comparator<Drug> drugComparator;
+
+	static {
+		Comparator<Drug> comparator = Comparator.comparing(d -> -d.activeIngredients.size());
+		drugComparator = comparator.thenComparing(drug -> drug.doseForm != null ? drug.doseForm : "");
+	}
 
 	private final Session session;
 
@@ -22,7 +26,36 @@ public class FinalResultTransformer {
 		this.session = session;
 	}
 
+	public ResultSet<FinalMatchingTarget> transform(ResultSet<ProductWithPzn> resultSet) {
+		ArrayList<ProductWithPzn> allResults = new ArrayList<>();
+		if (resultSet.bestResult != null) {
+			allResults.add(resultSet.bestResult);
+		}
+		allResults.addAll(resultSet.goodResults);
+		allResults.addAll(resultSet.otherResults);
+
+		if (allResults.isEmpty()) {
+			return new ResultSet<>(null, List.of(), List.of());
+		}
+		List<FinalMatchingTarget> resultList = transform(allResults);
+		Map<Long, FinalMatchingTarget> targetsByMmiId = new HashMap<>();
+		resultList.forEach(t -> targetsByMmiId.put(t.getMmiId(), t));
+
+		FinalMatchingTarget bestResult = null;
+		if (resultSet.bestResult != null) {
+			bestResult = targetsByMmiId.get(resultSet.bestResult.getMmiId());
+		}
+		List<FinalMatchingTarget> goodResults = resultSet.goodResults.stream()
+		                                                             .map(p -> targetsByMmiId.get(p.getMmiId()))
+		                                                             .toList();
+		List<FinalMatchingTarget> otherResults = resultSet.otherResults.stream()
+		                                                               .map(p -> targetsByMmiId.get(p.getMmiId()))
+		                                                               .toList();
+		return new ResultSet<>(bestResult, goodResults, otherResults);
+	}
+
 	public List<FinalMatchingTarget> transform(List<ProductWithPzn> list) {
+		if (list.isEmpty()) return Collections.emptyList();
 		Result result = session.run(new Query(
 				"MATCH (p:" + PRODUCT_LABEL + ") " +
 						"WHERE p.mmiId IN $productIds " +
@@ -34,9 +67,9 @@ public class FinalResultTransformer {
 						"OPTIONAL MATCH (i)-[:" + INGREDIENT_CORRESPONDS_TO_LABEL + "]->(ci:" + INGREDIENT_LABEL + ")-[:" + INGREDIENT_IS_SUBSTANCE_LABEL + "]->(cs:" + SUBSTANCE_LABEL + ") " +
 						"OPTIONAL MATCH (i)-[:" + INGREDIENT_HAS_UNIT_LABEL + "]->(iu:" + UNIT_LABEL + ") " +
 						"OPTIONAL MATCH (ci)-[:" + INGREDIENT_HAS_UNIT_LABEL + "]->(cu:" + UNIT_LABEL + ") " +
-						"WITH p, d, df, du, ef, collect({" +
+						"WITH p, d, df, du, ef, collect(CASE WHEN NOT i IS NULL THEN {" +
 						"iName:is.name,iMassFrom:i.massFrom,iMassTo:i.massTo,iUnit:iu.print," +
-						"cName:cs.name,cMassFrom:ci.massFrom,cMassTo:ci.massTo,cUnit:cu.print}) AS ingredients " +
+						"cName:cs.name,cMassFrom:ci.massFrom,cMassTo:ci.massTo,cUnit:cu.print} ELSE NULL END) AS ingredients " +
 						"RETURN p.mmiId AS productId, collect({doseForm:df.mmiName, edqm:ef.name, amount:d.amount, unit:du.print, ingredients:ingredients}) AS drugs",
 				parameters("productIds", list.stream().map(ProductWithPzn::getMmiId).toList())
 		));
@@ -48,7 +81,8 @@ public class FinalResultTransformer {
 		}
 
 		if (resultMap.size() != list.size()) {
-			throw new IllegalStateException("Failed to resolve all products! (Got "+list.size()+", but resolved "+resultMap.size()+")");
+			throw new IllegalStateException(
+					"Failed to resolve all products! (Got " + list.size() + ", but resolved " + resultMap.size() + ")");
 		}
 
 		List<FinalMatchingTarget> resultList = new ArrayList<>(list.size());
@@ -61,7 +95,9 @@ public class FinalResultTransformer {
 	}
 
 	private List<Drug> parse(Record record) {
-		return record.get("drugs").asList(this::parseToDrug);
+		List<Drug> drugList = new ArrayList<>(record.get("drugs").asList(this::parseToDrug));
+		drugList.sort(drugComparator);
+		return drugList;
 	}
 
 	private Drug parseToDrug(Value value) {

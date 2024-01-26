@@ -7,6 +7,7 @@ import de.tum.med.aiim.markusbudeus.matcher.data.SubSortingTree;
 import de.tum.med.aiim.markusbudeus.matcher.model.ProductWithPzn;
 import de.tum.med.aiim.markusbudeus.matcher.model.HouselistEntry;
 import de.tum.med.aiim.markusbudeus.matcher.model.MatchingTarget;
+import de.tum.med.aiim.markusbudeus.matcher.model.ResultSet;
 import de.tum.med.aiim.markusbudeus.matcher.sample.synthetic.HouselistMatcher;
 import de.tum.med.aiim.markusbudeus.matcher.sample.synthetic.SyntheticHouselistEntry;
 import de.tum.med.aiim.markusbudeus.matcher.ui.SearchDialog;
@@ -65,7 +66,7 @@ public class Main {
 					HouselistEntry entry = new HouselistEntry();
 					entry.searchTerm = line;
 					SubSortingTree<MatchingTarget> result = algorithm.match(entry);
-					ResultSet resultSet = toResultSet(result, bestMatchTransformer);
+					ResultSet<ProductWithPzn> resultSet = toResultSet(result, bestMatchTransformer);
 					System.out.println("-------- Best match: --------");
 					System.out.println(resultSet.bestResult);
 					System.out.println("-------- Good results: --------");
@@ -86,11 +87,12 @@ public class Main {
 			DatabaseConnection.runSession(session -> {
 				MatchingAlgorithm algorithm = new MastersThesisAlgorithm(session);
 				BestMatchTransformer bestMatchTransformer = new BestMatchTransformer(session);
+				FinalResultTransformer finalResultTransformer = new FinalResultTransformer(session);
 				HouselistEntry entry = new HouselistEntry();
 				entry.searchTerm = searchTerm;
 				SubSortingTree<MatchingTarget> result = algorithm.match(entry);
-				ResultSet resultSet = toResultSet(result, bestMatchTransformer);
-				dialog.applyResults(resultSet);
+				ResultSet<ProductWithPzn> resultSet = toResultSet(result, bestMatchTransformer);
+				dialog.applyResults(finalResultTransformer.transform(resultSet));
 			});
 
 		});
@@ -136,11 +138,11 @@ public class Main {
 		System.out.println("]");
 	}
 
-	public static ResultSet toResultSet(SubSortingTree<MatchingTarget> results, BestMatchTransformer bestMatchTransformer) {
+	public static ResultSet<ProductWithPzn> toResultSet(SubSortingTree<MatchingTarget> results, BestMatchTransformer bestMatchTransformer) {
 		List<MatchingTarget> topResults = results.getTopContents();
 		List<MatchingTarget> otherResults = results.getContents();
 
-		if (otherResults.isEmpty()) return new ResultSet(null, List.of(), List.of());
+		if (otherResults.isEmpty()) return new ResultSet<>(null, List.of(), List.of());
 
 		otherResults = otherResults.subList(topResults.size(), otherResults.size());
 		List<ProductWithPzn> transformedTargets = bestMatchTransformer.reorderAndTransform(results.getContents());
@@ -165,20 +167,7 @@ public class Main {
 		ProductWithPzn best = sortedTransformedTopTargets.get(0);
 		sortedTransformedTopTargets.remove(0);
 
-		return new ResultSet(best, sortedTransformedTopTargets, transformedOtherTargets);
-	}
-
-	public static class ResultSet {
-		public final ProductWithPzn bestResult;
-		public final List<ProductWithPzn> goodResults;
-		public final List<ProductWithPzn> otherResults;
-
-		private ResultSet(ProductWithPzn bestResult, List<ProductWithPzn> goodResults,
-		                  List<ProductWithPzn> otherResults) {
-			this.bestResult = bestResult;
-			this.goodResults = goodResults;
-			this.otherResults = otherResults;
-		}
+		return new ResultSet<>(best, sortedTransformedTopTargets, transformedOtherTargets);
 	}
 
 }
