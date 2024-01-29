@@ -1,6 +1,5 @@
 package de.tum.med.aiim.markusbudeus.matcher.ui;
 
-import de.tum.med.aiim.markusbudeus.graphdbpopulator.DatabaseConnection;
 import de.tum.med.aiim.markusbudeus.matcher.model.FinalMatchingTarget;
 import de.tum.med.aiim.markusbudeus.matcher.model.ResultSet;
 
