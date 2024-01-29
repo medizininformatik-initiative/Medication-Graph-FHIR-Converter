@@ -50,9 +50,6 @@ public class SearchDialog extends JSplitPane {
 
 		JPanel top = new JPanel();
 
-		// TODO REMOVE THIS OMG PLEASE
-		DatabaseConnection.setConnection(DatabaseConnection.uri, DatabaseConnection.user, "aiim-experimentation".toCharArray());
-
 		returnButton = new JButton("Exit");
 		returnButton.setVisible(false);
 		top.add(returnButton);

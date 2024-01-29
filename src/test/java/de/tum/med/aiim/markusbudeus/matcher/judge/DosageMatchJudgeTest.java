@@ -1,9 +1,10 @@
 package de.tum.med.aiim.markusbudeus.matcher.judge;
 
-import de.tum.med.aiim.markusbudeus.matcher.model.HouselistEntry;
+import de.tum.med.aiim.markusbudeus.FakeSession;
 import de.tum.med.aiim.markusbudeus.matcher.TestWithSession;
 import de.tum.med.aiim.markusbudeus.matcher.model.Amount;
 import de.tum.med.aiim.markusbudeus.matcher.model.Dosage;
+import de.tum.med.aiim.markusbudeus.matcher.model.HouselistEntry;
 import de.tum.med.aiim.markusbudeus.matcher.model.MatchingTarget;
 import de.tum.med.aiim.markusbudeus.matcher.provider.BaseProvider;
 import de.tum.med.aiim.markusbudeus.matcher.provider.MappedIdentifier;
@@ -118,7 +119,8 @@ class DosageMatchJudgeTest extends TestWithSession {
 				new Dosage(new Amount(new BigDecimal("1000"), "mg"), null, new Amount(BigDecimal.TEN, "ml")),
 				new Dosage(new Amount(new BigDecimal("10"), "ml"), null, null)
 		);
-		assertEquals(DosageMatchJudge.PERFECT_RELATIVE_MATCH_SCORE + DosageMatchJudge.DRUG_AMOUNT_MATCH_SCORE, sut.judge(target, sampleEntry), 0.01);
+		assertEquals(DosageMatchJudge.PERFECT_RELATIVE_MATCH_SCORE + DosageMatchJudge.DRUG_AMOUNT_MATCH_SCORE,
+				sut.judge(target, sampleEntry), 0.01);
 	}
 
 	@Test
@@ -130,6 +132,28 @@ class DosageMatchJudgeTest extends TestWithSession {
 				new Dosage(new Amount(new BigDecimal("10"), "ml"), null, null)
 		);
 		assertEquals(DosageMatchJudge.PERFECT_RELATIVE_MATCH_SCORE, sut.judge(target, sampleEntry));
+	}
+
+	@Test
+	public void noDatabaseAccessRequiredSingle() {
+		DosageMatchJudge localSut = new DosageMatchJudge(new FakeSession()); // Cannot access DB!
+		MatchingTarget target = getProductByName("Tranexamsäure Carinopharm 100 mg/ml Injektionslösung, 5 ml");
+		HouselistEntry sampleEntry = new HouselistEntry();
+		// No active ingredient dosages set!
+		assertEquals(DosageMatchJudge.DOSAGELESS_SCORE, localSut.judge(target, sampleEntry));
+	}
+
+	@Test
+	public void noDatabaseAccessRequiredMulti() {
+		DosageMatchJudge localSut = new DosageMatchJudge(new FakeSession()); // Cannot access DB!
+		MatchingTarget target1 = getProductByName("Tranexamsäure Carinopharm 100 mg/ml Injektionslösung, 5 ml");
+		MatchingTarget target2 = getProductByName("Berberil® N Augentropfen, 0,5 mg/ml");
+		HouselistEntry sampleEntry = new HouselistEntry();
+		// No active ingredient dosages set!
+		assertEquals(List.of(
+						DosageMatchJudge.DOSAGELESS_SCORE,
+						DosageMatchJudge.DOSAGELESS_SCORE),
+				localSut.batchJudge(List.of(target1, target2), sampleEntry));
 	}
 
 	@Test
