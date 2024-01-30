@@ -1,5 +1,7 @@
 package de.tum.med.aiim.markusbudeus.ui;
 
+import de.tum.med.aiim.markusbudeus.graphdbpopulator.DatabaseConnection;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.WindowAdapter;
@@ -9,11 +11,34 @@ import java.util.function.Function;
 public class Application extends JFrame {
 
 	public static void main(String[] args) {
+
+		for (int i = 0; i < args.length - 1; i += 2) {
+			applyArgument(args[i], args[i+1]);
+		}
+
 		EventQueue.invokeLater(() -> {
 			Application application = new Application();
-			application.navigateTo(ConnectionDialog::new);
+
+			try (DatabaseConnection connection = new DatabaseConnection()) {
+				if (connection.testConnection() == DatabaseConnection.ConnectionResult.SUCCESS) {
+					application.navigateToMainMenu();
+				} else {
+					application.navigateTo(ConnectionDialog::new);
+				}
+			} catch (Exception e) {
+				application.navigateTo(ConnectionDialog::new);
+			}
+
 			application.setVisible(true);
 		});
+	}
+
+	private static void applyArgument(String arg, String value) {
+		switch (arg) {
+			case "-dburi" -> DatabaseConnection.uri = value;
+			case "-dbuser" -> DatabaseConnection.user = value;
+			case "-dbpassword" -> DatabaseConnection.password = value.toCharArray();
+		}
 	}
 
 	public Application() {

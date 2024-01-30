@@ -66,7 +66,7 @@ public class PopulatorUi extends GridBagFrame {
 		gbc.anchor = EAST;
 		gbc.insets.right = 8;
 		gbc.weightx = 0.0;
-		gbc.weighty = 1.0;
+		gbc.weighty = 0.0;
 		gbc.fill = GridBagConstraints.HORIZONTAL;
 
 		gbc.gridwidth = REMAINDER;
@@ -154,6 +154,9 @@ public class PopulatorUi extends GridBagFrame {
 		add(errorLabel, gbc);
 
 		gbc.gridy = 7;
+		gbc.weighty = 1;
+		gbc.weightx = 1;
+		gbc.fill = BOTH;
 		add(TextOutputArea.INSTANCE, gbc);
 	}
 

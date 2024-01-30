@@ -1,9 +1,6 @@
 package de.tum.med.aiim.markusbudeus.ui;
 
 import de.tum.med.aiim.markusbudeus.graphdbpopulator.DatabaseConnection;
-import org.neo4j.driver.Session;
-import org.neo4j.driver.exceptions.AuthenticationException;
-import org.neo4j.driver.exceptions.ServiceUnavailableException;
 
 import javax.swing.*;
 import java.awt.*;
@@ -101,22 +98,25 @@ public class ConnectionDialog extends GridBagFrame {
 		String user = txtUser.getText();
 		char[] password = txtPassword.getPassword();
 
-		try {
-			DatabaseConnection connection = new DatabaseConnection(uri, user, password);
-			Session s = connection.createSession();
-			s.beginTransaction();
-			s.close();
-			connection.close();
-			DatabaseConnection.setConnection(uri, user, password);
-
-			complete();
-		} catch (IllegalArgumentException e) {
-			errorLabel.setText("Connection String invalid!");
+		try (DatabaseConnection connection = new DatabaseConnection(uri, user, password)) {
+			switch (connection.testConnection()) {
+				case SUCCESS -> {
+					DatabaseConnection.setConnection(uri, user, password);
+					complete();
+				}
+				case INVALID_CONNECTION_STRING -> {
+					errorLabel.setText("Connection String invalid!");
+				}
+				case SERVICE_UNAVAILABLE -> {
+					errorLabel.setText("Failed to connect to Neo4j. Is the service running?");
+				}
+				case AUTHENTICATION_FAILED -> {
+					errorLabel.setText("Authentication failed!");
+				}
+			}
+		} catch (Exception e) {
+			errorLabel.setText("Something went wrong.");
 			e.printStackTrace();
-		} catch (AuthenticationException e) {
-			errorLabel.setText("Authentication failed!");
-		} catch (ServiceUnavailableException e) {
-			errorLabel.setText("Failed to connect to Neo4j. Is the service running?");
 		}
 	}
 

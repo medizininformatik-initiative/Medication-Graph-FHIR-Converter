@@ -41,6 +41,7 @@ public class FhirExporterFrame extends GridBagFrame {
 		gbc.gridy = 0;
 		gbc.fill = HORIZONTAL;
 		gbc.gridwidth = REMAINDER;
+		gbc.weighty = 0;
 		JLabel description1 = new JLabel("Use this tool to export FHIR instances from the Graph Database.");
 		JLabel description2 = new JLabel("Specify a directory into which to export and then run the export.");
 		add(description1, gbc);
@@ -90,6 +91,9 @@ public class FhirExporterFrame extends GridBagFrame {
 		add(errorText, gbc);
 
 		gbc.gridy += 1;
+		gbc.weightx = 1;
+		gbc.weighty = 1;
+		gbc.fill = BOTH;
 		TextOutputArea.INSTANCE.clear();
 		add(TextOutputArea.INSTANCE, gbc);
 	}

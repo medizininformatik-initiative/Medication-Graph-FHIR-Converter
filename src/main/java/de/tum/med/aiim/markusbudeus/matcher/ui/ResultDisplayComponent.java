@@ -34,7 +34,7 @@ public class ResultDisplayComponent {
 		Border border = BorderFactory.createLineBorder(Color.black, 2);
 		outerPanel.setBorder(border);
 		JPanel contentPanel = new JPanel();
-		Border padding = BorderFactory.createEmptyBorder(4, 4, 4, 4);
+		Border padding = BorderFactory.createEmptyBorder(4, 8, 4, 8);
 		contentPanel.setBorder(padding);
 		GridBagLayout gridBagLayout = new GridBagLayout();
 		GridBagConstraints gbc = new GridBagConstraints();

@@ -4,6 +4,8 @@ import org.neo4j.driver.Driver;
 import org.neo4j.driver.GraphDatabase;
 import org.neo4j.driver.AuthTokens;
 import org.neo4j.driver.Session;
+import org.neo4j.driver.exceptions.AuthenticationException;
+import org.neo4j.driver.exceptions.ServiceUnavailableException;
 
 import java.util.function.Consumer;
 
@@ -34,8 +36,8 @@ public class DatabaseConnection implements AutoCloseable {
 	public DatabaseConnection() {
 		this(
 				uri,
-				"neo4j",
-				"aiim-experimentation".toCharArray()
+				user,
+				password
 		);
 	}
 
@@ -44,8 +46,30 @@ public class DatabaseConnection implements AutoCloseable {
 		driver = GraphDatabase.driver(uri, AuthTokens.basic(user, new String(password)));
 	}
 
+	public ConnectionResult testConnection() {
+		try {
+			Session s = createSession();
+			s.beginTransaction();
+			s.close();
+			return ConnectionResult.SUCCESS;
+		} catch (IllegalArgumentException e) {
+			return ConnectionResult.INVALID_CONNECTION_STRING;
+		} catch (AuthenticationException e) {
+			return ConnectionResult.AUTHENTICATION_FAILED;
+		} catch (ServiceUnavailableException e) {
+			return ConnectionResult.SERVICE_UNAVAILABLE;
+		}
+	}
+
 	public Session createSession() {
 		return driver.session();
+	}
+
+	public enum ConnectionResult {
+		SUCCESS,
+		INVALID_CONNECTION_STRING,
+		SERVICE_UNAVAILABLE,
+		AUTHENTICATION_FAILED
 	}
 
 	@Override

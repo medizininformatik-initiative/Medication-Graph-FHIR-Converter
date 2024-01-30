@@ -31,7 +31,7 @@ public class SearchDialog extends JSplitPane {
 	}
 
 	private final JTextField searchField;
-	private final JPanel bottom;
+	private final JPanel resultsBox;
 	private final JButton searchButton;
 	private final JButton returnButton;
 	private final BiConsumer<SearchDialog, String> onSearch;
@@ -77,17 +77,48 @@ public class SearchDialog extends JSplitPane {
 				onReturn.run();
 		});
 
-		bottom = new JPanel();
-		bottom.setLayout(new BoxLayout(bottom, BoxLayout.Y_AXIS));
+		JPanel bottom = new JPanel();
+		bottom.setLayout(new BorderLayout());
+		resultsBox = new JPanel();
+		bottom.add(resultsBox, BorderLayout.PAGE_START);
+		resultsBox.setLayout(new BoxLayout(this.resultsBox, BoxLayout.Y_AXIS));
 		JScrollPane scrollPane = new JScrollPane(bottom,
 				ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
 				ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+
+		scrollPane.getVerticalScrollBar().setUnitIncrement(12);
 
 		scrollPane.setMinimumSize(new Dimension(400, 400));
 		scrollPane.setPreferredSize(new Dimension(750, 400));
 
 		setTopComponent(top);
 		setBottomComponent(scrollPane);
+	}
+
+	public void applyResults(ResultSet<FinalMatchingTarget> resultSet) {
+		EventQueue.invokeLater(() -> {
+			resultsBox.removeAll();
+			if (resultSet.bestResult != null) {
+				resultsBox.add(ResultDisplayComponent.construct(resultSet.bestResult, BEST_MATCH_COLOR));
+			}
+			for (FinalMatchingTarget t : resultSet.goodResults) {
+				resultsBox.add(ResultDisplayComponent.construct(t, GOOD_MATCH_COLOR));
+			}
+			for (FinalMatchingTarget t : resultSet.otherResults) {
+				resultsBox.add(ResultDisplayComponent.construct(t, null));
+			}
+			resultsBox.revalidate();
+			resultsBox.repaint();
+		});
+	}
+
+	public void setOnReturn(Runnable onReturn) {
+		returnButton.setVisible(true);
+		this.onReturn = onReturn;
+	}
+
+	public void focusSearch() {
+		searchField.requestFocus();
 	}
 
 	private synchronized void considerSearch() {
@@ -110,28 +141,6 @@ public class SearchDialog extends JSplitPane {
 				searching = false;
 			});
 		});
-	}
-
-	public void applyResults(ResultSet<FinalMatchingTarget> resultSet) {
-		EventQueue.invokeLater(() -> {
-			bottom.removeAll();
-			if (resultSet.bestResult != null) {
-				bottom.add(ResultDisplayComponent.construct(resultSet.bestResult, BEST_MATCH_COLOR));
-			}
-			for (FinalMatchingTarget t : resultSet.goodResults) {
-				bottom.add(ResultDisplayComponent.construct(t, GOOD_MATCH_COLOR));
-			}
-			for (FinalMatchingTarget t : resultSet.otherResults) {
-				bottom.add(ResultDisplayComponent.construct(t, null));
-			}
-			bottom.revalidate();
-			bottom.repaint();
-		});
-	}
-
-	public void setOnReturn(Runnable onReturn) {
-		returnButton.setVisible(true);
-		this.onReturn = onReturn;
 	}
 
 }
