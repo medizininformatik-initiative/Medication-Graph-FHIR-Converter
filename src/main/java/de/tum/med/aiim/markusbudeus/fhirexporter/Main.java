@@ -18,7 +18,7 @@ import java.util.function.Function;
 
 public class Main {
 
-	// Medications: Statistics{simpleMedicationsTotal=66640, compositeMedicationsTotal=1947, compositeMedicationChildrenTotal=5604, compositeChildObjectsWithAtc=5546, atcOccurrencesInCompositeChildren=5548, simpleObjectsWithAtc=66606, atcOccurrencesInSimpleObjects=66693, objectsWithPzn=68586, pznOccurrences=109458, simpleObjectsWithDoseForm=66640, simpleObjectsWithEdqmDoseForm=52564, compositeChildrenWithDoseForm=5604, compositeChildrenWithEdqmDoseForm=4490}
+	// Medications: Statistics{simpleMedicationsTotal=66640, compositeMedicationsTotal=1947, compositeMedicationChildrenTotal=5604, compositeChildObjectsWithAtc=5546, atcOccurrencesInCompositeChildren=5548, simpleObjectsWithAtc=66606, atcOccurrencesInSimpleObjects=66693, objectsWithPzn=68586, pznOccurrences=109458, simpleObjectsWithDoseForm=66640, simpleObjectsWithEdqmDoseForm=52564, compositeChildrenWithDoseForm=5604, compositeChildrenWithEdqmDoseForm=4490, ucumCompliantObjects=44979, nonUcumCompliantObjects=29212, ucumCompliantRatios=158408, nonUcumCompliantRatios=31703}
 	// Found in file: [compositeMedicationChildrenTotal=5576]
 	// Substances: Statistics{substancesTotal=15901, substancesWithAtLeastOneCode=6361, uniiOccurrences=4319, objectsWithUnii=4319, casOccurrences=7354, objectsWithCas=4740, rxcuiOccurrences=4051, objectsWithRxcui=3756, askOccurrences=6361, objectsWithAsk=6361, innOccurrences=3230, objectsWithInn=3230}
 

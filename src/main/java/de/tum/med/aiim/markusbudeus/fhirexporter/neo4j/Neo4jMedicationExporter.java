@@ -1,7 +1,10 @@
 package de.tum.med.aiim.markusbudeus.fhirexporter.neo4j;
 
 import de.tum.med.aiim.markusbudeus.fhirexporter.resource.*;
-import de.tum.med.aiim.markusbudeus.fhirexporter.resource.medication.*;
+import de.tum.med.aiim.markusbudeus.fhirexporter.resource.medication.Ingredient;
+import de.tum.med.aiim.markusbudeus.fhirexporter.resource.medication.Medication;
+import de.tum.med.aiim.markusbudeus.fhirexporter.resource.medication.MedicationReference;
+import de.tum.med.aiim.markusbudeus.fhirexporter.resource.medication.Meta;
 import de.tum.med.aiim.markusbudeus.fhirexporter.resource.organization.OrganizationReference;
 import de.tum.med.aiim.markusbudeus.fhirexporter.resource.substance.Substance;
 import de.tum.med.aiim.markusbudeus.fhirexporter.resource.substance.SubstanceReference;
@@ -26,6 +29,8 @@ public class Neo4jMedicationExporter extends Neo4jExporter<Medication> {
 	public static final String SYSTEM_URI = "uri";
 	public static final String SYSTEM_DATE = "date";
 	public static final String SYSTEM_VERSION = "version";
+
+	private static final String UCUM_SYSTEM = "http://unitsofmeasure.org";
 
 	private final boolean allowMedicationsWithoutIngredients;
 	private final boolean collectStatistics;
@@ -471,7 +476,7 @@ public class Neo4jMedicationExporter extends Neo4jExporter<Medication> {
 
 			if (unit.ucumCs != null) {
 				quantity.code = unit.ucumCs;
-				quantity.system = "http://unitsofmeasure.org";
+				quantity.system = UCUM_SYSTEM;
 			}
 		}
 		return quantity;
@@ -500,6 +505,13 @@ public class Neo4jMedicationExporter extends Neo4jExporter<Medication> {
 		private final AtomicInteger compositeChildrenWithDoseForm = new AtomicInteger();
 		private final AtomicInteger compositeChildrenWithEdqmDoseForm = new AtomicInteger();
 
+
+		private final AtomicInteger ucumCompliantObjects = new AtomicInteger();
+		private final AtomicInteger nonUcumCompliantObjects = new AtomicInteger();
+
+		private final AtomicInteger ucumCompliantRatios = new AtomicInteger();
+		private final AtomicInteger nonUcumCompliantRatios = new AtomicInteger();
+
 		public void add(Medication medication) {
 			if (medication == null) return;
 			Type type = inferObjectType(medication);
@@ -522,10 +534,44 @@ public class Neo4jMedicationExporter extends Neo4jExporter<Medication> {
 				}
 			}
 
+
 			if (type == Type.SIMPLE || type == Type.COMPOSITION_PARENT) {
 				addCodes(medication, CodingSystem.PZN.uri, objectsWithPzn, pznOccurrences);
 			}
+
+			boolean isUcumCompliant = areIngredientsUcumCompliant(medication);
+
+			if (type == Type.SIMPLE || type == Type.COMPOSITION_CHILD) {
+				isUcumCompliant = isUcumCompliant && isUcumCompliant(medication.amount);
+			}
+
+			if (isUcumCompliant)
+				ucumCompliantObjects.incrementAndGet();
+			else
+				nonUcumCompliantObjects.incrementAndGet();
 		}
+
+		private boolean areIngredientsUcumCompliant(Medication medication) {
+			boolean result = true;
+			if (medication.ingredient != null) {
+				for (Ingredient i: medication.ingredient) {
+					result  = isUcumCompliant(i.strength) && result;
+				}
+			}
+			return true;
+		}
+
+		private boolean isUcumCompliant(Ratio ratio) {
+			if (ratio == null) return true;
+			boolean result = UCUM_SYSTEM.equals(ratio.numerator.system) && UCUM_SYSTEM.equals(ratio.denominator.system);
+			if (result) {
+				ucumCompliantRatios.incrementAndGet();
+			} else {
+				nonUcumCompliantRatios.incrementAndGet();
+			}
+			return result;
+		}
+
 
 		private Type inferObjectType(Medication medication) {
 			if (MedicationReference.TYPE.value.equals(medication.ingredient[0].itemReference.type)) {
@@ -589,6 +635,10 @@ public class Neo4jMedicationExporter extends Neo4jExporter<Medication> {
 					", simpleObjectsWithEdqmDoseForm=" + simpleObjectsWithEdqmDoseForm +
 					", compositeChildrenWithDoseForm=" + compositeChildrenWithDoseForm +
 					", compositeChildrenWithEdqmDoseForm=" + compositeChildrenWithEdqmDoseForm +
+					", ucumCompliantObjects=" + ucumCompliantObjects +
+					", nonUcumCompliantObjects=" + nonUcumCompliantObjects +
+					", ucumCompliantRatios=" + ucumCompliantRatios +
+					", nonUcumCompliantRatios=" + nonUcumCompliantRatios +
 					'}';
 		}
 	}
