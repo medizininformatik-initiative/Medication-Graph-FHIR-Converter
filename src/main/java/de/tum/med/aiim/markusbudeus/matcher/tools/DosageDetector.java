@@ -336,6 +336,11 @@ public class DosageDetector {
 		public Dosage getDosage() {
 			return dosage;
 		}
+
+		@Override
+		public String toString() {
+			return "["+dosage+"]@"+startIndex+"--"+length;
+		}
 	}
 
 	private static class DetectedAmount {
