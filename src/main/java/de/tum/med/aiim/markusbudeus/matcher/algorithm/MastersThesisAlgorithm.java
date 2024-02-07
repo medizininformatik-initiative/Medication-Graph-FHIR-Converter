@@ -84,7 +84,7 @@ public class MastersThesisAlgorithm implements MatchingAlgorithm {
 
 		matching.applySortingStep("Dosage Match Score", dosageMatchJudge, 0.1, true);
 
-		sortBySubsequencesFound(matching);
+		sortBySubstringsFound(matching);
 
 		matching.applySortingStep("Prefer products without successor", filterProductsWithoutSuccessor);
 
@@ -107,7 +107,7 @@ public class MastersThesisAlgorithm implements MatchingAlgorithm {
 		return result.stream().map(i -> i.target).collect(Collectors.toList());
 	}
 
-	private void sortBySubsequencesFound(OngoingMatching matching) {
+	private void sortBySubstringsFound(OngoingMatching matching) {
 		Transformer<String, String> stringTransformer2 = new ToLowerCase();
 		Transformer<String, Set<String>> setTransformer2 = stringTransformer2
 				.and(new WhitespaceTokenizer())
