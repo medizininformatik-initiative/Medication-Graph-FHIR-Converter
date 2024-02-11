@@ -11,7 +11,7 @@ import org.neo4j.driver.Session;
 
 import java.awt.*;
 
-import static de.tum.med.aiim.markusbudeus.matcher.Main.toResultSet;
+import static de.tum.med.aiim.markusbudeus.matcher.Matcher.toResultSet;
 
 public class SearchFrame extends ApplicationFrame {
 
@@ -46,8 +46,8 @@ public class SearchFrame extends ApplicationFrame {
 			ResultSet<FinalMatchingTarget> transformedResultSet = finalResultTransformer.transform(resultSet);
 			long t3 = System.currentTimeMillis();
 			long timeTaken = System.currentTimeMillis() - time;
-			System.out.println("Search \""+searchTerm+"\" took "+timeTaken+"ms. " +
-					"("+(t1-t0)+"ms matching, "+(t2-t1)+"ms result set, "+(t3-t2)+"ms final transformation.)");
+			System.out.println("Search \"" + searchTerm + "\" took " + timeTaken + "ms. " +
+					"(" + (t1 - t0) + "ms matching, " + (t2 - t1) + "ms result set, " + (t3 - t2) + "ms final transformation.)");
 			d.applyResults(transformedResultSet);
 		});
 
