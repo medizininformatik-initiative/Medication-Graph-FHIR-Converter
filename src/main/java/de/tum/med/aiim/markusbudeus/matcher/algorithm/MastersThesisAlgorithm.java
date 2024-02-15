@@ -17,9 +17,7 @@ import de.tum.med.aiim.markusbudeus.matcher.resulttransformer.SubstanceToProduct
 import de.tum.med.aiim.markusbudeus.matcher.stringtransformer.*;
 import org.neo4j.driver.Session;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class MastersThesisAlgorithm implements MatchingAlgorithm {
@@ -104,7 +102,7 @@ public class MastersThesisAlgorithm implements MatchingAlgorithm {
 		if (result.isEmpty()) {
 			return new ArrayList<>();
 		}
-		return result.stream().map(i -> i.target).collect(Collectors.toList());
+		return result.stream().map(i -> i.target).distinct().collect(Collectors.toList());
 	}
 
 	private void sortBySubstringsFound(OngoingMatching matching) {

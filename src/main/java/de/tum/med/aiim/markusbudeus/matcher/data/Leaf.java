@@ -37,6 +37,7 @@ class Leaf<S> extends Node<S> {
 	@Override
 	void clearDuplicates(HashSet<S> alreadyFoundObjects) {
 		contents.removeAll(alreadyFoundObjects);
+		contents = new ArrayList<>(new HashSet<>(contents));
 		alreadyFoundObjects.addAll(contents);
 	}
 
