@@ -2,7 +2,7 @@ plugins {
     id 'java'
 }
 
-group 'de.tum.med.aiim.markusbudeus'
+group 'de.medizininformatikinitiative'
 version '1.0-SNAPSHOT'
 
 repositories {
@@ -25,7 +25,7 @@ test {
 
 jar {
     manifest {
-        attributes 'Main-Class': 'de.tum.med.aiim.markusbudeus.ui.Application'
+        attributes 'Main-Class': 'de.medizininformatikinitiative.medgraph.ui.Application'
     }
     duplicatesStrategy = DuplicatesStrategy.WARN
 
