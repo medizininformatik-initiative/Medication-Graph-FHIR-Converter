@@ -1,6 +1,7 @@
 package de.medizininformatikinitiative.medgraph.graphdbpopulator;
 
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.neo4j.driver.Query;
@@ -20,6 +21,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * Runs the whole migration on a set of sample files.
  */
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
+@Disabled("This test wipes the target database and is therefore disabled by default")
 public class IntegrationTest {
 
 	// WARNING:

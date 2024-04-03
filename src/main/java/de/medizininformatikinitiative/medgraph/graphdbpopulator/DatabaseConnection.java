@@ -24,7 +24,7 @@ public class DatabaseConnection implements AutoCloseable {
 
 	public static String uri = "neo4j://localhost:7687";
 	public static String user = "neo4j";
-	public static char[] password = "".toCharArray();
+	public static char[] password = "aiim-experimentation".toCharArray();
 
 	private final Driver driver;
 

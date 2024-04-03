@@ -1,11 +1,7 @@
 package de.medizininformatikinitiative.medgraph.graphdbpopulator.loaders;
 
 import de.medizininformatikinitiative.medgraph.graphdbpopulator.DatabaseConnection;
-import org.apache.commons.lang3.tuple.Pair;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.neo4j.driver.Record;
 import org.neo4j.driver.Result;
 import org.neo4j.driver.Session;
@@ -17,6 +13,7 @@ import static de.medizininformatikinitiative.medgraph.graphdbpopulator.DatabaseD
 import static de.medizininformatikinitiative.medgraph.graphdbpopulator.DatabaseDefinitions.SYNONYME_REFERENCES_NODE_LABEL;
 import static org.junit.jupiter.api.Assertions.*;
 
+@Disabled("This test wipes the target database and is therefore disabled by default")
 public class DatabaseSynonymePreparerTest {
 
 	private static DatabaseConnection connection;
@@ -122,6 +119,27 @@ public class DatabaseSynonymePreparerTest {
 		);
 		session.close();
 		connection.close();
+	}
+
+	private static class Pair<K, V> {
+		private final K left;
+		private final V right;
+
+		private Pair(K left, V right) {
+			this.left = left;
+			this.right = right;
+		}
+
+		static <K, V> Pair<K, V> of(K left, V right) {
+			return new Pair<>(left, right);
+		}
+
+		public K getLeft() {
+			return left;
+		}
+		public V getRight() {
+			return right;
+		}
 	}
 
 }

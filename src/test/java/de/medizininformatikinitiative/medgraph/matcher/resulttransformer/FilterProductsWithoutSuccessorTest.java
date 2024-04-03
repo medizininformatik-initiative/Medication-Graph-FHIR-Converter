@@ -1,9 +1,8 @@
-package de.medizininformatikinitiative.medgraph.matcher.judge;
+package de.medizininformatikinitiative.medgraph.matcher.resulttransformer;
 
 import de.medizininformatikinitiative.medgraph.matcher.TestWithSession;
 import de.medizininformatikinitiative.medgraph.matcher.model.Product;
 import de.medizininformatikinitiative.medgraph.matcher.model.Substance;
-import de.medizininformatikinitiative.medgraph.matcher.resulttransformer.FilterProductsWithoutSuccessor;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
