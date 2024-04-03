@@ -6,6 +6,10 @@ It currently comprises three core features:
 - Using the knowledge graph to create FHIR **Medication**, **Substance**, and **Organization** instances
 - Searching pharmaceutical products in the knowledge graph
 
-As of: Februrary 25, 2024
+**Please notice that this program is a prototype, errors are therefore likely to occur.**
+Furthermore, some implementation details are as of now less than ideal, especially for collaborative development. I will address these issues in the future.
+At least that's my plan. But you have heard of the phrase "there is nothing more permanent than a temporary solution", haven't you?
+
+As of: April 3, 2024
 
 This project was originially created as part of the Master's thesis of Markus Budeus during the winter semester 2023/24.
