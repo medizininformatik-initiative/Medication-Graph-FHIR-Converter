@@ -27,8 +27,8 @@ public class Main {
 
 			long tDel0 = System.currentTimeMillis();
 			System.out.print("Clearing database...");
-			session.run("MATCH ()-[r]->() CALL { WITH r DELETE r } IN TRANSACTIONS OF 50000 ROWS");
-			session.run("MATCH (n) CALL { WITH n DETACH DELETE n } IN TRANSACTIONS OF 50000 ROWS");
+			session.run("MATCH ()-[r]->() CALL { WITH r DELETE r } IN TRANSACTIONS OF 10000 ROWS");
+			session.run("MATCH (n) CALL { WITH n DETACH DELETE n } IN TRANSACTIONS OF 10000 ROWS");
 //			session.run("DROP CONSTRAINT addressMmiIdConstraint");
 //			session.run("DROP CONSTRAINT askCodeConstraint");
 //			session.run("DROP CONSTRAINT atcCodeConstraint");

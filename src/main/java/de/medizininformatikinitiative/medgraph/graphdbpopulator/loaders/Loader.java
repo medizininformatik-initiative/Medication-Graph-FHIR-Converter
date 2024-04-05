@@ -20,8 +20,6 @@ public abstract class Loader {
 	private static final DateTimeFormatter cypherDateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
 	protected final Session session;
-
-	private boolean usingSubtasks = false;
 	private long subtaskStartTime = -1L;
 
 	public Loader(Session session) {
@@ -65,7 +63,7 @@ public abstract class Loader {
 	protected void startSubtask(String subtask) {
 		if (subtaskStartTime != -1) {
 			completeSubtask();
-		} else if (!usingSubtasks) {
+		} else {
 			System.out.println();
 		}
 		System.out.print("    " + subtask + "...");
@@ -82,6 +80,25 @@ public abstract class Loader {
 	}
 
 	protected abstract void executeLoad();
+
+	/**
+	 * Wraps the given statement into a "CALL { ... } IN TRANSACTIONS OF 5000 ROWS"
+	 * @param statement the statement to wrap
+	 * @return the statement wrapped into the CALL IN TRANSACTIONS structure
+	 */
+	public String withRowLimit(String statement) {
+		return withRowLimit(statement, 5000);
+	}
+
+	/**
+	 * Wraps the given statement into a "CALL { ... } IN TRANSACTIONS OF rowLimit ROWS"
+	 * @param statement the statement to wrap
+	 * @param rowLimit the row limit to use
+	 * @return the statement wrapped into the CALL IN TRANSACTIONS structure
+	 */
+	public String withRowLimit(String statement, int rowLimit) {
+		return "CALL { " + statement + "} IN TRANSACTIONS OF " + rowLimit + " ROWS";
+	}
 
 	/**
 	 * Executes the given query and returns its result.

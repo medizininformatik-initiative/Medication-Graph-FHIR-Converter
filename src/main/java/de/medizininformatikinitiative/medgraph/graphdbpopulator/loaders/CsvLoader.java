@@ -4,6 +4,7 @@ import org.neo4j.driver.Session;
 
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.Objects;
 
 /**
  * CsvLoaders use the LOAD CSV function of Cypher to load bulk data.
@@ -82,7 +83,7 @@ public abstract class CsvLoader extends Loader {
 		return "LOAD CSV " + (withHeaders ? "WITH HEADERS " : "") + "FROM '" + getCypherFilePath() + "'"
 				+ " AS " + ROW_IDENTIFIER
 				+ " FIELDTERMINATOR '" + fieldTerminator + "' "
-				+ statement;
+				+ withRowLimit("WITH " + ROW_IDENTIFIER + " " + statement);
 	}
 
 	/**

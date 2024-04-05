@@ -59,37 +59,39 @@ public class PackageLoader extends CsvLoader {
 						"})"
 		));
 
-		startSubtask("Connecting " + DatabaseDefinitions.PACKAGE_LABEL + " to " + DatabaseDefinitions.PRODUCT_LABEL + " nodes");
+		startSubtask(
+				"Connecting " + DatabaseDefinitions.PACKAGE_LABEL + " to " + DatabaseDefinitions.PRODUCT_LABEL + " nodes");
 		executeQuery(
 				"MATCH (p:" + DatabaseDefinitions.PACKAGE_LABEL + ") " +
 						"MATCH (i:" + DatabaseDefinitions.PRODUCT_LABEL + " {mmiId: p.productId}) " +
-						"CREATE (p)-[:" + DatabaseDefinitions.PACKAGE_BELONGS_TO_PRODUCT_LABEL + "]->(i) "
-		);
+						withRowLimit(
+								"WITH p, i CREATE (p)-[:" + DatabaseDefinitions.PACKAGE_BELONGS_TO_PRODUCT_LABEL + "]->(i) "));
 
 		startSubtask("Deleting unmatched " + DatabaseDefinitions.PACKAGE_LABEL + " nodes");
 		executeQuery(
 				"MATCH (p:" + DatabaseDefinitions.PACKAGE_LABEL + ") " +
 						"WHERE NOT (p)-[:" + DatabaseDefinitions.PACKAGE_BELONGS_TO_PRODUCT_LABEL + "]->(:" + DatabaseDefinitions.PRODUCT_LABEL + ") " +
-						"DELETE p"
+						withRowLimit("WITH p DELETE p")
 		);
 
 		startSubtask("Parsing onMarketDate");
 		// Parse onMarketDate
 		executeQuery(
 				"MATCH (p:" + DatabaseDefinitions.PACKAGE_LABEL + ") WHERE NOT p.onMarketDate IS NULL " +
-						"WITH p, split(p.onMarketDate, '.') AS dateParts " +
-						"SET p.onMarketDate = date(dateParts[2]+'-'+dateParts[1]+'-'+dateParts[0])"
+						withRowLimit("WITH p WITH p, split(p.onMarketDate, '.') AS dateParts " +
+								"SET p.onMarketDate = date(dateParts[2]+'-'+dateParts[1]+'-'+dateParts[0])")
 		);
 
 		startSubtask("Creating PZN nodes");
 		executeQuery(
 				"MATCH (p:" + DatabaseDefinitions.PACKAGE_LABEL + ") WHERE NOT p.pzn IS NULL " +
-						"CREATE (c:" + DatabaseDefinitions.PZN_LABEL + ":" + DatabaseDefinitions.CODE_LABEL + " {" +
-						"code: p.pzn, " +
-						"pznOriginal: p.pznOriginal, " +
-						"pznSuccessor: p.pznSuccessor" +
-						"}) " +
-						"CREATE (c)-[:" + DatabaseDefinitions.CODE_REFERENCE_RELATIONSHIP_NAME + "]->(p)"
+						withRowLimit(
+								"WITH p CREATE (c:" + DatabaseDefinitions.PZN_LABEL + ":" + DatabaseDefinitions.CODE_LABEL + " {" +
+										"code: p.pzn, " +
+										"pznOriginal: p.pznOriginal, " +
+										"pznSuccessor: p.pznSuccessor" +
+										"}) " +
+										"CREATE (c)-[:" + DatabaseDefinitions.CODE_REFERENCE_RELATIONSHIP_NAME + "]->(p)")
 		);
 
 		startSubtask("Interconnecting Package nodes");
@@ -99,16 +101,25 @@ public class PackageLoader extends CsvLoader {
 		executeQuery(
 				"MATCH (p1:" + DatabaseDefinitions.PZN_LABEL + ")-[:" + DatabaseDefinitions.CODE_REFERENCE_RELATIONSHIP_NAME + "]->(pk1:" + DatabaseDefinitions.PACKAGE_LABEL + ") " +
 						"MATCH (p2:" + DatabaseDefinitions.PZN_LABEL + " {code: p1.pznSuccessor})-[:" + DatabaseDefinitions.CODE_REFERENCE_RELATIONSHIP_NAME + "]->(pk2:" + DatabaseDefinitions.PACKAGE_LABEL + ") " +
-						"CREATE (pk1)-[:" + DatabaseDefinitions.PACKAGE_HAS_SUCCESSOR_LABEL + "]->(pk2)");
+						withRowLimit(
+								"WITH p1, p2 CREATE (pk1)-[:" + DatabaseDefinitions.PACKAGE_HAS_SUCCESSOR_LABEL + "]->(pk2)")
+		);
 
 		// Connect originals
-		executeQuery("MATCH (p1:" + DatabaseDefinitions.PZN_LABEL + ")-[:" + DatabaseDefinitions.CODE_REFERENCE_RELATIONSHIP_NAME + "]->(pk1:" + DatabaseDefinitions.PACKAGE_LABEL + ") " +
-				"MATCH (p2:" + DatabaseDefinitions.PZN_LABEL + " {code: p1.pznOriginal})-[:" + DatabaseDefinitions.CODE_REFERENCE_RELATIONSHIP_NAME + "]->(pk2:" + DatabaseDefinitions.PACKAGE_LABEL + ") " +
-				"CREATE (pk1)-[:" + DatabaseDefinitions.PACKAGE_IS_ORIGINALLY + "]->(pk2)");
+		executeQuery(
+				"MATCH (p1:" + DatabaseDefinitions.PZN_LABEL + ")-[:" + DatabaseDefinitions.CODE_REFERENCE_RELATIONSHIP_NAME + "]->(pk1:" + DatabaseDefinitions.PACKAGE_LABEL + ") " +
+						"MATCH (p2:" + DatabaseDefinitions.PZN_LABEL + " {code: p1.pznOriginal})-[:" + DatabaseDefinitions.CODE_REFERENCE_RELATIONSHIP_NAME + "]->(pk2:" + DatabaseDefinitions.PACKAGE_LABEL + ") " +
+						withRowLimit(
+								"WITH p1, p2 CREATE (pk1)-[:" + DatabaseDefinitions.PACKAGE_IS_ORIGINALLY + "]->(pk2)")
+		);
 
 		startSubtask("Cleaning up");
 		// Remove obsolete fields
-		executeQuery("MATCH (p:" + DatabaseDefinitions.PACKAGE_LABEL + ") REMOVE p.productId, p.pzn, p.pznOriginal, p.pznSuccessor");
-		executeQuery("MATCH (p:" + DatabaseDefinitions.PZN_LABEL + ") REMOVE p.pznOriginal, p.pznSuccessor");
+		executeQuery(
+				"MATCH (p:" + DatabaseDefinitions.PACKAGE_LABEL + ") " +
+						withRowLimit("WITH p REMOVE p.productId, p.pzn, p.pznOriginal, p.pznSuccessor"));
+		executeQuery(
+				"MATCH (p:" + DatabaseDefinitions.PZN_LABEL + ") " +
+						withRowLimit("WITH p REMOVE p.pznOriginal, p.pznSuccessor"));
 	}
 }

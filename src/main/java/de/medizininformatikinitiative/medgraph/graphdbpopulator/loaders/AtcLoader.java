@@ -36,8 +36,8 @@ public class AtcLoader extends CatalogEntryLoader {
 		// Create hierarchy relationships
 		executeQuery("MATCH (a:" + DatabaseDefinitions.ATC_LABEL + ") WHERE a.parent IS NOT NULL " +
 				"MATCH (p:" + DatabaseDefinitions.ATC_LABEL + " {code: a.parent}) " +
-				"WITH a, p " +
-				"CREATE (a)-[:" + DatabaseDefinitions.ATC_HAS_PARENT_LABEL + "]->(p)");
+				withRowLimit("WITH a, p " +
+						"CREATE (a)-[:" + DatabaseDefinitions.ATC_HAS_PARENT_LABEL + "]->(p)"));
 	}
 
 }

@@ -30,8 +30,8 @@ public class DrugIngredientConnectionLoader extends CsvLoader {
 						"CREATE (d)-[:" + DRUG_CONTAINS_INGREDIENT_LABEL + "]->(i) "
 		));
 
-		executeQuery("MATCH (i:"+MMI_INGREDIENT_LABEL+") " +
-				"WHERE NOT (:"+DRUG_LABEL+")-[:"+DRUG_CONTAINS_INGREDIENT_LABEL+"]->(i) " +
-				"DETACH DELETE i");
+		executeQuery("MATCH (i:" + MMI_INGREDIENT_LABEL + ") " +
+				"WHERE NOT (:" + DRUG_LABEL + ")-[:" + DRUG_CONTAINS_INGREDIENT_LABEL + "]->(i) " +
+				withRowLimit("WITH i DETACH DELETE i"));
 	}
 }

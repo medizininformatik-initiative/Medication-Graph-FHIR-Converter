@@ -21,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * Runs the whole migration on a set of sample files.
  */
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-@Disabled("This test wipes the target database and is therefore disabled by default")
+//@Disabled("This test wipes the target database and is therefore disabled by default")
 public class IntegrationTest {
 
 	// WARNING:
@@ -39,7 +39,7 @@ public class IntegrationTest {
 	public void integrationTestSetup() {
 		connection = new DatabaseConnection();
 		session = connection.createSession();
-		session.run(new Query("MATCH (n) DETACH DELETE n")).consume(); // Delete everything
+		session.run(new Query("MATCH (n) CALL { WITH n DETACH DELETE n } IN TRANSACTIONS OF 5000 ROWS")).consume(); // Delete everything
 		try {
 			Main.runLoaders();
 		} catch (IOException | InterruptedException e) {

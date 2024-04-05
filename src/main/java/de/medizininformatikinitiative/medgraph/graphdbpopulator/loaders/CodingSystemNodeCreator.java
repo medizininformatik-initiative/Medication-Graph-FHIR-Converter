@@ -61,10 +61,13 @@ public class CodingSystemNodeCreator extends Loader {
 	 */
 	private void createCodingSystemNodeAndConnectAllLabelledNodes(String uri, String name,
 	                                                              LocalDate date, String notice, String label) {
-		executeQuery(createCodingSytemNode(uri, name, date, notice) +
-				"WITH cs " +
-				"MATCH (e:" + label + ") " +
-				"CREATE (e)-[:" + BELONGS_TO_CODING_SYSTEM_LABEL + "]->(cs)"
+		executeQuery(createCodingSytemNode(uri, name, date, notice));
+		executeQuery(
+				"MATCH (cs:" + CODING_SYSTEM_LABEL + " {uri: $uri}) " +
+						"MATCH (e:" + label + ") " +
+						withRowLimit("WITH cs, e " +
+								"CREATE (e)-[:" + BELONGS_TO_CODING_SYSTEM_LABEL + "]->(cs)"),
+				"uri", uri
 		);
 	}
 

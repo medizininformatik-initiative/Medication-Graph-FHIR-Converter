@@ -55,29 +55,29 @@ public class DrugLoader extends CsvLoader {
 
 		startSubtask("Removing orphan drug nodes");
 		executeQuery(
-				"MATCH (d:"+DRUG_LABEL+") " +
-						"WHERE NOT (:"+PRODUCT_LABEL+")-[:"+PRODUCT_CONTAINS_DRUG_LABEL+"]->(d) " +
-						"DELETE d"
+				"MATCH (d:" + DRUG_LABEL + ") " +
+						"WHERE NOT (:" + PRODUCT_LABEL + ")-[:" + PRODUCT_CONTAINS_DRUG_LABEL + "]->(d) " +
+						withRowLimit("WITH d DELETE d")
 		);
 
 		startSubtask("Connecting to unit nodes");
 		// Connect to Unit Nodes
 		executeQuery(
-				"MATCH (d:"+DRUG_LABEL+") WHERE d.mmiUnitCode IS NOT NULL " +
-						"MATCH (u:"+UNIT_LABEL+" {mmiCode: d.mmiUnitCode}) " +
-						"WITH d, u " +
-						"CREATE (d)-[:"+DRUG_HAS_UNIT_LABEL+"]->(u) " +
-						"SET d.mmiUnitCode = null"
+				"MATCH (d:" + DRUG_LABEL + ") WHERE d.mmiUnitCode IS NOT NULL " +
+						"MATCH (u:" + UNIT_LABEL + " {mmiCode: d.mmiUnitCode}) " +
+						withRowLimit("WITH d, u " +
+								"CREATE (d)-[:" + DRUG_HAS_UNIT_LABEL + "]->(u) " +
+								"SET d.mmiUnitCode = null")
 		);
 
 		startSubtask("Connecting to dose form nodes");
 		// Connect to Dose Form nodes
 		executeQuery(
-				"MATCH (d:"+DRUG_LABEL+") WHERE d.mmiDoseFormCode IS NOT NULL " +
-						"MATCH (f:"+DOSE_FORM_LABEL+" {mmiCode: d.mmiDoseFormCode}) " +
-						"WITH d, f " +
-						"CREATE (d)-[:"+DRUG_HAS_DOSE_FORM_LABEL+"]->(f) " +
-						"SET d.mmiDoseFormCode = null"
+				"MATCH (d:" + DRUG_LABEL + ") WHERE d.mmiDoseFormCode IS NOT NULL " +
+						"MATCH (f:" + DOSE_FORM_LABEL + " {mmiCode: d.mmiDoseFormCode}) " +
+						withRowLimit("WITH d, f " +
+								"CREATE (d)-[:" + DRUG_HAS_DOSE_FORM_LABEL + "]->(f) " +
+								"SET d.mmiDoseFormCode = null")
 		);
 	}
 }

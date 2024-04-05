@@ -94,22 +94,23 @@ public class AmiceStoffBezLoader extends CsvLoader {
 				"WITH c, c.target AS targets " +
 				"UNWIND targets AS target " +
 				"MATCH (s:" + SUBSTANCE_LABEL + " {mmiId: target}) " +
-				"CREATE (c)-[:" + SYNONYME_REFERENCES_NODE_LABEL + "]->(s) ");
+				withRowLimit("WITH c, s CREATE (c)-[:" + SYNONYME_REFERENCES_NODE_LABEL + "]->(s) "));
 
 		// Remove temporary markers
 		executeQuery("MATCH (s:" + SYNONYME_LABEL + ":TEMP) " +
-				"REMOVE s.target " +
-				"REMOVE s:TEMP");
+				withRowLimit("WITH s " +
+						"REMOVE s.target " +
+						"REMOVE s:TEMP"));
 
 		// Remove the trash entry
 		executeQuery("MATCH (c:" + SYNONYME_LABEL + " {name: '-'}) DETACH DELETE c");
 
 		// Remove duplicate references, which are created if names exist twice in the dataset
 		executeQuery(
-				"MATCH (s:"+SUBSTANCE_LABEL+")<-[r1]-(sy:"+SYNONYME_LABEL+") " +
+				"MATCH (s:" + SUBSTANCE_LABEL + ")<-[r1]-(sy:" + SYNONYME_LABEL + ") " +
 						"MATCH (s)<-[r2]-(sy) " +
 						"WHERE elementId(r1) < elementId(r2) " +
-						"DELETE r2"
+						withRowLimit("WITH r2 DELETE r2")
 		);
 	}
 }

@@ -76,7 +76,7 @@ public class CompanyAddressLoader extends CsvLoader {
 			executeQuery(
 					"MATCH (a:" + ADDRESS_LABEL + ") " +
 							"MATCH (c:CountryCode {mmiCode: a.countryCode}) " +
-							" SET a.country = c.country, a.countryCode = c.countryCode"
+							withRowLimit("WITH a, c SET a.country = c.country, a.countryCode = c.countryCode")
 			);
 			executeQuery("MATCH (c:CountryCode) DELETE c");
 			executeQuery("DROP CONSTRAINT tempCountryCodes");

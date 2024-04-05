@@ -45,20 +45,20 @@ public class IngredientCorrespondenceLoader extends CsvLoader {
 						"MATCH (p:" + MMI_INGREDIENT_LABEL + " {mmiId: i.parentId}) " +
 						"MATCH (s:" + SUBSTANCE_LABEL + " {mmiId: i.moleculeId}) " +
 						"MATCH (u:" + UNIT_LABEL + " {mmiCode: i.unitCode}) " +
-						"WITH i, p, s, u " +
+						withRowLimit("WITH i, p, s, u " +
 						"CREATE (p)-[:" + INGREDIENT_CORRESPONDS_TO_LABEL + "]->(i) " +
 						"CREATE (i)-[:" + INGREDIENT_IS_SUBSTANCE_LABEL + "]->(s) " +
 						"CREATE (i)-[:" + INGREDIENT_HAS_UNIT_LABEL + "]->(u) " +
 						"REMOVE i.parentId " +
 						"REMOVE i.moleculeId " +
 						"REMOVE i.unitCode " +
-						"REMOVE i:"+CORRESPONDING_INGREDIENT_LABEL
+						"REMOVE i:"+CORRESPONDING_INGREDIENT_LABEL)
 		);
 
 		startSubtask("Removing orphans");
 		executeQuery("MATCH (i:"+CORRESPONDING_INGREDIENT_LABEL+") " +
 				"WHERE NOT (i)<-[:"+INGREDIENT_CORRESPONDS_TO_LABEL+"]-(:"+MMI_INGREDIENT_LABEL+") " +
-				"DELETE i");
+				withRowLimit("WITH i DELETE i"));
 	}
 
 }

@@ -50,21 +50,21 @@ public class IngredientLoader extends CsvLoader {
 
 		startSubtask("Connecting to substance nodes");
 		executeQuery("MATCH (i:" + MMI_INGREDIENT_LABEL + ") " +
-						"MATCH (s:" + SUBSTANCE_LABEL + " {mmiId: i.substanceId}) " +
-						"WITH i, s " +
-						"CREATE (i)-[:" + INGREDIENT_IS_SUBSTANCE_LABEL + "]->(s) "
+				"MATCH (s:" + SUBSTANCE_LABEL + " {mmiId: i.substanceId}) " +
+				withRowLimit("WITH i, s " +
+						"CREATE (i)-[:" + INGREDIENT_IS_SUBSTANCE_LABEL + "]->(s) ")
 		);
 
 		startSubtask("Connecting to unit nodes");
 		executeQuery(
 				"MATCH (i:" + MMI_INGREDIENT_LABEL + ") " +
 						"MATCH (u:" + UNIT_LABEL + " {mmiCode: i.unitCode}) " +
-						"WITH i, u " +
-						"CREATE (i)-[:" + INGREDIENT_HAS_UNIT_LABEL + "]->(u)"
+						withRowLimit("WITH i, u " +
+								"CREATE (i)-[:" + INGREDIENT_HAS_UNIT_LABEL + "]->(u)")
 		);
 
 		startSubtask("Cleaning up");
-		executeQuery("MATCH (i:"+MMI_INGREDIENT_LABEL+") " +
-				"REMOVE i.substanceId, i.unitCode");
+		executeQuery("MATCH (i:" + MMI_INGREDIENT_LABEL + ") " +
+				withRowLimit("WITH i REMOVE i.substanceId, i.unitCode"));
 	}
 }
