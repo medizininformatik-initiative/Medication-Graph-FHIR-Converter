@@ -1,4 +1,4 @@
-<mxfile host="app.diagrams.net" modified="2024-05-10T12:34:57.327Z" agent="Mozilla/5.0 (X11; Linux x86_64; rv:125.0) Gecko/20100101 Firefox/125.0" etag="TzI4MQx0O6JyW9C9lYQB" version="24.3.1" type="device">
+<mxfile host="app.diagrams.net" modified="2024-05-10T15:33:38.578Z" agent="Mozilla/5.0 (X11; Linux x86_64; rv:125.0) Gecko/20100101 Firefox/125.0" etag="rI5E0hwCoRH6WV7_EfKu" version="24.3.1" type="device">
   <diagram name="Page-1" id="FMcPhcLRTEElsIuv75pr">
     <mxGraphModel dx="1647" dy="930" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
       <root>
@@ -145,8 +145,8 @@
             <mxPoint x="1660" y="1240" as="targetPoint" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="kuBtR63fE_IgyAm7oiev-34" value="&lt;div&gt;&lt;span style=&quot;font-weight: normal;&quot;&gt;«abstract»&lt;/span&gt;&lt;/div&gt;&lt;div&gt;Filter&lt;/div&gt;" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=40;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
-          <mxGeometry x="1230" y="1300" width="310" height="130" as="geometry" />
+        <mxCell id="kuBtR63fE_IgyAm7oiev-34" value="&lt;div&gt;&lt;span style=&quot;font-weight: normal;&quot;&gt;«interface»&lt;/span&gt;&lt;/div&gt;&lt;div&gt;Filter&lt;/div&gt;" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=40;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="1275" y="1300" width="310" height="130" as="geometry" />
         </mxCell>
         <mxCell id="kuBtR63fE_IgyAm7oiev-35" value="&lt;div&gt;&lt;i&gt;+ passesFilter(Matchable, SearchQuery): boolean&lt;/i&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;&lt;i&gt;+ batchPassesFilter(List&amp;lt;Matchable&amp;gt;, SearchQuery): List&amp;lt;Boolean&amp;gt;&lt;/i&gt;&lt;br&gt;&lt;/div&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" vertex="1" parent="kuBtR63fE_IgyAm7oiev-34">
           <mxGeometry y="40" width="310" height="90" as="geometry" />
@@ -154,7 +154,7 @@
         <mxCell id="kuBtR63fE_IgyAm7oiev-36" value="OngoingMatching" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=32;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
           <mxGeometry x="790" y="728" width="380" height="190" as="geometry" />
         </mxCell>
-        <mxCell id="kuBtR63fE_IgyAm7oiev-37" value="&lt;div&gt;+ OngoingMatching(List&amp;lt;OriginalMatch&amp;gt;)&lt;/div&gt;&lt;div&gt;+ getMatchingObjects(): SubSortingTree&amp;lt;MatchingObject&amp;gt;&lt;/div&gt;&lt;div&gt;+ applyMatchingPipelineStep(MatchingPipelineComponent)&lt;br&gt;&lt;/div&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" vertex="1" parent="kuBtR63fE_IgyAm7oiev-36">
+        <mxCell id="kuBtR63fE_IgyAm7oiev-37" value="&lt;div&gt;+ OngoingMatching(List&amp;lt;OriginalMatch&amp;gt;, SearchQuery)&lt;/div&gt;&lt;div&gt;+ getMatchingObjects(): SubSortingTree&amp;lt;MatchingObject&amp;gt;&lt;/div&gt;&lt;div&gt;+ applyMatchingPipelineStep(MatchingPipelineComponent)&lt;br&gt;&lt;/div&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" vertex="1" parent="kuBtR63fE_IgyAm7oiev-36">
           <mxGeometry y="32" width="380" height="60" as="geometry" />
         </mxCell>
         <mxCell id="kuBtR63fE_IgyAm7oiev-47" value="&lt;div&gt;Responsible for running the matching pipeline&lt;/div&gt;&lt;div&gt;components and applying the result information to the matching objects.&lt;/div&gt;&lt;div&gt;Holds all MatchingObjects during the matching process.&lt;br&gt;&lt;/div&gt;" style="text;strokeColor=default;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" vertex="1" parent="kuBtR63fE_IgyAm7oiev-36">
@@ -166,7 +166,7 @@
         <mxCell id="kuBtR63fE_IgyAm7oiev-55" style="rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=0;dashed=1;entryX=0.75;entryY=1;entryDx=0;entryDy=0;" edge="1" parent="1" source="kuBtR63fE_IgyAm7oiev-52" target="kuBtR63fE_IgyAm7oiev-29">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="kuBtR63fE_IgyAm7oiev-52" value="&lt;span style=&quot;font-weight: normal;&quot;&gt;«abstract»&lt;/span&gt;&lt;br&gt;SimpleJudge&lt;span style=&quot;font-weight: normal;&quot;&gt;&lt;br&gt;&lt;/span&gt;" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=40;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+        <mxCell id="kuBtR63fE_IgyAm7oiev-52" value="&lt;span style=&quot;font-weight: normal;&quot;&gt;«abstract»&lt;/span&gt;&lt;br&gt;ScoreJudge&lt;span style=&quot;font-weight: normal;&quot;&gt;&lt;br&gt;&lt;/span&gt;" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=40;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
           <mxGeometry x="1630" y="1300" width="365" height="130" as="geometry" />
         </mxCell>
         <mxCell id="kuBtR63fE_IgyAm7oiev-53" value="&lt;div&gt;+ SimpleJudge(double passingScore)&lt;/div&gt;&lt;div&gt;&lt;i&gt;# judgeInternal(Matchable, SearchQuery): double&lt;/i&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;&lt;i&gt;# batchJudgeInternal(List&amp;lt;Matchable&amp;gt;, SearchQuery): List&amp;lt;Double&amp;gt;&lt;/i&gt;&lt;br&gt;&lt;/div&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" vertex="1" parent="kuBtR63fE_IgyAm7oiev-52">

@@ -51,7 +51,9 @@ public abstract class ScoreJudge implements Judge<ScoredJudgement> {
 	 * @return the assigned score for each {@link Matchable}, with each entry in the list being the score of the
 	 * {@link Matchable} in the input list at the same position
 	 */
-	protected abstract List<Double> batchJudgeInternal(List<Matchable> matchables, SearchQuery query);
+	protected List<Double> batchJudgeInternal(List<Matchable> matchables, SearchQuery query) {
+		return matchables.stream().map(m -> judgeInternal(m, query)).toList();
+	}
 
 	/**
 	 * Returns the minimun required score to pass this judge.

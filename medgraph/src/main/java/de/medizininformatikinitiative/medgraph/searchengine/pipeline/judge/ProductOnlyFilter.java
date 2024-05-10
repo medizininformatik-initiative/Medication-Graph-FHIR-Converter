@@ -13,6 +13,9 @@ import java.util.List;
  */
 public class ProductOnlyFilter implements Filter {
 
+	public static final String NAME = "Product Only Filter";
+	public static final String DESCRIPTION = "Removes all matches which are not products.";
+
 	@Override
 	public boolean passesFilter(Matchable matchable, SearchQuery query) {
 		return matchable instanceof Product;
@@ -20,11 +23,11 @@ public class ProductOnlyFilter implements Filter {
 
 	@Override
 	public String getName() {
-		return "Product Only Filter";
+		return NAME;
 	}
 
 	@Override
 	public String getDescription() {
-		return "Removes all matches which are not products.";
+		return DESCRIPTION;
 	}
 }
