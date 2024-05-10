@@ -11,15 +11,15 @@ import java.util.List;
  *
  * @author Markus Budeus
  */
-public abstract class Filter implements Judge<Filtering> {
+public interface Filter extends Judge<Filtering> {
 
 	@Override
-	public Filtering judge(Matchable matchable, SearchQuery query) {
+	default Filtering judge(Matchable matchable, SearchQuery query) {
 		return new Filtering(getName(), getDescription(), passesFilter(matchable, query));
 	}
 
 	@Override
-	public List<Filtering> batchJudge(List<Matchable> matchables, SearchQuery query) {
+	default List<Filtering> batchJudge(List<Matchable> matchables, SearchQuery query) {
 		String name = getName();
 		String desc = getDescription();
 		return batchPassesFilter(matchables, query)
@@ -35,7 +35,7 @@ public abstract class Filter implements Judge<Filtering> {
 	 * @param query     the query to consider when filtering
 	 * @return true if the {@link Matchable} passes this filter, false otherwise
 	 */
-	protected abstract boolean passesFilter(Matchable matchable, SearchQuery query);
+	boolean passesFilter(Matchable matchable, SearchQuery query);
 
 	/**
 	 * Decides whether the given {@link Matchable}s pass this filter.
@@ -45,16 +45,8 @@ public abstract class Filter implements Judge<Filtering> {
 	 * @return A list containing true for each {@link Matchable} which passes the filter and false for each that does
 	 * not
 	 */
-	protected abstract List<Boolean> batchPassesFilter(List<Matchable> matchables, SearchQuery query);
-
-	/**
-	 * Returns a short name of this filter.
-	 */
-	protected abstract String getName();
-
-	/**
-	 * Returns a short description of what this filter does.
-	 */
-	protected abstract String getDescription();
+	default List<Boolean> batchPassesFilter(List<Matchable> matchables, SearchQuery query) {
+		return matchables.stream().map(matchable -> passesFilter(matchable, query)).toList();
+	}
 
 }

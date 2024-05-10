@@ -33,7 +33,7 @@ public class BinarySortDirective<S> extends SortDirective<S> {
 		List<Node<S>> resultList = new ArrayList<>();
 		resultList.add(new Leaf<>(positives, "true"));
 
-		if (eliminateNegatives) {
+		if (!eliminateNegatives) {
 			resultList.add(new Leaf<>(negatives, "false"));
 		}
 		return resultList;

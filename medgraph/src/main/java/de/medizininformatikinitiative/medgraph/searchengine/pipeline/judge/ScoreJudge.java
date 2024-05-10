@@ -11,11 +11,11 @@ import java.util.List;
  *
  * @author Markus Budeus
  */
-public abstract class SimpleJudge implements Judge<ScoredJudgement> {
+public abstract class ScoreJudge implements Judge<ScoredJudgement> {
 
 	private final Double passingScore;
 
-	public SimpleJudge(Double passingScore) {
+	public ScoreJudge(Double passingScore) {
 		this.passingScore = passingScore;
 	}
 
@@ -54,13 +54,9 @@ public abstract class SimpleJudge implements Judge<ScoredJudgement> {
 	protected abstract List<Double> batchJudgeInternal(List<Matchable> matchables, SearchQuery query);
 
 	/**
-	 * Returns a short name of this judge.
+	 * Returns the minimun required score to pass this judge.
 	 */
-	protected abstract String getName();
-
-	/**
-	 * Returns a short description of what this judge does.
-	 */
-	protected abstract String getDescription();
-
+	public Double getPassingScore() {
+		return passingScore;
+	}
 }

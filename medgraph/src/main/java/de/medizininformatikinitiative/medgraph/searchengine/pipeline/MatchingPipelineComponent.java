@@ -5,4 +5,16 @@ package de.medizininformatikinitiative.medgraph.searchengine.pipeline;
  *
  * @author Markus Budeus
  */
-public interface MatchingPipelineComponent {}
+public interface MatchingPipelineComponent {
+
+	/**
+	 * Returns a short name of this component.
+	 */
+	String getName();
+
+	/**
+	 * Returns a short description of what this component does.
+	 */
+	String getDescription();
+
+}
