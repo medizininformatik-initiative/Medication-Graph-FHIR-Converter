@@ -9,6 +9,7 @@ import de.medizininformatikinitiative.medgraph.searchengine.model.pipelinestep.J
 import de.medizininformatikinitiative.medgraph.searchengine.model.pipelinestep.ScoredJudgement;
 import de.medizininformatikinitiative.medgraph.searchengine.pipeline.judge.Judge;
 import de.medizininformatikinitiative.medgraph.searchengine.pipeline.judge.ScoreJudge;
+import de.medizininformatikinitiative.medgraph.searchengine.pipeline.transformer.IMatchTransformer;
 import de.medizininformatikinitiative.medgraph.searchengine.pipeline.tree.BinarySortDirective;
 import de.medizininformatikinitiative.medgraph.searchengine.pipeline.tree.ScoreSortDirective;
 import de.medizininformatikinitiative.medgraph.searchengine.pipeline.tree.SubSortingTree;
@@ -59,6 +60,28 @@ public class OngoingMatching {
 		if (anyPass || !ensureSurvival) {
 			removeMatchesWhichFailedTheLastFiltering(filter.getName());
 		}
+	}
+
+	public void transformMatches(IMatchTransformer transformer) {
+		// This function is sadly a lot more complicated than applying a judgement.
+		//
+		// First, we feed all current matches into the transformer.
+		// Then, we construct new TransformedObject-instances for every output of each transformation.
+		//
+		// Now, intuitively, the final step is to replace each MatchingObject with its transformations using
+		// batchReplace.
+		// However, there is one issue: The MatchTransformer may have generated the same output within the
+		// transformations of different inputs. For example, say we transform substances into products by searching
+		// for products which use the substance as their active ingredient. But, product [A] may be a combination
+		// product, containing substances [B] and [C]. Both [B] and [C] are then resolved to product [A].
+		// Now, [A] exists twice in the resulting matches. Which means, we need to merge them.
+		//
+		// The way we do that is we group all TransformedObject-instances by their Matchable in a hash table.
+		// Then, everytime a Matchable is linked to multiple TransformedObject-instances, we merge them.
+		// Finally, we do the batchReplace. For groups, we replace the first occurrence on the matches (i.e. the
+		// highest-rated) with the Merge object and eliminate the others.
+
+		// TODO Now actually implement this, lol.
 	}
 
 	/**

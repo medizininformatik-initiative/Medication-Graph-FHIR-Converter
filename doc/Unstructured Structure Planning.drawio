@@ -1,4 +1,4 @@
-<mxfile host="app.diagrams.net" modified="2024-05-10T15:33:38.578Z" agent="Mozilla/5.0 (X11; Linux x86_64; rv:125.0) Gecko/20100101 Firefox/125.0" etag="rI5E0hwCoRH6WV7_EfKu" version="24.3.1" type="device">
+<mxfile host="app.diagrams.net" modified="2024-05-10T15:47:55.613Z" agent="Mozilla/5.0 (X11; Linux x86_64; rv:125.0) Gecko/20100101 Firefox/125.0" etag="T20js2VpT2oQPvlbkIu7" version="24.3.1" type="device">
   <diagram name="Page-1" id="FMcPhcLRTEElsIuv75pr">
     <mxGraphModel dx="1647" dy="930" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
       <root>
@@ -134,7 +134,7 @@
             <mxPoint x="1319.1550000000002" y="913.98" as="targetPoint" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="kuBtR63fE_IgyAm7oiev-32" value="&lt;span style=&quot;font-weight: normal;&quot;&gt;«interface»&lt;/span&gt;&lt;br&gt;IResultTransformer" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=40;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+        <mxCell id="kuBtR63fE_IgyAm7oiev-32" value="&lt;span style=&quot;font-weight: normal;&quot;&gt;«interface»&lt;/span&gt;&lt;br&gt;IMatchTransformer" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=40;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
           <mxGeometry x="830" y="1050" width="365" height="130" as="geometry" />
         </mxCell>
         <mxCell id="kuBtR63fE_IgyAm7oiev-33" value="&lt;div&gt;+ transform(Matchable, SearchQuery): Transformation&lt;br&gt;&lt;/div&gt;&lt;div&gt;+ batchTransform(List&amp;lt;Matchable&amp;gt;, SearchQuery): List&amp;lt;Transformation&amp;gt;&lt;br&gt;&lt;/div&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" vertex="1" parent="kuBtR63fE_IgyAm7oiev-32">
@@ -152,13 +152,13 @@
           <mxGeometry y="40" width="310" height="90" as="geometry" />
         </mxCell>
         <mxCell id="kuBtR63fE_IgyAm7oiev-36" value="OngoingMatching" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=32;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
-          <mxGeometry x="790" y="728" width="380" height="190" as="geometry" />
+          <mxGeometry x="790" y="728" width="380" height="218" as="geometry" />
         </mxCell>
-        <mxCell id="kuBtR63fE_IgyAm7oiev-37" value="&lt;div&gt;+ OngoingMatching(List&amp;lt;OriginalMatch&amp;gt;, SearchQuery)&lt;/div&gt;&lt;div&gt;+ getMatchingObjects(): SubSortingTree&amp;lt;MatchingObject&amp;gt;&lt;/div&gt;&lt;div&gt;+ applyMatchingPipelineStep(MatchingPipelineComponent)&lt;br&gt;&lt;/div&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" vertex="1" parent="kuBtR63fE_IgyAm7oiev-36">
-          <mxGeometry y="32" width="380" height="60" as="geometry" />
+        <mxCell id="kuBtR63fE_IgyAm7oiev-37" value="&lt;div&gt;+ OngoingMatching(List&amp;lt;OriginalMatch&amp;gt;, SearchQuery)&lt;/div&gt;&lt;div&gt;+ getMatchingObjects(): SubSortingTree&amp;lt;MatchingObject&amp;gt;&lt;/div&gt;&lt;div&gt;+ applyScoreJudge(Judge, boolean)&lt;br&gt;&lt;/div&gt;&lt;div&gt;+ applyFilter(Judge, boolean)&lt;/div&gt;&lt;div&gt;+ transformMatches(IMatchTransformer)&lt;br&gt;&lt;/div&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" vertex="1" parent="kuBtR63fE_IgyAm7oiev-36">
+          <mxGeometry y="32" width="380" height="88" as="geometry" />
         </mxCell>
         <mxCell id="kuBtR63fE_IgyAm7oiev-47" value="&lt;div&gt;Responsible for running the matching pipeline&lt;/div&gt;&lt;div&gt;components and applying the result information to the matching objects.&lt;/div&gt;&lt;div&gt;Holds all MatchingObjects during the matching process.&lt;br&gt;&lt;/div&gt;" style="text;strokeColor=default;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" vertex="1" parent="kuBtR63fE_IgyAm7oiev-36">
-          <mxGeometry y="92" width="380" height="98" as="geometry" />
+          <mxGeometry y="120" width="380" height="98" as="geometry" />
         </mxCell>
         <mxCell id="kuBtR63fE_IgyAm7oiev-49" value="&lt;span style=&quot;font-weight: normal;&quot;&gt;«interface»&lt;/span&gt;&lt;br&gt;&lt;b&gt;MatchingPipelineComponent&lt;/b&gt;" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=40;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
           <mxGeometry x="1283.75" y="828" width="182.5" height="84" as="geometry" />
@@ -175,7 +175,7 @@
         <mxCell id="kuBtR63fE_IgyAm7oiev-60" style="rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=0;dashed=1;" edge="1" parent="1" source="kuBtR63fE_IgyAm7oiev-58" target="kuBtR63fE_IgyAm7oiev-32">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="kuBtR63fE_IgyAm7oiev-58" value="&lt;span style=&quot;font-weight: normal;&quot;&gt;«abstract»&lt;/span&gt;&lt;br&gt;ResultTransformer" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=40;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+        <mxCell id="kuBtR63fE_IgyAm7oiev-58" value="&lt;span style=&quot;font-weight: normal;&quot;&gt;«abstract»&lt;/span&gt;&lt;br&gt;MatchTransformer" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=40;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
           <mxGeometry x="826" y="1260" width="365" height="130" as="geometry" />
         </mxCell>
         <mxCell id="kuBtR63fE_IgyAm7oiev-59" value="&lt;div&gt;+ transform(Matchable, SearchQuery): List&amp;lt;Matchable&amp;gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;+ batchTransform(List&amp;lt;Matchable&amp;gt;, SearchQuery): List&amp;lt;List&amp;lt;Matchable&amp;gt;&amp;gt;&lt;br&gt;&lt;/div&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" vertex="1" parent="kuBtR63fE_IgyAm7oiev-58">
