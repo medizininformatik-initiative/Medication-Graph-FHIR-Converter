@@ -3,7 +3,6 @@ package de.medizininformatikinitiative.medgraph.searchengine.pipeline.judge;
 import de.medizininformatikinitiative.medgraph.searchengine.model.SearchQuery;
 import de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject.Matchable;
 import de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject.Substance;
-import de.medizininformatikinitiative.medgraph.searchengine.model.pipelinestep.Judgement;
 import de.medizininformatikinitiative.medgraph.searchengine.model.pipelinestep.ScoredJudgement;
 import org.junit.jupiter.api.Test;
 
@@ -14,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.*;
 /**
  * @author Markus Budeus
  */
-public class SimpleJudgeTest {
+public class ScoreJudgeTest {
 
 	private static final double PASSING_SCORE = 1;
 
@@ -49,7 +48,7 @@ public class SimpleJudgeTest {
 		assertFalse(judgements.get(1).isPassed());
 	}
 
-	private static class TestJudge extends SimpleJudge {
+	private static class TestJudge extends ScoreJudge {
 
 		private final double judgement;
 		private final List<Double> batchJudgement;
@@ -71,12 +70,12 @@ public class SimpleJudgeTest {
 		}
 
 		@Override
-		protected String getName() {
+		public String getName() {
 			return "test";
 		}
 
 		@Override
-		protected String getDescription() {
+		public String getDescription() {
 			return "desc";
 		}
 	}

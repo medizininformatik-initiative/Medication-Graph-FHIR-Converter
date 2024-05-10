@@ -2,7 +2,9 @@ package de.medizininformatikinitiative.medgraph.searchengine.model.matchingobjec
 
 import de.medizininformatikinitiative.medgraph.searchengine.model.pipelinestep.Judgement;
 
+import java.util.Collections;
 import java.util.LinkedList;
+import java.util.List;
 
 /**
  * Carrier object for {@link Matchable} during the matching process. Stores information about
@@ -33,8 +35,8 @@ public abstract class MatchingObject {
 	/**
 	 * Returns all judgements applied to this object in the order of being applied.
 	 */
-	public LinkedList<Judgement> getAppliedJudgements() {
-		return appliedJudgements;
+	public List<Judgement> getAppliedJudgements() {
+		return Collections.unmodifiableList(appliedJudgements);
 	}
 
 	/**

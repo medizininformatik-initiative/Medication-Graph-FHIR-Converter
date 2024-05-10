@@ -48,7 +48,7 @@ public class FilterTest {
 		assertFalse(list.get(3).isPassed());
 	}
 
-	private static class TestFilter extends Filter {
+	private static class TestFilter implements Filter {
 
 		private final Boolean[] result;
 
@@ -57,24 +57,24 @@ public class FilterTest {
 		}
 
 		@Override
-		protected boolean passesFilter(Matchable matchable, SearchQuery query) {
+		public boolean passesFilter(Matchable matchable, SearchQuery query) {
 			return result[0];
 		}
 
 		@Override
-		protected List<Boolean> batchPassesFilter(List<Matchable> matchables, SearchQuery query) {
+		public List<Boolean> batchPassesFilter(List<Matchable> matchables, SearchQuery query) {
 			List<Boolean> result = new ArrayList<>(matchables.size());
 			result.addAll(Arrays.asList(this.result).subList(0, matchables.size()));
 			return result;
 		}
 
 		@Override
-		protected String getName() {
+		public String getName() {
 			return "filter";
 		}
 
 		@Override
-		protected String getDescription() {
+		public String getDescription() {
 			return "does things";
 		}
 	}
