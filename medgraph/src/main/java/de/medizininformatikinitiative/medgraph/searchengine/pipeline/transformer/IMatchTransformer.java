@@ -13,7 +13,7 @@ import java.util.List;
  * @author Markus Budeus
  * @see Transformation
  */
-public interface IResultTransformer {
+public interface IMatchTransformer {
 
 	/**
 	 * Creates a {@link Transformation} for a single {@link Matchable}. When transforming multiple {@link Matchable}s,
