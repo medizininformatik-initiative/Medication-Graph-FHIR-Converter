@@ -3,13 +3,17 @@ package de.medizininformatikinitiative.medgraph.searchengine.pipeline;
 import de.medizininformatikinitiative.medgraph.searchengine.model.SearchQuery;
 import de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject.*;
 import de.medizininformatikinitiative.medgraph.searchengine.model.pipelinestep.Judgement;
+import de.medizininformatikinitiative.medgraph.searchengine.pipeline.judge.PredefinedScoreJudge;
 import de.medizininformatikinitiative.medgraph.searchengine.pipeline.judge.ProductOnlyFilter;
 import de.medizininformatikinitiative.medgraph.searchengine.pipeline.judge.ScoreJudge;
+import de.medizininformatikinitiative.medgraph.searchengine.pipeline.transformer.PredefinedMatchTransformer;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import static de.medizininformatikinitiative.medgraph.searchengine.TestFactory.*;
 import static org.junit.jupiter.api.Assertions.*;
@@ -110,6 +114,97 @@ public class OngoingMatchingTest {
 	}
 
 	@Test
+	public void transform() {
+		OngoingMatching sut = createSut(List.of(
+				SAMPLE_SUBSTANCE_1,
+				SAMPLE_PRODUCT_1,
+				SAMPLE_PRODUCT_2
+		));
+
+		MatchingObject sourceObject1 = sut.getCurrentMatches().getFirst();
+
+		sut.transformMatches(new PredefinedMatchTransformer(Map.of(
+				SAMPLE_SUBSTANCE_1, List.of(SAMPLE_SUBSTANCE_2, SAMPLE_SUBSTANCE_3)
+		)));
+
+		List<MatchingObject> objects = sut.getCurrentMatches();
+		assertEquals(2, objects.size());
+
+		assertEquals(SAMPLE_SUBSTANCE_2, objects.get(0).getObject());
+		assertEquals(SAMPLE_SUBSTANCE_3, objects.get(1).getObject());
+		assertInstanceOf(TransformedObject.class, objects.getFirst());
+		assertNotNull(((TransformedObject) objects.getFirst()).getTransformation());
+		assertTrue(objects.getFirst().getAppliedJudgements().isEmpty());
+		assertEquals(sourceObject1, ((TransformedObject) objects.get(0)).getSourceObejct());
+		assertEquals(sourceObject1, ((TransformedObject) objects.get(1)).getSourceObejct());
+	}
+
+	@Test
+	public void transformWithMerge() {
+		OngoingMatching sut = createSut(List.of(
+				SAMPLE_SUBSTANCE_1,
+				SAMPLE_PRODUCT_1,
+				SAMPLE_PRODUCT_2
+		));
+
+		List<MatchingObject> sourceObjects = new ArrayList<>();
+
+		sut.transformMatches(new PredefinedMatchTransformer(Map.of(
+				SAMPLE_SUBSTANCE_1, List.of(SAMPLE_SUBSTANCE_2),
+				SAMPLE_PRODUCT_1, List.of(SAMPLE_SUBSTANCE_2),
+				SAMPLE_PRODUCT_2, List.of(SAMPLE_SUBSTANCE_2)
+		)));
+
+		List<MatchingObject> resultObjects = sut.getCurrentMatches();
+		assertEquals(1, resultObjects.size());
+
+		MatchingObject obj = resultObjects.getFirst();
+		assertInstanceOf(Merge.class, obj);
+		Merge merge = (Merge) obj;
+
+		assertEquals(SAMPLE_SUBSTANCE_2, merge.getObject());
+		// Source objects of the merge are the TransformedObject-instances, so we need to get their source to get back
+		// to the original MatchingObject instances.
+		assertEquals(sourceObjects, merge.getSourceObjects()
+		                                 .stream()
+		                                 .map(m -> ((TransformedObject) m).getSourceObejct())
+		                                 .toList());
+	}
+
+	@Test
+	public void sortAndTransformWithMerge() {
+		OngoingMatching sut = createSut(List.of(
+				SAMPLE_SUBSTANCE_2,
+				SAMPLE_SUBSTANCE_1,
+				SAMPLE_PRODUCT_1,
+				SAMPLE_PRODUCT_2
+		));
+
+		sut.applyScoreJudge(new PredefinedScoreJudge(Map.of(
+				SAMPLE_SUBSTANCE_2, 2.5,
+				SAMPLE_SUBSTANCE_1, 2.0,
+				SAMPLE_PRODUCT_2, 1.5,
+				SAMPLE_PRODUCT_1, 1.0
+		), 1.0), false);
+
+		sut.transformMatches(new PredefinedMatchTransformer(Map.of(
+				SAMPLE_SUBSTANCE_2, List.of(SAMPLE_SUBSTANCE_2),
+				SAMPLE_SUBSTANCE_1, List.of(SAMPLE_SUBSTANCE_3),
+				SAMPLE_PRODUCT_2, List.of(SAMPLE_PRODUCT_2, SAMPLE_PRODUCT_3),
+				SAMPLE_PRODUCT_1, List.of(SAMPLE_SUBSTANCE_3) // Should merge with 2nd-previous row
+		)));
+
+		List<MatchingObject> matchingObjects = sut.getCurrentMatches();
+		assertEquals(List.of(SAMPLE_SUBSTANCE_2, SAMPLE_SUBSTANCE_3, SAMPLE_PRODUCT_2, SAMPLE_PRODUCT_3),
+				matchingObjects.stream().map(MatchingObject::getObject).toList());
+
+		assertInstanceOf(TransformedObject.class, matchingObjects.get(0));
+		assertInstanceOf(Merge.class, matchingObjects.get(1));
+		assertInstanceOf(TransformedObject.class, matchingObjects.get(2));
+		assertInstanceOf(TransformedObject.class, matchingObjects.get(3));
+	}
+
+	@Test
 	public void multipleActions() {
 		OngoingMatching sut = createSut(List.of(
 				new Substance(97, ""),
@@ -125,21 +220,31 @@ public class OngoingMatchingTest {
 
 		assertEquals(4, sut.getCurrentMatches().size());
 
+		sut.transformMatches(new PredefinedMatchTransformer(Map.of(
+				new Substance(107, ""), List.of(SAMPLE_SUBSTANCE_3),
+				new Product(100, "GREAT"), List.of(),
+				new Substance(97, ""), List.of(SAMPLE_SUBSTANCE_1, SAMPLE_PRODUCT_2),
+				new Product(67, ""), List.of(SAMPLE_PRODUCT_3)
+		)));
+
 		sut.applyFilter(new ProductOnlyFilter(), true);
 
 		List<MatchingObject> currentMatches = sut.getCurrentMatches();
 		assertEquals(2, currentMatches.size());
-		assertEquals(new Product(100, "GREAT"), currentMatches.getFirst().getObject());
-		assertEquals(new Product(67, ""), currentMatches.getLast().getObject());
+		assertEquals(SAMPLE_PRODUCT_2, currentMatches.getFirst().getObject());
+		assertEquals(SAMPLE_PRODUCT_3, currentMatches.getLast().getObject());
 
 
 		List<Judgement> judgementList = currentMatches.getFirst().getAppliedJudgements();
-		assertFalse(judgementList.get(0).isPassed());
-		assertTrue(judgementList.get(1).isPassed());
-		assertTrue(judgementList.get(2).isPassed());
-		assertEquals(IdSizeJudge.NAME, judgementList.get(0).getName());
-		assertEquals(IdSizeJudge.NAME, judgementList.get(1).getName());
-		assertEquals(ProductOnlyFilter.NAME, judgementList.get(2).getName());
+		assertEquals(1, judgementList.size());
+		assertTrue(judgementList.getFirst().isPassed());
+		List<Judgement> judgementList2 = ((TransformedObject) currentMatches.getFirst()).getSourceObejct().getAppliedJudgements();
+		assertEquals(2, judgementList2.size());
+		assertFalse(judgementList2.get(0).isPassed());
+		assertTrue(judgementList2.get(1).isPassed());
+		assertEquals(IdSizeJudge.NAME, judgementList2.get(0).getName());
+		assertEquals(IdSizeJudge.NAME, judgementList2.get(1).getName());
+		assertEquals(ProductOnlyFilter.NAME, judgementList.getFirst().getName());
 	}
 
 	private OngoingMatching createSut(List<Matchable> matchables) {

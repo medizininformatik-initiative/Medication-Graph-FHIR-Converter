@@ -17,9 +17,9 @@ import de.medizininformatikinitiative.medgraph.searchengine.pipeline.tree.SubSor
 import java.util.List;
 
 /**
- * This class manages intermediate matching results during a run of the matching algorithm.
- * It exposes methods which can be used to apply matching pipeline steps to the intermediate results, thereby
- * executing parts of the matching algorithm.
+ * This class manages intermediate matching results during a run of the matching algorithm. It exposes methods which can
+ * be used to apply matching pipeline steps to the intermediate results, thereby executing parts of the matching
+ * algorithm.
  *
  * @author Markus Budeus
  */
@@ -34,7 +34,8 @@ public class OngoingMatching {
 	}
 
 	/**
-	 * Filters the current matches using the given filter.
+	 * Sorts the current matches using the given {@link ScoreJudge}. Non-passing matches are eliminated from the
+	 * matching process.
 	 *
 	 * @param judge          the judge to use
 	 * @param ensureSurvival if this is true, it prevents the elimination of all matches in case no match passes the
@@ -44,7 +45,7 @@ public class OngoingMatching {
 	public void applyScoreJudge(ScoreJudge judge, boolean ensureSurvival) {
 		boolean anyPass = judgeMatches(judge);
 		Double retainThreshold = (anyPass || !ensureSurvival) ? judge.getPassingScore() : null;
-		sortMatchesByLatestScoredJudgement(judge.getName(), retainThreshold);
+		sortMatchesByLatestScoredJudgement(judge.toString(), retainThreshold);
 	}
 
 	/**
@@ -58,7 +59,7 @@ public class OngoingMatching {
 	public void applyFilter(Judge<? extends Filtering> filter, boolean ensureSurvival) {
 		boolean anyPass = judgeMatches(filter);
 		if (anyPass || !ensureSurvival) {
-			removeMatchesWhichFailedTheLastFiltering(filter.getName());
+			removeMatchesWhichFailedTheLastFiltering(filter.toString());
 		}
 	}
 

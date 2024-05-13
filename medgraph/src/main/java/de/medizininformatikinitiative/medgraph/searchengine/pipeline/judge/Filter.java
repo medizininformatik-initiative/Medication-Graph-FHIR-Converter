@@ -15,12 +15,12 @@ public interface Filter extends Judge<Filtering> {
 
 	@Override
 	default Filtering judge(Matchable matchable, SearchQuery query) {
-		return new Filtering(getName(), getDescription(), passesFilter(matchable, query));
+		return new Filtering(toString(), getDescription(), passesFilter(matchable, query));
 	}
 
 	@Override
 	default List<Filtering> batchJudge(List<Matchable> matchables, SearchQuery query) {
-		String name = getName();
+		String name = toString();
 		String desc = getDescription();
 		return batchPassesFilter(matchables, query)
 				.stream()
