@@ -21,12 +21,12 @@ public abstract class ScoreJudge implements Judge<ScoredJudgement> {
 
 	@Override
 	public ScoredJudgement judge(Matchable matchable, SearchQuery query) {
-		return new ScoredJudgement(getName(), getDescription(), judgeInternal(matchable, query), passingScore);
+		return new ScoredJudgement(toString(), getDescription(), judgeInternal(matchable, query), passingScore);
 	}
 
 	@Override
 	public List<ScoredJudgement> batchJudge(List<Matchable> matchables, SearchQuery query) {
-		String name = getName();
+		String name = toString();
 		String desc = getDescription();
 		return batchJudgeInternal(matchables, query)
 				.stream()

@@ -70,7 +70,7 @@ public class ScoreJudgeTest {
 		}
 
 		@Override
-		public String getName() {
+		public String toString() {
 			return "test";
 		}
 

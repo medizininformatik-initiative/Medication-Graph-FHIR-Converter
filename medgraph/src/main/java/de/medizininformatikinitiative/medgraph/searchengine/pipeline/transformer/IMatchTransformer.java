@@ -3,6 +3,7 @@ package de.medizininformatikinitiative.medgraph.searchengine.pipeline.transforme
 import de.medizininformatikinitiative.medgraph.searchengine.model.SearchQuery;
 import de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject.Matchable;
 import de.medizininformatikinitiative.medgraph.searchengine.model.pipelinestep.Transformation;
+import de.medizininformatikinitiative.medgraph.searchengine.pipeline.MatchingPipelineComponent;
 
 import java.util.List;
 
@@ -13,7 +14,7 @@ import java.util.List;
  * @author Markus Budeus
  * @see Transformation
  */
-public interface IMatchTransformer {
+public interface IMatchTransformer extends MatchingPipelineComponent {
 
 	/**
 	 * Creates a {@link Transformation} for a single {@link Matchable}. When transforming multiple {@link Matchable}s,
