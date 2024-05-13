@@ -7,6 +7,7 @@ import java.util.function.Function;
  *
  * @author Markus Budeus
  */
+@FunctionalInterface
 public interface Transformer<S,T> extends Function<S, T> {
 
 	Transformer<String, String> IDENTITY = new IdentityTransformer();

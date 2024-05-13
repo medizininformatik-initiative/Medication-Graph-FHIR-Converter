@@ -10,12 +10,12 @@ import java.util.stream.Stream;
  *
  * @author Markus Budeus
  */
-public class TransformedProvider<S, T> implements IdentifierProvider<T> {
+public class TransformedIdentifierStream<S, T> implements IdentifierStream<T> {
 
 	private final IdentifierProvider<S> base;
 	private final Transformer<S, T> transformer;
 
-	public TransformedProvider(IdentifierProvider<S> base, Transformer<S, T> transformer) {
+	public TransformedIdentifierStream(IdentifierProvider<S> base, Transformer<S, T> transformer) {
 		this.base = base;
 		this.transformer = transformer;
 	}
