@@ -253,21 +253,21 @@ public class DosageDetector {
 			if (new HashSet<>(separatorsRead).size() > 1) {
 				// Two different separators appear, so we have both a decimal and thousands separator
 				// The last thing must be the decimal separator
-				char decimalSep = separatorsRead.get(separatorsRead.size() - 1);
+				char decimalSep = separatorsRead.getLast();
 				for (int i = 0; i < separatorsRead.size() - 2; i++) {
 					if (separatorsRead.get(i) == decimalSep) {
 						// The decimal separator appears multiple times! This is not a number any more IMO.
 						return null;
 					}
 				}
-				char thousandsSep = separatorsRead.get(0);
+				char thousandsSep = separatorsRead.getFirst();
 				return new BigDecimal(number.replace("" + thousandsSep, "").replace(decimalSep, '.'));
 			} else if (separatorsRead.size() > 1) {
 				// It occurs multiple times, so it's a thousands separator
-				return new BigDecimal(number.replace("" + separatorsRead.get(0), ""));
+				return new BigDecimal(number.replace("" + separatorsRead.getFirst(), ""));
 			} else {
 				// Thing occurs only once, it could be both a decimal or thousands separator
-				char sep = separatorsRead.get(0);
+				char sep = separatorsRead.getFirst();
 				if (number.length() >= 5
 						&& number.length() <= 7
 						&& number.charAt(number.length() - 4) == sep

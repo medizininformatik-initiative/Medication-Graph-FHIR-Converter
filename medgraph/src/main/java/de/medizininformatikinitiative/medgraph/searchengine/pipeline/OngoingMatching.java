@@ -27,7 +27,7 @@ public class OngoingMatching {
 	private final SubSortingTree<MatchingObject> currentMatches;
 	private final SearchQuery query;
 
-	public OngoingMatching(List<OriginalMatch> matchList, SearchQuery query) {
+	public OngoingMatching(List<? extends MatchingObject> matchList, SearchQuery query) {
 		currentMatches = new SubSortingTree<>(matchList);
 		this.query = query;
 	}

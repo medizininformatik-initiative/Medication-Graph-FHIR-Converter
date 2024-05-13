@@ -7,6 +7,20 @@ package de.medizininformatikinitiative.medgraph.searchengine.model;
  */
 public class SearchQuery {
 
-	// TODO This class is obviously incomplete...
+	private final String productName;
+	private final String substanceName;
+
+	public SearchQuery(String productName, String substanceName) {
+		this.productName = productName;
+		this.substanceName = substanceName;
+	}
+
+	public String getProductName() {
+		return productName;
+	}
+
+	public String getSubstanceName() {
+		return substanceName;
+	}
 
 }
