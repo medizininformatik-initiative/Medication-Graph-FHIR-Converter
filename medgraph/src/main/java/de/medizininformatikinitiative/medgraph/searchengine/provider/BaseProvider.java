@@ -23,7 +23,7 @@ import static de.medizininformatikinitiative.medgraph.db.DatabaseDefinitions.*;
  * @param <S> the type of identifiers provided.
  * @author Markus Budeus
  */
-public class BaseProvider<S> implements IdentifierProvider<S> {
+public class BaseProvider<S> implements IdentifierStream<S> {
 
 	/**
 	 * A provider for identifiers from the knowledge graph synonymes.

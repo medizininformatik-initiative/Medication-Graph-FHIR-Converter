@@ -13,7 +13,9 @@ public interface IdentifierProvider<S> {
 
 	/**
 	 * Returns the identifiers of this provider as a stream. Note this function generates a new stream
-	 * every time it's called.
+	 * every time it's called, which also means that any steps in the stream pipeline need to be processed
+	 * every time a stream is generated like this.
+	 *
 	 * @return a newly generated stream of identifiers
 	 */
 	Stream<MappedIdentifier<S>> getIdentifiers();
