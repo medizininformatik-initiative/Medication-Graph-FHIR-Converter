@@ -11,7 +11,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -135,8 +134,8 @@ public class OngoingMatchingTest {
 		assertInstanceOf(TransformedObject.class, objects.getFirst());
 		assertNotNull(((TransformedObject) objects.getFirst()).getTransformation());
 		assertTrue(objects.getFirst().getAppliedJudgements().isEmpty());
-		assertEquals(sourceObject1, ((TransformedObject) objects.get(0)).getSourceObejct());
-		assertEquals(sourceObject1, ((TransformedObject) objects.get(1)).getSourceObejct());
+		assertEquals(sourceObject1, ((TransformedObject) objects.get(0)).getSourceObject());
+		assertEquals(sourceObject1, ((TransformedObject) objects.get(1)).getSourceObject());
 	}
 
 	@Test
@@ -147,7 +146,7 @@ public class OngoingMatchingTest {
 				SAMPLE_PRODUCT_2
 		));
 
-		List<MatchingObject> sourceObjects = new ArrayList<>();
+		List<MatchingObject> sourceObjects = sut.getCurrentMatches();
 
 		sut.transformMatches(new PredefinedMatchTransformer(Map.of(
 				SAMPLE_SUBSTANCE_1, List.of(SAMPLE_SUBSTANCE_2),
@@ -167,7 +166,7 @@ public class OngoingMatchingTest {
 		// to the original MatchingObject instances.
 		assertEquals(sourceObjects, merge.getSourceObjects()
 		                                 .stream()
-		                                 .map(m -> ((TransformedObject) m).getSourceObejct())
+		                                 .map(m -> ((TransformedObject) m).getSourceObject())
 		                                 .toList());
 	}
 
@@ -238,7 +237,7 @@ public class OngoingMatchingTest {
 		List<Judgement> judgementList = currentMatches.getFirst().getAppliedJudgements();
 		assertEquals(1, judgementList.size());
 		assertTrue(judgementList.getFirst().isPassed());
-		List<Judgement> judgementList2 = ((TransformedObject) currentMatches.getFirst()).getSourceObejct().getAppliedJudgements();
+		List<Judgement> judgementList2 = ((TransformedObject) currentMatches.getFirst()).getSourceObject().getAppliedJudgements();
 		assertEquals(2, judgementList2.size());
 		assertFalse(judgementList2.get(0).isPassed());
 		assertTrue(judgementList2.get(1).isPassed());
@@ -266,7 +265,7 @@ public class OngoingMatchingTest {
 		}
 
 		@Override
-		public String getName() {
+		public String toString() {
 			return NAME;
 		}
 

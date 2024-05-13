@@ -69,7 +69,7 @@ public class FilterTest {
 		}
 
 		@Override
-		public String getName() {
+		public String toString() {
 			return "filter";
 		}
 

@@ -4,8 +4,6 @@ import de.medizininformatikinitiative.medgraph.searchengine.model.SearchQuery;
 import de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject.Matchable;
 import de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject.Product;
 
-import java.util.List;
-
 /**
  * Filter which only product matches pass.
  *
@@ -22,7 +20,7 @@ public class ProductOnlyFilter implements Filter {
 	}
 
 	@Override
-	public String getName() {
+	public String toString() {
 		return NAME;
 	}
 
