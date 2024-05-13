@@ -6,8 +6,6 @@ package de.medizininformatikinitiative.medgraph.searchengine.model.matchingobjec
  *
  * @author Markus Budeus
  */
-public interface Matchable {
-
-	String getName();
+public interface Matchable extends Identifiable {
 
 }
