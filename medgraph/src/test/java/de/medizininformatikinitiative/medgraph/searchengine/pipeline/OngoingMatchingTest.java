@@ -1,5 +1,6 @@
 package de.medizininformatikinitiative.medgraph.searchengine.pipeline;
 
+import de.medizininformatikinitiative.medgraph.searchengine.TestFactory;
 import de.medizininformatikinitiative.medgraph.searchengine.model.SearchQuery;
 import de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject.*;
 import de.medizininformatikinitiative.medgraph.searchengine.model.pipelinestep.Judgement;
@@ -247,7 +248,7 @@ public class OngoingMatchingTest {
 	}
 
 	private OngoingMatching createSut(List<Matchable> matchables) {
-		return new OngoingMatching(matchables.stream().map(OriginalMatch::new).toList(), new SearchQuery());
+		return new OngoingMatching(matchables.stream().map(OriginalMatch::new).toList(), SAMPLE_SEARCH_QUERY);
 	}
 
 

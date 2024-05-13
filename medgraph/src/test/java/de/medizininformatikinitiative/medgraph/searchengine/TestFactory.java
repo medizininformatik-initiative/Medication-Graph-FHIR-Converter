@@ -31,6 +31,6 @@ public class TestFactory {
 			new MappedIdentifier<>(SAMPLE_PRODUCT_3.getName(), SAMPLE_PRODUCT_3)
 	));
 
-	public static final SearchQuery SAMPLE_SEARCH_QUERY = new SearchQuery();
+	public static final SearchQuery SAMPLE_SEARCH_QUERY = new SearchQuery("Aspirin", "Acetylsalicylsäure");
 
 }
