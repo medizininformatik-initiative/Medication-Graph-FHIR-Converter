@@ -11,18 +11,18 @@ public class ToLowerCaseTest {
 
 	@Test
 	public void mixed() {
-		assertEquals("hallo welt,", new ToLowerCase().transform("Hallo Welt,"));
+		assertEquals("hallo welt,", new ToLowerCase().apply("Hallo Welt,"));
 	}
 	@Test
 	public void lowerCase() {
-		assertEquals("ich gebe nicht auf!", new ToLowerCase().transform("ich gebe nicht auf!"));
+		assertEquals("ich gebe nicht auf!", new ToLowerCase().apply("ich gebe nicht auf!"));
 	}
 	@Test
 	public void upperCase() {
-		assertEquals("caps lock gilt als schreien", new ToLowerCase().transform("CAPS LOCK GILT ALS SCHREIEN"));
+		assertEquals("caps lock gilt als schreien", new ToLowerCase().apply("CAPS LOCK GILT ALS SCHREIEN"));
 	}
 	@Test
 	public void blank() {
-		assertEquals("", new ToLowerCase().transform(""));
+		assertEquals("", new ToLowerCase().apply(""));
 	}
 }

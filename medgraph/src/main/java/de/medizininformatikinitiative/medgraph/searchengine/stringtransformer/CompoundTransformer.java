@@ -19,8 +19,8 @@ public class CompoundTransformer<S,V,T> implements Transformer<S,T> {
 	}
 
 	@Override
-	public T transform(S source) {
-		return transformer2.transform(transformer1.transform(source));
+	public T apply(S source) {
+		return transformer2.apply(transformer1.apply(source));
 	}
 
 }

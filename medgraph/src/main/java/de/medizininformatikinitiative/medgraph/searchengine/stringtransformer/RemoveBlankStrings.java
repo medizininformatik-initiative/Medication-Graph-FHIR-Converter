@@ -11,7 +11,7 @@ import java.util.List;
 public class RemoveBlankStrings implements Transformer<List<String>, List<String>> {
 
 	@Override
-	public List<String> transform(List<String> source) {
+	public List<String> apply(List<String> source) {
 		ArrayList<String> result = new ArrayList<>(source);
 		for (int i = 0; i < result.size(); i++) {
 			String entry = result.get(i);

@@ -14,25 +14,25 @@ public class RemoveBlankStringsTest {
 	@Test
 	public void someBlankStrings() {
 		assertEquals(List.of("Apfel", "Haus", "-"),
-				new RemoveBlankStrings().transform(List.of("", "Apfel", "", "Haus", "-")));
+				new RemoveBlankStrings().apply(List.of("", "Apfel", "", "Haus", "-")));
 	}
 
 	@Test
 	public void onlyBlankStrings() {
 		assertEquals(List.of(),
-				new RemoveBlankStrings().transform(List.of("", "", "")));
+				new RemoveBlankStrings().apply(List.of("", "", "")));
 	}
 
 	@Test
 	public void emptyList() {
 		assertEquals(List.of(),
-				new RemoveBlankStrings().transform(List.of()));
+				new RemoveBlankStrings().apply(List.of()));
 	}
 
 	@Test
 	public void noBlankStrings() {
 		assertEquals(List.of("Marie", "Eisenhower", "Burkhardt", "Neverwinter"),
-				new RemoveBlankStrings().transform(List.of("Marie", "Eisenhower", "Burkhardt", "Neverwinter")));
+				new RemoveBlankStrings().apply(List.of("Marie", "Eisenhower", "Burkhardt", "Neverwinter")));
 	}
 
 }

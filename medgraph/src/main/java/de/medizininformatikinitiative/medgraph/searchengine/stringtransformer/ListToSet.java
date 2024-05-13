@@ -11,7 +11,7 @@ import java.util.Set;
  */
 public class ListToSet implements Transformer<List<String>, Set<String>> {
 	@Override
-	public Set<String> transform(List<String> source) {
+	public Set<String> apply(List<String> source) {
 		return new HashSet<>(source);
 	}
 }
