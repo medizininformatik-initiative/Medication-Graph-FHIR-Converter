@@ -10,7 +10,7 @@ import java.util.List;
 public class WhitespaceTokenizer implements Transformer<String, List<String>> {
 
 	@Override
-	public List<String> transform(String source) {
+	public List<String> apply(String source) {
 		List<String> list = new java.util.ArrayList<>(List.of(source.split(" ")));
 		list.removeIf(String::isBlank);
 		return list;

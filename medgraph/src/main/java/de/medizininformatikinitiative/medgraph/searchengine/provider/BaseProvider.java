@@ -102,8 +102,8 @@ public class BaseProvider<S> implements IdentifierProvider<S> {
 	}
 
 	@Override
-	public List<MappedIdentifier<S>> getIdentifiers() {
-		return identifiers;
+	public Stream<MappedIdentifier<S>> getIdentifiers() {
+		return identifiers.stream();
 	}
 
 }

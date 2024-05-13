@@ -8,7 +8,7 @@ package de.medizininformatikinitiative.medgraph.searchengine.stringtransformer;
 public class ToLowerCase implements Transformer<String, String> {
 
 	@Override
-	public String transform(String source) {
+	public String apply(String source) {
 		return source.toLowerCase();
 	}
 

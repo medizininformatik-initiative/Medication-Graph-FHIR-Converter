@@ -2,33 +2,26 @@ package de.medizininformatikinitiative.medgraph.searchengine.provider;
 
 import de.medizininformatikinitiative.medgraph.searchengine.stringtransformer.Transformer;
 
-import java.util.List;
-import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
- * A {@link IdentifierProvider} which copies the identifiers from the given provider and applies the transformation
- * given by the {@link Transformer} to them.
- * This class calculates the transformations of all identifiers immediately and only once.
+ * A {@link IdentifierProvider} which forwards the identifiers from the given provider and with the transformation
+ * given by the {@link Transformer} applied to them.
  *
  * @author Markus Budeus
  */
 public class TransformedProvider<S, T> implements IdentifierProvider<T> {
 
-	private final List<MappedIdentifier<T>> identifiers;
+	private final IdentifierProvider<S> base;
+	private final Transformer<S, T> transformer;
 
 	public TransformedProvider(IdentifierProvider<S> base, Transformer<S, T> transformer) {
-		this.identifiers = transform(base.getIdentifiers(), transformer);
-	}
-
-	private List<MappedIdentifier<T>> transform(List<MappedIdentifier<S>> sourceList, Transformer<S, T> transformer) {
-		return sourceList
-				.stream()
-				.map(m -> new MappedIdentifier<>(transformer.transform(m.identifier), m.target))
-				.collect(Collectors.toList());
+		this.base = base;
+		this.transformer = transformer;
 	}
 
 	@Override
-	public List<MappedIdentifier<T>> getIdentifiers() {
-		return identifiers;
+	public Stream<MappedIdentifier<T>> getIdentifiers() {
+		return base.getIdentifiers().map(m -> new MappedIdentifier<>(transformer.apply(m.identifier), m.target));
 	}
 }
