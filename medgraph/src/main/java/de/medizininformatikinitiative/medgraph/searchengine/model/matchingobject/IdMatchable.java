@@ -37,4 +37,11 @@ public abstract class IdMatchable implements Matchable {
 		return Objects.hash(id);
 	}
 
+	@Override
+	public String toString() {
+		return getClass().getSimpleName()+"{" +
+				"id=" + id +
+				", name='" + name + '\'' +
+				'}';
+	}
 }

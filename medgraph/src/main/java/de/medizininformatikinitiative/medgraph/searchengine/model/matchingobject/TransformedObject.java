@@ -29,7 +29,7 @@ public class TransformedObject extends MatchingObject {
 	/**
 	 * Returns the object this instance originated from via the transformation.
 	 */
-	public MatchingObject getSourceObejct() {
+	public MatchingObject getSourceObject() {
 		return source;
 	}
 

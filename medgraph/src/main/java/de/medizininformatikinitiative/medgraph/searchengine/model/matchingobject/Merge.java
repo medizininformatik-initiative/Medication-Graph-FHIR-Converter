@@ -1,5 +1,6 @@
 package de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -23,7 +24,7 @@ public class Merge extends MatchingObject {
 	 * @throws IllegalArgumentException         if {@link #sourceObjects} is empty or if the objects inside
 	 *                                          {@link #sourceObjects} reference different {@link Matchable}s
 	 */
-	private static Matchable checkAndResolveMatchable(List<MatchingObject> sourceObjects) {
+	private static Matchable checkAndResolveMatchable(List<? extends MatchingObject> sourceObjects) {
 		if (sourceObjects == null) throw new NullPointerException("The list of source objects may not be null!");
 		if (sourceObjects.isEmpty()) throw new IllegalArgumentException("The list of source objects may not be empty!");
 		Matchable matchable = sourceObjects.getFirst().getObject();
@@ -33,9 +34,9 @@ public class Merge extends MatchingObject {
 		return matchable;
 	}
 
-	protected Merge(List<MatchingObject> sourceObjects) {
+	public Merge(List<? extends MatchingObject> sourceObjects) {
 		super(checkAndResolveMatchable(sourceObjects));
-		this.sourceObjects = sourceObjects;
+		this.sourceObjects = new ArrayList<>(sourceObjects);
 	}
 
 	/**

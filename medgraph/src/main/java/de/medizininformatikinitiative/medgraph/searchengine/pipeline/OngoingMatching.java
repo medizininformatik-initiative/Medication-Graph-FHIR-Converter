@@ -1,12 +1,11 @@
 package de.medizininformatikinitiative.medgraph.searchengine.pipeline;
 
 import de.medizininformatikinitiative.medgraph.searchengine.model.SearchQuery;
-import de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject.Matchable;
-import de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject.MatchingObject;
-import de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject.OriginalMatch;
+import de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject.*;
 import de.medizininformatikinitiative.medgraph.searchengine.model.pipelinestep.Filtering;
 import de.medizininformatikinitiative.medgraph.searchengine.model.pipelinestep.Judgement;
 import de.medizininformatikinitiative.medgraph.searchengine.model.pipelinestep.ScoredJudgement;
+import de.medizininformatikinitiative.medgraph.searchengine.model.pipelinestep.Transformation;
 import de.medizininformatikinitiative.medgraph.searchengine.pipeline.judge.Judge;
 import de.medizininformatikinitiative.medgraph.searchengine.pipeline.judge.ScoreJudge;
 import de.medizininformatikinitiative.medgraph.searchengine.pipeline.transformer.IMatchTransformer;
@@ -14,7 +13,7 @@ import de.medizininformatikinitiative.medgraph.searchengine.pipeline.tree.Binary
 import de.medizininformatikinitiative.medgraph.searchengine.pipeline.tree.ScoreSortDirective;
 import de.medizininformatikinitiative.medgraph.searchengine.pipeline.tree.SubSortingTree;
 
-import java.util.List;
+import java.util.*;
 
 /**
  * This class manages intermediate matching results during a run of the matching algorithm. It exposes methods which can
@@ -82,7 +81,60 @@ public class OngoingMatching {
 		// Finally, we do the batchReplace. For groups, we replace the first occurrence on the matches (i.e. the
 		// highest-rated) with the Merge object and eliminate the others.
 
-		// TODO Now actually implement this, lol.
+		// Step 1: Run the transformer
+		List<MatchingObject> matchingObjects = getCurrentMatches();
+		List<Matchable> matchables = matchingObjects.stream().map(MatchingObject::getObject).toList();
+		List<Transformation> transformations = transformer.batchTransform(matchables, query);
+
+		// Verify we got the expected amount of transformations
+		int size = matchables.size();
+		if (size != transformations.size()) {
+			throw new IllegalStateException("The transformer was given "+matchables.size()+" objects to transform, " +
+					"but returned "+transformations.size()+" transformations!");
+		}
+
+		// Step 2: create TransformedObject-instances and group by outcome Matchable
+		// Use LinkedHashMap to ensure order to objects in transformation output is preserved.
+		Map<Matchable, LinkedList<TransformedObject>> postTransformationMap = new LinkedHashMap<>();
+		for (int i = 0; i < size; i++) {
+			MatchingObject sourceObject = matchingObjects.get(i);
+			Transformation transformation = transformations.get(i);
+			for (Matchable output : transformation.getResult()) {
+				TransformedObject transformedObject = new TransformedObject(output, sourceObject, transformation);
+				// Add to the list of TransformedObjects which represent this Matchable, creating the list if required
+				postTransformationMap.computeIfAbsent(output, m -> new LinkedList<>()).add(transformedObject);
+			}
+		}
+
+		// Step 3: Merge all TransformedObjects which reference the same Matchable.
+		// While doing that, prepare the replacement map for the SubSortingTree.
+		Map<MatchingObject, List<MatchingObject>> replacementMap = new HashMap<>();
+		for (MatchingObject sourceObject : matchingObjects) {
+			replacementMap.put(sourceObject, new LinkedList<>());
+		}
+		for (LinkedList<TransformedObject> list : postTransformationMap.values()) {
+			MatchingObject result;
+			assert !list.isEmpty();
+			if (list.size() == 1) {
+				result = list.getFirst();
+			} else {
+				result = new Merge(list);
+			}
+			// The remappingKey is the object in the SubSortingTree which is to be replaced with the result.
+			// In case of a single-entry list, this is trivial. We simply replace the source object with the
+			// transformed one.
+			// For a merge, we don't want the Merge to be inserted multiple times, once for each of the merged objects.
+			// Instead we use the position closest to the beginning of the list (i.e. the highest-rated position.)
+			// The object at this position is the source object of the first transformed object in the list, because
+			// the processing happened in this order. So elements further back in the original list are processed later
+			// and therefore end up at later positions in the list of transformed objects.
+			MatchingObject remappingKey = list.getFirst().getSourceObject();
+
+			replacementMap.get(remappingKey).add(result);
+		}
+
+		// Finally, replace MatchingObjects in the SubSortingTree by their TransformedObject or Merge object
+		currentMatches.batchReplace(replacementMap);
 	}
 
 	/**
