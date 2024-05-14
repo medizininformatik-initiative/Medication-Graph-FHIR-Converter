@@ -1,20 +1,16 @@
 package de.medizininformatikinitiative.medgraph.searchengine.provider;
 
 import de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject.Identifiable;
-import de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject.Matchable;
 import de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject.Product;
 import de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject.Substance;
 import org.neo4j.driver.Query;
 import org.neo4j.driver.Record;
 import org.neo4j.driver.Session;
-import org.neo4j.driver.Value;
 
-import javax.xml.crypto.Data;
-import java.util.List;
 import java.util.function.BiFunction;
 import java.util.stream.Stream;
 
-import static de.medizininformatikinitiative.medgraph.db.DatabaseDefinitions.*;
+import static de.medizininformatikinitiative.medgraph.common.db.DatabaseDefinitions.*;
 import static org.neo4j.driver.Values.parameters;
 
 /**

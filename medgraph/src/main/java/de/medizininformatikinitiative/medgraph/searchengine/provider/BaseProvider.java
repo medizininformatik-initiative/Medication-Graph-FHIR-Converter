@@ -1,21 +1,12 @@
 package de.medizininformatikinitiative.medgraph.searchengine.provider;
 
-import de.medizininformatikinitiative.medgraph.db.DatabaseConnection;
 import de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject.Matchable;
-import de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject.Product;
-import de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject.Substance;
-import org.neo4j.driver.Record;
-import org.neo4j.driver.Session;
-import org.neo4j.driver.Value;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
-import static de.medizininformatikinitiative.medgraph.db.DatabaseDefinitions.*;
 
 /**
  * A provider for identifiers against which we can match.

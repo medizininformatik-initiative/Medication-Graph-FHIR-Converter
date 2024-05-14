@@ -1,4 +1,4 @@
-package de.medizininformatikinitiative.medgraph.db;
+package de.medizininformatikinitiative.medgraph.common.db;
 
 /**
  * A set of constants used for defining the database, primarily relation and node labels.
