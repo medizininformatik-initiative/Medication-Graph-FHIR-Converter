@@ -1,6 +1,5 @@
 package de.medizininformatikinitiative.medgraph.searchengine.pipeline;
 
-import de.medizininformatikinitiative.medgraph.searchengine.TestFactory;
 import de.medizininformatikinitiative.medgraph.searchengine.model.SearchQuery;
 import de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject.*;
 import de.medizininformatikinitiative.medgraph.searchengine.model.pipelinestep.Judgement;
@@ -32,7 +31,7 @@ public class OngoingMatchingTest {
 				SAMPLE_SUBSTANCE_3
 		));
 
-		sut.applyFilter(new ProductOnlyFilter(), ensureSurvival);
+		assertTrue(sut.applyFilter(new ProductOnlyFilter(), ensureSurvival));
 
 		List<MatchingObject> currentMatches = sut.getCurrentMatches();
 		assertEquals(1, currentMatches.size());
@@ -49,7 +48,7 @@ public class OngoingMatchingTest {
 				SAMPLE_SUBSTANCE_3
 		));
 
-		sut.applyFilter(new ProductOnlyFilter(), ensureSurvival);
+		assertFalse(sut.applyFilter(new ProductOnlyFilter(), ensureSurvival));
 
 		List<MatchingObject> currentMatches = sut.getCurrentMatches();
 
@@ -227,7 +226,7 @@ public class OngoingMatchingTest {
 				new Product(67, ""), List.of(SAMPLE_PRODUCT_3)
 		)));
 
-		sut.applyFilter(new ProductOnlyFilter(), true);
+		assertTrue(sut.applyFilter(new ProductOnlyFilter(), true));
 
 		List<MatchingObject> currentMatches = sut.getCurrentMatches();
 		assertEquals(2, currentMatches.size());

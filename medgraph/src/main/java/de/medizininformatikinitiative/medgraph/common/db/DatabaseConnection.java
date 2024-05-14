@@ -20,8 +20,8 @@ public class DatabaseConnection implements AutoCloseable {
 	/**
 	 * The currently configured uri.
 	 */
-	public static String uri;
-	public static String user;
+	static String uri;
+	static String user;
 	private static char[] password;
 
 	static {

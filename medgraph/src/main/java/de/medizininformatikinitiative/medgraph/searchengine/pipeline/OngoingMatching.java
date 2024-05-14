@@ -54,12 +54,15 @@ public class OngoingMatching {
 	 * @param ensureSurvival if this is true, it prevents the elimination of all matches in case no match passes the
 	 *                       filter; instead, nothing gets eliminated, although the failure to pass the filter is still
 	 *                       documented
+	 * @return true if any matches passed the filter, false if none passed the filter (regardless of whether they were
+	 * eliminated based on the ensureSurvival parameter)
 	 */
-	public void applyFilter(Judge<? extends Filtering> filter, boolean ensureSurvival) {
+	public boolean applyFilter(Judge<? extends Filtering> filter, boolean ensureSurvival) {
 		boolean anyPass = judgeMatches(filter);
 		if (anyPass || !ensureSurvival) {
 			removeMatchesWhichFailedTheLastFiltering(filter.toString());
 		}
+		return anyPass;
 	}
 
 	public void transformMatches(IMatchTransformer transformer) {
@@ -89,8 +92,9 @@ public class OngoingMatching {
 		// Verify we got the expected amount of transformations
 		int size = matchables.size();
 		if (size != transformations.size()) {
-			throw new IllegalStateException("The transformer was given "+matchables.size()+" objects to transform, " +
-					"but returned "+transformations.size()+" transformations!");
+			throw new IllegalStateException(
+					"The transformer was given " + matchables.size() + " objects to transform, " +
+							"but returned " + transformations.size() + " transformations!");
 		}
 
 		// Step 2: create TransformedObject-instances and group by outcome Matchable
@@ -194,6 +198,14 @@ public class OngoingMatching {
 	 */
 	public List<MatchingObject> getCurrentMatches() {
 		return currentMatches.getContents();
+	}
+
+	/**
+	 * Returns the current matches as {@link SubSortingTree}. Note that modifications to this tree will
+	 * affect the matching, in possibly unpredicatable ways.
+	 */
+	public SubSortingTree<MatchingObject> getCurrentMatchesTree() {
+		return currentMatches;
 	}
 
 }
