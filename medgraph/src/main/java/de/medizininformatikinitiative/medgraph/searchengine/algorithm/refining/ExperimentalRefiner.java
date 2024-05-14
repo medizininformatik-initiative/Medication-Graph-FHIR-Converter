@@ -5,7 +5,9 @@ import de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject
 import de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject.Product;
 import de.medizininformatikinitiative.medgraph.searchengine.pipeline.OngoingMatching;
 import de.medizininformatikinitiative.medgraph.searchengine.pipeline.judge.ProductOnlyFilter;
+import de.medizininformatikinitiative.medgraph.searchengine.pipeline.transformer.SubstanceToProductResolver;
 import de.medizininformatikinitiative.medgraph.searchengine.pipeline.tree.SubSortingTree;
+import org.neo4j.driver.Session;
 
 import java.util.List;
 
@@ -18,6 +20,12 @@ import java.util.List;
 public class ExperimentalRefiner implements MatchRefiner {
 
 	private final ProductOnlyFilter productOnlyFilter = new ProductOnlyFilter();
+
+	private final SubstanceToProductResolver substanceToProductResolver;
+
+	public ExperimentalRefiner(Session session) {
+		substanceToProductResolver = new SubstanceToProductResolver(session);
+	}
 
 	/**
 	 * {@inheritDoc}
@@ -40,7 +48,7 @@ public class ExperimentalRefiner implements MatchRefiner {
 		// Only use product matches, unless this leaves us without a result. In that case, transform substances
 		// to products.
 		if (!matching.applyFilter(productOnlyFilter, true)) {
-//			matching.transformResults(substanceToProductResolver);
+			matching.transformMatches(substanceToProductResolver);
 		}
 
 		return null;

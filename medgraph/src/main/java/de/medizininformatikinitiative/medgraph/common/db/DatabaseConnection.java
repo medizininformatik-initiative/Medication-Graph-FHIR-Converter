@@ -24,15 +24,41 @@ public class DatabaseConnection implements AutoCloseable {
 	static String user;
 	private static char[] password;
 
+	public enum SaveOption {
+		/**
+		 * Saves URI, user and password.
+		 */
+		EVERYTHING,
+		/**
+		 * Saves URI and user.
+		 */
+		EXCLUDE_PASSWORD,
+		/**
+		 * Does not save anything.
+		 */
+		DONT_SAVE
+	}
+
 	static {
 		loadData();
 	}
 
-	public static void setConnection(String uri, String user, char[] password, boolean savePassword) {
+	public static void setConnection(String uri, String user, char[] password, SaveOption saveOption) {
 		DatabaseConnection.uri = uri;
 		DatabaseConnection.user = user;
 		DatabaseConnection.password = password;
-		saveData(savePassword);
+
+		switch (saveOption) {
+			case EVERYTHING -> {
+				saveData(true);
+			}
+			case EXCLUDE_PASSWORD -> {
+				saveData(false);
+			}
+			case DONT_SAVE -> {
+
+			}
+		}
 	}
 
 	private static void loadData() {

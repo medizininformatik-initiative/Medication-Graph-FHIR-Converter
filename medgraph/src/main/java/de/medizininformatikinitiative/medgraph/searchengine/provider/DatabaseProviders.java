@@ -3,7 +3,6 @@ package de.medizininformatikinitiative.medgraph.searchengine.provider;
 import de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject.Identifiable;
 import de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject.Product;
 import de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject.Substance;
-import org.neo4j.driver.Query;
 import org.neo4j.driver.Record;
 import org.neo4j.driver.Session;
 
@@ -11,7 +10,6 @@ import java.util.function.BiFunction;
 import java.util.stream.Stream;
 
 import static de.medizininformatikinitiative.medgraph.common.db.DatabaseDefinitions.*;
-import static org.neo4j.driver.Values.parameters;
 
 /**
  * @author Markus Budeus
@@ -42,16 +40,17 @@ class DatabaseProviders {
 
 	/**
 	 * Queries synonymes pointing to nodes with the given label in the database.
+	 * Do not pass a user-provided string as label, as it is inserted into the query unsafely. This is because Neo4j
+	 * does not support labels being parameterized.
 	 *
 	 * @param session the session to use for accessing the database
-	 * @param label   the label on the nodes which shall be referenced by the synonymes
+	 * @param label   the label on the nodes which shall be referenced by the synonymes - DO NOT PASS IN USER-PROVIDED STRINGS
 	 * @return a stream of found records, each record containing the synonyme name, mmiId of target and name of target
 	 */
 	private static Stream<Record> downloadMmiObjectSynonymes(Session session, String label) {
 		return session.run(
-				              new Query("MATCH (sy:" + SYNONYME_LABEL + ")--(t:$label) " +
-						              "RETURN sy.name, t.mmiId, t.name",
-						              parameters("label", label))
+				              "MATCH (sy:" + SYNONYME_LABEL + ")--(t:" + label + ") " +
+						              "RETURN sy.name, t.mmiId, t.name"
 		              )
 		              .stream();
 	}
