@@ -1,5 +1,6 @@
-package de.medizininformatikinitiative.medgraph.db;
+package de.medizininformatikinitiative.medgraph.common.db;
 
+import de.medizininformatikinitiative.medgraph.common.ApplicationPreferences;
 import org.neo4j.driver.AuthTokens;
 import org.neo4j.driver.Driver;
 import org.neo4j.driver.GraphDatabase;
@@ -16,15 +17,37 @@ import java.util.function.Consumer;
  */
 public class DatabaseConnection implements AutoCloseable {
 
-	public static void setConnection(String uri, String user, char[] password) {
+	/**
+	 * The currently configured uri.
+	 */
+	public static String uri;
+	public static String user;
+	private static char[] password;
+
+	static {
+		loadData();
+	}
+
+	public static void setConnection(String uri, String user, char[] password, boolean savePassword) {
 		DatabaseConnection.uri = uri;
 		DatabaseConnection.user = user;
 		DatabaseConnection.password = password;
+		saveData(savePassword);
 	}
 
-	public static String uri = "neo4j://localhost:7687";
-	public static String user = "neo4j";
-	public static char[] password = "".toCharArray();
+	private static void loadData() {
+		ConnectionPreferences prefs = ApplicationPreferences.getDatabaseConnectionPreferences();
+		uri = prefs.getConnectionUri();
+		user = prefs.getUser();
+		password = prefs.getPassword();
+	}
+
+	private static void saveData(boolean savePassword) {
+		ConnectionPreferences prefs = ApplicationPreferences.getDatabaseConnectionPreferences();
+		prefs.setConnectionUri(uri);
+		prefs.setUser(user);
+		if (savePassword) prefs.setPassword(password);
+	}
 
 	private final Driver driver;
 
