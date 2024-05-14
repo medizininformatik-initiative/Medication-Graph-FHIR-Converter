@@ -2,7 +2,6 @@ package de.medizininformatikinitiative.medgraph.searchengine.matcher;
 
 import de.medizininformatikinitiative.medgraph.searchengine.matcher.model.Match;
 import de.medizininformatikinitiative.medgraph.searchengine.provider.IdentifierProvider;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.stream.Stream;
 
