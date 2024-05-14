@@ -14,12 +14,12 @@ public class UnitTest {
 	private AutoCloseable mocks;
 
 	@BeforeEach
-	public void setUpMocks() {
+	void setUpMocks() {
 		mocks = MockitoAnnotations.openMocks(this);
 	}
 
 	@AfterEach
-	public void closeMocks() throws Exception {
+	void closeMocks() throws Exception {
 		mocks.close();
 	}
 
