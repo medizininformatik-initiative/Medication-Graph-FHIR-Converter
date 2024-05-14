@@ -8,6 +8,8 @@ import de.medizininformatikinitiative.medgraph.searchengine.model.SearchQuery;
 import de.medizininformatikinitiative.medgraph.searchengine.provider.Providers;
 import org.neo4j.driver.Session;
 
+import java.util.Collections;
+
 /**
  * This class currently serves no value other than me playing around and experimenting with things.
  *
@@ -26,7 +28,9 @@ public class Main {
 			ExperimentalRefiner refiner = new ExperimentalRefiner(session);
 
 			MatchingAlgorithm algorithm = new MatchingAlgorithm(matchFinder, refiner);
-			algorithm.findMatches(new SearchQuery(null, "Aspirin"));
+			algorithm.findMatches(new SearchQuery(null, "Aspirin",
+					Collections.emptyList(),
+					Collections.emptyList()));
 		}
 	}
 
