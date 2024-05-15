@@ -29,7 +29,7 @@ public class DbDrugDosage {
 		}
 	}
 
-	DbDrugDosage(@Nullable DbAmount amount, @NotNull List<DbDosage> dosages) {
+	public DbDrugDosage(@Nullable DbAmount amount, @NotNull List<DbDosage> dosages) {
 		this.amount = amount;
 		this.dosages = dosages;
 	}
