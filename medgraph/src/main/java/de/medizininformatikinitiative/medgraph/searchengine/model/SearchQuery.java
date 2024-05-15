@@ -22,11 +22,11 @@ public class SearchQuery {
 	private final List<Dosage> activeIngredientDosages;
 
 	@NotNull
-	private final List<RawAmount> drugAmounts;
+	private final List<Amount> drugAmounts;
 
 	public SearchQuery(@Nullable String productName, @Nullable String substanceName,
 	                   @NotNull List<? extends Dosage> activeIngredientDosages,
-	                   @NotNull List<? extends RawAmount> drugAmounts) {
+	                   @NotNull List<? extends Amount> drugAmounts) {
 		this.productName = productName;
 		this.substanceName = substanceName;
 		this.activeIngredientDosages = new ArrayList<>(activeIngredientDosages);
@@ -65,7 +65,7 @@ public class SearchQuery {
 	 * empty.
 	 */
 	@NotNull
-	public List<RawAmount> getDrugAmounts() {
+	public List<Amount> getDrugAmounts() {
 		return drugAmounts;
 	}
 

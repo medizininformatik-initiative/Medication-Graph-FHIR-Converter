@@ -51,10 +51,55 @@ public class DosageMatchJudgeTest {
 			))
 	);
 
+	/**
+	 * 450-550 milligrams of active ingredient in 5ml fluid.
+	 */
+	private static final List<DbDrugDosage> INACCURATE_DOSAGE = List.of(
+			new DbDrugDosage(new DbAmount(new BigDecimal(5), "ml"), List.of(
+					new DbDosage(new BigDecimal(450), new BigDecimal(550), "mg")
+			))
+	);
+
+	/**
+	 * 500 milligrams of active ingredient in 1 tablet (no amount unit).
+	 */
+	private static final List<DbDrugDosage> ASPIRIN_500_TABLET = List.of(
+			new DbDrugDosage(new DbAmount(BigDecimal.ONE, null), List.of(
+					new DbDosage(new BigDecimal("500"), "mg")
+			))
+	);
+
+	/**
+	 * 100 milligrams of active ingredient with no specified drug amount.
+	 */
+	private static final List<DbDrugDosage> GENERIC_MEDICATION = List.of(
+			new DbDrugDosage(null, List.of(
+					new DbDosage(new BigDecimal("100"), "mg")
+			))
+	);
+
 
 	@BeforeAll
 	public static void setupAll() {
 		sut = new DosageMatchJudge();
+	}
+
+	@Test
+	public void testWithoutTargetDosage() {
+		assertEquals(DOSAGELESS_SCORE, sut.judge(METHYLPREDNISOLUTE_1000, List.of()));
+	}
+
+	@Test
+	public void testWithoutTargetSubstanceData() {
+		List<Dosage> targetDosages = List.of(
+				new Dosage(new Amount(new BigDecimal(1000), "mg"), null, null)
+		);
+		assertEquals(0, sut.judge(List.of(), targetDosages));
+	}
+
+	@Test
+	public void testWithNothing() {
+		assertEquals(DOSAGELESS_SCORE, sut.judge(List.of(), List.of()));
 	}
 
 	@Test
@@ -71,6 +116,15 @@ public class DosageMatchJudgeTest {
 				new Dosage(new Amount(new BigDecimal(900), "mg"), null, null)
 		);
 		assertEquals(0, sut.judge(METHYLPREDNISOLUTE_1000, targetDosages));
+	}
+
+	@Test
+	public void testAbsoluteWithoutTargetUnit() {
+		List<Dosage> targetDosages = List.of(
+				new Dosage(new Amount(new BigDecimal(1000), null), null, null)
+		);
+		// Even without unit on the search, this is considered to be a match
+		assertEquals(ABSOLUTE_MATCH_SCORE, sut.judge(METHYLPREDNISOLUTE_1000, targetDosages));
 	}
 
 	@Test
@@ -98,9 +152,26 @@ public class DosageMatchJudgeTest {
 	}
 
 	@Test
+	public void testRelativeWithWrongNominatorUnit() {
+		List<Dosage> targetDosages = List.of(
+				new Dosage(new Amount(new BigDecimal("0.5"), "ug"), null, new Amount(BigDecimal.ONE, "ml"))
+		);
+		assertEquals(0, sut.judge(BERBERIL_EYE_DROPS, targetDosages));
+	}
+
+	@Test
 	public void testRelativeWithWrongDenominatorUnit() {
 		List<Dosage> targetDosages = List.of(
 				new Dosage(new Amount(new BigDecimal("0.5"), "mg"), null, new Amount(BigDecimal.ONE, "mg"))
+		);
+		assertEquals(0, sut.judge(BERBERIL_EYE_DROPS, targetDosages));
+	}
+
+
+	@Test
+	public void testRelativeWithMissingDenominatorUnit() {
+		List<Dosage> targetDosages = List.of(
+				new Dosage(new Amount(new BigDecimal("0.5"), "mg"), null, new Amount(BigDecimal.ONE, null))
 		);
 		assertEquals(0, sut.judge(BERBERIL_EYE_DROPS, targetDosages));
 	}
@@ -138,6 +209,54 @@ public class DosageMatchJudgeTest {
 	}
 
 	@Test
+	public void matchAbsoluteInaccurateDosage() {
+		List<Dosage> targetDosages = List.of(
+				new Dosage(new Amount(new BigDecimal("475"), "mg"), null, null)
+		);
+		assertEquals(ABSOLUTE_MATCH_SCORE, sut.judge(INACCURATE_DOSAGE, targetDosages));
+	}
+
+	@Test
+	public void perfectlyMatchInaccurateDosage() {
+		List<Dosage> targetDosages = List.of(
+				new Dosage(new Amount(new BigDecimal("525"), "mg"), null, new Amount(new BigDecimal("5"), "ml"))
+		);
+		assertEquals(PERFECT_RELATIVE_MATCH_SCORE, sut.judge(INACCURATE_DOSAGE, targetDosages));
+	}
+
+	@Test
+	public void relativelyMatchInaccurateDosage() {
+		List<Dosage> targetDosages = List.of(
+				new Dosage(new Amount(new BigDecimal("95"), "mg"), null, new Amount(new BigDecimal("1"), "ml"))
+		);
+		assertEquals(NORMALIZED_RELATIVE_MATCH_SCORE, sut.judge(INACCURATE_DOSAGE, targetDosages));
+	}
+
+	@Test
+	public void borderMatchInaccurateDosage() {
+		List<Dosage> targetDosages = List.of(
+				new Dosage(new Amount(new BigDecimal("550"), "mg"), null, null)
+		);
+		assertEquals(ABSOLUTE_MATCH_SCORE, sut.judge(INACCURATE_DOSAGE, targetDosages));
+	}
+
+	@Test
+	public void mismatchInaccurateDosage2() {
+		List<Dosage> targetDosages = List.of(
+				new Dosage(new Amount(new BigDecimal("560"), "mg"), null, null)
+		);
+		assertEquals(0, sut.judge(INACCURATE_DOSAGE, targetDosages));
+	}
+
+	@Test
+	public void mismatchInaccurateDosage() {
+		List<Dosage> targetDosages = List.of(
+				new Dosage(new Amount(new BigDecimal("430"), "mg"), null, null)
+		);
+		assertEquals(0, sut.judge(INACCURATE_DOSAGE, targetDosages));
+	}
+
+	@Test
 	public void allMatch() {
 		List<Dosage> targetDosages = List.of(
 				new Dosage(new Amount(new BigDecimal("0.5"), "mg"), null, new Amount(BigDecimal.ONE, "ml")),
@@ -156,6 +275,46 @@ public class DosageMatchJudgeTest {
 		);
 
 		assertEquals(PERFECT_RELATIVE_MATCH_SCORE, sut.judge(BERBERIL_EYE_DROPS, targetDosages));
+	}
+
+	@Test
+	public void drugDosageWithoutAmountUnit() {
+		List<Dosage> targetDosages = List.of(
+				new Dosage(new Amount(new BigDecimal("500"), "mg"), null, new Amount(BigDecimal.ONE, null))
+		);
+		assertEquals(PERFECT_RELATIVE_MATCH_SCORE, sut.judge(ASPIRIN_500_TABLET, targetDosages));
+	}
+
+	@Test
+	public void drugDosageWithTargetAmountUnitMismatch() {
+		List<Dosage> targetDosages = List.of(
+				new Dosage(new Amount(new BigDecimal("500"), "mg"), null, new Amount(BigDecimal.ONE, "ml"))
+		);
+		assertEquals(0, sut.judge(ASPIRIN_500_TABLET, targetDosages));
+	}
+
+	@Test
+	public void relativeMatchWithNoDrugAmount() {
+		List<Dosage> targetDosages = List.of(
+				new Dosage(new Amount(new BigDecimal("100"), "mg"), null, new Amount(BigDecimal.ONE, "ml"))
+		);
+		assertEquals(0, sut.judge(GENERIC_MEDICATION, targetDosages));
+	}
+
+	@Test
+	public void relativeMatchWithNoDrugAmount2() {
+		List<Dosage> targetDosages = List.of(
+				new Dosage(new Amount(new BigDecimal("100"), "mg"), null, new Amount(BigDecimal.ONE, null))
+		);
+		assertEquals(0, sut.judge(GENERIC_MEDICATION, targetDosages));
+	}
+
+	@Test
+	public void absoluteMatchWithNoDrugAmount() {
+		List<Dosage> targetDosages = List.of(
+				new Dosage(new Amount(new BigDecimal("100"), "mg"), null, null)
+		);
+		assertEquals(ABSOLUTE_MATCH_SCORE, sut.judge(GENERIC_MEDICATION, targetDosages));
 	}
 
 	@Test

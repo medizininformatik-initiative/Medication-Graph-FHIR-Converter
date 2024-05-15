@@ -109,7 +109,7 @@ public class DosageMatchJudge {
 	 * @see #judgeRelative(DbDosage, DbAmount, Dosage)
 	 */
 	private static double judgeRelative(DbDrugDosage drugDosage, Dosage targetDosage) {
-		if (drugDosage.amount == null || drugDosage.amount.unit == null) return 0;
+		if (drugDosage.amount == null) return 0;
 		double bestScore = 0;
 		for (DbDosage d : drugDosage.dosages) {
 			bestScore = Math.max(bestScore, judgeRelative(d, drugDosage.amount, targetDosage));
@@ -128,16 +128,6 @@ public class DosageMatchJudge {
 	 * @return the score of the best match found
 	 */
 	private static double judgeAbsolute(DbDrugDosage drugDosage, Dosage targetDosage) {
-		// Check if drug amount matches target amount
-		// TODO Move somewhere else
-//		double drugAmountMatch = 0;
-//		if (drugDosage.amount != null) {
-//			if (DosageMatchJudge.matchesAbsolute(drugDosage.amount.amount, null, targetAmount.number,
-//					BigDecimal.ZERO)
-//					&& Objects.equals(targetAmount.unit, drugDosage.amount.unit)) {
-//				drugAmountMatch = DRUG_AMOUNT_MATCH_SCORE;
-//			}
-//		}
 
 		// Check if drug dosage matches target dosage. If the drug features multiple ingredients each with their own
 		// dosage, take the best match.
@@ -178,9 +168,12 @@ public class DosageMatchJudge {
 	 * denominator of 3ml), the {@link #PERFECT_RELATIVE_MATCH_SCORE} is returned instead.
 	 * <p>
 	 * If no such match is achieved, zero is returned.
+	 *
+	 * @throws NullPointerException if the target dosage has no denominator
 	 */
 	private static double judgeRelative(DbDosage dbDosage, DbAmount drugAmount, Dosage targetDosage) {
-		if (drugAmount.unit != null && !Objects.equals(targetDosage.amountDenominator.unit, drugAmount.unit)) return 0;
+		assert targetDosage.amountDenominator != null;
+		if (!Objects.equals(targetDosage.amountDenominator.unit, drugAmount.unit)) return 0;
 		if (!Objects.equals(targetDosage.amountNominator.unit, dbDosage.unit)) return 0;
 
 		// Attempt perfect match
