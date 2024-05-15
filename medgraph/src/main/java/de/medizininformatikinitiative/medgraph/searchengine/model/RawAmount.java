@@ -7,35 +7,35 @@ import java.math.BigDecimal;
 import java.util.Objects;
 
 /**
- * An amount is a number combined with a unit.
+ * An amount with or without a unit.
  *
  * @author Markus Budeus
  */
-public class Amount extends RawAmount {
+public class RawAmount {
 
 	@NotNull
-	public final String unit;
+	public final BigDecimal number;
 
-	public Amount(@NotNull BigDecimal number, @NotNull String unit) {
-		super(number);
-		this.unit = unit;
+	public RawAmount(@NotNull BigDecimal number) {
+		this.number = number;
 	}
 
 	@Override
 	public boolean equals(Object o) {
 		if (this == o) return true;
 		if (o == null || getClass() != o.getClass()) return false;
-		Amount amount = (Amount) o;
-		return Objects.equals(number, amount.number) && Objects.equals(unit, amount.unit);
+		RawAmount amount = (RawAmount) o;
+		return Objects.equals(number, amount.number);
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(number, unit);
+		return Objects.hash(number);
 	}
 
 	@Override
 	public String toString() {
-		return number + " " + unit;
+		return number.toString();
 	}
+
 }

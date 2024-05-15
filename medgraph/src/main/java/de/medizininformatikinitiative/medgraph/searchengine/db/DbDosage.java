@@ -39,7 +39,11 @@ public class DbDosage {
 		amountTo = fromString(value.get("amountTo", (String) null));
 	}
 
-	DbDosage(@NotNull BigDecimal amountFrom, @Nullable BigDecimal amountTo, @NotNull String unit) {
+	public DbDosage(@NotNull BigDecimal amountFrom, @NotNull String unit) {
+		this(amountFrom, null, unit);
+	}
+
+	public DbDosage(@NotNull BigDecimal amountFrom, @Nullable BigDecimal amountTo, @NotNull String unit) {
 		this.amountFrom = amountFrom;
 		this.amountTo = amountTo;
 		this.unit = unit;

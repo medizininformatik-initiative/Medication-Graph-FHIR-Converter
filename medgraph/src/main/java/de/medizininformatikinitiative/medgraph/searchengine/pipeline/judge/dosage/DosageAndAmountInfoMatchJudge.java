@@ -56,15 +56,19 @@ public class DosageAndAmountInfoMatchJudge extends ScoreJudge {
 				targetIds.put(p.getId(), t);
 		}
 
-		Set<DbDosagesByProduct> dosagesByProducts = database.getDrugDosagesByProduct(targetIds.keySet());
 
 		Map<Matchable, Double> scoreMap = new HashMap<>();
+		if (!targetIds.isEmpty()) {
 
-		for (DbDosagesByProduct productDosageInfo : dosagesByProducts) {
-			Matchable target = targetIds.get(productDosageInfo.productId);
-			if (target != null) {
-				scoreMap.put(target, judge(productDosageInfo.drugDosages, query));
+			Set<DbDosagesByProduct> dosagesByProducts = database.getDrugDosagesByProduct(targetIds.keySet());
+
+			for (DbDosagesByProduct productDosageInfo : dosagesByProducts) {
+				Matchable target = targetIds.get(productDosageInfo.productId);
+				if (target != null) {
+					scoreMap.put(target, judge(productDosageInfo.drugDosages, query));
+				}
 			}
+
 		}
 
 		List<Double> resultList = new ArrayList<>(targets.size());

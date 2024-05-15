@@ -4,4 +4,7 @@ package de.medizininformatikinitiative.medgraph.searchengine.pipeline.judge.dosa
  * @author Markus Budeus
  */
 public class DrugAmountMatchJudge {
+
+
+
 }
