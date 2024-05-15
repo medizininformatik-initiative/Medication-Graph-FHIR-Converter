@@ -4,11 +4,11 @@ import org.neo4j.driver.Query;
 import org.neo4j.driver.Result;
 import org.neo4j.driver.Session;
 
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
 import static de.medizininformatikinitiative.medgraph.common.db.DatabaseDefinitions.*;
-import static de.medizininformatikinitiative.medgraph.common.db.DatabaseDefinitions.UNIT_LABEL;
 import static org.neo4j.driver.Values.parameters;
 
 /**
@@ -22,6 +22,7 @@ public class Neo4jCypherDatabase implements Database {
 
 	/**
 	 * Creates a new instance.
+	 *
 	 * @param session the session to use for accessing the database
 	 */
 	public Neo4jCypherDatabase(Session session) {
@@ -29,7 +30,7 @@ public class Neo4jCypherDatabase implements Database {
 	}
 
 	@Override
-	public Set<DbDosagesByProduct> getDrugDosagesByProduct(Set<Long> productIds) {
+	public Set<DbDosagesByProduct> getDrugDosagesByProduct(Collection<Long> productIds) {
 		Result result = session.run(new Query(
 				"MATCH (p:" + PRODUCT_LABEL + ")\n" +
 						"WHERE p.mmiId IN $mmiIds\n" +
@@ -42,7 +43,9 @@ public class Neo4jCypherDatabase implements Database {
 						"MATCH (i)--(u:Unit)\n" +
 						"WITH p.mmiId AS productId, d.mmiId AS drugId,\n" +
 						"{amount:d.amount, unit:du.print} AS drugAmount, " +
-						"collect({amountFrom:i.massFrom,amountTo:i.massTo,unit:u.print}) AS dosage\n" +
+						"collect({amountFrom:i.massFrom,amountTo:i.massTo," +
+						"unit:(CASE WHEN u.ucumCs IS NULL THEN u.mmiName ELSE u.ucumCs END)" +
+						"}) AS dosage\n" +
 						"WITH productId, collect({drugId:drugId, amount:drugAmount, dosage:dosage}) AS drugDosages\n" +
 						"RETURN productId, drugDosages",
 				parameters("mmiIds", productIds)

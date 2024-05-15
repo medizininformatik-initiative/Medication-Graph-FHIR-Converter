@@ -10,7 +10,8 @@ import java.util.Objects;
 import static de.medizininformatikinitiative.medgraph.searchengine.db.Tools.fromString;
 
 /**
- * Represents a dosage (amount of an ingredient) as taken from the database.
+ * Represents a dosage (amount of an ingredient) as taken from the database. It is either an exact value or a range,
+ * with a unit given in UCUM case-sensitive notation.
  *
  * @author Markus Budeus
  */
