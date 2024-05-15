@@ -1,15 +1,16 @@
 package de.medizininformatikinitiative.medgraph.searchengine.db;
 
 import de.medizininformatikinitiative.medgraph.Neo4jTest;
-import de.medizininformatikinitiative.medgraph.searchengine.TestFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
-import java.util.HashSet;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
-import static de.medizininformatikinitiative.medgraph.searchengine.TestFactory.Products.DORMICUM_15;
+import static de.medizininformatikinitiative.medgraph.searchengine.TestFactory.Products.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -31,20 +32,89 @@ public class Neo4jCypherDatabaseTest extends Neo4jTest {
 
 		DbDosagesByProduct dosageInfo = dosageSet.iterator().next();
 
-		assertEquals(DORMICUM_15.getId(), dosageInfo.productId);
-		assertEquals(1, dosageInfo.drugDosages.size());
-
-		DbDrugDosage drugDosage = dosageInfo.drugDosages.getFirst();
-		assertNotNull(drugDosage.amount);
-		assertEquals(drugDosage.amount.amount, BigDecimal.valueOf(3));
-		assertEquals(drugDosage.amount.unit, "ml");
-
-		assertEquals(Set.of(
-				new DbDosage(new BigDecimal("16.68"), null, "mg"),
-				new DbDosage(new BigDecimal("15"), null, "mg")
-		), new HashSet<>(drugDosage.dosages));
+		DbDosagesByProduct expected = constructExpectedDormicum15Instance();
+		assertEquals(expected, dosageInfo);
 	}
 
-	// TODO Test more
+	@Test
+	public void getDrugDosagesForDormicum5() {
+		Set<DbDosagesByProduct> dosageSet = sut.getDrugDosagesByProduct(Set.of(DORMICUM_5.getId()));
+		assertEquals(1, dosageSet.size());
+
+		DbDosagesByProduct dosageInfo = dosageSet.iterator().next();
+
+		DbDosagesByProduct expected = constructExpectedDormicum5Instance();
+		assertEquals(expected, dosageInfo);
+	}
+
+	@Test
+	public void getDrugDosagesForAspirin() {
+		Set<DbDosagesByProduct> dosageSet = sut.getDrugDosagesByProduct(Set.of(ASPIRIN.getId()));
+		assertEquals(1, dosageSet.size());
+
+		DbDosagesByProduct dosageInfo = dosageSet.iterator().next();
+
+		DbDosagesByProduct expected = constructExpectedAspirinInstance();
+		assertEquals(expected, dosageInfo);
+	}
+
+	@Test
+	public void notFound() {
+		assertTrue(sut.getDrugDosagesByProduct(Set.of(16841546814L, 56846816L)).isEmpty());
+	}
+
+	@Test
+	public void batchLoad() {
+		Set<DbDosagesByProduct> dosageSet = sut.getDrugDosagesByProduct(Set.of(
+				ASPIRIN.getId(),
+				DORMICUM_5.getId(),
+				DORMICUM_15.getId(),
+				-18541435L
+		));
+
+		assertEquals(3, dosageSet.size());
+
+		Map<Long, DbDosagesByProduct> dosagesByProductId = new HashMap<>();
+		dosageSet.forEach(s -> dosagesByProductId.put(s.productId, s));
+
+		assertEquals(constructExpectedAspirinInstance(), dosagesByProductId.get(ASPIRIN.getId()));
+		assertEquals(constructExpectedDormicum5Instance(), dosagesByProductId.get(DORMICUM_5.getId()));
+		assertEquals(constructExpectedDormicum15Instance(), dosagesByProductId.get(DORMICUM_15.getId()));
+	}
+
+	private DbDosagesByProduct constructExpectedDormicum5Instance() {
+		return new DbDosagesByProduct(DORMICUM_5.getId(),
+				List.of(new DbDrugDosage(
+						new DbAmount(BigDecimal.valueOf(3), "ml"),
+						List.of(
+								new DbDosage(new BigDecimal("5.5"), new BigDecimal("5.7"), "mg"),
+								new DbDosage(new BigDecimal("5"), null, "mg")
+						)
+				))
+		);
+	}
+
+	private DbDosagesByProduct constructExpectedDormicum15Instance() {
+		return new DbDosagesByProduct(DORMICUM_15.getId(),
+				List.of(new DbDrugDosage(
+						new DbAmount(BigDecimal.valueOf(3), "ml"),
+						List.of(
+								new DbDosage(new BigDecimal("16.68"), null, "mg"),
+								new DbDosage(new BigDecimal("15"), null, "mg")
+						)
+				))
+		);
+	}
+
+	private DbDosagesByProduct constructExpectedAspirinInstance() {
+		return new DbDosagesByProduct(ASPIRIN.getId(),
+				List.of(new DbDrugDosage(
+						new DbAmount(BigDecimal.valueOf(1), null),
+						List.of(
+								new DbDosage(new BigDecimal("500"), null, "mg")
+						)
+				))
+		);
+	}
 
 }
