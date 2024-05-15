@@ -1,5 +1,6 @@
 package de.medizininformatikinitiative.medgraph.searchengine.db;
 
+import java.util.Collection;
 import java.util.Set;
 
 /**
@@ -19,6 +20,6 @@ public interface Database {
 	 * @return a set of {@link DbDosagesByProduct}-instances containing the requested data for each product which could
 	 * be found
 	 */
-	Set<DbDosagesByProduct> getDrugDosagesByProduct(Set<Long> productIds);
+	Set<DbDosagesByProduct> getDrugDosagesByProduct(Collection<Long> productIds);
 
 }

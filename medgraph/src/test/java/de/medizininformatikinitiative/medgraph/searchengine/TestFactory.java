@@ -20,12 +20,14 @@ public class TestFactory {
 		public static final Product ASPIRIN = new Product(1, "Aspirin Complex Granulat-Sticks 500 mg/30 mg Granulat");
 		public static final Product DORMICUM_15 = new Product(2, "Dormicum® 15 mg/3 ml Injektionslösung");
 		public static final Product DORMICUM_5 = new Product(3, "Dormicum® V 5 mg/5 ml Injektionslösung");
+		public static final Product ANAPEN = new Product(4, "Anapen 300 µg kohlpharma Injektionslösung");
 	}
 
 	public static class Substances {
 		public static final Substance ACETYLSALICYLIC_ACID = new Substance(1, "Acetylsalicylsäure");
 		public static final Substance MIDAZOLAM = new Substance(2, "Midazolam");
 		public static final Substance MIDAZOLAM_HYDROCHLORIDE = new Substance(3, "Midazolam hydrochlorid");
+		public static final Substance EPINEPHRINE = new Substance(4, "Epinephrin");
 	}
 
 	public static final Substance SAMPLE_SUBSTANCE_1 = Substances.ACETYLSALICYLIC_ACID;

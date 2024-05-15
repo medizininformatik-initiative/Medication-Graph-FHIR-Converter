@@ -59,6 +59,17 @@ public class Neo4jCypherDatabaseTest extends Neo4jTest {
 	}
 
 	@Test
+	public void getDrugDosagesForAnapen() {
+		Set<DbDosagesByProduct> dosageSet = sut.getDrugDosagesByProduct(Set.of(ANAPEN.getId()));
+		assertEquals(1, dosageSet.size());
+
+		DbDosagesByProduct dosageInfo = dosageSet.iterator().next();
+
+		DbDosagesByProduct expected = constructExpectedAnapenInstance();
+		assertEquals(expected, dosageInfo);
+	}
+
+	@Test
 	public void notFound() {
 		assertTrue(sut.getDrugDosagesByProduct(Set.of(16841546814L, 56846816L)).isEmpty());
 	}
@@ -67,7 +78,7 @@ public class Neo4jCypherDatabaseTest extends Neo4jTest {
 	public void batchLoad() {
 		Set<DbDosagesByProduct> dosageSet = sut.getDrugDosagesByProduct(Set.of(
 				ASPIRIN.getId(),
-				DORMICUM_5.getId(),
+				ANAPEN.getId(),
 				DORMICUM_15.getId(),
 				-18541435L
 		));
@@ -78,7 +89,7 @@ public class Neo4jCypherDatabaseTest extends Neo4jTest {
 		dosageSet.forEach(s -> dosagesByProductId.put(s.productId, s));
 
 		assertEquals(constructExpectedAspirinInstance(), dosagesByProductId.get(ASPIRIN.getId()));
-		assertEquals(constructExpectedDormicum5Instance(), dosagesByProductId.get(DORMICUM_5.getId()));
+		assertEquals(constructExpectedAnapenInstance(), dosagesByProductId.get(ANAPEN.getId()));
 		assertEquals(constructExpectedDormicum15Instance(), dosagesByProductId.get(DORMICUM_15.getId()));
 	}
 
@@ -112,6 +123,18 @@ public class Neo4jCypherDatabaseTest extends Neo4jTest {
 						new DbAmount(BigDecimal.valueOf(1), null),
 						List.of(
 								new DbDosage(new BigDecimal("500"), null, "mg")
+						)
+				))
+		);
+	}
+
+	private DbDosagesByProduct constructExpectedAnapenInstance() {
+		return new DbDosagesByProduct(ANAPEN.getId(),
+				List.of(new DbDrugDosage(
+						new DbAmount(new BigDecimal("0.3"), "ml"),
+						List.of(
+								// This one ensures UCUM cs notation is used, so unit is "ug"
+								new DbDosage(new BigDecimal("300"), null, "ug")
 						)
 				))
 		);
