@@ -19,8 +19,6 @@ import java.util.*;
  */
 public class DosageAndAmountInfoMatchJudge extends ScoreJudge {
 
-	// TODO Test this class!
-
 	/**
 	 * The score which is assigned if the given matching target is not a product.
 	 */
@@ -32,11 +30,21 @@ public class DosageAndAmountInfoMatchJudge extends ScoreJudge {
 
 	private final Database database;
 	private final DosageMatchJudge dosageMatchJudge;
+	private final DrugAmountMatchJudge drugAmountMatchJudge;
 
 	public DosageAndAmountInfoMatchJudge(Database database, Double passingScore) {
+		this(database, passingScore, new DosageMatchJudge(), new DrugAmountMatchJudge());
+	}
+
+	/**
+	 * Constructor for testing purposes, which lets you insert mock judges.
+	 */
+	DosageAndAmountInfoMatchJudge(Database database, Double passingScore, DosageMatchJudge dosageMatchJudge,
+	                              DrugAmountMatchJudge drugAmountMatchJudge) {
 		super(passingScore);
 		this.database = database;
-		this.dosageMatchJudge = new DosageMatchJudge();
+		this.dosageMatchJudge = dosageMatchJudge;
+		this.drugAmountMatchJudge = drugAmountMatchJudge;
 	}
 
 	@Override
@@ -56,7 +64,6 @@ public class DosageAndAmountInfoMatchJudge extends ScoreJudge {
 				targetIds.put(p.getId(), t);
 		}
 
-
 		Map<Matchable, Double> scoreMap = new HashMap<>();
 		if (!targetIds.isEmpty()) {
 
@@ -66,6 +73,10 @@ public class DosageAndAmountInfoMatchJudge extends ScoreJudge {
 				Matchable target = targetIds.get(productDosageInfo.productId);
 				if (target != null) {
 					scoreMap.put(target, judge(productDosageInfo.drugDosages, query));
+				} else {
+					System.err.println("Requested dosage information for product ids "
+							+ targetIds.keySet().stream().toList()
+							+ ", but received data tagged with id " + productDosageInfo.productId + "!");
 				}
 			}
 
@@ -86,16 +97,23 @@ public class DosageAndAmountInfoMatchJudge extends ScoreJudge {
 		if (!(target instanceof Product)) return NO_PRODUCT_SCORE;
 		if (specifiesNoRelevantData(query)) return NO_DOSAGE_AND_AMOUNT_SCORE;
 
-		Set<DbDosagesByProduct> dosagesByProduct = database.getDrugDosagesByProduct(
-				List.of(((Product) target).getId()));
+		long targetId = ((Product) target).getId();
+		Set<DbDosagesByProduct> dosagesByProduct = database.getDrugDosagesByProduct(List.of(targetId));
 		if (dosagesByProduct.isEmpty()) return 0.0;
 		assert dosagesByProduct.size() < 2;
+		DbDosagesByProduct dosageInfo = dosagesByProduct.iterator().next();
+		if (dosageInfo.productId != targetId) {
+			System.err.println("Requested dosage information for product id " + targetId
+					+ ", but received data tagged with id " + dosageInfo.productId + "!");
+			return 0;
+		}
 		return judge(dosagesByProduct.iterator().next().drugDosages, query);
 	}
 
 	private double judge(List<DbDrugDosage> drugDosageInfo, SearchQuery query) {
 		double dosageMatchScore = dosageMatchJudge.judge(drugDosageInfo, query.getActiveIngredientDosages());
-		// TODO Add amount match score
+		dosageMatchScore += drugAmountMatchJudge.judge(drugDosageInfo.stream().map(dd -> dd.amount).toList(),
+				query.getDrugAmounts());
 		return dosageMatchScore;
 	}
 

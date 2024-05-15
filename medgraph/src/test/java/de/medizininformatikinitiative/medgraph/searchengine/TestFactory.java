@@ -1,11 +1,16 @@
 package de.medizininformatikinitiative.medgraph.searchengine;
 
+import de.medizininformatikinitiative.medgraph.searchengine.db.DbAmount;
+import de.medizininformatikinitiative.medgraph.searchengine.db.DbDosage;
+import de.medizininformatikinitiative.medgraph.searchengine.model.Amount;
+import de.medizininformatikinitiative.medgraph.searchengine.model.Dosage;
 import de.medizininformatikinitiative.medgraph.searchengine.model.SearchQuery;
 import de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject.Product;
 import de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject.Substance;
 import de.medizininformatikinitiative.medgraph.searchengine.provider.BaseProvider;
 import de.medizininformatikinitiative.medgraph.searchengine.provider.MappedIdentifier;
 
+import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.List;
 
@@ -49,7 +54,16 @@ public class TestFactory {
 	public static final SearchQuery SAMPLE_SEARCH_QUERY = new SearchQuery(
 			"Aspirin",
 			"Acetylsalicylsäure",
-			Collections.emptyList(),
-			Collections.emptyList());
+			List.of(Dosage.of(10, "mg")),
+			List.of(new Amount(BigDecimal.ONE, "ml")));
+
+	public static final DbAmount SAMPLE_DB_AMOUNT_1 = new DbAmount(new BigDecimal(5), "ml");
+	public static final DbAmount SAMPLE_DB_AMOUNT_2 = new DbAmount(new BigDecimal("7.5"), "g");
+	public static final DbAmount SAMPLE_DB_AMOUNT_3 = new DbAmount(BigDecimal.ONE, null);
+
+	public static final DbDosage SAMPLE_DB_DOSAGE_1 = new DbDosage(BigDecimal.ONE, "mg");
+	public static final DbDosage SAMPLE_DB_DOSAGE_2 = new DbDosage(new BigDecimal("1.4"), new BigDecimal("1.6"), "mg");
+
+	public static final DbDosage SAMPLE_DB_DOSAGE_3 = new DbDosage(new BigDecimal(500), "ug");
 
 }

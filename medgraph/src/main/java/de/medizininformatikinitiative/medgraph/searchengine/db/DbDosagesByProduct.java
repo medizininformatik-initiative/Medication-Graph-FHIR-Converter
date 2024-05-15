@@ -30,7 +30,7 @@ public class DbDosagesByProduct {
 		drugDosages = value.get("drugDosages").asList(DbDrugDosage::new);
 	}
 
-	DbDosagesByProduct(long productId, @NotNull List<DbDrugDosage> drugDosages) {
+	public DbDosagesByProduct(long productId, @NotNull List<DbDrugDosage> drugDosages) {
 		this.productId = productId;
 		this.drugDosages = drugDosages;
 	}
