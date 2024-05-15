@@ -41,9 +41,9 @@ public class Neo4jCypherDatabase implements Database {
 						"WITH p, d, du, i WHERE NOT i IS NULL\n" +
 						"MATCH (i)--(u:Unit)\n" +
 						"WITH p.mmiId AS productId, d.mmiId AS drugId,\n" +
-						"CASE WHEN du IS NULL THEN NULL ELSE {amount:d.amount, unit:du.print} END AS drugUnit, " +
+						"{amount:d.amount, unit:du.print} AS drugAmount, " +
 						"collect({amountFrom:i.massFrom,amountTo:i.massTo,unit:u.print}) AS dosage\n" +
-						"WITH productId, collect({drugId:drugId, amount:drugUnit, dosage:dosage}) AS drugDosages\n" +
+						"WITH productId, collect({drugId:drugId, amount:drugAmount, dosage:dosage}) AS drugDosages\n" +
 						"RETURN productId, drugDosages",
 				parameters("mmiIds", productIds)
 		));
