@@ -1,5 +1,6 @@
 package de.medizininformatikinitiative.medgraph;
 
+import de.medizininformatikinitiative.medgraph.common.db.ConnectionConfiguration;
 import de.medizininformatikinitiative.medgraph.common.db.DatabaseConnection;
 import org.junit.jupiter.api.extension.BeforeAllCallback;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -61,14 +62,15 @@ public class Neo4jDatabaseTestExtension implements BeforeAllCallback, ExtensionC
 		                                                .withFixture(getDatabaseFixture())
 		                                                .build();
 
-		DatabaseConnection.setConnection(
+		ConnectionConfiguration config = new ConnectionConfiguration(
 				neo4j.boltURI().toString(),
 				"neo4j",
-				"neo4j".toCharArray(),
-				DatabaseConnection.SaveOption.DONT_SAVE
+				"neo4j".toCharArray()
 		);
 
-		Neo4jDatabaseTestExtension.connection = new DatabaseConnection();
+		DatabaseConnection.setDefaultConfiguration(config);
+
+		Neo4jDatabaseTestExtension.connection = config.createConnection();
 	}
 
 	private void registerShutdownHook(ExtensionContext extensionContext) {

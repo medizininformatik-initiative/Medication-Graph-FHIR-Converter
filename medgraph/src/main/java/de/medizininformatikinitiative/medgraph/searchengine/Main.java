@@ -9,6 +9,7 @@ import de.medizininformatikinitiative.medgraph.searchengine.model.SearchQuery;
 import de.medizininformatikinitiative.medgraph.searchengine.provider.Providers;
 import org.neo4j.driver.Session;
 
+import javax.xml.crypto.Data;
 import java.util.Collections;
 
 /**
@@ -19,8 +20,7 @@ import java.util.Collections;
 public class Main {
 
 	public static void main(String[] args) {
-		try (DatabaseConnection connection = new DatabaseConnection(); Session session = connection.createSession()) {
-
+		DatabaseConnection.runSession(session -> {
 			LevenshteinSearchMatchFinder matchFinder = new LevenshteinSearchMatchFinder(
 					Providers.getProductSynonymes(session),
 					Providers.getSubstanceSynonymes(session)
@@ -32,7 +32,7 @@ public class Main {
 			algorithm.findMatches(new SearchQuery(null, "Aspirin",
 					Collections.emptyList(),
 					Collections.emptyList()));
-		}
+		});
 	}
 
 }

@@ -39,7 +39,7 @@ public class ConnectionPreferencesTest {
 
 	@Test
 	public void defaultPassword() {
-		assertArrayEquals(ConnectionPreferences.DEFAULT_PASSWORD, sut.getPassword());
+		assertNull(sut.getPassword());
 	}
 
 	@Test
@@ -58,6 +58,13 @@ public class ConnectionPreferencesTest {
 	public void setPassword() {
 		sut.setPassword("myhighlysecurepassword".toCharArray());
 		assertArrayEquals("myhighlysecurepassword".toCharArray(), sut.getPassword());
+	}
+
+	@Test
+	public void clearPassword() {
+		sut.setPassword("myhighlysecurepassword".toCharArray());
+		sut.clearPassword();
+		assertNull(sut.getPassword());
 	}
 
 	@AfterEach

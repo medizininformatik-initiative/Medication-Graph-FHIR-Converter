@@ -2,9 +2,10 @@ package de.medizininformatikinitiative.medgraph.ui.common.db
 
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
+import de.medizininformatikinitiative.medgraph.common.db.ConnectionConfiguration
+import de.medizininformatikinitiative.medgraph.common.db.ConnectionConfiguration.*
+import de.medizininformatikinitiative.medgraph.common.db.ConnectionPreferences
 import de.medizininformatikinitiative.medgraph.common.db.DatabaseConnection
-import de.medizininformatikinitiative.medgraph.common.db.DatabaseConnection.ConnectionResult
-import de.medizininformatikinitiative.medgraph.common.db.DatabaseConnection.SaveOption
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -16,6 +17,7 @@ import java.net.URISyntaxException
  * @author Markus Budeus
  */
 class ConnectionDialogViewModel(
+    private val preferences: ConnectionPreferences,
     private val coroutineScope: CoroutineScope,
     private val onFinish: () -> Unit = {}
 ) {
@@ -52,10 +54,10 @@ class ConnectionDialogViewModel(
     private var completeOnSuccessfulTest = false
 
     init {
-        uri = mutableStateOf(DatabaseConnection.getUri())
-        user = mutableStateOf(DatabaseConnection.getUser())
+        uri = mutableStateOf(preferences.connectionUri)
+        user = mutableStateOf(preferences.user)
         password = mutableStateOf("")
-        configuredPasswordExists = DatabaseConnection.hasConfiguredPassword();
+        configuredPasswordExists = preferences.hasConfiguredPassword()
         passwordUnchanged = mutableStateOf(configuredPasswordExists)
     }
 
@@ -75,17 +77,9 @@ class ConnectionDialogViewModel(
     /**
      * Applies the given configuration as defaults to [DatabaseConnection] and then exits.
      */
-    private fun applyAndFinish(config: Configuration) {
-        if (config.password == null) {
-            DatabaseConnection.setConnection(config.uri, config.user, true)
-        } else {
-            DatabaseConnection.setConnection(
-                config.uri,
-                config.user,
-                config.password,
-                if (config.savePassword) SaveOption.EVERYTHING else SaveOption.EXCLUDE_PASSWORD
-            )
-        }
+    private fun applyAndFinish(config: ConnectionConfiguration) {
+        config.save(preferences, savePassword.value)
+        DatabaseConnection.setDefaultConfiguration(config)
         finish()
     }
 
@@ -97,8 +91,8 @@ class ConnectionDialogViewModel(
         testingConnection.value = true
         coroutineScope.launch(Dispatchers.IO) {
             try {
-                val config = createConfiguration();
-                val result = createDatabaseConncetion(config).testConnection();
+                val config = createConfiguration()
+                val result = config.testConnection()
                 connectionTestResult.value = result
                 if (completeOnSuccessfulTest && result == ConnectionResult.SUCCESS) {
                     applyAndFinish(config)
@@ -119,26 +113,22 @@ class ConnectionDialogViewModel(
     }
 
     /**
-     * Creates a [DatabaseConnection] object based on the given configuration.
+     * Creates a [ConnectionConfiguration] object for the currently configured values.
      */
-    private fun createDatabaseConncetion(config: Configuration): DatabaseConnection {
-        if (config.password == null) {
-            return DatabaseConnection(config.uri, config.user)
+    private fun createConfiguration(): ConnectionConfiguration {
+        if (passwordUnchanged.value) {
+            return ConnectionConfiguration(
+                uri.value,
+                user.value,
+                preferences
+            )
         } else {
-            return DatabaseConnection(config.uri, config.user, config.password)
+            return ConnectionConfiguration(
+                uri.value,
+                user.value,
+                password.value.toCharArray()
+            )
         }
-    }
-
-    /**
-     * Creates a [Configuration] object for the currently configured values.
-     */
-    private fun createConfiguration(): Configuration {
-        return Configuration(
-            uri.value,
-            user.value,
-            if (passwordUnchanged.value) null else password.value.toCharArray(),
-            savePassword.value
-        )
     }
 
     private data class Configuration(

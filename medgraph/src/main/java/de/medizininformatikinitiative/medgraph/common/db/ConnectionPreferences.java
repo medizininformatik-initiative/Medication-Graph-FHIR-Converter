@@ -1,5 +1,6 @@
 package de.medizininformatikinitiative.medgraph.common.db;
 
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.nio.ByteBuffer;
@@ -17,8 +18,6 @@ public class ConnectionPreferences {
 
 	public static final String DEFAULT_URI = "neo4j://localhost:7687";
 	public static final String DEFAULT_USER = "neo4j";
-	public static final char[] DEFAULT_PASSWORD = new char[0];
-
 	public static final String URI_KEY = "uri";
 	public static final String USER_KEY = "user";
 	public static final String PASSWORD_KEY = "password";
@@ -34,13 +33,14 @@ public class ConnectionPreferences {
 	 *
 	 * @param connectionUri the connection uri to store
 	 */
-	public void setConnectionUri(String connectionUri) {
+	public void setConnectionUri(@NotNull String connectionUri) {
 		node.put(URI_KEY, connectionUri);
 	}
 
 	/**
 	 * Returns the stored connection uri or the {@link #DEFAULT_URI} if none is stored.
 	 */
+	@NotNull
 	public String getConnectionUri() {
 		return node.get(URI_KEY, DEFAULT_URI);
 	}
@@ -50,13 +50,14 @@ public class ConnectionPreferences {
 	 *
 	 * @param user the username to stroe
 	 */
-	public void setUser(String user) {
+	public void setUser(@NotNull String user) {
 		node.put(USER_KEY, user);
 	}
 
 	/**
 	 * Returns the stored username or {@link #DEFAULT_USER} if none is stored.
 	 */
+	@NotNull
 	public String getUser() {
 		return node.get(USER_KEY, DEFAULT_USER);
 	}
@@ -66,17 +67,32 @@ public class ConnectionPreferences {
 	 *
 	 * @param password the password to stroe
 	 */
-	public void setPassword(char[] password) {
+	public void setPassword(char @NotNull [] password) {
 		node.putByteArray(PASSWORD_KEY, toByteArray(password));
+	}
+
+	/**
+	 * Clears a stored password if there is one.
+	 */
+	public void clearPassword() {
+		node.remove(PASSWORD_KEY);
 	}
 
 	/**
 	 * Returns the stored password or null if none is stored.
 	 */
-	public char @Nullable [] getPassword() {
+	char @Nullable [] getPassword() {
 		byte[] password = node.getByteArray(PASSWORD_KEY, null);
 		if (password == null) return null;
 		return fromByteArray(password);
+	}
+
+	/**
+	 * Returns whether a password is saved within these connection preferences.
+	 * @return true, if these preferences specify a password, false otherwise.
+	 */
+	public boolean hasConfiguredPassword() {
+		return node.getByteArray(PASSWORD_KEY, null) != null;
 	}
 
 	private byte[] toByteArray(char[] array) {
