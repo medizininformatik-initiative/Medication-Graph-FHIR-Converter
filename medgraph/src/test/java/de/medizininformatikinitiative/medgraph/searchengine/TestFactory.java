@@ -33,6 +33,7 @@ public class TestFactory {
 		public static final Substance MIDAZOLAM = new Substance(2, "Midazolam");
 		public static final Substance MIDAZOLAM_HYDROCHLORIDE = new Substance(3, "Midazolam hydrochlorid");
 		public static final Substance EPINEPHRINE = new Substance(4, "Epinephrin");
+		public static final Substance WATER = new Substance(5, "Wasser für Injektionszwecke");
 	}
 
 	public static final Substance SAMPLE_SUBSTANCE_1 = Substances.ACETYLSALICYLIC_ACID;

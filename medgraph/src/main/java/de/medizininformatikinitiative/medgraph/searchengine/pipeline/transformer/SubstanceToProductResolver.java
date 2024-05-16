@@ -9,10 +9,7 @@ import org.neo4j.driver.Record;
 import org.neo4j.driver.Result;
 import org.neo4j.driver.Session;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static de.medizininformatikinitiative.medgraph.common.db.DatabaseDefinitions.*;
 import static org.neo4j.driver.Values.parameters;
@@ -61,7 +58,9 @@ public class SubstanceToProductResolver extends MatchTransformer {
 	@Override
 	public List<Matchable> transformInternal(Matchable target, SearchQuery query) {
 		if (target instanceof Substance s) {
-			return new ArrayList<>(queryAndParseProductsForSubstanceMmiIds(List.of(s.getId())).get(s.getId()));
+			List<Matchable> results = queryAndParseProductsForSubstanceMmiIds(List.of(s.getId())).get(s.getId());
+			if (results == null) return Collections.emptyList();
+			return results;
 		}
 		return List.of(target);
 	}

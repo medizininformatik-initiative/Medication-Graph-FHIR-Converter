@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -57,6 +58,14 @@ public class SubstanceToProductResolverTest extends Neo4jTest {
 		Transformation t = transform(TestFactory.Substances.MIDAZOLAM, batchMode);
 		assertEquals(Set.of(TestFactory.Products.DORMICUM_5, TestFactory.Products.DORMICUM_15),
 				new HashSet<>(t.getResult()));
+	}
+
+	@ParameterizedTest(name = "batchMode: {0}")
+	@ValueSource(booleans = {false, true})
+	public void resolveNonActiveIngredient(boolean batchMode) {
+		// Water is a nonactive ingredient and therefore no results should occur
+		Transformation t = transform(TestFactory.Substances.WATER, batchMode);
+		assertEquals(Collections.emptyList(), t.getResult());
 	}
 
 	@Test
