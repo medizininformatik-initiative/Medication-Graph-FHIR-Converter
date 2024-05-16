@@ -1,8 +1,9 @@
 package de.medizininformatikinitiative.medgraph.common.db;
 
+import org.jetbrains.annotations.Nullable;
+
 import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
-import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.prefs.Preferences;
@@ -70,11 +71,11 @@ public class ConnectionPreferences {
 	}
 
 	/**
-	 * Returns the stored password or {@link #DEFAULT_PASSWORD} if none is stored.
+	 * Returns the stored password or null if none is stored.
 	 */
-	public char[] getPassword() {
+	public char @Nullable [] getPassword() {
 		byte[] password = node.getByteArray(PASSWORD_KEY, null);
-		if (password == null) return DEFAULT_PASSWORD;
+		if (password == null) return null;
 		return fromByteArray(password);
 	}
 
