@@ -15,6 +15,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
+import de.medizininformatikinitiative.medgraph.common.db.ConnectionConfiguration
 import de.medizininformatikinitiative.medgraph.common.db.DatabaseConnection
 import kotlinx.coroutines.GlobalScope
 import medicationgraphfhirconverter.composeapp.generated.resources.*
@@ -77,7 +78,7 @@ fun ConnectionDialog(viewModel: ConnectionDialogViewModel, modifier: Modifier = 
 
         ButtonRow(viewModel, Modifier.fillMaxWidth())
 
-        ConnectionTestStatus(viewModel)
+        ConnectionTestStatus(viewModel, Modifier.padding(start = 4.dp))
     }
 }
 
@@ -109,28 +110,30 @@ private fun ButtonRow(viewModel: ConnectionDialogViewModel, modifier: Modifier =
 }
 
 @Composable
-private fun ConnectionTestStatus(viewModel: ConnectionDialogViewModel) {
-    if (viewModel.testingConnection.value) {
-        Text(stringResource(Res.string.db_connection_dialog_test_underway))
-    } else {
-        when (viewModel.connectionTestResult.value) {
-            DatabaseConnection.ConnectionResult.SUCCESS -> {
-                Text(stringResource(Res.string.db_connection_dialog_test_success))
-            }
+private fun ConnectionTestStatus(viewModel: ConnectionDialogViewModel, modifier: Modifier = Modifier) {
+    Row(modifier = modifier) {
+        if (viewModel.testingConnection.value) {
+            Text(stringResource(Res.string.db_connection_dialog_test_underway))
+        } else {
+            when (viewModel.connectionTestResult.value) {
+                ConnectionConfiguration.ConnectionResult.SUCCESS -> {
+                    Text(stringResource(Res.string.db_connection_dialog_test_success))
+                }
 
-            DatabaseConnection.ConnectionResult.INVALID_CONNECTION_STRING -> {
-                Text(stringResource(Res.string.db_connection_dialog_test_invalid_connection_string))
-            }
+                ConnectionConfiguration.ConnectionResult.INVALID_CONNECTION_STRING -> {
+                    Text(stringResource(Res.string.db_connection_dialog_test_invalid_connection_string))
+                }
 
-            DatabaseConnection.ConnectionResult.SERVICE_UNAVAILABLE -> {
-                Text(stringResource(Res.string.db_connection_dialog_test_service_unavailable))
-            }
+                ConnectionConfiguration.ConnectionResult.SERVICE_UNAVAILABLE -> {
+                    Text(stringResource(Res.string.db_connection_dialog_test_service_unavailable))
+                }
 
-            DatabaseConnection.ConnectionResult.AUTHENTICATION_FAILED -> {
-                Text(stringResource(Res.string.db_connection_dialog_test_authentication_failed))
-            }
+                ConnectionConfiguration.ConnectionResult.AUTHENTICATION_FAILED -> {
+                    Text(stringResource(Res.string.db_connection_dialog_test_authentication_failed))
+                }
 
-            null -> {
+                null -> {
+                }
             }
         }
     }
