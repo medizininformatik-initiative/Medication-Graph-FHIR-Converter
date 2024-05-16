@@ -12,4 +12,5 @@
     <string name="db_connection_dialog_test_authentication_failed">Authentication failed!</string>
     <string name="db_connection_dialog_test_service_unavailable">No Neo4j Service is reachable at the given URI.
     </string>
+    <string name="db_connection_dialog_password_unchanged">(unchanged)</string>
 </resources>
