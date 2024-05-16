@@ -21,8 +21,7 @@ import java.util.stream.Stream;
 public class LevenshteinSearchMatchFinder implements InitialMatchFinder {
 
 	private final Transformer<String, String> STRING_TRANSFORMER =
-			new ToLowerCase()
-					.and(new RemoveDosageInformation());
+			new ToLowerCase();
 	private final Transformer<String, Set<String>> TOKEN_TRANSFORMER =
 			STRING_TRANSFORMER
 					.and(new WhitespaceTokenizer())

@@ -12,6 +12,7 @@ public class TrimSpecialSuffixSymbols implements Transformer<List<String>, List<
 
 	@Override
 	public List<String> apply(List<String> source) {
+		if (source.isEmpty()) return source;
 		List<String> result = source.stream().map(this::trimSeperators)
 		                            .filter(s -> !s.isBlank())
 		                            .toList();
