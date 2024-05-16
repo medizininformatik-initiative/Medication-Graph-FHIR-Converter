@@ -1,6 +1,7 @@
 package de.medizininformatikinitiative.medgraph.ui.common.db
 
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import de.medizininformatikinitiative.medgraph.common.db.ConnectionConfiguration
 import de.medizininformatikinitiative.medgraph.common.db.ConnectionConfiguration.*
@@ -9,6 +10,9 @@ import de.medizininformatikinitiative.medgraph.common.db.DatabaseConnection
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import medicationgraphfhirconverter.composeapp.generated.resources.Res
+import medicationgraphfhirconverter.composeapp.generated.resources.db_connection_dialog_password_unchanged
+import org.jetbrains.compose.resources.getString
 import java.net.URISyntaxException
 
 /**
@@ -24,7 +28,9 @@ class ConnectionDialogViewModel(
 
     val uri: MutableState<String>
     val user: MutableState<String>
-    val password: MutableState<String>
+    val password: State<String>
+        get() = passwordInternal
+    private val passwordInternal: MutableState<String>
 
     /**
      * Whether the password is to be updated or the currently configured password is to be used.
@@ -56,9 +62,17 @@ class ConnectionDialogViewModel(
     init {
         uri = mutableStateOf(preferences.connectionUri)
         user = mutableStateOf(preferences.user)
-        password = mutableStateOf("")
+        passwordInternal = mutableStateOf("")
         configuredPasswordExists = preferences.hasConfiguredPassword()
         passwordUnchanged = mutableStateOf(configuredPasswordExists)
+    }
+
+    /**
+     * Sets the value of the [password] state.
+     */
+    fun setPassword(password: String) {
+        this.passwordInternal.value = password
+        this.passwordUnchanged.value = false
     }
 
     /**

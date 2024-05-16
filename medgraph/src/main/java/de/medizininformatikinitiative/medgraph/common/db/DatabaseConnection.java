@@ -2,15 +2,11 @@ package de.medizininformatikinitiative.medgraph.common.db;
 
 import de.medizininformatikinitiative.medgraph.common.ApplicationPreferences;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.neo4j.driver.AuthTokens;
 import org.neo4j.driver.Driver;
 import org.neo4j.driver.GraphDatabase;
 import org.neo4j.driver.Session;
-import org.neo4j.driver.exceptions.AuthenticationException;
-import org.neo4j.driver.exceptions.ServiceUnavailableException;
 
-import java.net.URISyntaxException;
 import java.util.function.Consumer;
 
 /**
@@ -23,21 +19,25 @@ public class DatabaseConnection implements AutoCloseable {
 	/**
 	 * Default connection configuration.
 	 */
-	private static ConnectionConfiguration DEFAULT_CONFIG;
+	private static ConnectionConfiguration defaultConfig;
 
 	static {
-		DEFAULT_CONFIG = new ConnectionConfiguration(ApplicationPreferences.getDatabaseConnectionPreferences());
+		defaultConfig = new ConnectionConfiguration(ApplicationPreferences.getDatabaseConnectionPreferences());
 	}
 
 	public static void setDefaultConfiguration(@NotNull ConnectionConfiguration connectionConfiguration) {
-		DEFAULT_CONFIG = connectionConfiguration;
+		defaultConfig = connectionConfiguration;
+	}
+
+	public static ConnectionConfiguration getDefaultConfig() {
+		return defaultConfig;
 	}
 
 	/**
 	 * Attempts to create a database connection using the current default connection configuration.
 	 */
 	public static DatabaseConnection createDefault() {
-		return DEFAULT_CONFIG.createConnection();
+		return defaultConfig.createConnection();
 	}
 
 	private final Driver driver;
