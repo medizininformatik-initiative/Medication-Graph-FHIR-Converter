@@ -1,10 +1,12 @@
 package de.medizininformatikinitiative.medgraph.searchengine.algorithm.refining;
 
+import de.medizininformatikinitiative.medgraph.searchengine.db.Database;
 import de.medizininformatikinitiative.medgraph.searchengine.model.SearchQuery;
 import de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject.MatchingObject;
 import de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject.Product;
 import de.medizininformatikinitiative.medgraph.searchengine.pipeline.OngoingMatching;
 import de.medizininformatikinitiative.medgraph.searchengine.pipeline.judge.ProductOnlyFilter;
+import de.medizininformatikinitiative.medgraph.searchengine.pipeline.judge.dosage.DosageAndAmountInfoMatchJudge;
 import de.medizininformatikinitiative.medgraph.searchengine.pipeline.transformer.SubstanceToProductResolver;
 import de.medizininformatikinitiative.medgraph.searchengine.pipeline.tree.SubSortingTree;
 import org.neo4j.driver.Session;
@@ -23,8 +25,11 @@ public class ExperimentalRefiner implements MatchRefiner {
 
 	private final SubstanceToProductResolver substanceToProductResolver;
 
-	public ExperimentalRefiner(Session session) {
+	private final DosageAndAmountInfoMatchJudge dosageJudge;
+
+	public ExperimentalRefiner(Session session, Database database) {
 		substanceToProductResolver = new SubstanceToProductResolver(session);
+		dosageJudge = new DosageAndAmountInfoMatchJudge(database, 0.1);
 	}
 
 	/**
@@ -50,6 +55,12 @@ public class ExperimentalRefiner implements MatchRefiner {
 		if (!matching.applyFilter(productOnlyFilter, true)) {
 			matching.transformMatches(substanceToProductResolver);
 		}
+
+		matching.applyScoreJudge(dosageJudge, true);
+
+		// TODO Master's Thesis Matcher included a sort by substrings found step here, I'll leave it out for now
+		//      as it is of little importance
+
 
 		return null;
 	}

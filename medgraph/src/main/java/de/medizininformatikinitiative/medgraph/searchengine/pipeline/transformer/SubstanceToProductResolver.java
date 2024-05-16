@@ -25,6 +25,8 @@ import static org.neo4j.driver.Values.parameters;
  */
 public class SubstanceToProductResolver extends MatchTransformer {
 
+	// TODO Ideally modify class to use the Database interface instead of Session
+
 	private final Session session;
 
 	public SubstanceToProductResolver(Session session) {
