@@ -1,5 +1,3 @@
-@file:OptIn(ExperimentalResourceApi::class)
-
 package de.medizininformatikinitiative.medgraph.ui.common.db
 
 import androidx.compose.desktop.ui.tooling.preview.Preview
@@ -12,26 +10,17 @@ import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
-import de.medizininformatikinitiative.medgraph.common.ApplicationPreferences
+import cafe.adriel.voyager.navigator.LocalNavigator
+import cafe.adriel.voyager.navigator.Navigator
+import cafe.adriel.voyager.navigator.currentOrThrow
 import de.medizininformatikinitiative.medgraph.common.db.ConnectionConfiguration
-import kotlinx.coroutines.GlobalScope
-import medicationgraphfhirconverter.composeapp.generated.resources.*
-import medicationgraphfhirconverter.composeapp.generated.resources.Res
-import medicationgraphfhirconverter.composeapp.generated.resources.db_connection_dialog_password
-import medicationgraphfhirconverter.composeapp.generated.resources.db_connection_dialog_uri
-import medicationgraphfhirconverter.composeapp.generated.resources.db_connection_dialog_user
-import org.jetbrains.compose.resources.ExperimentalResourceApi
-import org.jetbrains.compose.resources.stringResource
-
+import de.medizininformatikinitiative.medgraph.ui.resources.StringRes
+import java.util.concurrent.CompletableFuture
 
 @Composable
 @Preview
 private fun ConnectionDialogUI() {
-    val viewModel = ConnectionDialogViewModel(
-        ApplicationPreferences.getDatabaseConnectionPreferences(),
-        GlobalScope
-    )
-    ConnectionDialog(viewModel, Modifier.padding(8.dp))
+    ConnectionDialogUI(ConnectionDialogViewModel(), Modifier.padding(8.dp))
 }
 
 /**
@@ -40,7 +29,7 @@ private fun ConnectionDialogUI() {
  * @author Markus Budeus
  */
 @Composable
-fun ConnectionDialog(viewModel: ConnectionDialogViewModel, modifier: Modifier = Modifier) {
+fun ConnectionDialogUI(viewModel: ConnectionDialogViewModel, modifier: Modifier = Modifier) {
     Column(
         modifier = modifier
     ) {
@@ -59,27 +48,32 @@ private fun ConnectionInfoTextFields(viewModel: ConnectionDialogViewModel) {
     val password by viewModel.password
     val passwordUnchanged by viewModel.passwordUnchanged
     var passwordFocus by remember { mutableStateOf(false) }
+    val testingConnection by viewModel.testingConnection
+
     OutlinedTextField(
         uri, { value -> uri = value },
-        label = { Text(stringResource(Res.string.db_connection_dialog_uri)) },
+        enabled = !testingConnection,
+        label = { Text(StringRes.db_connection_dialog_uri) },
         modifier = Modifier.fillMaxWidth()
     )
     OutlinedTextField(
         user, { value -> user = value },
-        label = { Text(stringResource(Res.string.db_connection_dialog_user)) },
+        enabled = !testingConnection,
+        label = { Text(StringRes.db_connection_dialog_user) },
         modifier = Modifier.fillMaxWidth()
     )
     OutlinedTextField(
         password, { value -> viewModel.setPassword(value) },
+        enabled = !testingConnection,
         label = {
             Text(
-                stringResource(Res.string.db_connection_dialog_password) +
+                StringRes.db_connection_dialog_password +
                         (if (passwordUnchanged && !passwordFocus)
-                            " " + stringResource(Res.string.db_connection_dialog_password_unchanged) else "")
+                            " " + StringRes.db_connection_dialog_password_unchanged else "")
             )
         },
         placeholder = {
-            if (passwordUnchanged) Text(stringResource(Res.string.db_connection_dialog_password_unchanged))
+            if (passwordUnchanged) Text(StringRes.db_connection_dialog_password_unchanged)
         },
         visualTransformation = if (passwordUnchanged) VisualTransformation.None else PasswordVisualTransformation(),
         modifier = Modifier.fillMaxWidth()
@@ -89,27 +83,28 @@ private fun ConnectionInfoTextFields(viewModel: ConnectionDialogViewModel) {
 
 @Composable
 private fun ButtonRow(viewModel: ConnectionDialogViewModel, modifier: Modifier = Modifier) {
+    val navigator = LocalNavigator.currentOrThrow
     Row(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween,
         modifier = modifier
     ) {
         Button(
-            { viewModel.finish() },
+            { navigator.popAll() },
         ) {
-            Text(stringResource(Res.string.cancel))
+            Text(StringRes.cancel)
         }
         Button(
             { viewModel.testConnection() },
             enabled = !viewModel.testingConnection.value
         ) {
-            Text(stringResource(Res.string.db_connection_dialog_test_connection))
+            Text(StringRes.db_connection_dialog_test_connection)
         }
         Button(
-            { viewModel.apply() },
+            { viewModel.apply().thenAccept { success -> if (success) navigator.pop() } },
             enabled = !viewModel.testingConnection.value
         ) {
-            Text(stringResource(Res.string.ok))
+            Text(StringRes.ok)
         }
     }
 }
@@ -118,23 +113,23 @@ private fun ButtonRow(viewModel: ConnectionDialogViewModel, modifier: Modifier =
 private fun ConnectionTestStatus(viewModel: ConnectionDialogViewModel, modifier: Modifier = Modifier) {
     Row(modifier = modifier) {
         if (viewModel.testingConnection.value) {
-            Text(stringResource(Res.string.db_connection_dialog_test_underway))
+            Text(StringRes.db_connection_dialog_test_underway)
         } else {
             when (viewModel.connectionTestResult.value) {
                 ConnectionConfiguration.ConnectionResult.SUCCESS -> {
-                    Text(stringResource(Res.string.db_connection_dialog_test_success))
+                    Text(StringRes.db_connection_dialog_test_success)
                 }
 
                 ConnectionConfiguration.ConnectionResult.INVALID_CONNECTION_STRING -> {
-                    Text(stringResource(Res.string.db_connection_dialog_test_invalid_connection_string))
+                    Text(StringRes.db_connection_dialog_test_invalid_connection_string)
                 }
 
                 ConnectionConfiguration.ConnectionResult.SERVICE_UNAVAILABLE -> {
-                    Text(stringResource(Res.string.db_connection_dialog_test_service_unavailable))
+                    Text(StringRes.db_connection_dialog_test_service_unavailable)
                 }
 
                 ConnectionConfiguration.ConnectionResult.AUTHENTICATION_FAILED -> {
-                    Text(stringResource(Res.string.db_connection_dialog_test_authentication_failed))
+                    Text(StringRes.db_connection_dialog_test_authentication_failed)
                 }
 
                 null -> {

@@ -1,20 +1,23 @@
 package de.medizininformatikinitiative.medgraph.ui.common.db
 
-import de.medizininformatikinitiative.medgraph.ui.navigation.CoroutineView
+import androidx.compose.foundation.layout.padding
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
+import cafe.adriel.voyager.core.model.rememberScreenModel
+import cafe.adriel.voyager.core.screen.Screen
 
 /**
+ * [Screen]-implementation for the database connection dialog.
+ *
  * @author Markus Budeus
  */
-class ConnectionDialog : CoroutineView() {
+class ConnectionDialog : Screen {
 
-    private val viewModel = ConnectionDialogViewModel(coroutineScope)
-
-    init {
-
-    }
-
-    override fun Draw() {
-        TODO("Not yet implemented")
+    @Composable
+    override fun Content() {
+        val viewModel = rememberScreenModel { ConnectionDialogViewModel() }
+        ConnectionDialogUI(viewModel, modifier = Modifier.padding(8.dp))
     }
 
 }

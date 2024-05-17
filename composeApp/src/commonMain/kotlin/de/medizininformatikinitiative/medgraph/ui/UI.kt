@@ -6,7 +6,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
-import de.medizininformatikinitiative.medgraph.ui.navigation.Drawable
+import cafe.adriel.voyager.navigator.Navigator
+import de.medizininformatikinitiative.medgraph.ui.common.db.ConnectionDialog
 
 /**
  * @author Markus Budeus
@@ -14,7 +15,6 @@ import de.medizininformatikinitiative.medgraph.ui.navigation.Drawable
 class UI {
 
     companion object {
-        var view by mutableStateOf<Drawable?>(null)
 
         @JvmStatic
         fun startUi() {
@@ -23,7 +23,7 @@ class UI {
                     onCloseRequest = ::exitApplication,
                     title = "MedicationGraphFHIRConverter",
                 ) {
-                    view?.Draw()
+                    Navigator(ConnectionDialog())
                 }
             }
         }
