@@ -1,5 +1,6 @@
 package de.medizininformatikinitiative.medgraph.common.db;
 
+import de.medizininformatikinitiative.medgraph.common.ApplicationPreferences;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.neo4j.driver.Session;
@@ -12,6 +13,29 @@ import org.neo4j.driver.exceptions.ServiceUnavailableException;
  * @author Markus Budeus
  */
 public class ConnectionConfiguration {
+
+	/**
+	 * Default connection configuration.
+	 */
+	private static ConnectionConfiguration defaultConfig;
+
+	static {
+		defaultConfig = new ConnectionConfiguration(ApplicationPreferences.getDatabaseConnectionPreferences());
+	}
+
+	/**
+	 * Sets the default connection configuration.
+	 */
+	public static void setDefault(@NotNull ConnectionConfiguration connectionConfiguration) {
+		defaultConfig = connectionConfiguration;
+	}
+
+	/**
+	 * Returns the configured default connection configuration.
+	 */
+	public static ConnectionConfiguration getDefault() {
+		return defaultConfig;
+	}
 
 	@NotNull
 	private final String uri;

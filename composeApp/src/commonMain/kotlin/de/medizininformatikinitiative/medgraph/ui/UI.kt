@@ -1,9 +1,5 @@
 package de.medizininformatikinitiative.medgraph.ui
 
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
 import cafe.adriel.voyager.navigator.Navigator
@@ -23,7 +19,7 @@ class UI {
                     onCloseRequest = ::exitApplication,
                     title = "MedicationGraphFHIRConverter",
                 ) {
-                    Navigator(ConnectionDialog())
+                    Navigator(listOf(SampleScreen(), ConnectionDialog()))
                 }
             }
         }

@@ -9,7 +9,6 @@ import de.medizininformatikinitiative.medgraph.common.ApplicationPreferences
 import de.medizininformatikinitiative.medgraph.common.db.ConnectionConfiguration
 import de.medizininformatikinitiative.medgraph.common.db.ConnectionConfiguration.ConnectionResult
 import de.medizininformatikinitiative.medgraph.common.db.ConnectionPreferences
-import de.medizininformatikinitiative.medgraph.common.db.DatabaseConnection
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -96,7 +95,7 @@ class ConnectionDialogViewModel(
         val config = createConfiguration();
         if (testConnection(config)) {
             config.save(preferences, savePassword.value)
-            DatabaseConnection.setDefaultConfiguration(config)
+            ConnectionConfiguration.setDefault(config)
             return true
         }
         return false

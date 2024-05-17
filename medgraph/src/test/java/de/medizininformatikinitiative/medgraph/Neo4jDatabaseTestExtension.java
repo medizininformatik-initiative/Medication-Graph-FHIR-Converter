@@ -68,7 +68,7 @@ public class Neo4jDatabaseTestExtension implements BeforeAllCallback, ExtensionC
 				"neo4j".toCharArray()
 		);
 
-		DatabaseConnection.setDefaultConfiguration(config);
+		ConnectionConfiguration.setDefault(config);
 
 		Neo4jDatabaseTestExtension.connection = config.createConnection();
 	}
