@@ -1,7 +1,5 @@
 package de.medizininformatikinitiative.medgraph.common.db;
 
-import de.medizininformatikinitiative.medgraph.common.ApplicationPreferences;
-import org.jetbrains.annotations.NotNull;
 import org.neo4j.driver.AuthTokens;
 import org.neo4j.driver.Driver;
 import org.neo4j.driver.GraphDatabase;
@@ -17,27 +15,10 @@ import java.util.function.Consumer;
 public class DatabaseConnection implements AutoCloseable {
 
 	/**
-	 * Default connection configuration.
-	 */
-	private static ConnectionConfiguration defaultConfig;
-
-	static {
-		defaultConfig = new ConnectionConfiguration(ApplicationPreferences.getDatabaseConnectionPreferences());
-	}
-
-	public static void setDefaultConfiguration(@NotNull ConnectionConfiguration connectionConfiguration) {
-		defaultConfig = connectionConfiguration;
-	}
-
-	public static ConnectionConfiguration getDefaultConfig() {
-		return defaultConfig;
-	}
-
-	/**
 	 * Attempts to create a database connection using the current default connection configuration.
 	 */
 	public static DatabaseConnection createDefault() {
-		return defaultConfig.createConnection();
+		return ConnectionConfiguration.getDefault().createConnection();
 	}
 
 	private final Driver driver;
