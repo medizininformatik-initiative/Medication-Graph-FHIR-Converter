@@ -30,6 +30,14 @@ kotlin {
             // Required by Voyager
             implementation("org.jetbrains.kotlinx:kotlinx-coroutines-swing")
         }
+        commonTest.dependencies {
+            val junit_version = "5.10.2"
+            implementation("org.junit.jupiter:junit-jupiter-api:$junit_version") // JUnit 5
+            implementation("org.junit.jupiter:junit-jupiter-params:$junit_version") // JUnit 5
+            implementation("org.junit.jupiter:junit-jupiter-engine:$junit_version") // JUnit 5
+            implementation("org.mockito:mockito-core:5.12.0") // Mocking
+//            implementation("org.mockito.kotlin:mockito-kotlin:5.3.1") // Kotlin Mocking Support
+        }
         desktopMain.dependencies {
             implementation(compose.desktop.currentOs)
         }
@@ -47,4 +55,8 @@ compose.desktop {
             packageVersion = "1.0.0"
         }
     }
+}
+
+tasks.named<Test>("desktopTest") {
+    useJUnitPlatform()
 }

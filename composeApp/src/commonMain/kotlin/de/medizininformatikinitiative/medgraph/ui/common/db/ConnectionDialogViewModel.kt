@@ -11,7 +11,6 @@ import de.medizininformatikinitiative.medgraph.common.db.ConnectionConfiguration
 import de.medizininformatikinitiative.medgraph.common.db.ConnectionPreferences
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.util.concurrent.CompletableFuture
 
@@ -21,7 +20,15 @@ import java.util.concurrent.CompletableFuture
  * @author Markus Budeus
  */
 class ConnectionDialogViewModel(
+
+    /**
+     * The preferences to which to save the selected configuration settings.
+     */
     private val preferences: ConnectionPreferences = ApplicationPreferences.getDatabaseConnectionPreferences(),
+    /**
+     * Only meant for testing purposes, allows to mock the [ConnectionConfiguration.testConnection] function.
+     */
+    private val connectionTester: suspend (ConnectionConfiguration) -> ConnectionResult = { c -> c.testConnection() },
 ) : ScreenModel {
 
     val uri: MutableState<String>
@@ -109,8 +116,7 @@ class ConnectionDialogViewModel(
     suspend fun testConnection(config: ConnectionConfiguration): Boolean {
         testingConnection.value = true
         try {
-            delay(1000)
-            val result = config.testConnection()
+            val result = connectionTester.invoke(config)
             connectionTestResult.value = result
             return result == ConnectionResult.SUCCESS;
         } finally {
