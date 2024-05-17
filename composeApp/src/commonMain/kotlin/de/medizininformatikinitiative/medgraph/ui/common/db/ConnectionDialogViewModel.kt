@@ -3,17 +3,18 @@ package de.medizininformatikinitiative.medgraph.ui.common.db
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
+import cafe.adriel.voyager.core.model.ScreenModel
+import cafe.adriel.voyager.core.model.screenModelScope
+import de.medizininformatikinitiative.medgraph.common.ApplicationPreferences
 import de.medizininformatikinitiative.medgraph.common.db.ConnectionConfiguration
-import de.medizininformatikinitiative.medgraph.common.db.ConnectionConfiguration.*
+import de.medizininformatikinitiative.medgraph.common.db.ConnectionConfiguration.ConnectionResult
 import de.medizininformatikinitiative.medgraph.common.db.ConnectionPreferences
 import de.medizininformatikinitiative.medgraph.common.db.DatabaseConnection
-import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import medicationgraphfhirconverter.composeapp.generated.resources.Res
-import medicationgraphfhirconverter.composeapp.generated.resources.db_connection_dialog_password_unchanged
-import org.jetbrains.compose.resources.getString
-import java.net.URISyntaxException
+import java.util.concurrent.CompletableFuture
 
 /**
  * Manages the state of the database connection dialog.
@@ -21,10 +22,8 @@ import java.net.URISyntaxException
  * @author Markus Budeus
  */
 class ConnectionDialogViewModel(
-    private val preferences: ConnectionPreferences,
-    private val coroutineScope: CoroutineScope,
-    private val onFinish: () -> Unit = {}
-) {
+    private val preferences: ConnectionPreferences = ApplicationPreferences.getDatabaseConnectionPreferences(),
+) : ScreenModel {
 
     val uri: MutableState<String>
     val user: MutableState<String>
@@ -76,53 +75,48 @@ class ConnectionDialogViewModel(
     }
 
     /**
-     * Publishes a notification that this view is ready to exit.
+     * Makes a connection test and if it's successful, applies the current configuration and exits.
      */
-    fun finish() = onFinish()
+    fun apply(): CompletableFuture<Boolean> = wrapIntoFuture { applyInternal() }
+
+    /**
+     * Makes a connection test and writes its results into the screen model state.
+     *
+     * @return a future which completes once the test is complete
+     */
+    fun testConnection(): CompletableFuture<Boolean> = wrapIntoFuture {
+        if (testingConnection.value) return@wrapIntoFuture false
+        testConnection(createConfiguration())
+    }
 
     /**
      * Makes a connection test and if it's successful, applies the current configuration and exits.
      */
-    fun apply() {
-        completeOnSuccessfulTest = true
-        testConnection()
-    }
-
-    /**
-     * Applies the given configuration as defaults to [DatabaseConnection] and then exits.
-     */
-    private fun applyAndFinish(config: ConnectionConfiguration) {
-        config.save(preferences, savePassword.value)
-        DatabaseConnection.setDefaultConfiguration(config)
-        finish()
+    private suspend fun applyInternal(): Boolean {
+        val config = createConfiguration();
+        if (testConnection(config)) {
+            config.save(preferences, savePassword.value)
+            DatabaseConnection.setDefaultConfiguration(config)
+            return true
+        }
+        return false
     }
 
     /**
      * Makes a connection test for the currently entered values.
+     *
+     * @return true if the connection test was successful and false if it wasn't
      */
-    fun testConnection() {
-        if (testingConnection.value) return
+    suspend fun testConnection(config: ConnectionConfiguration): Boolean {
         testingConnection.value = true
-        coroutineScope.launch(Dispatchers.IO) {
-            try {
-                val config = createConfiguration()
-                val result = config.testConnection()
-                connectionTestResult.value = result
-                if (completeOnSuccessfulTest && result == ConnectionResult.SUCCESS) {
-                    applyAndFinish(config)
-                }
-            } catch (e: Exception) {
-                when (e) {
-                    is URISyntaxException,
-                    is IllegalArgumentException -> {
-                        connectionTestResult.value = ConnectionResult.INVALID_CONNECTION_STRING
-                    }
-                    else -> throw e
-                }
-            } finally {
-                testingConnection.value = false
-                completeOnSuccessfulTest = false
-            }
+        try {
+            delay(1000)
+            val result = config.testConnection()
+            connectionTestResult.value = result
+            return result == ConnectionResult.SUCCESS;
+        } finally {
+            testingConnection.value = false
+            completeOnSuccessfulTest = false
         }
     }
 
@@ -145,14 +139,37 @@ class ConnectionDialogViewModel(
         }
     }
 
-    private data class Configuration(
-        val uri: String,
-        val user: String,
-        /**
-         * The password or null if it is set to being kept unchanged.
-         */
-        val password: CharArray?,
-        val savePassword: Boolean
-    )
+    /**
+     * Asynchronously executes the given suspending function using this screen model's coroutine scope. The result
+     * of the action will then be published using the returned CompletableFuture.
+     *
+     * @param action the action to asynchronously execute
+     * @param targetDispatcher the target dispatcher on which to execute the suspending function
+     * @param callbackOnMainThread if true, the result is published to the future using the main thread, thereby
+     * ensuring any follow-up calls on that future happen on the main thread
+     */
+    protected fun <T> wrapIntoFuture(
+        targetDispatcher: CoroutineDispatcher = Dispatchers.IO,
+        callbackOnMainThread: Boolean = true,
+        action: suspend () -> T,
+    ): CompletableFuture<T> {
+        val future = CompletableFuture<T>()
+        screenModelScope.launch(targetDispatcher) {
+            var completionAction: () -> Unit
+            try {
+                val result = action.invoke()
+                completionAction = { future.complete(result) }
+            } catch (e: Exception) {
+                completionAction = { future.completeExceptionally(e) }
+            }
 
+            if (callbackOnMainThread) {
+                launch(Dispatchers.Main) { completionAction() }
+            } else {
+                completionAction()
+            }
+
+        }
+        return future
+    }
 }

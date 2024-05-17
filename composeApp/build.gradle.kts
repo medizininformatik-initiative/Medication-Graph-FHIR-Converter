@@ -19,6 +19,16 @@ kotlin {
             implementation(compose.ui)
             implementation(compose.components.resources)
             implementation(compose.components.uiToolingPreview)
+
+
+            // Voyager - Navigation Framework
+            val voyagerVersion = "1.0.0"
+            // Navigator
+            implementation("cafe.adriel.voyager:voyager-navigator:$voyagerVersion")
+            // Screen Model
+            implementation("cafe.adriel.voyager:voyager-screenmodel:$voyagerVersion")
+            // Required by Voyager
+            implementation("org.jetbrains.kotlinx:kotlinx-coroutines-swing")
         }
         desktopMain.dependencies {
             implementation(compose.desktop.currentOs)
