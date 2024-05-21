@@ -24,6 +24,10 @@ class StringRes {
         @JvmStatic val query_dialog_product_query_text = "Query (products only)"
         @JvmStatic val query_dialog_substance_query_text = "Query (substances only)"
         @JvmStatic val query_dialog_parse = "Parse"
+        @JvmStatic val parsed_query_dialog_product = "Product"
+        @JvmStatic val parsed_query_dialog_substance = "Substance"
+        @JvmStatic val parsed_query_dialog_dosages = "Dosages"
+        @JvmStatic val parsed_query_dialog_amounts = "Drug amounts"
     }
 
 }

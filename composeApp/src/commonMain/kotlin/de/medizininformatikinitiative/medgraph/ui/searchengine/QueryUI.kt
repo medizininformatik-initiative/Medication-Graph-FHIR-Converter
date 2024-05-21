@@ -23,7 +23,6 @@ fun QueryUI() {
 @Composable
 fun QueryUI(
     viewModel: QueryViewModel,
-    onParseQuery: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -41,16 +40,5 @@ fun QueryUI(
             label = StringRes.query_dialog_substance_query_text,
             modifier = Modifier.fillMaxWidth()
         )
-
-        Row(
-            horizontalArrangement = Arrangement.End,
-            modifier = Modifier.fillMaxWidth()
-                .padding(horizontal = 8.dp)
-        ) {
-            Button(onClick = onParseQuery) {
-                Text(StringRes.query_dialog_parse)
-            }
-        }
-
     }
 }
