@@ -61,8 +61,7 @@ public class ExperimentalRefiner implements MatchRefiner {
 		// TODO Master's Thesis Matcher included a sort by substrings found step here, I'll leave it out for now
 		//      as it is of little importance
 
-
-		return null;
+		return matching.getCurrentMatchesTree();
 	}
 
 }

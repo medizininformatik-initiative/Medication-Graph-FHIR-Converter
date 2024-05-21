@@ -24,7 +24,7 @@ public abstract class Matcher<S, T, R extends Match<S>> implements IMatcher<S, T
 		}
 
 		return identifierStream.map(identifier -> match(searchTerm, identifier))
-				.filter(Objects::nonNull);
+		                       .filter(Objects::nonNull);
 	}
 
 	/**

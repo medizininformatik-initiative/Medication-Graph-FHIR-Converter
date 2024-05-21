@@ -20,6 +20,8 @@ kotlin {
             implementation(compose.components.resources)
             implementation(compose.components.uiToolingPreview)
 
+            // Neo4j driver
+            implementation("org.neo4j.driver:neo4j-java-driver:5.19.0")
 
             // Voyager - Navigation Framework
             val voyagerVersion = "1.0.0"
