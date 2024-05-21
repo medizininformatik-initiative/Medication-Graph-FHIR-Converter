@@ -1,5 +1,6 @@
 package de.medizininformatikinitiative.medgraph.searchengine.algorithm;
 
+import de.medizininformatikinitiative.medgraph.searchengine.QueryExecutor;
 import de.medizininformatikinitiative.medgraph.searchengine.algorithm.initial.InitialMatchFinder;
 import de.medizininformatikinitiative.medgraph.searchengine.algorithm.refining.MatchRefiner;
 import de.medizininformatikinitiative.medgraph.searchengine.model.SearchQuery;
@@ -11,25 +12,23 @@ import java.util.*;
 import java.util.stream.Stream;
 
 /**
- * Takes care of running a whole matching pipeline by chaining the required components.
+ * Takes care of running a whole search by chaining an {@link InitialMatchFinder} and a {@link MatchRefiner}.
  *
  * @author Markus Budeus
  */
-public class MatchingAlgorithm {
+public class SimpleQueryExecutor implements QueryExecutor {
 
 	private final InitialMatchFinder initialMatchFinder;
 	private final MatchRefiner matchRefiner;
 
-	public MatchingAlgorithm(InitialMatchFinder initialMatchFinder, MatchRefiner matchRefiner) {
+	public SimpleQueryExecutor(InitialMatchFinder initialMatchFinder, MatchRefiner matchRefiner) {
 		this.initialMatchFinder = initialMatchFinder;
 		this.matchRefiner = matchRefiner;
 	}
 
-	// TODO Void Return type obviously makes no sense here, this is a WIP
-	public void findMatches(SearchQuery query) {
+	public List<MatchingObject> executeQuery(SearchQuery query) {
 		List<MatchingObject> initialMatches = mergeDuplicates(initialMatchFinder.findInitialMatches(query));
-
-		matchRefiner.refineMatches(initialMatches, query);
+		return matchRefiner.refineMatches(initialMatches, query).getContents();
 	}
 
 	/**

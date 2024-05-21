@@ -7,6 +7,7 @@ import de.medizininformatikinitiative.medgraph.searchengine.model.SearchQuery;
 import de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject.MatchingObject;
 import de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject.Merge;
 import de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject.OriginalMatch;
+import de.medizininformatikinitiative.medgraph.searchengine.pipeline.tree.SubSortingTree;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -14,13 +15,15 @@ import org.mockito.Mock;
 import java.util.List;
 
 import static de.medizininformatikinitiative.medgraph.searchengine.TestFactory.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 /**
  * @author Markus Budeus
  */
-public class MatchingAlgorithmTest extends UnitTest {
+public class SimpleQueryExecutorTest extends UnitTest {
 
 	@Mock
 	private InitialMatchFinder initialMatchFinder;
@@ -29,12 +32,13 @@ public class MatchingAlgorithmTest extends UnitTest {
 	@Mock
 	private SearchQuery query;
 
-	private MatchingAlgorithm sut;
+	private SimpleQueryExecutor sut;
 
 
 	@BeforeEach
 	void setUp() {
-		sut = new MatchingAlgorithm(initialMatchFinder, matchRefiner);
+		sut = new SimpleQueryExecutor(initialMatchFinder, matchRefiner);
+		when(matchRefiner.refineMatches(any(), any())).thenAnswer(req -> new SubSortingTree<>(req.getArgument(0)));
 	}
 
 	@Test
@@ -46,7 +50,7 @@ public class MatchingAlgorithmTest extends UnitTest {
 		);
 		when(initialMatchFinder.findInitialMatches(query)).thenReturn(list.stream());
 
-		sut.findMatches(query);
+		assertEquals(list, sut.executeQuery(query));
 
 		verify(matchRefiner).refineMatches(list, query);
 	}
@@ -62,7 +66,7 @@ public class MatchingAlgorithmTest extends UnitTest {
 		);
 		when(initialMatchFinder.findInitialMatches(query)).thenReturn(list.stream());
 
-		sut.findMatches(query);
+
 
 		List<MatchingObject> expectedList = List.of(
 				new Merge(List.of(list.get(0), list.get(2))),
@@ -70,6 +74,7 @@ public class MatchingAlgorithmTest extends UnitTest {
 				new Merge(List.of(list.get(3), list.get(4)))
 		);
 
+		assertEquals(expectedList, sut.executeQuery(query));
 		verify(matchRefiner).refineMatches(expectedList, query);
 	}
 }

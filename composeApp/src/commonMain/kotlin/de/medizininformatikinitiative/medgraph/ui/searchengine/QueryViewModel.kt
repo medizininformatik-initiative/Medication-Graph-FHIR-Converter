@@ -1,6 +1,8 @@
 package de.medizininformatikinitiative.medgraph.ui.searchengine
 
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import cafe.adriel.voyager.core.model.ScreenModel
 import de.medizininformatikinitiative.medgraph.searchengine.model.RawQuery
 
@@ -11,10 +13,10 @@ import de.medizininformatikinitiative.medgraph.searchengine.model.RawQuery
  */
 class QueryViewModel {
 
-    val queryText = mutableStateOf("")
-    val productQueryText = mutableStateOf("")
-    val substanceQueryText = mutableStateOf("")
+    var queryText by mutableStateOf("")
+    var productQueryText by mutableStateOf("")
+    var substanceQueryText by mutableStateOf("")
 
-    fun createQuery() = RawQuery(queryText.value, productQueryText.value, substanceQueryText.value)
+    fun createQuery() = RawQuery(queryText, productQueryText, substanceQueryText)
 
 }

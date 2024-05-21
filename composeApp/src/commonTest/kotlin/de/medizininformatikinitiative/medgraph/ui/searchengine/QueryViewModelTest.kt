@@ -12,9 +12,9 @@ class QueryViewModelTest {
     fun createQuery() {
         val sut = QueryViewModel()
 
-        sut.queryText.value = "This is a query"
-        sut.productQueryText.value = "Aspirin HEXAL"
-        sut.substanceQueryText.value = "Prednisolon"
+        sut.queryText = "This is a query"
+        sut.productQueryText = "Aspirin HEXAL"
+        sut.substanceQueryText = "Prednisolon"
 
         val query = sut.createQuery()
 
