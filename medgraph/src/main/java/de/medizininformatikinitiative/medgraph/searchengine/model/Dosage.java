@@ -91,6 +91,9 @@ public class Dosage {
 	@Override
 	public String toString() {
 		String nominator = nominatorQualifier != null ? amountNominator + " " + nominatorQualifier : amountNominator.toString();
-		return amountDenominator != null ? nominator + "/" + amountDenominator : nominator;
+		String denominator = amountDenominator != null ?
+				(amountDenominator.number.equals(BigDecimal.ONE) ? amountDenominator.unit : amountDenominator.toString())
+				: null;
+		return denominator != null ? nominator + "/" + denominator : nominator;
 	}
 }
