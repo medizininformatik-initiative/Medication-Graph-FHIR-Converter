@@ -46,12 +46,12 @@ fun ParsedQueryUI(query: SearchQuery, modifier: Modifier = Modifier) {
         val productName = query.productName
         val substanceName = query.substanceName
 
+        Separator(StringRes.parsed_query_dialog_product)
         if (productName != null) {
-            Separator(StringRes.parsed_query_dialog_product)
             TextBox(productName, textColor = CorporateDesign.Secondary.DarkBlue)
         }
+        Separator(StringRes.parsed_query_dialog_substance)
         if (substanceName != null) {
-            Separator(StringRes.parsed_query_dialog_substance)
             TextBox(substanceName, textColor = CorporateDesign.Emphasis.Orange)
         }
         Separator(StringRes.parsed_query_dialog_dosages)

@@ -28,9 +28,9 @@ private fun SearchEngineUI() {
 fun SearchEngineUI(viewModel: SearchEngineViewModel, modifier: Modifier = Modifier) {
     Column(modifier = modifier) {
         RawAndParsedQueryUI(viewModel, modifier = Modifier
-            .weight(1f)
+            .height(300.dp)
             .fillMaxWidth())
-        ParseAndExecuteButtonRow(viewModel, modifier = Modifier.height(400.dp))
+        ParseAndExecuteButtonRow(viewModel, modifier = Modifier.fillMaxWidth())
     }
 }
 
@@ -43,7 +43,7 @@ fun RawAndParsedQueryUI(viewModel: SearchEngineViewModel, modifier: Modifier = M
 
         Divider(
             modifier = Modifier
-                .padding(4.dp)
+                .padding(horizontal = 16.dp)
                 .fillMaxHeight()
                 .width(1.dp)
         )

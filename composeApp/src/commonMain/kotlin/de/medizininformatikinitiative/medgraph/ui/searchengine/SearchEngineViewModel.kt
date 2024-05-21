@@ -4,6 +4,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import cafe.adriel.voyager.core.model.ScreenModel
+import de.medizininformatikinitiative.medgraph.searchengine.algorithm.MatchingAlgorithm
 import de.medizininformatikinitiative.medgraph.searchengine.algorithm.querymanagement.QueryParser
 import de.medizininformatikinitiative.medgraph.searchengine.algorithm.querymanagement.SimpleQueryParser
 import de.medizininformatikinitiative.medgraph.searchengine.model.SearchQuery
@@ -14,7 +15,7 @@ import de.medizininformatikinitiative.medgraph.searchengine.model.SearchQuery
  * @author Markus Budeus
  */
 class SearchEngineViewModel(
-    val queryParser: QueryParser = SimpleQueryParser()
+    val queryParser: QueryParser = SimpleQueryParser(),
 ) : ScreenModel {
 
     val queryViewModel = QueryViewModel()

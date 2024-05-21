@@ -8,8 +8,11 @@ package de.medizininformatikinitiative.medgraph.ui.resources
 class StringRes {
 
     companion object {
+        @JvmStatic val exit = "Exit"
         @JvmStatic val cancel = "Cancel"
         @JvmStatic val ok = "OK"
+        @JvmStatic val main_menu_search_algorithm = "Search for Medications"
+        @JvmStatic val main_menu_configure_db = "Configure Database Connection"
         @JvmStatic val db_connection_dialog_uri = "Connection URI"
         @JvmStatic val db_connection_dialog_user = "User"
         @JvmStatic val db_connection_dialog_password = "Password"
