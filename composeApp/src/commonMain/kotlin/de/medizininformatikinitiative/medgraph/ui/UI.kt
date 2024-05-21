@@ -14,14 +14,18 @@ class UI {
     companion object {
 
         @JvmStatic
-        fun startUi() {
+        fun startUi(goToConnectionDialog: Boolean = false) {
             application {
                 ApplicationTheme {
                     Window(
                         onCloseRequest = ::exitApplication,
                         title = "MedicationGraphFHIRConverter",
                     ) {
-                        Navigator(listOf(SampleScreen(), ConnectionDialog()))
+                        if (goToConnectionDialog) {
+                            Navigator(listOf(MainMenu(), ConnectionDialog()))
+                        } else {
+                            Navigator(MainMenu())
+                        }
                     }
                 }
             }

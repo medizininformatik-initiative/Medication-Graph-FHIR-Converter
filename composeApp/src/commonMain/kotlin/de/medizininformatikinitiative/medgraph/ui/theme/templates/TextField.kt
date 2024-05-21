@@ -42,7 +42,8 @@ fun TextField(
     value: String,
     onValueChange: (String) -> Unit,
     modifier: Modifier = Modifier,
+    singleLine: Boolean = true,
     label: @Composable() (() -> Unit)? = null
 ) {
-    OutlinedTextField(value, onValueChange, modifier, label = label)
+    OutlinedTextField(value, onValueChange, modifier, label = label, singleLine = singleLine)
 }
