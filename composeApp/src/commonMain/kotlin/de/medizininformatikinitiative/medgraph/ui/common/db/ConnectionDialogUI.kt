@@ -2,7 +2,9 @@ package de.medizininformatikinitiative.medgraph.ui.common.db
 
 import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.*
+import androidx.compose.material.Button
+import androidx.compose.material.OutlinedTextField
+import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -11,11 +13,9 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.navigator.LocalNavigator
-import cafe.adriel.voyager.navigator.Navigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import de.medizininformatikinitiative.medgraph.common.db.ConnectionConfiguration
 import de.medizininformatikinitiative.medgraph.ui.resources.StringRes
-import java.util.concurrent.CompletableFuture
 
 @Composable
 @Preview
