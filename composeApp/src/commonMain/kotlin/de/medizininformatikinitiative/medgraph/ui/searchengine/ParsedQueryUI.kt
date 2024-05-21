@@ -16,6 +16,7 @@ import androidx.compose.ui.unit.dp
 import de.medizininformatikinitiative.medgraph.searchengine.model.Amount
 import de.medizininformatikinitiative.medgraph.searchengine.model.Dosage
 import de.medizininformatikinitiative.medgraph.searchengine.model.SearchQuery
+import de.medizininformatikinitiative.medgraph.ui.resources.StringRes
 import de.medizininformatikinitiative.medgraph.ui.theme.ApplicationTheme
 import de.medizininformatikinitiative.medgraph.ui.theme.CorporateDesign
 import de.medizininformatikinitiative.medgraph.ui.theme.TUMWeb
@@ -46,20 +47,20 @@ fun ParsedQueryUI(query: SearchQuery, modifier: Modifier = Modifier) {
         val substanceName = query.substanceName
 
         if (productName != null) {
-            Separator("Product name")
+            Separator(StringRes.parsed_query_dialog_product)
             TextBox(productName, textColor = CorporateDesign.Secondary.DarkBlue)
         }
         if (substanceName != null) {
-            Separator("Substance name")
+            Separator(StringRes.parsed_query_dialog_substance)
             TextBox(substanceName, textColor = CorporateDesign.Emphasis.Orange)
         }
-        Separator("Dosages")
+        Separator(StringRes.parsed_query_dialog_dosages)
         Row {
             query.activeIngredientDosages.forEach { dosage ->
                 TextBox(dosage.toString(), textColor = CorporateDesign.Emphasis.Green)
             }
         }
-        Separator("Amounts")
+        Separator(StringRes.parsed_query_dialog_amounts)
         Row {
             query.drugAmounts.forEach { amount ->
                 TextBox(amount.toString(), textColor = CorporateDesign.Emphasis.Green)
