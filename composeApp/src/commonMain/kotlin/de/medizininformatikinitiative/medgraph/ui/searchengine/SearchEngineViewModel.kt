@@ -11,6 +11,7 @@ import de.medizininformatikinitiative.medgraph.searchengine.algorithm.querymanag
 import de.medizininformatikinitiative.medgraph.searchengine.algorithm.querymanagement.SimpleQueryParser
 import de.medizininformatikinitiative.medgraph.searchengine.model.SearchQuery
 import de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject.MatchingObject
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.job
 import kotlinx.coroutines.launch
@@ -69,7 +70,7 @@ open class SearchEngineViewModel(
         val query = parsedQuery
         queryResultsState.value = emptyList()
         if  (query == null) return null
-        return screenModelScope.launch {
+        return screenModelScope.launch (Dispatchers.IO) {
             try {
                 queryResultsState.value = queryExecutor.executeQuery(query)
             } finally {

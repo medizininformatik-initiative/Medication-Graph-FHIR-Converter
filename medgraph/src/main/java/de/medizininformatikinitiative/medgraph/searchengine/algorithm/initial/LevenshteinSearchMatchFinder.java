@@ -8,6 +8,7 @@ import de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject
 import de.medizininformatikinitiative.medgraph.searchengine.provider.BaseProvider;
 import de.medizininformatikinitiative.medgraph.searchengine.stringtransformer.*;
 
+import java.util.Comparator;
 import java.util.Set;
 import java.util.stream.Stream;
 
@@ -62,7 +63,9 @@ public class LevenshteinSearchMatchFinder implements InitialMatchFinder {
 		}
 
 		// TODO This throws away all match info, which might be nice to have in the OriginalMatch instance for later reference
-		return allMatches.map(match -> new OriginalMatch((Matchable) match.getMatchedIdentifier().target));
+		return allMatches
+				.sorted(Comparator.reverseOrder())
+				.map(match -> new OriginalMatch((Matchable) match.getMatchedIdentifier().target));
 	}
 
 }
