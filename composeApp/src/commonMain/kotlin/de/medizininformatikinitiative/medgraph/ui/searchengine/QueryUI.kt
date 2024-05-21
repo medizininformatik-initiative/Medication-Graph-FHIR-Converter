@@ -29,14 +29,21 @@ fun QueryUI(
         modifier = modifier
     ) {
 
-        TextField(viewModel.queryText, label = StringRes.query_dialog_query_text, modifier = Modifier.fillMaxWidth())
+        TextField(
+            viewModel.queryText,
+            { v -> viewModel.queryText = v },
+            label = StringRes.query_dialog_query_text,
+            modifier = Modifier.fillMaxWidth()
+        )
         TextField(
             viewModel.productQueryText,
+            { v -> viewModel.productQueryText = v },
             label = StringRes.query_dialog_product_query_text,
             modifier = Modifier.fillMaxWidth()
         )
         TextField(
             viewModel.substanceQueryText,
+            { v -> viewModel.substanceQueryText = v },
             label = StringRes.query_dialog_substance_query_text,
             modifier = Modifier.fillMaxWidth()
         )

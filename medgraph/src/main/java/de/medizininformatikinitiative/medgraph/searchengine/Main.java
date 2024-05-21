@@ -1,15 +1,13 @@
 package de.medizininformatikinitiative.medgraph.searchengine;
 
 import de.medizininformatikinitiative.medgraph.common.db.DatabaseConnection;
-import de.medizininformatikinitiative.medgraph.searchengine.algorithm.MatchingAlgorithm;
+import de.medizininformatikinitiative.medgraph.searchengine.algorithm.SimpleQueryExecutor;
 import de.medizininformatikinitiative.medgraph.searchengine.algorithm.initial.LevenshteinSearchMatchFinder;
 import de.medizininformatikinitiative.medgraph.searchengine.algorithm.refining.ExperimentalRefiner;
 import de.medizininformatikinitiative.medgraph.searchengine.db.Neo4jCypherDatabase;
 import de.medizininformatikinitiative.medgraph.searchengine.model.SearchQuery;
 import de.medizininformatikinitiative.medgraph.searchengine.provider.Providers;
-import org.neo4j.driver.Session;
 
-import javax.xml.crypto.Data;
 import java.util.Collections;
 
 /**
@@ -28,8 +26,8 @@ public class Main {
 
 			ExperimentalRefiner refiner = new ExperimentalRefiner(session, new Neo4jCypherDatabase(session));
 
-			MatchingAlgorithm algorithm = new MatchingAlgorithm(matchFinder, refiner);
-			algorithm.findMatches(new SearchQuery(null, "Aspirin",
+			SimpleQueryExecutor algorithm = new SimpleQueryExecutor(matchFinder, refiner);
+			algorithm.executeQuery(new SearchQuery(null, "Aspirin",
 					Collections.emptyList(),
 					Collections.emptyList()));
 		});

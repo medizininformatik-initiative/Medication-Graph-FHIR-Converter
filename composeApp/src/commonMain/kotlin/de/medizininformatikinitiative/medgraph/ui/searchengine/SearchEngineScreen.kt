@@ -6,6 +6,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.core.model.rememberScreenModel
 import cafe.adriel.voyager.core.screen.Screen
+import de.medizininformatikinitiative.medgraph.searchengine.QueryExecutor
+import de.medizininformatikinitiative.medgraph.searchengine.algorithm.SimpleQueryExecutor
+import de.medizininformatikinitiative.medgraph.searchengine.algorithm.querymanagement.SimpleQueryParser
 
 /**
  * Search Engine UI Screen.
@@ -13,6 +16,16 @@ import cafe.adriel.voyager.core.screen.Screen
  * @author Markus Budeus
  */
 class SearchEngineScreen : Screen {
+
+    private val queryParser = SimpleQueryParser()
+    private val queryExecutor: QueryExecutor
+
+    init {
+
+        queryExecutor = SimpleQueryExecutor()
+
+
+    }
 
     @Composable
     override fun Content() {
