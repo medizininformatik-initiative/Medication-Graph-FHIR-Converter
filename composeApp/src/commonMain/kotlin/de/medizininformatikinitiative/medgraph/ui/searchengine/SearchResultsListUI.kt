@@ -7,10 +7,11 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.rememberScrollbarAdapter
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Divider
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject.DetailedProduct
 import de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject.MatchingObject
 import de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject.OriginalMatch
 import de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject.Product
@@ -33,6 +34,8 @@ private fun SearchResultsListUI() {
 
 @Composable
 fun SearchResultsListUI(results: List<MatchingObject>, modifier: Modifier = Modifier) {
+    var expandedResultIndex by remember { mutableStateOf<Int?>(null) }
+
     Row(
         modifier = modifier.fillMaxSize()
             .padding(4.dp)
@@ -47,7 +50,16 @@ fun SearchResultsListUI(results: List<MatchingObject>, modifier: Modifier = Modi
             results.forEachIndexed { index, result ->
                 if (index != 0)
                     Divider(thickness = 1.dp)
-                SearchResultUI(result, modifier = Modifier.fillMaxWidth())
+                val obj = result.`object`
+                if (obj is DetailedProduct) {
+                    ExpandableSearchResultUI(obj,
+                        expandedResultIndex == index,
+                        onSwitchExpand = { expand -> if (expand) expandedResultIndex = index else expandedResultIndex = null },
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                } else {
+                    SearchResultUI(result.`object`, modifier = Modifier.fillMaxWidth())
+                }
             }
         }
         VerticalScrollbar(
