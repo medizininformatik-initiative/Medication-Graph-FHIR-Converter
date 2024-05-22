@@ -33,6 +33,16 @@ class StringRes {
         @JvmStatic val parsed_query_dialog_substance = "Substance"
         @JvmStatic val parsed_query_dialog_dosages = "Dosages"
         @JvmStatic val parsed_query_dialog_amounts = "Drug amounts"
+        @JvmStatic val query_result_too_many_matches = "Query returned {0} matches. Only the first {1} results are shown."
+
+        @JvmStatic
+        fun get(template: String, vararg arguments: Any): String {
+            var actual = template
+            arguments.forEachIndexed { index, arg ->
+                actual = actual.replace("{$index}", arg.toString())
+            }
+            return actual
+        }
     }
 
 }

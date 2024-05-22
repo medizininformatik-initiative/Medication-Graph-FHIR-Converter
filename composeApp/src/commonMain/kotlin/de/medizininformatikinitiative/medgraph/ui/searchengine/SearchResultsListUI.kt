@@ -1,13 +1,14 @@
 package de.medizininformatikinitiative.medgraph.ui.searchengine
 
 import androidx.compose.desktop.ui.tooling.preview.Preview
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.VerticalScrollbar
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.rememberScrollbarAdapter
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Divider
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject.MatchingObject
@@ -32,16 +33,28 @@ private fun SearchResultsListUI() {
 
 @Composable
 fun SearchResultsListUI(results: List<MatchingObject>, modifier: Modifier = Modifier) {
-    Column(
-        modifier = modifier
-            .verticalScroll(rememberScrollState())
-            .fillMaxHeight()
+    Row(
+        modifier = modifier.fillMaxSize()
+            .padding(4.dp)
     ) {
-        results.forEachIndexed { index, result ->
-            if (index != 0)
-                Divider(thickness = 1.dp)
-            SearchResultUI(result, modifier = Modifier.fillMaxWidth())
+        val scrollState = rememberScrollState()
+        Column(
+            modifier = Modifier
+                .weight(1f)
+                .verticalScroll(scrollState)
+                .fillMaxHeight()
+        ) {
+            results.forEachIndexed { index, result ->
+                if (index != 0)
+                    Divider(thickness = 1.dp)
+                SearchResultUI(result, modifier = Modifier.fillMaxWidth())
+            }
         }
+        VerticalScrollbar(
+            modifier = Modifier
+                .fillMaxHeight(),
+            adapter = rememberScrollbarAdapter(scrollState)
+        )
     }
 
 }

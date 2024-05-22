@@ -4,16 +4,19 @@ import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Divider
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import de.medizininformatikinitiative.medgraph.ui.resources.StringRes
 import de.medizininformatikinitiative.medgraph.ui.theme.ApplicationTheme
+import de.medizininformatikinitiative.medgraph.ui.theme.CorporateDesign
 import de.medizininformatikinitiative.medgraph.ui.theme.templates.Button
 
 @Composable
@@ -34,18 +37,41 @@ fun SearchEngineUI(viewModel: SearchEngineViewModel, modifier: Modifier = Modifi
     Column(modifier = modifier) {
         RawAndParsedQueryUI(
             viewModel, modifier = Modifier
-                .height(200.dp)
+                .height(250.dp)
                 .fillMaxWidth()
         )
         ParseAndExecuteButtonRow(viewModel, modifier = Modifier.fillMaxWidth())
 
-        if (viewModel.queryExecutionUnderway) {
-            Text("Executing Query...")
+        val actualLastSize = viewModel.actualLastQueryResultSize
+        if (actualLastSize != null) {
+            Text(
+                StringRes.get(
+                    StringRes.query_result_too_many_matches,
+                    actualLastSize,
+                    SearchEngineViewModel.MAX_RESULT_SIZE
+                ),
+                color = MaterialTheme.colors.error
+            )
+            Spacer(modifier = Modifier.height(4.dp))
         }
-        SearchResultsListUI(viewModel.queryResults, modifier = Modifier
-            .weight(1f)
-            .border(2.dp, MaterialTheme.colors.onBackground, RoundedCornerShape(4.dp))
-        )
+
+        Box(
+            modifier = Modifier
+                .weight(1f)
+                .fillMaxWidth()
+                .border(2.dp, MaterialTheme.colors.onBackground, RoundedCornerShape(4.dp))
+        ) {
+            if (viewModel.queryExecutionUnderway) {
+                CircularProgressIndicator(
+                    modifier = Modifier.width(64.dp)
+                        .align(Alignment.Center),
+                    color = CorporateDesign.Main.TUMBlue,
+                    backgroundColor = CorporateDesign.Secondary.LighterBlue
+                )
+            } else {
+                SearchResultsListUI(viewModel.queryResults)
+            }
+        }
     }
 }
 
@@ -54,7 +80,11 @@ fun RawAndParsedQueryUI(viewModel: SearchEngineViewModel, modifier: Modifier = M
     Row(
         modifier = modifier
     ) {
-        QueryUI(viewModel.queryViewModel, modifier = Modifier.weight(1f))
+        QueryUI(
+            viewModel.queryViewModel,
+            modifier = Modifier.weight(1f),
+            onEnterPressed = viewModel::parseAndExecuteQuery,
+        )
 
         Divider(
             modifier = Modifier
@@ -99,7 +129,7 @@ fun ParseAndExecuteButtonRow(viewModel: SearchEngineViewModel, modifier: Modifie
             }
 
             Button(
-                onClick = { viewModel.parseQuery(); viewModel.executeQuery() },
+                onClick = { viewModel.parseAndExecuteQuery() },
                 enabled = !viewModel.queryExecutionUnderway,
             ) {
                 Text(StringRes.search_engine_dialog_parse_execute)
