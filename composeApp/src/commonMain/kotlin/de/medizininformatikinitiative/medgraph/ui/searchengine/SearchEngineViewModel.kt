@@ -26,6 +26,10 @@ open class SearchEngineViewModel(
     private val queryExecutor: QueryExecutor = StubQueryExecutor()
 ) : ScreenModel {
 
+    companion object {
+        val MAX_RESULT_SIZE = 100
+    }
+
     val queryViewModel = QueryViewModel()
 
     private val parsedQueryState = mutableStateOf<SearchQuery?>(null)
@@ -42,6 +46,15 @@ open class SearchEngineViewModel(
      */
     val queryExecutionUnderway by queryExecutionState
 
+    private val actualLastQueryResultSizeState = mutableStateOf<Int?>(null)
+
+    /**
+     * The actual result size of the last query, whose result has been cropped because it is too large.
+     * If there is no last query or it has not been cropped, this is null.
+     */
+    var actualLastQueryResultSize by actualLastQueryResultSizeState
+        private set
+    private var lastActualQueryResult: List<MatchingObject> = emptyList()
     private val queryResultsState = mutableStateOf<List<MatchingObject>>(emptyList())
 
     /**
@@ -69,14 +82,30 @@ open class SearchEngineViewModel(
         }
         val query = parsedQuery
         queryResultsState.value = emptyList()
+        actualLastQueryResultSize = null
         if  (query == null) return null
         return screenModelScope.launch (Dispatchers.IO) {
             try {
-                queryResultsState.value = queryExecutor.executeQuery(query)
+                lastActualQueryResult = queryExecutor.executeQuery(query)
+                if (lastActualQueryResult.size <= MAX_RESULT_SIZE) queryResultsState.value = lastActualQueryResult
+                else {
+                    queryResultsState.value = lastActualQueryResult.subList(0, MAX_RESULT_SIZE)
+                    actualLastQueryResultSize = lastActualQueryResult.size
+                }
             } finally {
                 queryExecutionState.value = false
             }
         }
+    }
+
+    /**
+     * Parses the current query and then executes it.
+     *
+     * @return the job representing the query execution or null if the query execution could not start successfully
+     */
+    fun parseAndExecuteQuery(): Job? {
+        parseQuery()
+        return executeQuery()
     }
 
 }

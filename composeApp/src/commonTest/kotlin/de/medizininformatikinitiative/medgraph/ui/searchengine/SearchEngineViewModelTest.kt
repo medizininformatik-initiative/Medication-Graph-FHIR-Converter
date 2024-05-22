@@ -1,6 +1,5 @@
 package de.medizininformatikinitiative.medgraph.ui.searchengine
 
-import cafe.adriel.voyager.core.model.screenModelScope
 import de.medizininformatikinitiative.medgraph.searchengine.QueryExecutor
 import de.medizininformatikinitiative.medgraph.searchengine.algorithm.querymanagement.QueryParser
 import de.medizininformatikinitiative.medgraph.searchengine.model.RawQuery
@@ -9,10 +8,8 @@ import de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject
 import de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject.OriginalMatch
 import de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject.Product
 import de.medizininformatikinitiative.medgraph.ui.UnitTest
-import kotlinx.coroutines.job
 import kotlinx.coroutines.runBlocking
-import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Assertions.assertFalse
+import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.mockito.ArgumentMatchers
@@ -61,6 +58,7 @@ class SearchEngineViewModelTest : UnitTest() {
         }
 
         assertFalse(sut.queryExecutionUnderway)
+        assertNull(sut.actualLastQueryResultSize)
         assertEquals(sampleSearchResult, sut.queryResults)
     }
 
@@ -74,6 +72,56 @@ class SearchEngineViewModelTest : UnitTest() {
 
         assertFalse(sut.queryExecutionUnderway)
         assertEquals(emptyList<MatchingObject>(), sut.queryResults)
+    }
+
+    @Test
+    fun parseAndExecute() {
+        val currentQuery = mock(SearchQuery::class.java)
+        val currentResult = listOf(OriginalMatch(Product(2, "Novalgin")))
+
+        `when`(queryParser.parse(any())).thenReturn(currentQuery)
+        `when`(queryExecutor.executeQuery(currentQuery)).thenReturn(currentResult)
+
+        runBlocking {
+            sut.parseAndExecuteQuery()!!.join()
+        }
+
+        assertFalse(sut.queryExecutionUnderway)
+        assertEquals(currentResult, sut.queryResults)
+    }
+
+    @Test
+    fun tooManyResults() {
+        val resultList = ArrayList<MatchingObject>()
+        repeat(SearchEngineViewModel.MAX_RESULT_SIZE + 5) {
+            resultList.add(OriginalMatch(Product(17, "A")))
+        }
+
+        `when`(queryExecutor.executeQuery(any())).thenReturn(resultList)
+
+        runBlocking {
+            sut.parseQuery()
+            sut.executeQuery()!!.join()
+        }
+
+        assertEquals(SearchEngineViewModel.MAX_RESULT_SIZE + 5, sut.actualLastQueryResultSize)
+        assertEquals(resultList.subList(0, SearchEngineViewModel.MAX_RESULT_SIZE), sut.queryResults)
+    }
+
+    @Test
+    fun tooManyResultsReset() {
+        tooManyResults()
+
+        assertNotNull(sut.actualLastQueryResultSize)
+
+        `when`(queryExecutor.executeQuery(any())).thenReturn(listOf(OriginalMatch(Product(2, "B"))))
+
+        runBlocking {
+            sut.parseQuery()
+            sut.executeQuery()!!.join()
+        }
+
+        assertNull(sut.actualLastQueryResultSize)
     }
 
 }

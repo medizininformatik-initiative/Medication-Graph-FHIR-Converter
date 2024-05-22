@@ -7,6 +7,7 @@ import de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject
 import de.medizininformatikinitiative.medgraph.searchengine.pipeline.OngoingMatching;
 import de.medizininformatikinitiative.medgraph.searchengine.pipeline.judge.ProductOnlyFilter;
 import de.medizininformatikinitiative.medgraph.searchengine.pipeline.judge.dosage.DosageAndAmountInfoMatchJudge;
+import de.medizininformatikinitiative.medgraph.searchengine.pipeline.transformer.ProductDetailsResolver;
 import de.medizininformatikinitiative.medgraph.searchengine.pipeline.transformer.SubstanceToProductResolver;
 import de.medizininformatikinitiative.medgraph.searchengine.pipeline.tree.SubSortingTree;
 import org.neo4j.driver.Session;
@@ -27,9 +28,12 @@ public class ExperimentalRefiner implements MatchRefiner {
 
 	private final DosageAndAmountInfoMatchJudge dosageJudge;
 
+	private final ProductDetailsResolver productDetailsResolver;
+
 	public ExperimentalRefiner(Session session, Database database) {
 		substanceToProductResolver = new SubstanceToProductResolver(session);
 		dosageJudge = new DosageAndAmountInfoMatchJudge(database, 0.1);
+		productDetailsResolver = new ProductDetailsResolver(database);
 	}
 
 	/**
@@ -60,6 +64,8 @@ public class ExperimentalRefiner implements MatchRefiner {
 
 		// TODO Master's Thesis Matcher included a sort by substrings found step here, I'll leave it out for now
 		//      as it is of little importance
+
+		matching.transformMatches(productDetailsResolver);
 
 		return matching.getCurrentMatchesTree();
 	}
