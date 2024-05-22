@@ -20,7 +20,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
-import static de.medizininformatikinitiative.medgraph.searchengine.TestFactory.*;
+import static de.medizininformatikinitiative.medgraph.TestFactory.*;
 import static de.medizininformatikinitiative.medgraph.searchengine.pipeline.judge.dosage.DosageAndAmountInfoMatchJudge.NO_DOSAGE_AND_AMOUNT_SCORE;
 import static de.medizininformatikinitiative.medgraph.searchengine.pipeline.judge.dosage.DosageAndAmountInfoMatchJudge.NO_PRODUCT_SCORE;
 import static org.junit.jupiter.api.Assertions.assertEquals;

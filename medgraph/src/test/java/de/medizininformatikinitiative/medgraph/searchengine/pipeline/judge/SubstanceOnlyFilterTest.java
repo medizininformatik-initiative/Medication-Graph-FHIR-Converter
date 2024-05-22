@@ -2,8 +2,8 @@ package de.medizininformatikinitiative.medgraph.searchengine.pipeline.judge;
 
 import org.junit.jupiter.api.Test;
 
-import static de.medizininformatikinitiative.medgraph.searchengine.TestFactory.*;
-import static de.medizininformatikinitiative.medgraph.searchengine.TestFactory.SAMPLE_SUBSTANCE_2;
+import static de.medizininformatikinitiative.medgraph.TestFactory.*;
+import static de.medizininformatikinitiative.medgraph.TestFactory.SAMPLE_SUBSTANCE_2;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**

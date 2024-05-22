@@ -10,13 +10,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import static de.medizininformatikinitiative.medgraph.searchengine.TestFactory.Products.*;
+import static de.medizininformatikinitiative.medgraph.TestFactory.Products.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * @author Markus Budeus
  */
-public class Neo4jCypherDatabaseTest extends Neo4jTest {
+public class Neo4jCypherDatabaseGetDrugDosagesTest extends Neo4jTest {
 
 	private Neo4jCypherDatabase sut;
 

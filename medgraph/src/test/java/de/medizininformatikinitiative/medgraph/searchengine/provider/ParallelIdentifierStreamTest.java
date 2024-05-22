@@ -1,6 +1,6 @@
 package de.medizininformatikinitiative.medgraph.searchengine.provider;
 
-import de.medizininformatikinitiative.medgraph.searchengine.TestFactory;
+import de.medizininformatikinitiative.medgraph.TestFactory;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;

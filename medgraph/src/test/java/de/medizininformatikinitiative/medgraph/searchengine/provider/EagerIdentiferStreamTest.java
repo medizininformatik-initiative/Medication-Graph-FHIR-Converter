@@ -4,7 +4,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import static de.medizininformatikinitiative.medgraph.searchengine.TestFactory.PRODUCTS_AND_SUBSTANCES_PROVIDER;
+import static de.medizininformatikinitiative.medgraph.TestFactory.PRODUCTS_AND_SUBSTANCES_PROVIDER;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 

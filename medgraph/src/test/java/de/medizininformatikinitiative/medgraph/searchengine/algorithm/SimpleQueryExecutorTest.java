@@ -14,7 +14,7 @@ import org.mockito.Mock;
 
 import java.util.List;
 
-import static de.medizininformatikinitiative.medgraph.searchengine.TestFactory.*;
+import static de.medizininformatikinitiative.medgraph.TestFactory.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;

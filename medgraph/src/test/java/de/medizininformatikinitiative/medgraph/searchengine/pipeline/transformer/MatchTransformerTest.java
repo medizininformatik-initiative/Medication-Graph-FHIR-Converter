@@ -11,7 +11,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static de.medizininformatikinitiative.medgraph.searchengine.TestFactory.*;
+import static de.medizininformatikinitiative.medgraph.TestFactory.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
