@@ -34,6 +34,8 @@ class StringRes {
         @JvmStatic val parsed_query_dialog_dosages = "Dosages"
         @JvmStatic val parsed_query_dialog_amounts = "Drug amounts"
         @JvmStatic val query_result_too_many_matches = "Query returned {0} matches. Only the first {1} results are shown."
+        @JvmStatic val result_mmi_id = "MMI ID: {0}"
+        @JvmStatic val result_pzn = "PZN: {0}"
 
         @JvmStatic
         fun get(template: String, vararg arguments: Any): String {
