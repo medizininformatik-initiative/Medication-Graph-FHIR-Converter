@@ -148,10 +148,10 @@ public class DosageMatchJudge {
 	 */
 	private static boolean matchesAbsolute(DbDosage dbDosage, Dosage targetDosage) {
 		Amount amount = targetDosage.amountNominator;
-		if (!matchesAbsolute(dbDosage.amountFrom, dbDosage.amountTo, amount.number, BigDecimal.ZERO)) return false;
+		if (!matchesAbsolute(dbDosage.amountFrom, dbDosage.amountTo, amount.getNumber(), BigDecimal.ZERO)) return false;
 
-		if (amount.unit != null) {
-			return amount.unit.equals(dbDosage.unit);
+		if (amount.getUnit() != null) {
+			return amount.getUnit().equals(dbDosage.unit);
 		}
 		return true;
 	}
@@ -173,12 +173,12 @@ public class DosageMatchJudge {
 	 */
 	private static double judgeRelative(DbDosage dbDosage, DbAmount drugAmount, Dosage targetDosage) {
 		assert targetDosage.amountDenominator != null;
-		if (!Objects.equals(targetDosage.amountDenominator.unit, drugAmount.unit)) return 0;
-		if (!Objects.equals(targetDosage.amountNominator.unit, dbDosage.unit)) return 0;
+		if (!Objects.equals(targetDosage.amountDenominator.getUnit(), drugAmount.unit)) return 0;
+		if (!Objects.equals(targetDosage.amountNominator.getUnit(), dbDosage.unit)) return 0;
 
 		// Attempt perfect match
-		if (matchesAbsolute(dbDosage.amountFrom, dbDosage.amountTo, targetDosage.amountNominator.number,
-				BigDecimal.ZERO) && matchesAbsolute(drugAmount.amount, null, targetDosage.amountDenominator.number,
+		if (matchesAbsolute(dbDosage.amountFrom, dbDosage.amountTo, targetDosage.amountNominator.getNumber(),
+				BigDecimal.ZERO) && matchesAbsolute(drugAmount.amount, null, targetDosage.amountDenominator.getNumber(),
 				BigDecimal.ZERO)) {
 			return PERFECT_RELATIVE_MATCH_SCORE;
 		}
@@ -190,8 +190,8 @@ public class DosageMatchJudge {
 		if (dbDosage.amountTo != null) normalizedAmountLocalTo = dbDosage.amountTo.setScale(4, RoundingMode.UNNECESSARY)
 		                                                                          .divide(drugAmount.amount,
 				                                                                          RoundingMode.HALF_UP);
-		BigDecimal normalizedAmountOther = targetDosage.amountNominator.number.setScale(4, RoundingMode.HALF_UP)
-		                                                                      .divide(targetDosage.amountDenominator.number,
+		BigDecimal normalizedAmountOther = targetDosage.amountNominator.getNumber().setScale(4, RoundingMode.HALF_UP)
+		                                                                      .divide(targetDosage.amountDenominator.getNumber(),
 				                                                                      RoundingMode.HALF_UP);
 
 		if (matchesAbsolute(normalizedAmountLocalFrom, normalizedAmountLocalTo, normalizedAmountOther, EPSILON)) {

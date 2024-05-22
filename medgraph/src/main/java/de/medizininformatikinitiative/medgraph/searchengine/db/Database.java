@@ -21,7 +21,9 @@ public interface Database {
 	 * @param productIds the product ids for which to retrieve the information from the database.
 	 * @return a set of {@link DbDosagesByProduct}-instances containing the requested data for each product which could
 	 * be found
+	 * @deprecated use {@link #getDetailedProductInfo(Collection)} instead
 	 */
+	@Deprecated
 	Set<DbDosagesByProduct> getDrugDosagesByProduct(Collection<Long> productIds);
 
 	/**

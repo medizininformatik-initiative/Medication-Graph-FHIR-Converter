@@ -1,17 +1,22 @@
 package de.medizininformatikinitiative.medgraph.searchengine.db;
 
 import de.medizininformatikinitiative.medgraph.Neo4jTest;
+import de.medizininformatikinitiative.medgraph.searchengine.model.ActiveIngredient;
+import de.medizininformatikinitiative.medgraph.searchengine.model.Amount;
+import de.medizininformatikinitiative.medgraph.searchengine.model.AmountRange;
+import de.medizininformatikinitiative.medgraph.searchengine.model.CorrespondingActiveIngredient;
+import de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject.DetailedProduct;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.math.BigDecimal;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Stream;
 
 import static de.medizininformatikinitiative.medgraph.TestFactory.Products.*;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * @author Markus Budeus
@@ -32,7 +37,7 @@ public class Neo4jCypherDatabaseGetDrugDosagesTest extends Neo4jTest {
 
 		DbDosagesByProduct dosageInfo = dosageSet.iterator().next();
 
-		DbDosagesByProduct expected = constructExpectedDormicum15Instance();
+		DbDosagesByProduct expected = ofDetailedInfo(Detailed.DORMICUM_15);
 		assertEquals(expected, dosageInfo);
 	}
 
@@ -43,7 +48,7 @@ public class Neo4jCypherDatabaseGetDrugDosagesTest extends Neo4jTest {
 
 		DbDosagesByProduct dosageInfo = dosageSet.iterator().next();
 
-		DbDosagesByProduct expected = constructExpectedDormicum5Instance();
+		DbDosagesByProduct expected = ofDetailedInfo(Detailed.DORMICUM_5);
 		assertEquals(expected, dosageInfo);
 	}
 
@@ -54,7 +59,7 @@ public class Neo4jCypherDatabaseGetDrugDosagesTest extends Neo4jTest {
 
 		DbDosagesByProduct dosageInfo = dosageSet.iterator().next();
 
-		DbDosagesByProduct expected = constructExpectedAspirinInstance();
+		DbDosagesByProduct expected = ofDetailedInfo(Detailed.ASPIRIN);
 		assertEquals(expected, dosageInfo);
 	}
 
@@ -65,7 +70,7 @@ public class Neo4jCypherDatabaseGetDrugDosagesTest extends Neo4jTest {
 
 		DbDosagesByProduct dosageInfo = dosageSet.iterator().next();
 
-		DbDosagesByProduct expected = constructExpectedAnapenInstance();
+		DbDosagesByProduct expected = ofDetailedInfo(Detailed.ANAPEN);
 		assertEquals(expected, dosageInfo);
 	}
 
@@ -88,56 +93,38 @@ public class Neo4jCypherDatabaseGetDrugDosagesTest extends Neo4jTest {
 		Map<Long, DbDosagesByProduct> dosagesByProductId = new HashMap<>();
 		dosageSet.forEach(s -> dosagesByProductId.put(s.productId, s));
 
-		assertEquals(constructExpectedAspirinInstance(), dosagesByProductId.get(ASPIRIN.getId()));
-		assertEquals(constructExpectedAnapenInstance(), dosagesByProductId.get(ANAPEN.getId()));
-		assertEquals(constructExpectedDormicum15Instance(), dosagesByProductId.get(DORMICUM_15.getId()));
+		assertEquals(ofDetailedInfo(Detailed.ASPIRIN), dosagesByProductId.get(ASPIRIN.getId()));
+		assertEquals(ofDetailedInfo(Detailed.ANAPEN), dosagesByProductId.get(ANAPEN.getId()));
+		assertEquals(ofDetailedInfo(Detailed.DORMICUM_15), dosagesByProductId.get(DORMICUM_15.getId()));
 	}
 
-	private DbDosagesByProduct constructExpectedDormicum5Instance() {
-		return new DbDosagesByProduct(DORMICUM_5.getId(),
-				List.of(new DbDrugDosage(
-						new DbAmount(BigDecimal.valueOf(3), "ml"),
-						List.of(
-								new DbDosage(new BigDecimal("5.5"), new BigDecimal("5.7"), "mg"),
-								new DbDosage(new BigDecimal("5"), null, "mg")
+	private DbDosagesByProduct ofDetailedInfo(DetailedProduct product) {
+		return new DbDosagesByProduct(product.getId(),
+				product.getDrugs().stream().map(drug ->
+						new DbDrugDosage(
+								drug.getAmount() == null ? null : new DbAmount(drug.getAmount().getNumber(),
+										drug.getAmount().getUnit()),
+								drug.getActiveIngredients().stream().flatMap(this::convertIngredient).toList()
 						)
-				))
+				).toList()
 		);
 	}
 
-	private DbDosagesByProduct constructExpectedDormicum15Instance() {
-		return new DbDosagesByProduct(DORMICUM_15.getId(),
-				List.of(new DbDrugDosage(
-						new DbAmount(BigDecimal.valueOf(3), "ml"),
-						List.of(
-								new DbDosage(new BigDecimal("16.68"), null, "mg"),
-								new DbDosage(new BigDecimal("15"), null, "mg")
-						)
-				))
-		);
+	private Stream<DbDosage> convertIngredient(ActiveIngredient ingredient) {
+		DbDosage baseDosage = convertToDbDosage(ingredient.getAmount());
+
+		if (ingredient instanceof CorrespondingActiveIngredient ci) {
+			return Stream.of(baseDosage, convertToDbDosage(ci.getCorrespondingSubstanceAmount()));
+		} else return Stream.of(baseDosage);
 	}
 
-	private DbDosagesByProduct constructExpectedAspirinInstance() {
-		return new DbDosagesByProduct(ASPIRIN.getId(),
-				List.of(new DbDrugDosage(
-						new DbAmount(BigDecimal.valueOf(1), null),
-						List.of(
-								new DbDosage(new BigDecimal("500"), null, "mg")
-						)
-				))
-		);
-	}
-
-	private DbDosagesByProduct constructExpectedAnapenInstance() {
-		return new DbDosagesByProduct(ANAPEN.getId(),
-				List.of(new DbDrugDosage(
-						new DbAmount(new BigDecimal("0.3"), "ml"),
-						List.of(
-								// This one ensures UCUM cs notation is used, so unit is "ug"
-								new DbDosage(new BigDecimal("300"), null, "ug")
-						)
-				))
-		);
+	@SuppressWarnings("ConstantConditions")
+	private DbDosage convertToDbDosage(Amount amount) {
+		if (amount instanceof AmountRange r) {
+			return new DbDosage(r.getFrom(), r.getTo(), r.getUnit());
+		} else {
+			return new DbDosage(amount.getNumber(), amount.getUnit());
+		}
 	}
 
 }

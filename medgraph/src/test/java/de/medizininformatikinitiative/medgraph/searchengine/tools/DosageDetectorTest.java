@@ -283,14 +283,15 @@ class DosageDetectorTest {
 	                        String expectedDeominatorUnit) {
 		assertEquals(startIndex, dosage.startIndex);
 		assertEquals(length, dosage.length);
-		assertEquals(expectedNominator, dosage.getDosage().amountNominator.number);
-		assertEquals(expectedNominatorUnit, dosage.getDosage().amountNominator.unit);
+		assertEquals(expectedNominator, dosage.getDosage().amountNominator.getNumber());
+		assertEquals(expectedNominatorUnit, dosage.getDosage().amountNominator.getUnit());
 		assertEquals(expectedQualifier, dosage.getDosage().nominatorQualifier);
 		if (expectedDenominator == null && expectedDeominatorUnit == null) {
 			assertNull(dosage.getDosage().amountDenominator);
 		} else {
-			assertEquals(dosage.getDosage().amountDenominator.number, expectedDenominator);
-			assertEquals(dosage.getDosage().amountDenominator.unit, expectedDeominatorUnit);
+			assertNotNull(dosage.getDosage().amountDenominator);
+			assertEquals(dosage.getDosage().amountDenominator.getNumber(), expectedDenominator);
+			assertEquals(dosage.getDosage().amountDenominator.getUnit(), expectedDeominatorUnit);
 		}
 	}
 

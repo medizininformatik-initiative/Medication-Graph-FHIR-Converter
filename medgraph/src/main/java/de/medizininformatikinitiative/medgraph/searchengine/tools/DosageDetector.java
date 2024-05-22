@@ -115,11 +115,11 @@ public class DosageDetector {
 		int currentIndex = detNominator.endIndex;
 		result.length = currentIndex - startIndex; // result.length will act as our current reading index
 
-		if (result.amountNominator.unit == null) {
+		if (result.amountNominator.getUnit() == null) {
 			// Ignore numbers without unit preceded by "LM "
 			if (startIndex >= 3 && value.startsWith("LM ", startIndex - 3))
 				return null;
-			if (result.amountNominator.number.compareTo(MIN_NUMBER_FOR_UNITLESS_DOSAGE) >= 0)
+			if (result.amountNominator.getNumber().compareTo(MIN_NUMBER_FOR_UNITLESS_DOSAGE) >= 0)
 				return result.complete();
 			else return null;
 		}
@@ -164,7 +164,7 @@ public class DosageDetector {
 		}
 		DetectedAmount detDenominator = detectAmount(currentIndex, KNOWN_DENOMINATOR_UNITS);
 		if (detDenominator != null) {
-			if (detDenominator.amount.unit != null) { // Denominator must always have a unit to be recognized as such
+			if (detDenominator.amount.getUnit() != null) { // Denominator must always have a unit to be recognized as such
 				result.nominatorQualifier = qualifier;
 				result.amountDenominator = detDenominator.amount;
 				result.length = detDenominator.endIndex - startIndex;
