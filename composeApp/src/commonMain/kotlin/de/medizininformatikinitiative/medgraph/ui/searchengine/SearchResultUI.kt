@@ -3,28 +3,27 @@ package de.medizininformatikinitiative.medgraph.ui.searchengine
 import androidx.compose.animation.animateContentSize
 import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.LocalIndication
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Divider
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import de.medizininformatikinitiative.medgraph.searchengine.model.Amount
 import de.medizininformatikinitiative.medgraph.searchengine.model.CorrespondingActiveIngredient
 import de.medizininformatikinitiative.medgraph.searchengine.model.Drug
-import de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject.*
+import de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject.DetailedProduct
+import de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject.Matchable
+import de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject.Product
 import de.medizininformatikinitiative.medgraph.ui.resources.StringRes
 import de.medizininformatikinitiative.medgraph.ui.theme.ApplicationTheme
 import de.medizininformatikinitiative.medgraph.ui.theme.CorporateDesign
 import de.medizininformatikinitiative.medgraph.ui.theme.TUMWeb
+import de.medizininformatikinitiative.medgraph.ui.theme.templates.clipToBox
 import java.math.BigDecimal
 
 
@@ -102,9 +101,7 @@ fun DetailedProductResultUI(result: DetailedProduct, modifier: Modifier = Modifi
     Column(
         modifier = modifier
             .padding(4.dp)
-            .clip(RoundedCornerShape(4.dp))
-            .background(TUMWeb.TumGrey7)
-            .padding(horizontal = 4.dp, vertical = 2.dp)
+            .clipToBox()
     ) {
         Text(result.name, style = MaterialTheme.typography.h6, color = CorporateDesign.Secondary.DarkBlue)
         Spacer(modifier = Modifier.height(4.dp))
@@ -129,9 +126,7 @@ fun DetailedProductResultUI(result: DetailedProduct, modifier: Modifier = Modifi
 fun DetailedDrugUI(drug: Drug, modifier: Modifier = Modifier) {
     Column(
         modifier = modifier
-            .clip(RoundedCornerShape(4.dp))
-            .background(TUMWeb.TumBlueBright1)
-            .padding(horizontal = 4.dp, vertical = 2.dp)
+            .clipToBox(TUMWeb.TumBlueBright1)
     ) {
         Text(drug.toString())
 
