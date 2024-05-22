@@ -17,8 +17,8 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
-import static de.medizininformatikinitiative.medgraph.searchengine.TestFactory.SAMPLE_PRODUCT_1;
-import static de.medizininformatikinitiative.medgraph.searchengine.TestFactory.SAMPLE_PRODUCT_2;
+import static de.medizininformatikinitiative.medgraph.TestFactory.SAMPLE_PRODUCT_1;
+import static de.medizininformatikinitiative.medgraph.TestFactory.SAMPLE_PRODUCT_2;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;

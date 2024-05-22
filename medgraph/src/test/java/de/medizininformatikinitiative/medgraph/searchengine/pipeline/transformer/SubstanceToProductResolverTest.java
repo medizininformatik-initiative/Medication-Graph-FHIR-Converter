@@ -1,7 +1,7 @@
 package de.medizininformatikinitiative.medgraph.searchengine.pipeline.transformer;
 
 import de.medizininformatikinitiative.medgraph.Neo4jTest;
-import de.medizininformatikinitiative.medgraph.searchengine.TestFactory;
+import de.medizininformatikinitiative.medgraph.TestFactory;
 import de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject.Matchable;
 import de.medizininformatikinitiative.medgraph.searchengine.model.pipelinestep.Transformation;
 import org.junit.jupiter.api.BeforeEach;
@@ -14,8 +14,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import static de.medizininformatikinitiative.medgraph.searchengine.TestFactory.SAMPLE_PRODUCT_1;
-import static de.medizininformatikinitiative.medgraph.searchengine.TestFactory.SAMPLE_SEARCH_QUERY;
+import static de.medizininformatikinitiative.medgraph.TestFactory.SAMPLE_PRODUCT_1;
+import static de.medizininformatikinitiative.medgraph.TestFactory.SAMPLE_SEARCH_QUERY;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**

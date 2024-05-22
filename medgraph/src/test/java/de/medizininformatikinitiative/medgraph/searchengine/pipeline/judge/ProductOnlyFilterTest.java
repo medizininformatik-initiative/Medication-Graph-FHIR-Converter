@@ -2,7 +2,7 @@ package de.medizininformatikinitiative.medgraph.searchengine.pipeline.judge;
 
 import org.junit.jupiter.api.Test;
 
-import static de.medizininformatikinitiative.medgraph.searchengine.TestFactory.*;
+import static de.medizininformatikinitiative.medgraph.TestFactory.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**

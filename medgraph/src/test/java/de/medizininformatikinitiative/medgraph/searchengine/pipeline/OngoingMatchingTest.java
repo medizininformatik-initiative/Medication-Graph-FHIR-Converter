@@ -14,7 +14,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 import java.util.List;
 import java.util.Map;
 
-import static de.medizininformatikinitiative.medgraph.searchengine.TestFactory.*;
+import static de.medizininformatikinitiative.medgraph.TestFactory.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**

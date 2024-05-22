@@ -7,20 +7,44 @@ import java.math.BigDecimal;
 import java.util.Objects;
 
 /**
- * An amount is a number, possibly combined with a unit.
+ * An amount is a number, possibly combined with a unit. Please note that instances may be given as {@link AmountRange},
+ * which specifies a less exact amount.
  *
  * @author Markus Budeus
  */
 public class Amount {
 
+	/**
+	 * The amount number.
+	 */
 	@NotNull
 	public final BigDecimal number;
+	/**
+	 * The unit of this amount.
+	 */
 	@Nullable
 	public final String unit;
 
 	public Amount(@NotNull BigDecimal number, @Nullable String unit) {
 		this.number = number;
 		this.unit = unit;
+	}
+
+
+	/**
+	 * Returns the number of this amount.
+	 */
+	@NotNull
+	public BigDecimal getNumber() {
+		return number;
+	}
+
+	/**
+	 * Returns the unit of this amount.
+	 */
+	@Nullable
+	public String getUnit() {
+		return unit;
 	}
 
 	@Override
