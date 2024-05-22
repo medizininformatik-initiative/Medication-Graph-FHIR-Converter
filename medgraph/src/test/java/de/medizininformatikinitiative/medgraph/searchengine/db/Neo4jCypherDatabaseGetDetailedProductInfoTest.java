@@ -47,12 +47,14 @@ public class Neo4jCypherDatabaseGetDetailedProductInfoTest extends Neo4jTest {
 				TestFactory.Products.ASPIRIN.getId(),
 				TestFactory.Products.ANAPEN.getId(),
 				-5184516513651L,
-				TestFactory.Products.DORMICUM_5.getId()
+				TestFactory.Products.DORMICUM_5.getId(),
+				TestFactory.Products.PREDNISOLUT.getId()
 		));
 		assertEquals(Set.of(
 				TestFactory.Products.Detailed.ASPIRIN,
 				TestFactory.Products.Detailed.ANAPEN,
-				TestFactory.Products.Detailed.DORMICUM_5
+				TestFactory.Products.Detailed.DORMICUM_5,
+				TestFactory.Products.Detailed.PREDNISOLUT
 		), resultSet);
 	}
 
@@ -61,7 +63,9 @@ public class Neo4jCypherDatabaseGetDetailedProductInfoTest extends Neo4jTest {
 				arguments(named("Aspirin", TestFactory.Products.Detailed.ASPIRIN)),
 				arguments(named("Dormicum 5", TestFactory.Products.Detailed.DORMICUM_5)),
 				arguments(named("Dormicum 15", TestFactory.Products.Detailed.DORMICUM_15)),
-				arguments(named("Anapen", TestFactory.Products.Detailed.ANAPEN))
+				arguments(named("Anapen", TestFactory.Products.Detailed.ANAPEN)),
+				arguments(named("Prednisolut", TestFactory.Products.Detailed.PREDNISOLUT)),
+				arguments(named("Aseptoderm", TestFactory.Products.Detailed.ASEPTODERM))
 		);
 	}
 
