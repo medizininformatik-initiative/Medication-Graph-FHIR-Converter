@@ -1,16 +1,13 @@
 package de.medizininformatikinitiative.medgraph.ui.searchengine
 
 import androidx.compose.desktop.ui.tooling.preview.Preview
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Divider
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import de.medizininformatikinitiative.medgraph.searchengine.model.Amount
@@ -19,7 +16,7 @@ import de.medizininformatikinitiative.medgraph.searchengine.model.SearchQuery
 import de.medizininformatikinitiative.medgraph.ui.resources.StringRes
 import de.medizininformatikinitiative.medgraph.ui.theme.ApplicationTheme
 import de.medizininformatikinitiative.medgraph.ui.theme.CorporateDesign
-import de.medizininformatikinitiative.medgraph.ui.theme.TUMWeb
+import de.medizininformatikinitiative.medgraph.ui.theme.templates.clipToBox
 import java.math.BigDecimal
 
 @Composable
@@ -94,8 +91,6 @@ fun TextBox(text: String, textColor: Color = CorporateDesign.Secondary.DarkBlue,
         color = textColor,
         modifier = modifier
             .padding(4.dp)
-            .clip(RoundedCornerShape(4.dp))
-            .background(TUMWeb.TumGrey7)
-            .padding(horizontal = 4.dp, vertical = 2.dp)
+            .clipToBox()
     )
 }

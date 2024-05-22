@@ -100,3 +100,8 @@ object TUMWeb {
     val TumGrey9 = Color(0xFFFBF9FA)
     val TumWhite = Color(0xFFFFFFFF)
 }
+
+object Situation {
+    val weakSuccessGreen = Color(0xFFBBFFBB)
+    val weakFailureRed = Color(0xFFFFBBBB)
+}
