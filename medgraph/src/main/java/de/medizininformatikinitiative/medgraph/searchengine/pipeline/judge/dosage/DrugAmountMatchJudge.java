@@ -70,11 +70,11 @@ public class DrugAmountMatchJudge {
 	 * {@link #UNITLESS_MATCH_SCORE} is returned. Otherwise, 0 is returned.
 	 */
 	private static double judgeAmountMatch(DbAmount drugAmount, Amount targetAmount) {
-		if (drugAmount.amount.compareTo(targetAmount.number) != 0)
+		if (drugAmount.amount.compareTo(targetAmount.getNumber()) != 0)
 			return 0;
-		if (Objects.equals(drugAmount.unit, targetAmount.unit))
+		if (Objects.equals(drugAmount.unit, targetAmount.getUnit()))
 			return MATCH_SCORE;
-		if (targetAmount.unit == null)
+		if (targetAmount.getUnit() == null)
 			return UNITLESS_MATCH_SCORE;
 		return 0;
 	}

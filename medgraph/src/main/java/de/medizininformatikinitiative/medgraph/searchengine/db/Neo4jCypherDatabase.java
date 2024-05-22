@@ -19,6 +19,28 @@ import static org.neo4j.driver.Values.parameters;
  */
 public class Neo4jCypherDatabase implements Database {
 
+	public static void main(String[] args) {
+		System.out.println("MATCH (p:" + PRODUCT_LABEL + ") " +
+				"WHERE p.mmiId IN $productIds " +
+				"OPTIONAL MATCH (p)-[:" + PRODUCT_CONTAINS_DRUG_LABEL + "]->(d:" + DRUG_LABEL + ") " +
+				"OPTIONAL MATCH (d)-[:" + DRUG_HAS_DOSE_FORM_LABEL + "]->(df:" + DOSE_FORM_LABEL + ") " +
+				"OPTIONAL MATCH (df)-[:" + DOSE_FORM_IS_EDQM + "]->(ef:" + EDQM_LABEL + ") " +
+				"OPTIONAL MATCH (d)-[:" + DRUG_HAS_UNIT_LABEL + "]->(du:" + UNIT_LABEL + ") " +
+				"OPTIONAL MATCH (d)-[:" + DRUG_CONTAINS_INGREDIENT_LABEL + "]->(i:" + MMI_INGREDIENT_LABEL + " {isActive: true})-[:" + INGREDIENT_IS_SUBSTANCE_LABEL + "]->(is:" + SUBSTANCE_LABEL + ") " +
+				"OPTIONAL MATCH (i)-[:" + INGREDIENT_CORRESPONDS_TO_LABEL + "]->(ci:" + INGREDIENT_LABEL + ")-[:" + INGREDIENT_IS_SUBSTANCE_LABEL + "]->(cs:" + SUBSTANCE_LABEL + ") " +
+				"OPTIONAL MATCH (i)-[:" + INGREDIENT_HAS_UNIT_LABEL + "]->(iu:" + UNIT_LABEL + ") " +
+				"OPTIONAL MATCH (ci)-[:" + INGREDIENT_HAS_UNIT_LABEL + "]->(cu:" + UNIT_LABEL + ") " +
+				"WITH p, d, df, du, ef, collect(CASE WHEN NOT i IS NULL THEN {" +
+				"iName:is.name,iMassFrom:i.massFrom,iMassTo:i.massTo,iUnit:iu.print," +
+				"cName:cs.name,cMassFrom:ci.massFrom,cMassTo:ci.massTo,cUnit:(CASE WHEN cu.ucumCs IS NULL THEN cu.mmiName ELSE cu.ucumCs END)} ELSE NULL END) AS ingredients " +
+				"WITH p, " +
+				"collect(CASE WHEN NOT d IS NULL THEN {doseForm:df.mmiName, edqm:ef.name, amount:d.amount, unit:du.print, ingredients:ingredients} ELSE NULL END) AS drugs " +
+				"OPTIONAL MATCH (p)<-[:" + PACKAGE_BELONGS_TO_PRODUCT_LABEL + "]-(pk:" + PACKAGE_LABEL + ")<-[:" + CODE_REFERENCE_RELATIONSHIP_NAME + "]-(pzn:" + PZN_LABEL + ") " +
+				"RETURN p.mmiId AS productId, p.name as productName, " +
+				"drugs, " +
+				"collect(pzn.code) AS pzns");
+	}
+
 	private static final Comparator<Drug> drugComparator;
 
 	static {
@@ -82,8 +104,8 @@ public class Neo4jCypherDatabase implements Database {
 						"OPTIONAL MATCH (i)-[:" + INGREDIENT_HAS_UNIT_LABEL + "]->(iu:" + UNIT_LABEL + ") " +
 						"OPTIONAL MATCH (ci)-[:" + INGREDIENT_HAS_UNIT_LABEL + "]->(cu:" + UNIT_LABEL + ") " +
 						"WITH p, d, df, du, ef, collect(CASE WHEN NOT i IS NULL THEN {" +
-						"iName:is.name,iMassFrom:i.massFrom,iMassTo:i.massTo,iUnit:iu.print," +
-						"cName:cs.name,cMassFrom:ci.massFrom,cMassTo:ci.massTo,cUnit:cu.print} ELSE NULL END) AS ingredients " +
+						"iName:is.name,iMassFrom:i.massFrom,iMassTo:i.massTo,iUnit:(CASE WHEN iu.ucumCs IS NULL THEN iu.mmiName ELSE iu.ucumCs END)," +
+						"cName:cs.name,cMassFrom:ci.massFrom,cMassTo:ci.massTo,cUnit:(CASE WHEN cu.ucumCs IS NULL THEN cu.mmiName ELSE cu.ucumCs END)} ELSE NULL END) AS ingredients " +
 						"WITH p, " +
 						"collect(CASE WHEN NOT d IS NULL THEN {doseForm:df.mmiName, edqm:ef.name, amount:d.amount, unit:du.print, ingredients:ingredients} ELSE NULL END) AS drugs " +
 						"OPTIONAL MATCH (p)<-[:" + PACKAGE_BELONGS_TO_PRODUCT_LABEL + "]-(pk:" + PACKAGE_LABEL + ")<-[:" + CODE_REFERENCE_RELATIONSHIP_NAME + "]-(pzn:" + PZN_LABEL + ") " +
@@ -99,7 +121,8 @@ public class Neo4jCypherDatabase implements Database {
 	private DetailedProduct parseToDetailedProduct(Record record) {
 		long productId = record.get("productId").asLong();
 		String productName = record.get("productName").asString();
-		List<String> pzns = record.get("pzns").asList(Value::asString);
+		List<String> pzns = new ArrayList<>(record.get("pzns").asList(Value::asString));
+		pzns.sort(Comparator.naturalOrder());
 		List<Drug> drugList = new ArrayList<>(record.get("drugs").asList(this::parseToDrug, null));
 		drugList.sort(drugComparator);
 		return new DetailedProduct(productId, productName, pzns, drugList);
@@ -119,15 +142,25 @@ public class Neo4jCypherDatabase implements Database {
 		BigDecimal massFrom = toBigDecimal(value.get("iMassFrom").asString(null));
 		BigDecimal massTo = toBigDecimal(value.get("iMassTo").asString(null));
 		String unit = value.get("iUnit").asString(null);
-		AmountRange amount = new AmountRange(massFrom, massTo, unit);
+		Amount amount;
+		if (massFrom == null) {
+			amount = null;
+		} else {
+			amount = AmountRange.ofNullableUpperEnd(massFrom, massTo, unit);
+		}
 
 		String correspondingName = value.get("cName").asString(null);
 		if (correspondingName != null) {
 			BigDecimal correspondingMassFrom = toBigDecimal(value.get("cMassFrom").asString(null));
-			BigDecimal correspondingMassTo = toBigDecimal(value.get("cMassTo").asString(null));
-			String correspondingUnit = value.get("cUnit").asString(null);
-			AmountRange correspondingAmount = new AmountRange(correspondingMassFrom, correspondingMassTo,
-					correspondingUnit);
+			Amount correspondingAmount;
+			if (correspondingMassFrom == null) {
+				correspondingAmount = null;
+			} else {
+				BigDecimal correspondingMassTo = toBigDecimal(value.get("cMassTo").asString(null));
+				String correspondingUnit = value.get("cUnit").asString(null);
+				correspondingAmount = AmountRange.ofNullableUpperEnd(correspondingMassFrom, correspondingMassTo,
+						correspondingUnit);
+			}
 
 			return new CorrespondingActiveIngredient(name, amount, correspondingName, correspondingAmount);
 		}

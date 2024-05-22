@@ -92,7 +92,7 @@ public class Dosage {
 	public String toString() {
 		String nominator = nominatorQualifier != null ? amountNominator + " " + nominatorQualifier : amountNominator.toString();
 		String denominator = amountDenominator != null ?
-				(amountDenominator.number.equals(BigDecimal.ONE) ? amountDenominator.unit : amountDenominator.toString())
+				(amountDenominator.getNumber().equals(BigDecimal.ONE) ? amountDenominator.getUnit() : amountDenominator.toString())
 				: null;
 		return denominator != null ? nominator + "/" + denominator : nominator;
 	}

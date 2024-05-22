@@ -67,7 +67,7 @@ public class Drug {
 	public String toString() {
 		StringBuilder stringBuilder = new StringBuilder();
 
-		if (amount.unit != null)
+		if (amount != null && amount.getUnit() != null)
 			stringBuilder.append(amount).append(" ");
 		stringBuilder.append(doseForm);
 		if (edqmDoseForm != null) {

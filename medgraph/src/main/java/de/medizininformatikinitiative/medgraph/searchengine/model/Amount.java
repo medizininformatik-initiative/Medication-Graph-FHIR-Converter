@@ -18,12 +18,12 @@ public class Amount {
 	 * The amount number.
 	 */
 	@NotNull
-	public final BigDecimal number;
+	private final BigDecimal number;
 	/**
 	 * The unit of this amount.
 	 */
 	@Nullable
-	public final String unit;
+	private final String unit;
 
 	public Amount(@NotNull BigDecimal number, @Nullable String unit) {
 		this.number = number;
