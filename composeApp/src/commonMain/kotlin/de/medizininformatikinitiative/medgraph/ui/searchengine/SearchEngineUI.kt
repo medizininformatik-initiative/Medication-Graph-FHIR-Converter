@@ -42,19 +42,6 @@ fun SearchEngineUI(viewModel: SearchEngineViewModel, modifier: Modifier = Modifi
         )
         ParseAndExecuteButtonRow(viewModel, modifier = Modifier.fillMaxWidth())
 
-        val actualLastSize = viewModel.actualLastQueryResultSize
-        if (actualLastSize != null) {
-            Text(
-                StringRes.get(
-                    StringRes.query_result_too_many_matches,
-                    actualLastSize,
-                    SearchEngineViewModel.MAX_RESULT_SIZE
-                ),
-                color = MaterialTheme.colors.error
-            )
-            Spacer(modifier = Modifier.height(4.dp))
-        }
-
         Box(
             modifier = Modifier
                 .weight(1f)
@@ -69,7 +56,7 @@ fun SearchEngineUI(viewModel: SearchEngineViewModel, modifier: Modifier = Modifi
                     backgroundColor = CorporateDesign.Secondary.LighterBlue
                 )
             } else {
-                SearchResultsListUI(viewModel.queryResults)
+                SearchResultsListUI(viewModel.resultsViewModel)
             }
         }
     }

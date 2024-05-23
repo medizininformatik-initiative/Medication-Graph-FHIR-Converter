@@ -58,8 +58,8 @@ class SearchEngineViewModelTest : UnitTest() {
         }
 
         assertFalse(sut.queryExecutionUnderway)
-        assertNull(sut.actualLastQueryResultSize)
-        assertEquals(sampleSearchResult, sut.queryResults)
+        assertNull(sut.resultsViewModel.actualLastQueryResultSize)
+        assertEquals(sampleSearchResult, sut.resultsViewModel.queryResults)
     }
 
     @Test
@@ -71,7 +71,7 @@ class SearchEngineViewModelTest : UnitTest() {
         }
 
         assertFalse(sut.queryExecutionUnderway)
-        assertEquals(emptyList<MatchingObject>(), sut.queryResults)
+        assertEquals(emptyList<MatchingObject>(), sut.resultsViewModel.queryResults)
     }
 
     @Test
@@ -87,13 +87,13 @@ class SearchEngineViewModelTest : UnitTest() {
         }
 
         assertFalse(sut.queryExecutionUnderway)
-        assertEquals(currentResult, sut.queryResults)
+        assertEquals(currentResult, sut.resultsViewModel.queryResults)
     }
 
     @Test
     fun tooManyResults() {
         val resultList = ArrayList<MatchingObject>()
-        repeat(SearchEngineViewModel.MAX_RESULT_SIZE + 5) {
+        repeat(SearchResultsListViewModel.MAX_RESULT_SIZE + 5) {
             resultList.add(OriginalMatch(Product(17, "A")))
         }
 
@@ -104,15 +104,15 @@ class SearchEngineViewModelTest : UnitTest() {
             sut.executeQuery()!!.join()
         }
 
-        assertEquals(SearchEngineViewModel.MAX_RESULT_SIZE + 5, sut.actualLastQueryResultSize)
-        assertEquals(resultList.subList(0, SearchEngineViewModel.MAX_RESULT_SIZE), sut.queryResults)
+        assertEquals(SearchResultsListViewModel.MAX_RESULT_SIZE + 5, sut.resultsViewModel.actualLastQueryResultSize)
+        assertEquals(resultList.subList(0, SearchResultsListViewModel.MAX_RESULT_SIZE), sut.resultsViewModel.queryResults)
     }
 
     @Test
     fun tooManyResultsReset() {
         tooManyResults()
 
-        assertNotNull(sut.actualLastQueryResultSize)
+        assertNotNull(sut.resultsViewModel.actualLastQueryResultSize)
 
         `when`(queryExecutor.executeQuery(any())).thenReturn(listOf(OriginalMatch(Product(2, "B"))))
 
@@ -121,7 +121,7 @@ class SearchEngineViewModelTest : UnitTest() {
             sut.executeQuery()!!.join()
         }
 
-        assertNull(sut.actualLastQueryResultSize)
+        assertNull(sut.resultsViewModel.actualLastQueryResultSize)
     }
 
 }

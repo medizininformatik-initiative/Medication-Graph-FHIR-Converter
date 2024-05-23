@@ -47,6 +47,9 @@ class StringRes {
         @JvmStatic val judgement_score = "Score: {0}"
         @JvmStatic val transformation_no_output = "No output"
         @JvmStatic val transformation_outputs = "Outputs:"
+        @JvmStatic val search_result_show_pipeline_info = "More info"
+        @JvmStatic val pipeline_info_title = "Matching Pipeline Steps"
+        @JvmStatic val pipeline_info_subtitle = "How this result came to be"
 
         @JvmStatic
         fun get(template: String, vararg arguments: Any): String {
