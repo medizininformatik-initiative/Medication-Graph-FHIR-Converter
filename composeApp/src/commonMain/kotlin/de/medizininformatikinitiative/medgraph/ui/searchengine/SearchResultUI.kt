@@ -18,12 +18,13 @@ import de.medizininformatikinitiative.medgraph.searchengine.model.Amount
 import de.medizininformatikinitiative.medgraph.searchengine.model.CorrespondingActiveIngredient
 import de.medizininformatikinitiative.medgraph.searchengine.model.Drug
 import de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject.DetailedProduct
+import de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject.IdMatchable
 import de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject.Matchable
 import de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject.Product
 import de.medizininformatikinitiative.medgraph.ui.resources.StringRes
 import de.medizininformatikinitiative.medgraph.ui.theme.ApplicationTheme
 import de.medizininformatikinitiative.medgraph.ui.theme.CorporateDesign
-import de.medizininformatikinitiative.medgraph.ui.theme.TUMWeb
+import de.medizininformatikinitiative.medgraph.ui.theme.localColors
 import de.medizininformatikinitiative.medgraph.ui.theme.templates.clipToBox
 import java.math.BigDecimal
 
@@ -34,9 +35,9 @@ private fun MatchableObjectUI() {
     ApplicationTheme {
         Column {
 
-            MatchableObjectUI(Product(1, "Furorese 100mg"), modifier = Modifier.fillMaxWidth())
-            Divider(modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp), thickness = 1.dp)
-            DetailedProductResultUI(
+            MatchableObjectUI(Product(1, "Furorese 100mg"), modifier = Modifier.fillMaxWidth().padding(4.dp))
+            Divider(modifier = Modifier.fillMaxWidth().padding(horizontal = 4.dp), thickness = 1.dp)
+            DetailedMatchableObjectUI(
                 DetailedProduct(
                     6,
                     "Prednisolut® 10 mg L, Pulver und Lösungsmittel zur Herstellung einer Injektionslösung",
@@ -61,17 +62,26 @@ private fun MatchableObjectUI() {
                         )
                     )
                 ),
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth().padding(4.dp)
             )
         }
     }
 }
 
+/**
+ * Basic matchable object information card which can be expanded into the detailed card.
+ *
+ * @param expanded whether this card is currently in the detailed mode
+ * @param onSwitchExpand called when the card is being interacted with
+ */
 @Composable
-fun ExpandableDetailedProductUI(result: DetailedProduct,
-                                expanded: Boolean,
-                                onSwitchExpand: (Boolean) -> Unit = {},
-                                modifier: Modifier = Modifier) {
+fun ExpandableMatchableObjectUI(
+    result: Matchable,
+    expanded: Boolean,
+    onSwitchExpand: (Boolean) -> Unit = {},
+    modifier: Modifier = Modifier,
+    bottomSlot: @Composable ColumnScope.() -> Unit = {},
+) {
     Box(modifier = modifier
         .animateContentSize()
         .clickable(
@@ -82,7 +92,7 @@ fun ExpandableDetailedProductUI(result: DetailedProduct,
         }
     ) {
         if (expanded) {
-            DetailedProductResultUI(result, modifier = Modifier.fillMaxWidth())
+            DetailedMatchableObjectUI(result, modifier = Modifier.fillMaxWidth(), bottomSlot = bottomSlot)
         } else {
             MatchableObjectUI(result, modifier = Modifier.fillMaxWidth())
         }
@@ -93,43 +103,95 @@ fun ExpandableDetailedProductUI(result: DetailedProduct,
  * Displays a single matchable object.
  */
 @Composable
-fun MatchableObjectUI(result: Matchable,
-                      backgroundColor: Color = MaterialTheme.colors.surface,
-                      modifier: Modifier = Modifier) {
-    TextBox(result.name, backgroundColor = backgroundColor, modifier = modifier)
+fun MatchableObjectUI(
+    matchable: Matchable,
+    modifier: Modifier = Modifier,
+    backgroundColor: Color = MaterialTheme.colors.surface,
+) {
+    TextBox(matchable.name, backgroundColor = backgroundColor, modifier = modifier)
 }
 
 @Composable
-fun DetailedProductResultUI(result: DetailedProduct, modifier: Modifier = Modifier) {
+fun DetailedMatchableObjectUI(
+    matchable: Matchable,
+    modifier: Modifier = Modifier,
+    backgroundColor: Color = MaterialTheme.colors.surface,
+    bottomSlot: @Composable ColumnScope.() -> Unit = {},
+) {
+    when (matchable) {
+        is DetailedProduct -> DetailedProductResultUI(matchable, modifier, backgroundColor, bottomSlot)
+        is IdMatchable -> GenericIdMatchableObjectUI(matchable, modifier, backgroundColor, bottomSlot)
+        else -> MatchableObjectUI(matchable, modifier, backgroundColor)
+    }
+}
+
+@Composable
+fun GenericDetailedMatchableObjectUI(
+    matchable: Matchable,
+    modifier: Modifier = Modifier,
+    backgroundColor: Color = MaterialTheme.colors.surface,
+    content: @Composable ColumnScope.() -> Unit,
+) {
     Column(
         modifier = modifier
-            .padding(4.dp)
-            .clipToBox(MaterialTheme.colors.surface)
+            .clipToBox(backgroundColor)
     ) {
-        Text(result.name, style = MaterialTheme.typography.h6, color = CorporateDesign.Secondary.DarkBlue)
+        Text(matchable.name, style = MaterialTheme.typography.h6, color = CorporateDesign.Main.TUMBlue)
         Spacer(modifier = Modifier.height(4.dp))
 
-        result.drugs.forEach {
-            DetailedDrugUI(it, modifier = Modifier.padding(2.dp).fillMaxWidth())
-        }
+        content()
+    }
+}
+
+@Composable
+fun GenericIdMatchableObjectUI(
+    matchable: IdMatchable,
+    modifier: Modifier = Modifier,
+    backgroundColor: Color = MaterialTheme.colors.surface,
+    centerSlot: @Composable ColumnScope.() -> Unit = {},
+    bottomRowSlot: @Composable RowScope.() -> Unit = {},
+    bottomSlot: @Composable ColumnScope.() -> Unit = {},
+) {
+    GenericDetailedMatchableObjectUI(matchable, modifier, backgroundColor) {
+        centerSlot()
 
         Spacer(modifier = Modifier.height(4.dp))
         Row {
-            Text(StringRes.get(StringRes.result_mmi_id, result.id))
+            Text(StringRes.get(StringRes.result_mmi_id, matchable.id))
+            bottomRowSlot()
+        }
+        bottomSlot()
+    }
+}
+
+@Composable
+fun DetailedProductResultUI(
+    result: DetailedProduct, modifier: Modifier = Modifier, backgroundColor: Color,
+    bottomSlot: @Composable ColumnScope.() -> Unit = {}
+) {
+    GenericIdMatchableObjectUI(
+        result, modifier, backgroundColor,
+        centerSlot = {
+            result.drugs.forEach {
+                DetailedDrugUI(it, modifier = Modifier.padding(2.dp).fillMaxWidth())
+            }
+        },
+        bottomRowSlot = {
             val pzn = result.pzn.firstOrNull()
             if (pzn != null) {
                 Spacer(modifier = Modifier.weight(1f))
                 Text(StringRes.get(StringRes.result_pzn, pzn))
             }
-        }
-    }
+        },
+        bottomSlot = bottomSlot
+    )
 }
 
 @Composable
 fun DetailedDrugUI(drug: Drug, modifier: Modifier = Modifier) {
     Column(
         modifier = modifier
-            .clipToBox(TUMWeb.TumBlueBright1)
+            .clipToBox(MaterialTheme.localColors.surface2)
     ) {
         Text(drug.toString())
 

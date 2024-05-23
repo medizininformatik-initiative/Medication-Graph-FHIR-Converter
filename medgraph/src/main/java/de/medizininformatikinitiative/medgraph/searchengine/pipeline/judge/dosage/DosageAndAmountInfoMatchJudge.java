@@ -48,6 +48,11 @@ public class DosageAndAmountInfoMatchJudge extends ScoreJudge {
 	}
 
 	@Override
+	public String toString() {
+		return "Dosage and Amount Match Judge";
+	}
+
+	@Override
 	public String getDescription() {
 		return "Assigns scores to product matches based on how well their active ingredient dosages and drug amounts" +
 				" match the search.";

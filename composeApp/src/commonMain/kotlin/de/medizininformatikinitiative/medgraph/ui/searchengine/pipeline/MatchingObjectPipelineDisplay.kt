@@ -5,6 +5,8 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -12,6 +14,7 @@ import androidx.compose.ui.unit.dp
 import de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject.*
 import de.medizininformatikinitiative.medgraph.searchengine.model.pipelinestep.ScoredJudgement
 import de.medizininformatikinitiative.medgraph.searchengine.model.pipelinestep.Transformation
+import de.medizininformatikinitiative.medgraph.ui.searchengine.DetailedMatchableObjectUI
 import de.medizininformatikinitiative.medgraph.ui.searchengine.MatchableObjectUI
 import de.medizininformatikinitiative.medgraph.ui.theme.ApplicationTheme
 
@@ -43,6 +46,8 @@ fun MatchingObjectPipelineDisplay(obj: MatchingObject, modifier: Modifier = Modi
     Column(
         verticalArrangement = Arrangement.spacedBy(4.dp),
         modifier = modifier
+            .verticalScroll(rememberScrollState())
+            .padding(horizontal = 16.dp)
     ) {
         MatchingObjectDisplay(obj)
     }
@@ -64,13 +69,13 @@ private fun MatchingObjectDisplay(obj: MatchingObject) {
 
 @Composable
 private fun OriginalMatchDisplay(obj: OriginalMatch) {
-    MatchableObjectUI(obj.`object`, modifier = Modifier.fillMaxWidth())
+    DetailedMatchableObjectUI(obj.`object`, modifier = Modifier.fillMaxWidth())
 }
 
 @Composable
 private fun MergeDisplay(obj: Merge) {
     // TODO
-    MatchingObjectPipelineDisplay(obj.sourceObjects.get(0))
+    MatchingObjectDisplay(obj.sourceObjects.get(0))
     Text("A merge happened here...")
 }
 

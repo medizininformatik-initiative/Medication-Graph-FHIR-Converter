@@ -1,7 +1,11 @@
 package de.medizininformatikinitiative.medgraph.ui.searchengine.pipeline
 
 import androidx.compose.desktop.ui.tooling.preview.Preview
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -63,15 +67,23 @@ fun TransformationDisplay(
             )
         } else {
             Text(text = StringRes.transformation_outputs, fontWeight = FontWeight.Bold, modifier = Modifier.padding(start = 4.dp))
-            results.forEachIndexed() { index, result ->
-                MatchableObjectUI(
-                    result,
-                    backgroundColor = if (index == highlightedOutputIndex)
-                        MaterialTheme.localColors.surfaceHighlight
-                    else MaterialTheme.localColors.surface2,
-                    modifier = Modifier.fillMaxWidth()
-                        .padding(4.dp)
-                )
+            Column(
+                modifier = Modifier
+                    .border(2.dp, color = MaterialTheme.colors.onBackground, RoundedCornerShape(4.dp))
+                    .padding(4.dp)
+                    .heightIn(50.dp, 300.dp)
+                    .verticalScroll(rememberScrollState())
+            ) {
+                results.forEachIndexed() { index, result ->
+                    MatchableObjectUI(
+                        result,
+                        backgroundColor = if (index == highlightedOutputIndex)
+                            MaterialTheme.localColors.surfaceHighlight
+                        else MaterialTheme.localColors.surface2,
+                        modifier = Modifier.fillMaxWidth()
+                            .padding(4.dp)
+                    )
+                }
             }
         }
     }
