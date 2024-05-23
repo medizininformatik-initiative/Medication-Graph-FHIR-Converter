@@ -25,7 +25,7 @@ private val LightColorPalette = ThemeColors(
 private val LocalColors = staticCompositionLocalOf { LightColorPalette }
 
 /**
- * Wrapper which applies the application theme around the given content.
+ * Wrapper which applies the application theme to the given content.
  * @author Markus Budeus
  */
 @Composable
