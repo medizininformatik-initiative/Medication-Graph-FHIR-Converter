@@ -11,12 +11,15 @@ private val LightColorPalette = ThemeColors(
     lightColors(
         primary = CorporateDesign.Main.TUMBlue,
         primaryVariant = CorporateDesign.Secondary.DarkBlue,
-        secondary = CorporateDesign.Secondary.LightBlue
+        secondary = CorporateDesign.Secondary.LightBlue,
+        surface = TUMWeb.TumGrey7
     ),
     weakSuccess = TUMWeb.TumGreen2,
     strongSuccess = TUMWeb.TumGreenDark,
     weakFailure = TUMWeb.TumRed2,
     strongFailure = TUMWeb.TumRedDark,
+    surfaceHighlight = TUMWeb.TumOrange2,
+    surface2 = TUMWeb.TumBlueBright1
 )
 
 private val LocalColors = staticCompositionLocalOf { LightColorPalette }

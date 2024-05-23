@@ -1,5 +1,7 @@
 package de.medizininformatikinitiative.medgraph.ui.resources
 
+import java.text.DecimalFormat
+
 /**
  * Since the Multiplatform Resource API is experimental, this class acts as a stable container for string resources.
  *
@@ -8,6 +10,8 @@ package de.medizininformatikinitiative.medgraph.ui.resources
 class StringRes {
 
     companion object {
+        private val decimalFormat = DecimalFormat("0.0")
+
         @JvmStatic val exit = "Exit"
         @JvmStatic val cancel = "Cancel"
         @JvmStatic val ok = "OK"
@@ -39,6 +43,10 @@ class StringRes {
         @JvmStatic val judgement_result = "Result: "
         @JvmStatic val judgement_passed = "Passed ✅"
         @JvmStatic val judgement_failed = "Failed ❌"
+        @JvmStatic val judgement_score_with_passing_score = "Score: {0}/{1}"
+        @JvmStatic val judgement_score = "Score: {0}"
+        @JvmStatic val transformation_no_output = "No output"
+        @JvmStatic val transformation_outputs = "Outputs:"
 
         @JvmStatic
         fun get(template: String, vararg arguments: Any): String {
@@ -48,6 +56,9 @@ class StringRes {
             }
             return actual
         }
+
+        @JvmStatic
+        fun parseDecimal(double: Double): String = decimalFormat.format(double)
     }
 
 }
