@@ -7,11 +7,34 @@ import androidx.compose.ui.graphics.Color
  * @author Markus Budeus
  */
 data class ThemeColors(
+    /**
+     * Reference to the default MaterialTheme colors.
+     */
     val material: Colors,
+    /**
+     * Weak color used to indicate a success or something good, usable for backgrounds.
+     */
     val weakSuccess: Color,
+    /**
+     * Strong color used to indicate a success or something good, meant to be used in the foreground.
+     */
     val strongSuccess: Color,
+    /**
+     * Weak color used to indicate a failure or something bad, usable for backgrounds.
+     */
     val weakFailure: Color,
+    /**
+     * Strong color used to indicate a failure or something bad, meant to be used in the foreground.
+     */
     val strongFailure: Color,
+    /**
+     * Color to be used for surfaces (i.e. as background) of objects which are to be highlighted.
+     */
+    val surfaceHighlight: Color,
+    /**
+     * Color to be used for surfaces on top of a different surface.
+     */
+    val surface2: Color,
 ) {
     val primary: Color get() = material.primary
     val primaryVariant: Color get() = material.primaryVariant

@@ -12,6 +12,7 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import de.medizininformatikinitiative.medgraph.searchengine.model.Amount
 import de.medizininformatikinitiative.medgraph.searchengine.model.CorrespondingActiveIngredient
@@ -29,11 +30,11 @@ import java.math.BigDecimal
 
 @Composable
 @Preview
-private fun SearchResultUI() {
+private fun MatchableObjectUI() {
     ApplicationTheme {
         Column {
 
-            SearchResultUI(Product(1, "Furorese 100mg"), modifier = Modifier.fillMaxWidth())
+            MatchableObjectUI(Product(1, "Furorese 100mg"), modifier = Modifier.fillMaxWidth())
             Divider(modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp), thickness = 1.dp)
             DetailedProductResultUI(
                 DetailedProduct(
@@ -67,10 +68,10 @@ private fun SearchResultUI() {
 }
 
 @Composable
-fun ExpandableSearchResultUI(result: DetailedProduct,
-                             expanded: Boolean,
-                             onSwitchExpand: (Boolean) -> Unit = {},
-                             modifier: Modifier = Modifier) {
+fun ExpandableDetailedProductUI(result: DetailedProduct,
+                                expanded: Boolean,
+                                onSwitchExpand: (Boolean) -> Unit = {},
+                                modifier: Modifier = Modifier) {
     Box(modifier = modifier
         .animateContentSize()
         .clickable(
@@ -83,17 +84,19 @@ fun ExpandableSearchResultUI(result: DetailedProduct,
         if (expanded) {
             DetailedProductResultUI(result, modifier = Modifier.fillMaxWidth())
         } else {
-            SearchResultUI(result, modifier = Modifier.fillMaxWidth())
+            MatchableObjectUI(result, modifier = Modifier.fillMaxWidth())
         }
     }
 }
 
 /**
- * Displays a single search result.
+ * Displays a single matchable object.
  */
 @Composable
-fun SearchResultUI(result: Matchable, modifier: Modifier = Modifier) {
-    TextBox(result.name, modifier = modifier)
+fun MatchableObjectUI(result: Matchable,
+                      backgroundColor: Color = MaterialTheme.colors.surface,
+                      modifier: Modifier = Modifier) {
+    TextBox(result.name, backgroundColor = backgroundColor, modifier = modifier)
 }
 
 @Composable
@@ -101,7 +104,7 @@ fun DetailedProductResultUI(result: DetailedProduct, modifier: Modifier = Modifi
     Column(
         modifier = modifier
             .padding(4.dp)
-            .clipToBox()
+            .clipToBox(MaterialTheme.colors.surface)
     ) {
         Text(result.name, style = MaterialTheme.typography.h6, color = CorporateDesign.Secondary.DarkBlue)
         Spacer(modifier = Modifier.height(4.dp))

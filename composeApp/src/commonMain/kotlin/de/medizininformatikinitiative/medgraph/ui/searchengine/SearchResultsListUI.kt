@@ -8,7 +8,6 @@ import androidx.compose.foundation.rememberScrollbarAdapter
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Divider
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject.DetailedProduct
@@ -52,13 +51,13 @@ fun SearchResultsListUI(results: List<MatchingObject>, modifier: Modifier = Modi
                     Divider(thickness = 1.dp)
                 val obj = result.`object`
                 if (obj is DetailedProduct) {
-                    ExpandableSearchResultUI(obj,
+                    ExpandableDetailedProductUI(obj,
                         expandedResultIndex == index,
                         onSwitchExpand = { expand -> if (expand) expandedResultIndex = index else expandedResultIndex = null },
                         modifier = Modifier.fillMaxWidth()
                     )
                 } else {
-                    SearchResultUI(result.`object`, modifier = Modifier.fillMaxWidth())
+                    MatchableObjectUI(result.`object`, modifier = Modifier.fillMaxWidth())
                 }
             }
         }
