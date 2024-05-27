@@ -55,7 +55,7 @@ public class DosageAndAmountInfoMatchJudgeTest extends UnitTest {
 				new IllegalArgumentException("No database access should happen!"));
 
 		// No active ingredient dosages or drug amounts in query!
-		SearchQuery query = new SearchQuery(null, "Aspirin", Collections.emptyList(), Collections.emptyList());
+		SearchQuery query = new SearchQuery(Collections.emptyList(), List.of("Aspirin"), Collections.emptyList(), Collections.emptyList());
 
 		if (batchMode) {
 			List<ScoredJudgement> judgements = sut.batchJudge(List.of(SAMPLE_PRODUCT_1, SAMPLE_PRODUCT_2), query);
@@ -73,7 +73,7 @@ public class DosageAndAmountInfoMatchJudgeTest extends UnitTest {
 		when(database.getDrugDosagesByProduct(any())).thenThrow(
 				new IllegalArgumentException("No database access should happen!"));
 
-		SearchQuery query = new SearchQuery(null, "Aspirin",
+		SearchQuery query = new SearchQuery(Collections.emptyList(), List.of("Aspirin"),
 				List.of(Dosage.of(400, "mg")),
 				List.of(new Amount(BigDecimal.ONE, null)));
 
@@ -90,7 +90,7 @@ public class DosageAndAmountInfoMatchJudgeTest extends UnitTest {
 	@Test
 	public void correctValuesPassedToDosageMatchJudge() {
 		List<Dosage> queryDosages = List.of(Dosage.of(10, "mg"));
-		SearchQuery query = new SearchQuery("", "Aspirin", queryDosages, Collections.emptyList());
+		SearchQuery query = new SearchQuery(Collections.emptyList(), List.of("Aspirin"), queryDosages, Collections.emptyList());
 
 		List<DbDrugDosage> drugDosages = List.of(
 				new DbDrugDosage(
@@ -109,7 +109,7 @@ public class DosageAndAmountInfoMatchJudgeTest extends UnitTest {
 	@Test
 	public void correctValuesPassedToAmountJudge() {
 		List<Amount> queryAmounts = List.of(new Amount(BigDecimal.ONE, "ml"));
-		SearchQuery query = new SearchQuery("", "Aspirin", Collections.emptyList(), queryAmounts);
+		SearchQuery query = new SearchQuery(Collections.emptyList(), List.of("Aspirin"), Collections.emptyList(), queryAmounts);
 
 		List<DbDrugDosage> drugDosages = List.of(
 				new DbDrugDosage(
@@ -133,7 +133,7 @@ public class DosageAndAmountInfoMatchJudgeTest extends UnitTest {
 	public void judgeAProduct() {
 		List<Dosage> queryDosages = List.of(Dosage.of(10, "mg"));
 		List<Amount> queryAmounts = List.of(new Amount(BigDecimal.ONE, "ml"));
-		SearchQuery query = new SearchQuery("", "Aspirin", queryDosages, queryAmounts);
+		SearchQuery query = new SearchQuery(Collections.emptyList(), List.of("Aspirin"), queryDosages, queryAmounts);
 
 		List<DbDrugDosage> drugDosages = List.of(
 				new DbDrugDosage(
@@ -163,7 +163,7 @@ public class DosageAndAmountInfoMatchJudgeTest extends UnitTest {
 	public void databaseReportsDataForWrongProduct() {
 		List<Dosage> queryDosages = List.of(Dosage.of(10, "mg"));
 		List<Amount> queryAmounts = List.of(new Amount(BigDecimal.ONE, "ml"));
-		SearchQuery query = new SearchQuery("", "Aspirin", queryDosages, queryAmounts);
+		SearchQuery query = new SearchQuery(Collections.emptyList(), List.of("Aspirin"), queryDosages, queryAmounts);
 
 		List<DbDrugDosage> drugDosages1 = List.of(
 				new DbDrugDosage(
@@ -186,7 +186,7 @@ public class DosageAndAmountInfoMatchJudgeTest extends UnitTest {
 	public void batchJudgeProducts() {
 		List<Dosage> queryDosages = List.of(Dosage.of(10, "mg"));
 		List<Amount> queryAmounts = List.of(new Amount(BigDecimal.ONE, "ml"));
-		SearchQuery query = new SearchQuery("", "Aspirin", queryDosages, queryAmounts);
+		SearchQuery query = new SearchQuery(Collections.emptyList(), List.of("Aspirin"), queryDosages, queryAmounts);
 
 		List<DbDrugDosage> drugDosages1 = List.of(
 				new DbDrugDosage(

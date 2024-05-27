@@ -9,6 +9,7 @@ import de.medizininformatikinitiative.medgraph.searchengine.model.SearchQuery;
 import de.medizininformatikinitiative.medgraph.searchengine.provider.Providers;
 
 import java.util.Collections;
+import java.util.List;
 
 /**
  * This class currently serves no value other than me playing around and experimenting with things.
@@ -27,7 +28,9 @@ public class Main {
 			ExperimentalRefiner refiner = new ExperimentalRefiner(session, new Neo4jCypherDatabase(session));
 
 			SimpleQueryExecutor algorithm = new SimpleQueryExecutor(matchFinder, refiner);
-			algorithm.executeQuery(new SearchQuery(null, "Aspirin",
+			algorithm.executeQuery(new SearchQuery(
+					Collections.emptyList(),
+					List.of("Aspirin"),
 					Collections.emptyList(),
 					Collections.emptyList()));
 		});

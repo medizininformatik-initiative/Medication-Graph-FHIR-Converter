@@ -147,8 +147,8 @@ public class TestFactory {
 	));
 
 	public static final SearchQuery SAMPLE_SEARCH_QUERY = new SearchQuery(
-			"Aspirin",
-			"Acetylsalicylsäure",
+			List.of("Aspirin"),
+			List.of("Acetylsalicylsäure"),
 			List.of(Dosage.of(10, "mg")),
 			List.of(new Amount(BigDecimal.ONE, "ml")));
 

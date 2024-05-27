@@ -6,30 +6,32 @@ import de.medizininformatikinitiative.medgraph.searchengine.model.SearchQuery;
 import de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject.Matchable;
 import de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject.OriginalMatch;
 import de.medizininformatikinitiative.medgraph.searchengine.provider.BaseProvider;
+import de.medizininformatikinitiative.medgraph.searchengine.provider.IdentifierProvider;
 import de.medizininformatikinitiative.medgraph.searchengine.provider.IdentifierStream;
 import de.medizininformatikinitiative.medgraph.searchengine.stringtransformer.*;
 
 import java.util.Comparator;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Stream;
 
 /**
  * This initial match finder relies on matchers working with the Levenshtein Distance to find initial matches. It
- * searches known products and substances based on {@link SearchQuery#getProductName()} and
- * {@link SearchQuery#getSubstanceName()}.
+ * searches known products and substances based on {@link SearchQuery#getProductNameKeywords()} and
+ * {@link SearchQuery#getSubstanceNameKeywords()}.
  *
  * @author Markus Budeus
  */
 public class LevenshteinSearchMatchFinder implements InitialMatchFinder {
 
-	private final Transformer<String, String> STRING_TRANSFORMER =
-			new ToLowerCase();
-	private final Transformer<String, Set<String>> TOKEN_TRANSFORMER =
-			STRING_TRANSFORMER
-					.and(new WhitespaceTokenizer())
-					.and(new TrimSpecialSuffixSymbols())
+	private final Transformer<List<String>, Set<String>> TOKEN_TRANSFORMER =
+			new CollectionToLowerCase<List<String>>()
 					.and(new RemoveBlankStrings())
 					.and(new ListToSet());
+	private final Transformer<String, Set<String>> IDENTIFIER_TRANSFORMER =
+			new WhitespaceTokenizer()
+					.and(new TrimSpecialSuffixSymbols())
+					.and(TOKEN_TRANSFORMER);
 
 	private final LevenshteinSetMatcher levenshteinSetMatcher = new LevenshteinSetMatcher();
 
@@ -52,21 +54,25 @@ public class LevenshteinSearchMatchFinder implements InitialMatchFinder {
 		// TODO This looks repetitive
 
 		Stream<ScoreBasedMatch<Set<String>>> allMatches = Stream.empty();
-		if (query.getProductName() != null) {
-			allMatches = levenshteinSetMatcher.match(
-					TOKEN_TRANSFORMER.apply(query.getProductName()),
-					productsProvider.withTransformation(TOKEN_TRANSFORMER));
+		List<String> productKeywords = query.getProductNameKeywords();
+		List<String> substanceKeywords = query.getSubstanceNameKeywords();
+		if (!productKeywords.isEmpty()) {
+			allMatches = doMatching(productsProvider, productKeywords);
 		}
-		if (query.getSubstanceName() != null) {
-			allMatches = Stream.concat(allMatches, levenshteinSetMatcher.match(
-					TOKEN_TRANSFORMER.apply(query.getSubstanceName()),
-					substanceProvider.withTransformation(TOKEN_TRANSFORMER)));
+		if (!substanceKeywords.isEmpty()) {
+			allMatches = Stream.concat(allMatches, doMatching(substanceProvider, substanceKeywords));
 		}
 
 		// TODO This throws away all match info, which might be nice to have in the OriginalMatch instance for later reference
 		return allMatches
 				.sorted(Comparator.reverseOrder())
 				.map(match -> new OriginalMatch((Matchable) match.getMatchedIdentifier().target));
+	}
+
+	private Stream<ScoreBasedMatch<Set<String>>> doMatching(IdentifierProvider<String> identifierProvider,
+	                                                        List<String> searchKeywords) {
+		return levenshteinSetMatcher.match(TOKEN_TRANSFORMER.apply(searchKeywords),
+				substanceProvider.withTransformation(IDENTIFIER_TRANSFORMER));
 	}
 
 }
