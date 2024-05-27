@@ -28,8 +28,9 @@ public class IntegrationTest extends Neo4jTest {
 
 	@BeforeAll
 	public void integrationTestSetup() {
-		GraphDbPopulator.clearDatabase(session); // Delete everything
-		GraphDbPopulator.prepareLoaders(session).forEach(Loader::execute);
+		GraphDbPopulator graphDbPopulator = new GraphDbPopulator();
+		graphDbPopulator.clearDatabase(session); // Delete everything
+		graphDbPopulator.prepareLoaders(session).forEach(Loader::execute);
 	}
 
 	@Test

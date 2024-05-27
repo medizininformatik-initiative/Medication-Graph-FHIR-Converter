@@ -11,7 +11,6 @@ class StringRes {
 
     companion object {
         private val decimalFormat = DecimalFormat("0.0")
-
         @JvmStatic
         val exit = "Exit"
         @JvmStatic
@@ -92,6 +91,18 @@ class StringRes {
         val pipeline_merge = "Merge"
         @JvmStatic
         val pipeline_merge_desc = "{0} paths were merged. Only displaying previous pipeline steps of the first path."
+        @JvmStatic
+        val graph_db_populator_preparing = "Preparing data import"
+        @JvmStatic
+        val graph_db_populator_clearing_db = "Clearing database"
+        @JvmStatic
+        val graph_db_populator_running_loader = "Running {0}"
+        @JvmStatic
+        val graph_db_populator_cleaning_up = "Cleaning up"
+        @JvmStatic
+        val graph_db_populator_done = "Done. The database is ready."
+        @JvmStatic
+        val graph_db_populator_error = "The database setup was not successful."
 
         @JvmStatic
         fun get(template: String, vararg arguments: Any): String {
@@ -101,7 +112,6 @@ class StringRes {
             }
             return actual
         }
-
         @JvmStatic
         fun parseDecimal(double: Double): String = decimalFormat.format(double)
     }
