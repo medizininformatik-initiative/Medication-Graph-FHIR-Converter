@@ -13,15 +13,19 @@ import java.awt.TextField
  *
  * @param state the MutableState to bind this text field to
  * @param modifier the modifier to apply
+ * @param enabled whether the text field is enabled
+ * @param singleLine whether to make this a single-line text field
  * @param label the label to assign to the text field
  */
 @Composable
 fun TextField(
     state: MutableState<String>,
     modifier: Modifier = Modifier,
+    enabled: Boolean = true,
+    singleLine: Boolean = true,
     label: String? = null
 ) {
-    TextField(state.value, { v -> state.value = v }, modifier, label = label)
+    TextField(state.value, { v -> state.value = v }, modifier, enabled, singleLine, label = label)
 }
 
 /**
@@ -30,6 +34,8 @@ fun TextField(
  * @param value the text to assign to the text field
  * @param onValueChange the callback to invoke when the value changes
  * @param modifier the modifier to apply
+ * @param enabled whether the text field is enabled
+ * @param singleLine whether to make this a single-line text field
  * @param label the label to assign to the text field
  */
 @Composable
@@ -37,6 +43,7 @@ fun TextField(
     value: String,
     onValueChange: (String) -> Unit,
     modifier: Modifier = Modifier,
+    enabled: Boolean = true,
     singleLine: Boolean = true,
     label: String? = null,
 ) {
@@ -46,7 +53,7 @@ fun TextField(
     } else {
         labelComposable = null
     }
-    TextField(value, onValueChange, modifier, label = labelComposable, singleLine = singleLine)
+    TextField(value, onValueChange, modifier, enabled, singleLine, labelComposable)
 }
 
 /**
@@ -55,6 +62,8 @@ fun TextField(
  * @param value the text to assign to the text field
  * @param onValueChange the callback to invoke when the value changes
  * @param modifier the modifier to apply
+ * @param enabled whether the text field is enabled
+ * @param singleLine whether to make this a single-line text field
  * @param label the label to assign to the text field
  */
 @Composable
@@ -62,8 +71,9 @@ fun TextField(
     value: String,
     onValueChange: (String) -> Unit,
     modifier: Modifier = Modifier,
+    enabled: Boolean = true,
     singleLine: Boolean = true,
     label: @Composable() (() -> Unit)? = null
 ) {
-    OutlinedTextField(value, onValueChange, modifier, label = label, singleLine = singleLine)
+    OutlinedTextField(value, onValueChange, modifier, enabled, label = label, singleLine = singleLine)
 }

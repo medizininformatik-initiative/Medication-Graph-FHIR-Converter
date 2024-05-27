@@ -97,6 +97,7 @@ class GraphDbPopulatorScreenModel(
             executionUnderway = true
         }
         executionComplete = false
+        errorMessage = null
         executionMajorStep = ""
         executionMinorStep = null
         executionMajorStepIndex = 0
