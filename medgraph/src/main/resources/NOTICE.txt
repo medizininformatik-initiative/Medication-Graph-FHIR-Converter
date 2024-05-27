@@ -1,0 +1,16 @@
+This project uses data copies from external data sources which may not be up to date!
+
+For one, the internal file amice_stoffbezeichnungen_utf8.csv is the 2023 version of this file as provided by the German Federal Institute for Drugs and Medical Devices.
+From this file we extract CAS numbers, INNs and synonymes for substances and link them via the ASK.
+
+The UNIIs and RXCUIs are from the Global Substance Registration System and were extracted on 2023-11-30 via the public GSRS api via known CAS numbers.
+
+The EDQM dosage form terms are taken from the EDQM Standard Terms database and are reproduced with permission of the European Directorate for the Quality of Medicines & HealthCare, Council of Europe (EDQM).
+The data has been retrieved on 2023-10-16. Since the EDQM Standard Terms database is not a static list, this data may not be up-to-date. They have been mapped to the MMI Pharmindex dose forms via a manually crafted mapping table.
+
+Additionally, the database gets initialized using provided MMI Pharmindex data. As such, how up-to-date other information is depends on the version of the used data.
+
+The exported FHIR objects contain temporary identifiers and references to such, all of which should be replaced by a proper FHIR URL after the objects have been uploaded to a FHIR server.
+
+Finally, be advised data from any of the given sources may contain errors, which would propagate into the output produced by this tool.
+
