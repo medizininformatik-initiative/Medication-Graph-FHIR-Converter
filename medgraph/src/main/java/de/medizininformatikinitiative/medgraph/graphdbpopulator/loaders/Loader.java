@@ -5,6 +5,7 @@ import org.neo4j.driver.Session;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.function.Consumer;
 
 import static org.neo4j.driver.Values.parameters;
 
@@ -21,6 +22,9 @@ public abstract class Loader {
 
 	protected final Session session;
 	private long subtaskStartTime = -1L;
+
+	private Consumer<String> onSubtaskStarted = null;
+	private Runnable onSubtaskCompleted;
 
 	public Loader(Session session) {
 		this.session = session;
@@ -67,6 +71,7 @@ public abstract class Loader {
 			System.out.println();
 		}
 		System.out.print("    " + subtask + "...");
+		ifNotNull(onSubtaskStarted, listener -> listener.accept(subtask));
 		subtaskStartTime = System.currentTimeMillis();
 	}
 
@@ -75,6 +80,7 @@ public abstract class Loader {
 	 */
 	protected void completeSubtask() {
 		if (subtaskStartTime == -1) return;
+		ifNotNull(onSubtaskCompleted, Runnable::run);
 		System.out.println("done ("+(System.currentTimeMillis() - subtaskStartTime)+"ms)");
 		subtaskStartTime = -1;
 	}
@@ -122,4 +128,25 @@ public abstract class Loader {
 		}
 	}
 
+	/**
+	 * Sets a callback to be invoked if this loader starts a subtask during execution.
+	 * @param onSubtaskStarted the callback to invoke when a subtask starts
+	 */
+	public void setOnSubtaskStartedListener(Consumer<String> onSubtaskStarted) {
+		this.onSubtaskStarted = onSubtaskStarted;
+	}
+
+	/**
+	 * Sets a callback to be invoked if this loader completes a subtask during execution.
+	 * @param onSubtaskCompleted the callback to invoke when a subtask completes
+	 */
+	public void setOnSubtaskCompletedListener(Runnable onSubtaskCompleted) {
+		this.onSubtaskCompleted = onSubtaskCompleted;
+	}
+
+	private static <T> void ifNotNull(T object, Consumer<T> action) {
+		if (object != null) {
+			action.accept(object);
+		}
+	}
 }
