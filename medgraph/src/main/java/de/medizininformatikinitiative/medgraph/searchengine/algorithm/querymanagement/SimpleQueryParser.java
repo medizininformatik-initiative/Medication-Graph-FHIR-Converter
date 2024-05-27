@@ -9,9 +9,7 @@ import de.medizininformatikinitiative.medgraph.searchengine.tools.DosageDetector
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import java.util.Stack;
 
 /**
  * Implementation for {@link QueryParser}.
@@ -43,7 +41,7 @@ public class SimpleQueryParser implements QueryParser {
 		List<Dosage> searchDosages = new ArrayList<>();
 		List<Amount> searchAmounts = new ArrayList<>();
 
-		for (DosageDetector.DetectedDosage dd: detectedDosages) {
+		for (DosageDetector.DetectedDosage dd : detectedDosages) {
 			Dosage dosage = dd.getDosage();
 			searchDosages.add(dosage);
 			if (dosage.amountDenominator == null)
@@ -51,16 +49,11 @@ public class SimpleQueryParser implements QueryParser {
 		}
 
 		return new SearchQuery(
-				concatenateWithWhitespaceOrNullIfEmpty(productTokens),
-				concatenateWithWhitespaceOrNullIfEmpty(substanceTokens),
+				productTokens,
+				substanceTokens,
 				searchDosages,
 				searchAmounts
-				);
-	}
-
-	private String concatenateWithWhitespaceOrNullIfEmpty(List<String> elements) {
-		if (elements.isEmpty()) return null;
-		return String.join(" ", elements.toArray(new String[0]));
+		);
 	}
 
 }

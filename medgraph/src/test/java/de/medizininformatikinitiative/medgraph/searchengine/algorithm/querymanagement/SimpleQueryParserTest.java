@@ -27,57 +27,58 @@ public class SimpleQueryParserTest {
 	@Test
 	public void parseProducts() {
 		SearchQuery query = sut.parse(new RawQuery("ProductA ProductB", "Aspirin", ""));
-		assertNotNull(query.getProductName());
-		assertTrue(query.getProductName().contains("ProductA ProductB"));
-		assertTrue(query.getProductName().contains("Aspirin"));
-		assertFalse(query.getProductName().contains("AspirinProductA"));
-		assertFalse(query.getProductName().contains("ProductBAspirin"));
+		assertNotNull(query.getProductNameKeywords());
+		assertTrue(query.getProductNameKeywords().contains("ProductA"));
+		assertTrue(query.getProductNameKeywords().contains("ProductB"));
+		assertTrue(query.getProductNameKeywords().contains("Aspirin"));
+		assertFalse(query.getProductNameKeywords().contains("AspirinProductA"));
+		assertFalse(query.getProductNameKeywords().contains("ProductBAspirin"));
 	}
 
 	@Test
 	public void parseSubstances() {
-		SearchQuery query = sut.parse(new RawQuery("SubstanceA", "", "Acetylsalicylic acid"));
-		assertNotNull(query.getSubstanceName());
-		assertTrue(query.getSubstanceName().contains("SubstanceA"));
-		assertTrue(query.getSubstanceName().contains("Acetylsalicylic acid"));
-		assertFalse(query.getSubstanceName().contains("SubstanceAAcetylsalicylic"));
-		assertFalse(query.getSubstanceName().contains("acidSubstance"));
+		SearchQuery query = sut.parse(new RawQuery("SubstanceA", "", "Acetylsalicylic-acid"));
+		assertNotNull(query.getSubstanceNameKeywords());
+		assertTrue(query.getSubstanceNameKeywords().contains("SubstanceA"));
+		assertTrue(query.getSubstanceNameKeywords().contains("Acetylsalicylic-acid"));
+		assertFalse(query.getSubstanceNameKeywords().contains("SubstanceAAcetylsalicylic"));
+		assertFalse(query.getSubstanceNameKeywords().contains("acidSubstance"));
 	}
 
 	@Test
 	public void substanceAndProductDoNotSpill() {
-		SearchQuery query = sut.parse(new RawQuery("Aspirin", "Bayer", "Acetylsalicylic acid"));
+		SearchQuery query = sut.parse(new RawQuery("Aspirin", "Bayer", "Acetylsalicylic_acid"));
 
-		assertNotNull(query.getProductName());
-		assertNotNull(query.getSubstanceName());
-		assertFalse(query.getProductName().contains("Acetylsalicylic acid"));
-		assertFalse(query.getSubstanceName().contains("Bayer"));
+		assertNotNull(query.getProductNameKeywords());
+		assertNotNull(query.getSubstanceNameKeywords());
+		assertFalse(query.getProductNameKeywords().contains("Acetylsalicylic_acid"));
+		assertFalse(query.getSubstanceNameKeywords().contains("Bayer"));
 	}
 
 	@Test
 	public void noProductInfo() {
-		SearchQuery query = sut.parse(new RawQuery("", "", "Acetylsalicylic acid"));
+		SearchQuery query = sut.parse(new RawQuery("", "", "Acetylsalicylic_acid"));
 
-		assertNull(query.getProductName());
-		assertEquals("Acetylsalicylic acid", query.getSubstanceName());
+		assertTrue(query.getProductNameKeywords().isEmpty());
+		assertEquals(List.of("Acetylsalicylic_acid"), query.getSubstanceNameKeywords());
 	}
 
 	@Test
 	public void noSubstanceInfo() {
-		SearchQuery query = sut.parse(new RawQuery("", "Aspirin Bayer", ""));
+		SearchQuery query = sut.parse(new RawQuery("", "Aspirin-Bayer", ""));
 
-		assertNull(query.getSubstanceName());
-		assertEquals("Aspirin Bayer", query.getProductName());
+		assertTrue(query.getSubstanceNameKeywords().isEmpty());
+		assertEquals(List.of("Aspirin-Bayer"), query.getProductNameKeywords());
 	}
 
 	@Test
 	public void dosageInfoFiltered() {
 		SearchQuery query = sut.parse(new RawQuery("Aspirin 500 mg", "", ""));
 
-		assertNotNull(query.getProductName());
-		assertTrue(query.getProductName().contains("Aspirin"));
-		assertFalse(query.getProductName().contains("500"));
-		assertFalse(query.getProductName().contains("mg"));
+		assertNotNull(query.getProductNameKeywords());
+		assertTrue(query.getProductNameKeywords().contains("Aspirin"));
+		assertFalse(query.getProductNameKeywords().contains("500"));
+		assertFalse(query.getProductNameKeywords().contains("mg"));
 		assertEquals(List.of(Dosage.of(500, "mg")), query.getActiveIngredientDosages());
 	}
 
@@ -85,11 +86,28 @@ public class SimpleQueryParserTest {
 	public void amountInfoFiltered() {
 		SearchQuery query = sut.parse(new RawQuery("Tranexamsäure 1 ml", "", ""));
 
-		assertNotNull(query.getSubstanceName());
-		assertTrue(query.getSubstanceName().contains("Tranexamsäure"));
-		assertFalse(query.getSubstanceName().contains("1"));
-		assertFalse(query.getSubstanceName().contains("ml"));
+		assertNotNull(query.getSubstanceNameKeywords());
+		assertTrue(query.getSubstanceNameKeywords().contains("Tranexamsäure"));
+		assertFalse(query.getSubstanceNameKeywords().contains("1"));
+		assertFalse(query.getSubstanceNameKeywords().contains("ml"));
 		assertEquals(List.of(new Amount(BigDecimal.ONE, "ml")), query.getDrugAmounts());
+	}
+
+	@Test
+	public void keywordSeparation() {
+		SearchQuery query = sut.parse(new RawQuery("Tranexamsäure PUREN", "Bayer", ""));
+
+		assertTrue(query.getProductNameKeywords().contains("Tranexamsäure"));
+		assertTrue(query.getProductNameKeywords().contains("PUREN"));
+		assertTrue(query.getProductNameKeywords().contains("Bayer"));
+		assertEquals(3, query.getProductNameKeywords().size());
+	}
+
+	@Test
+	public void keywordQuoting() {
+		SearchQuery query = sut.parse(new RawQuery("\"Tranexamsäure PUREN\"", "", ""));
+
+		assertEquals(List.of("Tranexamsäure PUREN"), query.getProductNameKeywords());
 	}
 
 }

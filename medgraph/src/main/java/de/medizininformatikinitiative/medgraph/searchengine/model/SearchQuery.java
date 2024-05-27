@@ -1,7 +1,6 @@
 package de.medizininformatikinitiative.medgraph.searchengine.model;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,10 +12,10 @@ import java.util.List;
  */
 public class SearchQuery {
 
-	@Nullable
-	private final String productName;
-	@Nullable
-	private final String substanceName;
+	@NotNull
+	private final List<String> productNameKeywords;
+	@NotNull
+	private final List<String> substanceNameKeywords;
 
 	@NotNull
 	private final List<Dosage> activeIngredientDosages;
@@ -24,31 +23,30 @@ public class SearchQuery {
 	@NotNull
 	private final List<Amount> drugAmounts;
 
-	public SearchQuery(@Nullable String productName, @Nullable String substanceName,
+	public SearchQuery(@NotNull List<String> productNameKeywords,
+	                   @NotNull List<String> substanceNameKeywords,
 	                   @NotNull List<? extends Dosage> activeIngredientDosages,
 	                   @NotNull List<? extends Amount> drugAmounts) {
-		this.productName = productName;
-		this.substanceName = substanceName;
+		this.productNameKeywords = productNameKeywords;
+		this.substanceNameKeywords = substanceNameKeywords;
 		this.activeIngredientDosages = new ArrayList<>(activeIngredientDosages);
 		this.drugAmounts = new ArrayList<>(drugAmounts);
 	}
 
 	/**
-	 * Returns a search string for product names to be searched. Null if product name searching is not intended to be
-	 * performed.
+	 * Returns a list of keywords for which so search in product names.
 	 */
-	@Nullable
-	public String getProductName() {
-		return productName;
+	@NotNull
+	public List<String> getProductNameKeywords() {
+		return productNameKeywords;
 	}
 
 	/**
-	 * Returns a search string for substance names to be searched. Null if substance name searching is not intended to
-	 * be performed.
+	 * Returns a list of keywords for which so search in substance names.
 	 */
-	@Nullable
-	public String getSubstanceName() {
-		return substanceName;
+	@NotNull
+	public List<String> getSubstanceNameKeywords() {
+		return substanceNameKeywords;
 	}
 
 	/**
