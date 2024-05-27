@@ -39,7 +39,7 @@ public class EdqmStandardTermsApiRequestBuilder {
 	/**
 	 * The access key to the standard terms database for the given user.
 	 */
-	private final String secretKey;
+	private final char[] secretKey;
 
 	/**
 	 * Creates a new API request builder.
@@ -52,7 +52,7 @@ public class EdqmStandardTermsApiRequestBuilder {
 	 * @param email     the email used to log into the standard terms database
 	 * @param secretKey the secret key used by this user to access the standard terms database
 	 */
-	public EdqmStandardTermsApiRequestBuilder(String email, String secretKey) {
+	public EdqmStandardTermsApiRequestBuilder(String email, char[] secretKey) {
 		this.email = email;
 		this.secretKey = secretKey;
 	}
@@ -127,7 +127,7 @@ public class EdqmStandardTermsApiRequestBuilder {
 	private byte[] sign(String message) {
 		try {
 			Mac hmac = Mac.getInstance(HMAC_ALGORITHM);
-			SecretKeySpec secret_key = new SecretKeySpec(secretKey.getBytes(), HMAC_ALGORITHM);
+			SecretKeySpec secret_key = new SecretKeySpec(new String(secretKey).getBytes(), HMAC_ALGORITHM);
 			hmac.init(secret_key);
 
 			return hmac.doFinal(message.getBytes());

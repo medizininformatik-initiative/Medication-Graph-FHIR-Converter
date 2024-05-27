@@ -19,7 +19,11 @@ public class EdqmStandardTermsApiClient implements AutoCloseable {
 	private final HttpClient client;
 	private final EdqmStandardTermsApiRequestBuilder requestBuilder;
 
-	public EdqmStandardTermsApiClient(HttpClient client, String email, String secretKey) {
+	public EdqmStandardTermsApiClient(String email, char[] secretKey) {
+		this(HttpClient.newHttpClient(), email, secretKey);
+	}
+
+	public EdqmStandardTermsApiClient(HttpClient client, String email, char[] secretKey) {
 		this.client = client;
 		requestBuilder = new EdqmStandardTermsApiRequestBuilder(email, secretKey);
 	}
