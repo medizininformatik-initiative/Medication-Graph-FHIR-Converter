@@ -19,14 +19,22 @@ fun MatchingPipelineStepDisplay(
     modifier: Modifier = Modifier,
     backgroundColor: Color = MaterialTheme.colors.surface,
     body: @Composable ColumnScope.() -> Unit
-) {
+) = MatchingPipelineStepDisplay(step.name, step.description, modifier, backgroundColor, body)
 
+@Composable
+fun MatchingPipelineStepDisplay(
+    name: String,
+    description: String,
+    modifier: Modifier = Modifier,
+    backgroundColor: Color = MaterialTheme.colors.surface,
+    body: @Composable ColumnScope.() -> Unit
+) {
     Column(
         modifier = modifier.clipToBox(backgroundColor)
     ) {
-        Text(step.name, fontWeight = FontWeight.Bold, style = MaterialTheme.typography.h5)
+        Text(name, fontWeight = FontWeight.Bold, style = MaterialTheme.typography.h5)
         Text(
-            step.description,
+            description,
             style = MaterialTheme.typography.subtitle2,
             modifier = Modifier.padding(start = 4.dp)
         )

@@ -57,7 +57,7 @@ fun MatchingObjectPipelineDisplay(obj: MatchingObject, modifier: Modifier = Modi
 private fun MatchingObjectDisplay(obj: MatchingObject) {
     when (obj) {
         is OriginalMatch -> OriginalMatchDisplay(obj)
-        is Merge -> MergeDisplay(obj)
+        is Merge -> MergedObjectsDisplay(obj)
         is TransformedObject -> TransformedObjectDisplay(obj)
         else -> Text("Unknown object type encountered!")
     }
@@ -73,10 +73,9 @@ private fun OriginalMatchDisplay(obj: OriginalMatch) {
 }
 
 @Composable
-private fun MergeDisplay(obj: Merge) {
-    // TODO
+private fun MergedObjectsDisplay(obj: Merge) {
     MatchingObjectDisplay(obj.sourceObjects.get(0))
-    Text("A merge happened here...")
+    MergeDisplay(obj)
 }
 
 @Composable

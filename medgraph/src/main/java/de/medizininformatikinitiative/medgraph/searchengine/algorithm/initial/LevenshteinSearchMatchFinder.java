@@ -6,6 +6,7 @@ import de.medizininformatikinitiative.medgraph.searchengine.model.SearchQuery;
 import de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject.Matchable;
 import de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject.OriginalMatch;
 import de.medizininformatikinitiative.medgraph.searchengine.provider.BaseProvider;
+import de.medizininformatikinitiative.medgraph.searchengine.provider.IdentifierStream;
 import de.medizininformatikinitiative.medgraph.searchengine.stringtransformer.*;
 
 import java.util.Comparator;
@@ -32,8 +33,8 @@ public class LevenshteinSearchMatchFinder implements InitialMatchFinder {
 
 	private final LevenshteinSetMatcher levenshteinSetMatcher = new LevenshteinSetMatcher();
 
-	private final BaseProvider<String> productsProvider;
-	private final BaseProvider<String> substanceProvider;
+	private final IdentifierStream<String> productsProvider;
+	private final IdentifierStream<String> substanceProvider;
 
 	/**
 	 * Creates a new {@link LevenshteinSearchMatchFinder}.
@@ -42,8 +43,8 @@ public class LevenshteinSearchMatchFinder implements InitialMatchFinder {
 	 * @param substanceProvider the provider of substance names and corresponding substances in which to search
 	 */
 	public LevenshteinSearchMatchFinder(BaseProvider<String> productsProvider, BaseProvider<String> substanceProvider) {
-		this.productsProvider = productsProvider;
-		this.substanceProvider = substanceProvider;
+		this.productsProvider = productsProvider.parallel();
+		this.substanceProvider = substanceProvider.parallel();
 	}
 
 	@Override
