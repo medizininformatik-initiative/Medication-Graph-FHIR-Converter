@@ -28,7 +28,7 @@ public class FhirExporter {
 	public static final String MEDICATION_OUT_PATH = "medication";
 	public static final String ORGANIZATION_OUT_PATH = "organisation";
 
-	public static void exportAll(Session session) throws IOException {
+	public void exportAll(Session session) throws IOException {
 		exportSubstances(session, OUT_PATH.resolve(SUBSTANCE_OUT_PATH), true);
 		exportMedications(session, OUT_PATH.resolve(MEDICATION_OUT_PATH), true);
 		exportOrganizations(session, OUT_PATH.resolve(ORGANIZATION_OUT_PATH));
@@ -37,7 +37,7 @@ public class FhirExporter {
 	private static String combine(String... parts) {
 		StringBuilder sb = new StringBuilder();
 		boolean first = true;
-		for (String s: parts) {
+		for (String s : parts) {
 			if (s != null) {
 				if (first)
 					first = false;
@@ -49,7 +49,7 @@ public class FhirExporter {
 		return sb.toString();
 	}
 
-	public static void exportSubstances(Session session, Path outPath, boolean collectAndPrintStatistics)
+	public void exportSubstances(Session session, Path outPath, boolean collectAndPrintStatistics)
 	throws IOException {
 		Neo4jSubstanceExporter exporter = new Neo4jSubstanceExporter(session, collectAndPrintStatistics);
 		exportToJsonFiles(exporter, outPath,
@@ -58,7 +58,7 @@ public class FhirExporter {
 			exporter.printStatistics();
 	}
 
-	public static void exportMedications(Session session, Path outPath, boolean collectAndPrintStatistics)
+	public void exportMedications(Session session, Path outPath, boolean collectAndPrintStatistics)
 	throws IOException {
 		Neo4jMedicationExporter exporter = new Neo4jMedicationExporter(session, false, collectAndPrintStatistics);
 		exportToJsonFiles(exporter, outPath,
@@ -70,7 +70,7 @@ public class FhirExporter {
 			exporter.printStatistics();
 	}
 
-	public static void exportOrganizations(Session session, Path outPath) throws IOException {
+	public void exportOrganizations(Session session, Path outPath) throws IOException {
 		exportToJsonFiles(new Neo4jOrganizationExporter(session), outPath,
 				organization -> {
 					String name;
@@ -88,15 +88,15 @@ public class FhirExporter {
 	 * @param filenameProvider a function which provides a filename for each exported object - the .json-suffix will be
 	 *                         appended automatically!
 	 */
-	private static <T> void exportToJsonFiles(Neo4jExporter<T> exporter, Path outPath,
-	                                          Function<T, String> filenameProvider) throws IOException {
+	private <T> void exportToJsonFiles(Neo4jExporter<T> exporter, Path outPath,
+	                                   Function<T, String> filenameProvider) throws IOException {
 		JsonExporter jsonExporter = new GsonExporter(outPath);
 		final Set<String> filenamesUsed = new HashSet<>();
 		exporter.exportObjects().forEach(object -> {
 			try {
 				String filename = filenameProvider.apply(object);
 				if (!filenamesUsed.add(filename)) {
-					throw new IllegalArgumentException("A filename was generated twice: "+filename);
+					throw new IllegalArgumentException("A filename was generated twice: " + filename);
 				}
 				filename = filename.replace(File.separatorChar, '-');
 
