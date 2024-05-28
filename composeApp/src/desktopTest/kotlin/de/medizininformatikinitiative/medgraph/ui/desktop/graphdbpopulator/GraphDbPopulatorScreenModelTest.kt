@@ -1,4 +1,4 @@
-package de.medizininformatikinitiative.medgraph.ui.graphdbpopulator
+package de.medizininformatikinitiative.medgraph.ui.desktop.graphdbpopulator
 
 import de.medizininformatikinitiative.medgraph.graphdbpopulator.GraphDbPopulator
 import de.medizininformatikinitiative.medgraph.graphdbpopulator.loaders.Loader
