@@ -37,38 +37,32 @@ class GraphDbPopulatorScreenModel(
      * The current error message to display.
      */
     var errorMessage by mutableStateOf<String?>(null)
-        private set
 
     /**
      * Whether a population is currently underway.
      */
     var executionUnderway by mutableStateOf(false)
-        private set
 
     /**
      * The current major task running as part of the population task chain.
      */
     var executionMajorStep by mutableStateOf("")
-        private set
 
     /**
      * The current number of the major execution steps. (0-indexed)
      */
     var executionMajorStepIndex by mutableStateOf(0)
-        private set
 
     /**
      * The number of major steps currently planned.
      */
     var executionTotalMajorStepsNumber by mutableStateOf(1)
-        private set
 
     /**
      * The current minor task running as part of the population task chain or null if there currently is no minor task
      * running.
      */
     var executionMinorStep by mutableStateOf<String?>(null)
-        private set
 
     /**
      * Whether this view is in "completed" state.

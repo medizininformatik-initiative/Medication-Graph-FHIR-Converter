@@ -10,6 +10,7 @@ import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import de.medizininformatikinitiative.medgraph.ui.common.db.ConnectionDialog
+import de.medizininformatikinitiative.medgraph.ui.graphdbpopulator.GraphDbPopulatorScreen
 import de.medizininformatikinitiative.medgraph.ui.resources.StringRes
 import de.medizininformatikinitiative.medgraph.ui.searchengine.SearchEngineScreen
 import de.medizininformatikinitiative.medgraph.ui.theme.templates.Button
@@ -30,27 +31,32 @@ class MainMenu : Screen {
         ) {
 
             val navigator = LocalNavigator.currentOrThrow
+            val buttonModifier = Modifier.fillMaxWidth().height(80.dp)
+
+            Button(
+                { navigator.push(GraphDbPopulatorScreen()) },
+                modifier = buttonModifier
+            ) {
+                Text(StringRes.main_menu_populate_database)
+            }
 
             Button(
                 { navigator.push(SearchEngineScreen()) },
-                modifier = Modifier.fillMaxWidth()
-                    .height(80.dp)
+                modifier = buttonModifier
             ) {
                 Text(StringRes.main_menu_search_algorithm)
             }
 
             Button(
                 { navigator.push(ConnectionDialog()) },
-                modifier = Modifier.fillMaxWidth()
-                    .height(80.dp)
+                modifier = buttonModifier
             ) {
                 Text(StringRes.main_menu_configure_db)
             }
 
             Button(
                 { System.exit(0) },
-                modifier = Modifier.fillMaxWidth()
-                    .height(80.dp)
+                modifier = buttonModifier
             ) {
                 Text(StringRes.exit)
             }
