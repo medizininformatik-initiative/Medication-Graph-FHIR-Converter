@@ -48,9 +48,9 @@ public class EdqmStandardTermsScraper {
 		) {
 			String notice = generateNotice();
 			objectsOutFileWriter.write(notice);
-			objectsOutFileWriter.write("# CLASS,CODE,NAME,STATUS\n");
+			objectsWriter.write("CLASS","CODE","NAME","STATUS");
 			relationsOutFileWriter.write(notice);
-			relationsOutFileWriter.write("# SOURCECODE,TARGETCLASS,TARGETCODE\n");
+			relationsWriter.write("SOURCECODE","TARGETCLASS","TARGETCODE");
 
 			EdqmPharmaceuticalDoseFormLoader pdfLoader = new EdqmPharmaceuticalDoseFormLoader();
 			pdfLoader.load(apiClient.getFullDataByClass(EdqmStandardTermsObject.PHARMACEUTICAL_DOSE_FORM_CLASS));

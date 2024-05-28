@@ -2,8 +2,6 @@ package de.medizininformatikinitiative.medgraph.graphdbpopulator.loaders;
 
 import org.neo4j.driver.Session;
 
-import java.io.IOException;
-
 import static de.medizininformatikinitiative.medgraph.common.db.DatabaseDefinitions.*;
 
 /**
@@ -73,7 +71,7 @@ public class DrugLoader extends CsvLoader {
 		// Connect to Dose Form nodes
 		executeQuery(
 				"MATCH (d:" + DRUG_LABEL + ") WHERE d.mmiDoseFormCode IS NOT NULL " +
-						"MATCH (f:" + DOSE_FORM_LABEL + " {mmiCode: d.mmiDoseFormCode}) " +
+						"MATCH (f:" + MMI_DOSE_FORM_LABEL + " {mmiCode: d.mmiDoseFormCode}) " +
 						withRowLimit("WITH d, f " +
 								"CREATE (d)-[:" + DRUG_HAS_DOSE_FORM_LABEL + "]->(f) " +
 								"SET d.mmiDoseFormCode = null")

@@ -1,11 +1,19 @@
 package de.medizininformatikinitiative.medgraph.graphdbpopulator;
 
 import de.medizininformatikinitiative.medgraph.Neo4jTest;
+import de.medizininformatikinitiative.medgraph.common.db.DatabaseConnection;
+import de.medizininformatikinitiative.medgraph.graphdbpopulator.loaders.EdqmStandardTermsLoader;
 import de.medizininformatikinitiative.medgraph.graphdbpopulator.loaders.Loader;
 import org.junit.jupiter.api.*;
 import org.neo4j.driver.Record;
 import org.neo4j.driver.Result;
+import org.neo4j.driver.Session;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.nio.file.Path;
 import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
@@ -17,20 +25,31 @@ import static org.junit.jupiter.api.Assertions.*;
  * Runs the whole migration on a set of sample files.
  */
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-@Disabled("This test wipes the target database and is therefore disabled by default")
-public class IntegrationTest extends Neo4jTest {
+//@Disabled("This test wipes the target database. Also it needs to copy files to the Neo4j import directory " +
+//		"which is likely different if you have a different OS than mine and also write privileges are required. " +
+//		"Sadly, a platform-independent solution is tricky. I have not yet seen a way to inject the test files " +
+//		"into the Neo4j harness in a different way.")
+public class IntegrationTest {
 
-	// This test can only be run manually, as it requires the MMI data be loaded into the Neo4j import directory by hand.
-	// And since the test Neo4j instance
-
-	// WARNING:
-	// This test will completely overwrite the target database
+	private DatabaseConnection connection;
+	private Session session;
 
 	@BeforeAll
-	public void integrationTestSetup() {
+	public void integrationTestSetup() throws IOException {
+		connection = DatabaseConnection.createDefault();
+		session = connection.createSession();
+		copyTestFilesToNeo4jImportDir();
+
 		GraphDbPopulator graphDbPopulator = new GraphDbPopulator();
 		graphDbPopulator.clearDatabase(session); // Delete everything
 		graphDbPopulator.prepareLoaders(session).forEach(Loader::execute);
+	}
+
+	@AfterAll
+	public void cleanup() throws IOException {
+		session.close();
+		connection.close();
+		deleteTestFilesFromNeo4jImportDir();
 	}
 
 	@Test
@@ -96,7 +115,7 @@ public class IntegrationTest extends Neo4jTest {
 	public void belocDoseForm() {
 		Result result = session.run(
 				"MATCH (p:" + PRODUCT_LABEL + " {name: 'Beloc mite'})-[pd:" + PRODUCT_CONTAINS_DRUG_LABEL + "]->(d:" + DRUG_LABEL + ")" +
-						"-[df:" + DRUG_HAS_DOSE_FORM_LABEL + "]->(f:" + DOSE_FORM_LABEL + ")-[:" + DOSE_FORM_IS_EDQM + "]->(e:" + EDQM_LABEL + ") " +
+						"-[df:" + DRUG_HAS_DOSE_FORM_LABEL + "]->(f:" + MMI_DOSE_FORM_LABEL + ")-[:" + DOSE_FORM_IS_EDQM + "]->(e:" + EDQM_LABEL + ") " +
 						"RETURN e.code, e.name"
 		);
 
@@ -110,7 +129,7 @@ public class IntegrationTest extends Neo4jTest {
 	public void midazolamDoseForm() {
 		Result result = session.run(
 				"MATCH (p:" + PRODUCT_LABEL + " {name: 'Dormicum V 5 mg/5 ml'})-[pd:" + PRODUCT_CONTAINS_DRUG_LABEL + "]->(d:" + DRUG_LABEL + ")" +
-						"-[df:" + DRUG_HAS_DOSE_FORM_LABEL + "]->(f:" + DOSE_FORM_LABEL + ")-[:" + DOSE_FORM_IS_EDQM + "]->(e:" + EDQM_LABEL + ") " +
+						"-[df:" + DRUG_HAS_DOSE_FORM_LABEL + "]->(f:" + MMI_DOSE_FORM_LABEL + ")-[:" + DOSE_FORM_IS_EDQM + "]->(e:" + EDQM_LABEL + ") " +
 						"RETURN e.code, e.name"
 		);
 
@@ -256,6 +275,42 @@ public class IntegrationTest extends Neo4jTest {
 		assertFalse(result.hasNext()); // Only the 'Firmensitz' address (type C) should exist in the db!
 	}
 
+	@Test
+	public void edqmDoseForms() {
+		Result result = session.run(
+				"MATCH (p:" + MMI_DOSE_FORM_LABEL + " {mmiName: 'Tbl.'})-[:" + DOSE_FORM_IS_EDQM + "]->" +
+						"(e:" + EDQM_LABEL + ":" + EDQM_PDF_LABEL + ")-[:" + EDQM_HAS_CHARACTERISTIC_LABEL + "]->" +
+						"(ch:" + EDQM_LABEL + "{type: '" + EdqmStandardTermsLoader.EDQM_BDF_CLASS + "'})" +
+						"RETURN e.code, ch.code "
+		);
+
+		Record record = result.next();
+		assertEquals(EdqmStandardTermsLoader.EDQM_PDF_CLASS + "-10219000", record.get(0).asString());
+		assertEquals(EdqmStandardTermsLoader.EDQM_BDF_CLASS + "-0069", record.get(1).asString());
+		assertFalse(result.hasNext());
+	}
+
+	@Test
+	public void edqmDoseFormNodesAmount() throws IOException {
+		Result result = session.run("MATCH (e:" + EDQM_LABEL + ") RETURN COUNT(e)");
+
+		Record record = result.next();
+		assertEquals(getCsvEntries("/edqmObjects.csv", true), record.get(0).asInt(),
+				"The number of EDQM nodes does not match the number of entries in its CSV source!");
+		assertFalse(result.hasNext());
+	}
+
+	@Test
+	public void edqmDoseFormRelationsAmount() throws IOException {
+		Result result = session.run("MATCH (:" + EDQM_LABEL + ")-[r:" + EDQM_HAS_CHARACTERISTIC_LABEL + "]->" +
+				"(:" + EDQM_LABEL + ") RETURN COUNT(r)");
+
+		Record record = result.next();
+		assertEquals(getCsvEntries("/pdfRelations.csv", true), record.get(0).asInt(),
+				"The number of EDQM node internal relations does not match the number of entries in its CSV source!");
+		assertFalse(result.hasNext());
+	}
+
 	private void checkProductMatchesIngredient(Record record) {
 		String name = record.get(1).asString();
 		if (name.equals("Dormicum V 5 mg/5 ml")) {
@@ -263,6 +318,40 @@ public class IntegrationTest extends Neo4jTest {
 		} else {
 			assertEquals("15", record.get(2).asString());
 		}
+	}
+
+	/**
+	 * Counts the non-empty lines in the given resource file which do not start with a "#".
+	 *
+	 * @param resourceName the resource file to read
+	 * @param hasHeader    if true, additionally deducts 1 from the result to account for a header line
+	 */
+	private int getCsvEntries(String resourceName, boolean hasHeader) throws IOException {
+		int lines = 0;
+		try (InputStream inputStream = GraphDbPopulator.class.getResourceAsStream(resourceName)) {
+			assertNotNull(inputStream);
+			try (BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream))) {
+				String line;
+				while ((line = reader.readLine()) != null) {
+					if (!line.startsWith("#")) lines++;
+				}
+			}
+		}
+		if (hasHeader) lines--;
+		return Math.max(0, lines);
+	}
+
+	private void copyTestFilesToNeo4jImportDir() throws IOException {
+		new GraphDbPopulator().copyKnowledgeGraphSourceDataToNeo4jImportDirectory(
+				Path.of("src", "test", "resources", "sample"),
+				Path.of("/var", "lib", "neo4j", "import")
+		);
+	}
+
+	private void deleteTestFilesFromNeo4jImportDir() throws IOException {
+		new GraphDbPopulator().removeFilesFromNeo4jImportDir(
+				Path.of("/var", "lib", "neo4j", "import")
+		);
 	}
 
 }

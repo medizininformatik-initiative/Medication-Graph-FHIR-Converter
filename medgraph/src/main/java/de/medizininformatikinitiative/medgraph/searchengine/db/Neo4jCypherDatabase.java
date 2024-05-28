@@ -23,7 +23,7 @@ public class Neo4jCypherDatabase implements Database {
 		System.out.println("MATCH (p:" + PRODUCT_LABEL + ") " +
 				"WHERE p.mmiId IN $productIds " +
 				"OPTIONAL MATCH (p)-[:" + PRODUCT_CONTAINS_DRUG_LABEL + "]->(d:" + DRUG_LABEL + ") " +
-				"OPTIONAL MATCH (d)-[:" + DRUG_HAS_DOSE_FORM_LABEL + "]->(df:" + DOSE_FORM_LABEL + ") " +
+				"OPTIONAL MATCH (d)-[:" + DRUG_HAS_DOSE_FORM_LABEL + "]->(df:" + MMI_DOSE_FORM_LABEL + ") " +
 				"OPTIONAL MATCH (df)-[:" + DOSE_FORM_IS_EDQM + "]->(ef:" + EDQM_LABEL + ") " +
 				"OPTIONAL MATCH (d)-[:" + DRUG_HAS_UNIT_LABEL + "]->(du:" + UNIT_LABEL + ") " +
 				"OPTIONAL MATCH (d)-[:" + DRUG_CONTAINS_INGREDIENT_LABEL + "]->(i:" + MMI_INGREDIENT_LABEL + " {isActive: true})-[:" + INGREDIENT_IS_SUBSTANCE_LABEL + "]->(is:" + SUBSTANCE_LABEL + ") " +
@@ -96,7 +96,7 @@ public class Neo4jCypherDatabase implements Database {
 				"MATCH (p:" + PRODUCT_LABEL + ") " +
 						"WHERE p.mmiId IN $productIds " +
 						"OPTIONAL MATCH (p)-[:" + PRODUCT_CONTAINS_DRUG_LABEL + "]->(d:" + DRUG_LABEL + ") " +
-						"OPTIONAL MATCH (d)-[:" + DRUG_HAS_DOSE_FORM_LABEL + "]->(df:" + DOSE_FORM_LABEL + ") " +
+						"OPTIONAL MATCH (d)-[:" + DRUG_HAS_DOSE_FORM_LABEL + "]->(df:" + MMI_DOSE_FORM_LABEL + ") " +
 						"OPTIONAL MATCH (df)-[:" + DOSE_FORM_IS_EDQM + "]->(ef:" + EDQM_LABEL + ") " +
 						"OPTIONAL MATCH (d)-[:" + DRUG_HAS_UNIT_LABEL + "]->(du:" + UNIT_LABEL + ") " +
 						"OPTIONAL MATCH (d)-[:" + DRUG_CONTAINS_INGREDIENT_LABEL + "]->(i:" + MMI_INGREDIENT_LABEL + " {isActive: true})-[:" + INGREDIENT_IS_SUBSTANCE_LABEL + "]->(is:" + SUBSTANCE_LABEL + ") " +
