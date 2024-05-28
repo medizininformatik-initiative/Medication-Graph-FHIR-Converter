@@ -2,21 +2,19 @@ package de.medizininformatikinitiative.medgraph.ui.graphdbpopulator
 
 import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.Divider
-import androidx.compose.material.LinearProgressIndicator
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
+import androidx.compose.material.*
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.AwtWindow
 import cafe.adriel.voyager.navigator.LocalNavigator
 import de.medizininformatikinitiative.medgraph.ui.resources.StringRes
 import de.medizininformatikinitiative.medgraph.ui.theme.ApplicationTheme
 import de.medizininformatikinitiative.medgraph.ui.theme.templates.Button
 import de.medizininformatikinitiative.medgraph.ui.theme.templates.TextField
-import java.awt.FileDialog
-import java.awt.Frame
+import java.io.File
+import javax.swing.JFileChooser
 
 
 @Composable
@@ -44,14 +42,14 @@ fun GraphDbPopulatorUI() {
 @Composable
 fun GraphDbPopulatorUI(viewModel: GraphDbPopulatorScreenModel, modifier: Modifier = Modifier) {
     Column(modifier = modifier) {
-        TextField(
+        DirectoryPathTextField(
             viewModel.mmiPharmindexDirectory,
             { value -> viewModel.mmiPharmindexDirectory = value },
             enabled = !viewModel.executionUnderway,
             label = StringRes.graph_db_populator_mmi_pharmindex_path,
             modifier = Modifier.fillMaxWidth()
         )
-        TextField(
+        DirectoryPathTextField(
             viewModel.neo4jImportDirectory,
             { value -> viewModel.neo4jImportDirectory = value },
             enabled = !viewModel.executionUnderway,
@@ -66,13 +64,69 @@ fun GraphDbPopulatorUI(viewModel: GraphDbPopulatorScreenModel, modifier: Modifie
 
         val errorMessage = viewModel.errorMessage
         if (errorMessage != null) {
-            Text(errorMessage, color = MaterialTheme.colors.error)
+            Text(
+                errorMessage,
+                textAlign = TextAlign.Center,
+                color = MaterialTheme.colors.error,
+                modifier = Modifier.fillMaxWidth()
+            )
         }
 
-        ImportProgressUI(viewModel, modifier = Modifier
-            .padding(horizontal = 8.dp, vertical = 4.dp)
-            .fillMaxWidth())
+        if (viewModel.executionComplete) {
+            Text(
+                StringRes.graph_db_populator_done,
+                textAlign = TextAlign.Center,
+                modifier = Modifier.fillMaxWidth()
+            )
+        }
 
+        ImportProgressUI(
+            viewModel, modifier = Modifier
+                .padding(horizontal = 8.dp, vertical = 4.dp)
+                .fillMaxWidth()
+        )
+
+    }
+}
+
+@Composable
+private fun DirectoryPathTextField(
+    value: String,
+    onValueChange: (String) -> Unit,
+    enabled: Boolean,
+    label: String,
+    modifier: Modifier = Modifier,
+) {
+
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = modifier
+    ) {
+        TextField(
+            value,
+            onValueChange,
+            modifier = Modifier.weight(1f),
+            enabled = enabled,
+            label = label
+        )
+        Button(
+            onClick = {
+                // This is a hack which completely blocks the UI thread. Not nice, but compose offers no simple file
+                // chooser unfortunately
+                val fc = JFileChooser()
+                fc.fileSelectionMode = JFileChooser.DIRECTORIES_ONLY
+                val initialPath = if (value.isBlank()) System.getProperty("user.dir") else value
+                fc.currentDirectory = File(initialPath)
+                val returnVal = fc.showOpenDialog(null)
+                if (returnVal == JFileChooser.APPROVE_OPTION) {
+                    onValueChange(fc.selectedFile.absolutePath)
+                }
+            },
+            enabled = enabled,
+            modifier = Modifier.padding(4.dp)
+        ) {
+            Text(StringRes.browse)
+        }
     }
 }
 
@@ -90,7 +144,7 @@ private fun GraphDbPopulatorControls(viewModel: GraphDbPopulatorScreenModel, mod
 
         Button(
             viewModel::populate,
-            enabled = !viewModel.executionUnderway
+            enabled = !viewModel.executionUnderway && !viewModel.executionComplete
         ) { Text(StringRes.graph_db_populator_run) }
     }
 }
@@ -101,7 +155,11 @@ private fun ImportProgressUI(viewModel: GraphDbPopulatorScreenModel, modifier: M
         Column(
             modifier = modifier
         ) {
-            Text(viewModel.executionMajorStep)
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Text(viewModel.executionMajorStep)
+                Spacer(modifier = Modifier.width(8.dp))
+                CircularProgressIndicator(modifier = Modifier.size(16.dp))
+            }
             LinearProgressIndicator(
                 progress =
                 viewModel.executionMajorStepIndex * 1f / viewModel.executionTotalMajorStepsNumber,
