@@ -25,6 +25,9 @@ class StringRes {
         val ok = "OK"
 
         @JvmStatic
+        val browse = "Browse"
+
+        @JvmStatic
         val main_menu_populate_database = "Populate Database"
 
         @JvmStatic
