@@ -9,6 +9,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.navigator.LocalNavigator
+import de.medizininformatikinitiative.medgraph.ui.desktop.templates.DirectoryPathTextField
 import de.medizininformatikinitiative.medgraph.ui.resources.StringRes
 import de.medizininformatikinitiative.medgraph.ui.theme.ApplicationTheme
 import de.medizininformatikinitiative.medgraph.ui.theme.templates.Button
@@ -86,47 +87,6 @@ fun GraphDbPopulatorUI(viewModel: GraphDbPopulatorScreenModel, modifier: Modifie
                 .fillMaxWidth()
         )
 
-    }
-}
-
-@Composable
-private fun DirectoryPathTextField(
-    value: String,
-    onValueChange: (String) -> Unit,
-    enabled: Boolean,
-    label: String,
-    modifier: Modifier = Modifier,
-) {
-
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-        modifier = modifier
-    ) {
-        TextField(
-            value,
-            onValueChange,
-            modifier = Modifier.weight(1f),
-            enabled = enabled,
-            label = label
-        )
-        Button(
-            onClick = {
-                // This is a hack which completely blocks the UI thread. Not nice, but compose offers no simple file
-                // chooser unfortunately
-                val fc = JFileChooser()
-                fc.fileSelectionMode = JFileChooser.DIRECTORIES_ONLY
-                val initialPath = if (value.isBlank()) System.getProperty("user.dir") else value
-                fc.currentDirectory = File(initialPath)
-                val returnVal = fc.showOpenDialog(null)
-                if (returnVal == JFileChooser.APPROVE_OPTION) {
-                    onValueChange(fc.selectedFile.absolutePath)
-                }
-            },
-            enabled = enabled,
-            modifier = Modifier.padding(4.dp)
-        ) {
-            Text(StringRes.browse)
-        }
     }
 }
 

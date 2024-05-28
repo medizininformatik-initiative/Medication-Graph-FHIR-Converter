@@ -31,6 +31,9 @@ class StringRes {
         val main_menu_populate_database = "Populate Database"
 
         @JvmStatic
+        val main_menu_fhir_exporter = "Export to MMI KDS FHIR Instances"
+
+        @JvmStatic
         val main_menu_search_algorithm = "Search for Medications"
 
         @JvmStatic
@@ -184,6 +187,20 @@ class StringRes {
 
         @JvmStatic
         val fhir_exporter_output_dir_occupied = "A file named {0} already exists in the output directory!"
+
+        @JvmStatic
+        val fhir_exporter_export_path = "Export Output Directory"
+
+        @JvmStatic
+        val fhir_exporter_description = "Use this tool to export MII KDS-compliant FHIR Medication, Substance and " +
+                "Organization instances from the Graph Database. Specify a directory into which to export and then run " +
+                "the export."
+
+        @JvmStatic
+        val fhir_exporter_do_export = "Export"
+
+        @JvmStatic
+        val fhir_exporter_done = "Export complete."
 
         @JvmStatic
         fun get(template: String, vararg arguments: Any): String {
