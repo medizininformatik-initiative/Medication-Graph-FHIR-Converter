@@ -157,9 +157,6 @@ class StringRes {
         val graph_db_populator_done = "Done. The database is ready."
 
         @JvmStatic
-        val graph_db_populator_error = "The database setup was not successful."
-
-        @JvmStatic
         val graph_db_populator_mmi_pharmindex_path = "Path to MMI Pharmindex raw data"
 
         @JvmStatic
@@ -169,8 +166,24 @@ class StringRes {
         val graph_db_populator_neo4j_import_dir_description =
             "On most systems, the default Neo4j import directory is at <NEO4J_HOME>/import, with <NEO4J_HOME> being the installation directory of Neo4.\n" +
                     "On Debian- and RPM-based systems, the default path is /var/lib/neo4j/import"
+
         @JvmStatic
         val graph_db_populator_run = "Run import"
+
+        @JvmStatic
+        val fhir_exporter_exporting_medications = "Exporting Medications"
+
+        @JvmStatic
+        val fhir_exporter_exporting_substances = "Exporting Substances"
+
+        @JvmStatic
+        val fhir_exporter_exporting_organizations = "Exporting Manufacturers"
+
+        @JvmStatic
+        val fhir_exporter_invalid_output_dir = "The given output path does not point to a directory!"
+
+        @JvmStatic
+        val fhir_exporter_output_dir_occupied = "A file named {0} already exists in the output directory!"
 
         @JvmStatic
         fun get(template: String, vararg arguments: Any): String {
