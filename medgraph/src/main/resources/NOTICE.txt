@@ -5,8 +5,9 @@ From this file we extract CAS numbers, INNs and synonymes for substances and lin
 
 The UNIIs and RXCUIs are from the Global Substance Registration System and were extracted on 2023-11-30 via the public GSRS api via known CAS numbers.
 
-The EDQM dosage form terms are taken from the EDQM Standard Terms database and are reproduced with permission of the European Directorate for the Quality of Medicines & HealthCare, Council of Europe (EDQM).
-The data has been retrieved on 2023-10-16. Since the EDQM Standard Terms database is not a static list, this data may not be up-to-date. They have been mapped to the MMI Pharmindex dose forms via a manually crafted mapping table.
+The EDQM dosage form terms (edqmObjects.csv, pdfRelations.csv) are taken from the EDQM Standard Terms database and are reproduced with permission of the European Directorate for the Quality of Medicines & HealthCare, Council of Europe (EDQM).
+The data has been retrieved on the date displayed in the header of those files. Since the EDQM Standard Terms database is not a static list, this data may not be up-to-date.
+The Standard Terms pharmaceutical dose forms have been mapped to the MMI Pharmindex dose forms via a manually crafted mapping table.
 
 Additionally, the database gets initialized using provided MMI Pharmindex data. As such, how up-to-date other information is depends on the version of the used data.
 

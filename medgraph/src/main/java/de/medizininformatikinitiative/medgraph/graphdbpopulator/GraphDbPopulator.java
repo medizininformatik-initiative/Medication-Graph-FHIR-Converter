@@ -43,6 +43,8 @@ public class GraphDbPopulator {
 			"custom_synonymes.csv",
 			"dose_form_mapping.csv",
 			"gsrs_matches.csv",
+			"edqmObjects.csv",
+			"pdfRelations.csv",
 			"NOTICE.txt",
 	};
 
@@ -80,10 +82,14 @@ public class GraphDbPopulator {
 
 		// Unit nodes
 		loaders.add(new UnitLoader(session));
+		// EDQM Standard Term nodes
+		loaders.add(new EdqmStandardTermsLoader(session));
+		// EDQM Standard Term Relations
+		loaders.add(new EdqmStandardTermsRelationsLoader(session));
 		// MMI Dose forms
 		loaders.add(new DoseFormLoader(session));
-		// EDQM Dose forms
-		loaders.add(new EdqmDoseFormLoader(session));
+		// Relations between MMI dose forms and EDQM dose forms
+		loaders.add(new MmiEdqmDoseFormConnectionsLoader(session));
 		// ATC Hierarchy
 		loaders.add(new AtcLoader(session));
 		// Substance nodes, ASK nodes and CAS nodes and their relations

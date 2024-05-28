@@ -42,9 +42,14 @@ public class DatabaseDefinitions {
 	public static final String DRUG_HAS_UNIT_LABEL = INGREDIENT_HAS_UNIT_LABEL;
 	public static final String DRUG_HAS_DOSE_FORM_LABEL = "HAS_DOSE_FORM";
 	public static final String UNIT_LABEL = "Unit";
-	public static final String DOSE_FORM_LABEL = "DoseForm";
+	public static final String MMI_DOSE_FORM_LABEL = "MmiDoseForm";
 	public static final String UCUM_LABEL = "UCUM";
 	public static final String EDQM_LABEL = "EDQM";
+	public static final String EDQM_HAS_CHARACTERISTIC_LABEL = "HAS_CHARACTERISTIC";
+	/**
+	 * Label for EDQM Standard Terms Pharmaceutical Dose Forms
+	 */
+	public static final String EDQM_PDF_LABEL = "DoseForm";
 	public static final String DOSE_FORM_IS_EDQM = "CORRESPONDS_TO";
 	public static final String SYNONYME_LABEL = "Synonyme";
 	public static final String SYNONYME_REFERENCES_NODE_LABEL = "REFERENCES";

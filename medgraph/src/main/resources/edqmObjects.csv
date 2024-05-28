@@ -1,6 +1,6 @@
 # 2024-05-27
 # Data taken from the EDQM Standard Terms database (http://standardterms.edqm.eu) with the permission of the European Directorate for the Quality of Medicines & HealthCare, Council of Europe (EDQM).
-# CLASS,CODE,NAME,STATUS
+"CLASS";"CODE";"NAME";"STATUS"
 "PDF";"10100500";"Concentrate for oral suspension";"Current"
 "PDF";"10101000";"Oral drops, solution";"Current"
 "PDF";"10102000";"Oral drops, suspension";"Current"

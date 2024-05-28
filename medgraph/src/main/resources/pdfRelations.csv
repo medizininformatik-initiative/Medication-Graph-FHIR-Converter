@@ -1,6 +1,6 @@
 # 2024-05-27
 # Data taken from the EDQM Standard Terms database (http://standardterms.edqm.eu) with the permission of the European Directorate for the Quality of Medicines & HealthCare, Council of Europe (EDQM).
-# SOURCECODE,TARGETCLASS,TARGETCODE
+"SOURCECODE";"TARGETCLASS";"TARGETCODE"
 "10100500";"BDF";"0078"
 "10100500";"ISI";"0031"
 "10100500";"RCA";"0047"
