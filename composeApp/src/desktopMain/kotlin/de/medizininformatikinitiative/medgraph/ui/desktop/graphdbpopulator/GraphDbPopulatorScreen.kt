@@ -1,4 +1,4 @@
-package de.medizininformatikinitiative.medgraph.ui.graphdbpopulator
+package de.medizininformatikinitiative.medgraph.ui.desktop.graphdbpopulator
 
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable

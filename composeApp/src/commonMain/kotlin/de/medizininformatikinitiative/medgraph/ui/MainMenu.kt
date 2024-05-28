@@ -8,9 +8,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
+import cafe.adriel.voyager.navigator.Navigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import de.medizininformatikinitiative.medgraph.ui.common.db.ConnectionDialog
-import de.medizininformatikinitiative.medgraph.ui.graphdbpopulator.GraphDbPopulatorScreen
 import de.medizininformatikinitiative.medgraph.ui.resources.StringRes
 import de.medizininformatikinitiative.medgraph.ui.searchengine.SearchEngineScreen
 import de.medizininformatikinitiative.medgraph.ui.theme.templates.Button
@@ -33,12 +33,7 @@ class MainMenu : Screen {
             val navigator = LocalNavigator.currentOrThrow
             val buttonModifier = Modifier.fillMaxWidth().height(80.dp)
 
-            Button(
-                { navigator.push(GraphDbPopulatorScreen()) },
-                modifier = buttonModifier
-            ) {
-                Text(StringRes.main_menu_populate_database)
-            }
+            MainMenuExtensions(navigator, buttonModifier)
 
             Button(
                 { navigator.push(SearchEngineScreen()) },
@@ -65,3 +60,6 @@ class MainMenu : Screen {
     }
 
 }
+
+@Composable
+expect fun ColumnScope.MainMenuExtensions(navigator: Navigator, navigationButtonDesign: Modifier)
