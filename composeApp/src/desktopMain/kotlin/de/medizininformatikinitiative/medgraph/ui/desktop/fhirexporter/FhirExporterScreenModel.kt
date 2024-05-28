@@ -8,6 +8,7 @@ import cafe.adriel.voyager.core.model.screenModelScope
 import de.medizininformatikinitiative.medgraph.common.db.DatabaseConnection
 import de.medizininformatikinitiative.medgraph.fhirexporter.FhirExporter
 import de.medizininformatikinitiative.medgraph.ui.resources.StringRes
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import java.nio.file.Files
@@ -58,7 +59,7 @@ class FhirExporterScreenModel(
      */
     fun doExport(): Job? {
         if (exportUnderway) return null
-        return screenModelScope.launch { doExportSync() }
+        return screenModelScope.launch(Dispatchers.IO) { doExportSync() }
     }
 
     /**
@@ -70,6 +71,7 @@ class FhirExporterScreenModel(
             exportUnderway = true
         }
         exportProgress = 0
+        exportCurrentTask = ""
         try {
             doExportTaskChain()
         } catch (e: Exception) {
@@ -96,7 +98,7 @@ class FhirExporterScreenModel(
                 exportCurrentTask = StringRes.fhir_exporter_exporting_organizations
                 fhirExporter.exportOrganizations(session, path.resolve(FhirExporter.ORGANIZATION_OUT_PATH))
                 exportProgress = 3
-                exportCurrentTask = ""
+                exportCurrentTask = StringRes.fhir_exporter_done
             }
         }
     }
