@@ -1,5 +1,6 @@
 package de.medizininformatikinitiative.medgraph.graphdbpopulator.loaders;
 
+import de.medizininformatikinitiative.medgraph.common.EDQM;
 import org.neo4j.driver.Session;
 
 import java.nio.file.Path;
@@ -26,7 +27,7 @@ public class EdqmStandardTermsRelationsLoader extends CsvLoader {
 	@Override
 	protected void executeLoad() {
 		executeQuery(withLoadStatement(
-				"MATCH (pdf:" + EDQM_LABEL + " {code: '" + EdqmStandardTermsLoader.EDQM_PDF_CLASS + "-'+" + row(
+				"MATCH (pdf:" + EDQM_LABEL + " {code: '" + EDQM.PHARMACEUTICAL_DOSE_FORM.getCodePrefix() + "'+" + row(
 						SOURCE_CODE) + "}) " +
 						"MATCH (ch:" + EDQM_LABEL + " {code: " + row(TARGET_CLASS) + "+'-'+" + row(
 						TARGET_CODE) + "}) " +
