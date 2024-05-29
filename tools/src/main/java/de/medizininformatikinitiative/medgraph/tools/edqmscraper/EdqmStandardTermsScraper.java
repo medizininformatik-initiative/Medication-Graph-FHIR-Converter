@@ -34,9 +34,9 @@ public class EdqmStandardTermsScraper {
 	 */
 	public static void downloadData(File targetDir, String apiEmail, char[] apiSecretKey)
 	throws IOException, URISyntaxException, InterruptedException {
-		File objectsOutFile = new File(targetDir + File.separator + "edqmObjects.csv");
+		File objectsOutFile = new File(targetDir + File.separator + "edqm_objects.csv");
 		objectsOutFile.createNewFile();
-		File relationsOutFile = new File(targetDir + File.separator + "pdfRelations.csv");
+		File relationsOutFile = new File(targetDir + File.separator + "pdf_relations.csv");
 		relationsOutFile.createNewFile();
 
 		EdqmStandardTermsObjectsLoader objectsLoader = new EdqmStandardTermsObjectsLoader();

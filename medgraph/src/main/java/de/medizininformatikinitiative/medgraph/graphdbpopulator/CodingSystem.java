@@ -45,7 +45,7 @@ public enum CodingSystem {
 	EDQM(
 			"https://standardterms.edqm.eu",
 			"EDQM Standard Terms database",
-			LocalDate.of(2024, 5, 27),
+			LocalDate.of(2024, 5, 29),
 			null,
 			"Data is taken from the EDQM Standard Terms database and is reproduced with permission " +
 					"of the European Directorate for the Quality of Medicines & HealthCare, Council of Europe (EDQM). " +

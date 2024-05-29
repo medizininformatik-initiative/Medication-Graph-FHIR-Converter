@@ -1,6 +1,6 @@
 package de.medizininformatikinitiative.medgraph.graphdbpopulator.loaders;
 
-import de.medizininformatikinitiative.medgraph.Neo4jTest;
+import de.medizininformatikinitiative.medgraph.ReadWriteNeo4jTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.neo4j.driver.Record;
@@ -13,7 +13,7 @@ import static de.medizininformatikinitiative.medgraph.common.db.DatabaseDefiniti
 import static de.medizininformatikinitiative.medgraph.common.db.DatabaseDefinitions.SYNONYME_REFERENCES_NODE_LABEL;
 import static org.junit.jupiter.api.Assertions.*;
 
-public class DatabaseSynonymePreparerTest extends Neo4jTest {
+public class DatabaseSynonymePreparerTest extends ReadWriteNeo4jTest {
 
 	@BeforeEach
 	public void clearDb() {

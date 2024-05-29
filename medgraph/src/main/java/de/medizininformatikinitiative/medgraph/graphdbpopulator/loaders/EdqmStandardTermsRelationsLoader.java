@@ -8,7 +8,7 @@ import static de.medizininformatikinitiative.medgraph.common.db.DatabaseDefiniti
 import static de.medizininformatikinitiative.medgraph.common.db.DatabaseDefinitions.EDQM_LABEL;
 
 /**
- * Loader which reads pdfRelations.csv and assigns the relations between EDQM PDF Standard Terms and their
+ * Loader which reads pdf_relations.csv and assigns the relations between EDQM PDF Standard Terms and their
  * characteristics. Requires the EDQM Standard Term nodes to already exist.
  *
  * @author Markus Budeus
@@ -20,7 +20,7 @@ public class EdqmStandardTermsRelationsLoader extends CsvLoader {
 	private static final String TARGET_CODE = "TARGETCODE";
 
 	public EdqmStandardTermsRelationsLoader(Session session) {
-		super(Path.of("pdfRelations.csv"), session);
+		super(Path.of("pdf_relations.csv"), session);
 	}
 
 	@Override
