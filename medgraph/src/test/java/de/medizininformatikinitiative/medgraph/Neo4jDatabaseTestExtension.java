@@ -2,7 +2,6 @@ package de.medizininformatikinitiative.medgraph;
 
 import de.medizininformatikinitiative.medgraph.common.db.ConnectionConfiguration;
 import de.medizininformatikinitiative.medgraph.common.db.DatabaseConnection;
-import de.medizininformatikinitiative.medgraph.graphdbpopulator.GraphDbPopulator;
 import org.junit.jupiter.api.extension.BeforeAllCallback;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.extension.ExtensionContext;
