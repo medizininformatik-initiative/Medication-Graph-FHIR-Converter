@@ -9,6 +9,8 @@ import java.net.URISyntaxException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
+import static de.medizininformatikinitiative.medgraph.tools.edqmscraper.EdqmConcept.*;
+
 /**
  * Accesses the EDQM standard terms API to download information about all pharmaceutical dose forms and writes them to a
  * CSV file.
@@ -38,33 +40,49 @@ public class EdqmStandardTermsScraper {
 		objectsOutFile.createNewFile();
 		File relationsOutFile = new File(targetDir + File.separator + "pdf_relations.csv");
 		relationsOutFile.createNewFile();
+		File translationsOutFile = new File(targetDir + File.separator + "edqm_translations.csv");
+		relationsOutFile.createNewFile();
 
-		EdqmStandardTermsObjectsLoader objectsLoader = new EdqmStandardTermsObjectsLoader();
+		EdqmConceptLoader objectsLoader = new EdqmConceptLoader();
 		try (EdqmStandardTermsApiClient apiClient = new EdqmStandardTermsApiClient(apiEmail, apiSecretKey);
 		     FileWriter objectsOutFileWriter = new FileWriter(objectsOutFile);
-			 FileWriter relationsOutFileWriter = new FileWriter(relationsOutFile);
+		     FileWriter relationsOutFileWriter = new FileWriter(relationsOutFile);
+		     FileWriter translationsOutFileWriter = new FileWriter(translationsOutFile);
 		     CSVWriter objectsWriter = CSVWriter.open(objectsOutFileWriter);
-			 CSVWriter relationsWriter = CSVWriter.open(relationsOutFileWriter);
+		     CSVWriter relationsWriter = CSVWriter.open(relationsOutFileWriter);
+		     CSVWriter translationsWriter = CSVWriter.open(translationsOutFileWriter)
 		) {
 			String notice = generateNotice();
 			objectsOutFileWriter.write(notice);
-			objectsWriter.write("CLASS","CODE","NAME","STATUS");
+			objectsWriter.write("CLASS", "CODE", "NAME", "STATUS");
 			relationsOutFileWriter.write(notice);
-			relationsWriter.write("SOURCECODE","TARGETCLASS","TARGETCODE");
+			relationsWriter.write("SOURCECLASS", "SOURCECODE", "TARGETCLASS", "TARGETCODE");
+			translationsOutFileWriter.write(notice);
+			translationsWriter.write("CLASS", "CODE", "SYNONYME");
 
-			EdqmPharmaceuticalDoseFormLoader pdfLoader = new EdqmPharmaceuticalDoseFormLoader();
-			pdfLoader.load(apiClient.getFullDataByClass(EdqmStandardTermsObject.PHARMACEUTICAL_DOSE_FORM_CLASS));
-			pdfLoader.writeToCsv(objectsWriter);
-			pdfLoader.writeRelationsToCsv(relationsWriter);
+			loadClassAndWriteObjectsAndTranslations(objectsLoader, PHARMACEUTICAL_DOSE_FORM_CLASS, apiClient,
+					objectsWriter, translationsWriter);
+			objectsLoader.writeRelationsToCsv(relationsWriter, BASIC_DOSE_FORM_CLASS);
+			objectsLoader.writeRelationsToCsv(relationsWriter, INTENDED_SITE_CLASS);
+			objectsLoader.writeRelationsToCsv(relationsWriter, RELEASE_CHARACTERISTICS_CLASS);
 
-			objectsLoader.load(apiClient.getFullDataByClass(EdqmStandardTermsObject.BASIC_DOSE_FORM_CLASS));
-			objectsLoader.writeToCsv(objectsWriter);
-			objectsLoader.load(apiClient.getFullDataByClass(EdqmStandardTermsObject.INTENDED_SITE_CLASS));
-			objectsLoader.writeToCsv(objectsWriter);
-			objectsLoader.load(apiClient.getFullDataByClass(EdqmStandardTermsObject.RELEASE_CHARACTERISTICS_CLASS));
-			objectsLoader.writeToCsv(objectsWriter);
+			loadClassAndWriteObjectsAndTranslations(objectsLoader, BASIC_DOSE_FORM_CLASS, apiClient,
+					objectsWriter, translationsWriter);
+			loadClassAndWriteObjectsAndTranslations(objectsLoader, INTENDED_SITE_CLASS, apiClient,
+					objectsWriter, translationsWriter);
+			loadClassAndWriteObjectsAndTranslations(objectsLoader, RELEASE_CHARACTERISTICS_CLASS, apiClient,
+					objectsWriter, translationsWriter);
 		}
+	}
 
+	private static void loadClassAndWriteObjectsAndTranslations(EdqmConceptLoader loader, String objectClass,
+														 EdqmStandardTermsApiClient client,
+	                                                     CSVWriter objectsWriter, CSVWriter translationsWriter)
+	throws IOException, URISyntaxException, InterruptedException {
+
+		loader.load(client.getFullDataByClass(objectClass));
+		loader.writeObjectsToCsv(objectsWriter);
+		loader.writeTranslationsToCsv(translationsWriter, "de");
 	}
 
 	private static String generateNotice() {
@@ -73,6 +91,5 @@ public class EdqmStandardTermsScraper {
 				"with the permission of the European Directorate for the Quality of Medicines & HealthCare, " +
 				"Council of Europe (EDQM).\n";
 	}
-
 
 }

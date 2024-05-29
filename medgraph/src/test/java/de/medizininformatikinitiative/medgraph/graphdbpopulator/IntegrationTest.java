@@ -24,10 +24,10 @@ import static org.junit.jupiter.api.Assertions.*;
  * Runs the whole migration on a set of sample files.
  */
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-@Disabled("This test wipes the target database. Also it needs to copy files to the Neo4j import directory " +
-		"which is likely different if you have a different OS than mine and also write privileges are required. " +
-		"Sadly, a platform-independent solution is tricky. I have not yet seen a way to inject the test files " +
-		"into the Neo4j harness in a different way.")
+//@Disabled("This test wipes the target database. Also it needs to copy files to the Neo4j import directory " +
+//		"which is likely different if you have a different OS than mine and also write privileges are required. " +
+//		"Sadly, a platform-independent solution is tricky. I have not yet seen a way to inject the test files " +
+//		"into the Neo4j harness in a different way.")
 public class IntegrationTest {
 
 	private DatabaseConnection connection;
@@ -307,6 +307,28 @@ public class IntegrationTest {
 		Record record = result.next();
 		assertEquals(getCsvEntries("/pdf_relations.csv", true), record.get(0).asInt(),
 				"The number of EDQM node internal relations does not match the number of entries in its CSV source!");
+		assertFalse(result.hasNext());
+	}
+
+	@Test
+	public void customDoseFormSynonymeApplied() {
+		Result result = session.run("MATCH (s:" + SYNONYME_LABEL + "{name: 'Filmtbl.'})" +
+				"-[r:" + SYNONYME_REFERENCES_NODE_LABEL + "]->(e:" + EDQM_LABEL + "{code: 'PDF-10221000'}) " +
+				"RETURN e.name");
+
+		Record record = result.next();
+		assertEquals("Film-coated tablet", record.get(0).asString());
+		assertFalse(result.hasNext());
+	}
+
+	@Test
+	public void doseFormTranslationApplied() {
+		Result result = session.run("MATCH (s:" + SYNONYME_LABEL + "{name: 'Teeaufgusspulver'})" +
+				"-[r:" + SYNONYME_REFERENCES_NODE_LABEL + "]->(e:" + EDQM_LABEL + "{code: 'PDF-10202000'}) " +
+				"RETURN e.name");
+
+		Record record = result.next();
+		assertEquals("Instant herbal tea", record.get(0).asString());
 		assertFalse(result.hasNext());
 	}
 

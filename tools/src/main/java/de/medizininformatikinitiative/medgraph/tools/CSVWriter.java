@@ -1,8 +1,5 @@
 package de.medizininformatikinitiative.medgraph.tools;
 
-import com.opencsv.CSVWriterBuilder;
-import com.opencsv.ICSVWriter;
-
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -10,39 +7,29 @@ import java.io.Writer;
 import java.nio.file.Path;
 
 /**
- * Wrapper around whichever CSV writing library is used.
+ * Interface used to write to a CSV file.
  *
  * @author Markus Budeus
  */
-public class CSVWriter implements AutoCloseable {
+public interface CSVWriter extends AutoCloseable {
 
-	public static CSVWriter open(Path path) throws IOException {
+	static CSVWriter open(Path path) throws IOException {
 		return CSVWriter.open(path.toFile());
 	}
 
-	public static CSVWriter open(File file) throws IOException {
+	static CSVWriter open(File file) throws IOException {
 		return CSVWriter.open(new FileWriter(file));
 	}
 
-	public static CSVWriter open(Writer writer) throws IOException {
-		ICSVWriter icsvWriter = new CSVWriterBuilder(writer)
-				.withSeparator(';')
-				.build();
-		return new CSVWriter(icsvWriter);
+	static CSVWriter open(Writer writer) throws IOException {
+		return CSVWriterImpl.open(writer);
 	}
 
-	private final ICSVWriter writer;
+	/**
+	 * Writes the given elements as next line into the CSV file.
+	 */
+	void write(String... line);
 
-	private CSVWriter(ICSVWriter writer) {
-		this.writer = writer;
-	}
+	void close() throws IOException;
 
-	public void write(String... line) {
-		writer.writeNext(line);
-	}
-
-		@Override
-	public void close() throws IOException {
-		writer.close();
-	}
 }
