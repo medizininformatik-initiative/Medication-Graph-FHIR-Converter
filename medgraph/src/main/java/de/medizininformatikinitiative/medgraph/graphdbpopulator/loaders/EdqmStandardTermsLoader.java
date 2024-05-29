@@ -1,9 +1,11 @@
 package de.medizininformatikinitiative.medgraph.graphdbpopulator.loaders;
 
+import de.medizininformatikinitiative.medgraph.common.EDQM;
 import org.neo4j.driver.Session;
 
 import java.nio.file.Path;
 
+import static de.medizininformatikinitiative.medgraph.common.EDQM.*;
 import static de.medizininformatikinitiative.medgraph.common.db.DatabaseDefinitions.*;
 
 /**
@@ -12,15 +14,6 @@ import static de.medizininformatikinitiative.medgraph.common.db.DatabaseDefiniti
  * @author Markus Budeus
  */
 public class EdqmStandardTermsLoader extends CsvLoader {
-
-	public static final String EDQM_PDF_CLASS = "PDF";
-	public static final String EDQM_PDF_TYPE = "Pharmaceutical dose form";
-	public static final String EDQM_BDF_CLASS = "BDF";
-	public static final String EDQM_BDF_TYPE = "Basic dose form";
-	public static final String EDQM_ISI_CLASS = "ISI";
-	public static final String EDQM_ISI_TYPE = "Intended site";
-	public static final String EDQM_RCA_CLASS = "RCA";
-	public static final String EDQM_RCA_TYPE = "Release characteristic";
 
 	private static final String CLASS = "CLASS";
 	private static final String CODE_IN_CLASS = "CODE";
@@ -51,15 +44,15 @@ public class EdqmStandardTermsLoader extends CsvLoader {
 		executeQuery(
 				"MATCH (e:" + EDQM_LABEL + ") WHERE e.code STARTS WITH $code " +
 						"SET e:" + EDQM_PDF_LABEL + ", e.type = $typeName",
-				"code", EDQM_PDF_CLASS, "typeName", EDQM_PDF_TYPE);
-		assignTyping(EDQM_BDF_CLASS, EDQM_BDF_TYPE);
-		assignTyping(EDQM_ISI_CLASS, EDQM_ISI_TYPE);
-		assignTyping(EDQM_RCA_CLASS, EDQM_RCA_TYPE);
+				"code", PHARMACEUTICAL_DOSE_FORM.getShorthand(), "typeName", PHARMACEUTICAL_DOSE_FORM.getTypeFullName());
+		assignTyping(BASIC_DOSE_FORM);
+		assignTyping(INTENDED_SITE);
+		assignTyping(RELEASE_CHARACTERISTIC);
 	}
 
-	private void assignTyping(String typeCode, String typeName) {
+	private void assignTyping(EDQM edqm) {
 		executeQuery("MATCH (e:" + EDQM_LABEL + ") WHERE e.code STARTS WITH $code SET e.type = $typeName",
-				"code", typeCode, "typeName", typeName);
+				"code", edqm.getShorthand(), "typeName", edqm.getTypeFullName());
 	}
 
 }

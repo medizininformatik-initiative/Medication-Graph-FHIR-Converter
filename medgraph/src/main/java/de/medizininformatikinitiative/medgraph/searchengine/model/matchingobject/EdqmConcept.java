@@ -1,5 +1,6 @@
 package de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject;
 
+import de.medizininformatikinitiative.medgraph.common.EDQM;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
@@ -27,10 +28,14 @@ public class EdqmConcept implements Identifiable {
 	 * The type of this Standard Terms concept. (E.g. Pharmaceutical dose dorm, Release characteristic)
 	 */
 	@NotNull
-	private final String conceptType;
+	private final EDQM conceptType;
 
-	public EdqmConcept(@NotNull String code, @NotNull String name, @NotNull String conceptType) {
+	public EdqmConcept(@NotNull String code, @NotNull String name, @NotNull EDQM conceptType) {
 		this.code = code;
+		if (!code.startsWith(conceptType.getShorthand() + "-")) {
+			throw new IllegalArgumentException("The code of an EDQM concept of type " + conceptType +
+					" must start with \"" + conceptType.getShorthand() + "-\"!");
+		}
 		this.name = name;
 		this.conceptType = conceptType;
 	}
@@ -47,7 +52,7 @@ public class EdqmConcept implements Identifiable {
 	}
 
 	@NotNull
-	public String getConceptType() {
+	public EDQM getConceptType() {
 		return conceptType;
 	}
 

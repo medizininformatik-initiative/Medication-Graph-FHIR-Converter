@@ -1,9 +1,11 @@
 package de.medizininformatikinitiative.medgraph.graphdbpopulator;
 
 import de.medizininformatikinitiative.medgraph.common.db.DatabaseConnection;
-import de.medizininformatikinitiative.medgraph.graphdbpopulator.loaders.EdqmStandardTermsLoader;
 import de.medizininformatikinitiative.medgraph.graphdbpopulator.loaders.Loader;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 import org.neo4j.driver.Record;
 import org.neo4j.driver.Result;
 import org.neo4j.driver.Session;
@@ -17,6 +19,8 @@ import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
 
+import static de.medizininformatikinitiative.medgraph.common.EDQM.BASIC_DOSE_FORM;
+import static de.medizininformatikinitiative.medgraph.common.EDQM.PHARMACEUTICAL_DOSE_FORM;
 import static de.medizininformatikinitiative.medgraph.common.db.DatabaseDefinitions.*;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -279,13 +283,13 @@ public class IntegrationTest {
 		Result result = session.run(
 				"MATCH (p:" + MMI_DOSE_FORM_LABEL + " {mmiName: 'Tbl.'})-[:" + DOSE_FORM_IS_EDQM + "]->" +
 						"(e:" + EDQM_LABEL + ":" + EDQM_PDF_LABEL + ")-[:" + EDQM_HAS_CHARACTERISTIC_LABEL + "]->" +
-						"(ch:" + EDQM_LABEL + "{type: '" + EdqmStandardTermsLoader.EDQM_BDF_TYPE + "'})" +
+						"(ch:" + EDQM_LABEL + "{type: '" + BASIC_DOSE_FORM.getTypeFullName() + "'})" +
 						"RETURN e.code, ch.code "
 		);
 
 		Record record = result.next();
-		assertEquals(EdqmStandardTermsLoader.EDQM_PDF_CLASS + "-10219000", record.get(0).asString());
-		assertEquals(EdqmStandardTermsLoader.EDQM_BDF_CLASS + "-0069", record.get(1).asString());
+		assertEquals(PHARMACEUTICAL_DOSE_FORM.getShorthand() + "-10219000", record.get(0).asString());
+		assertEquals(BASIC_DOSE_FORM.getShorthand() + "-0069", record.get(1).asString());
 		assertFalse(result.hasNext());
 	}
 

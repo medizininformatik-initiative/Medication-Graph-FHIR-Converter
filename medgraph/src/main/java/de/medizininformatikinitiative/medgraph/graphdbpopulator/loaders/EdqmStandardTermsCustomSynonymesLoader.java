@@ -27,7 +27,7 @@ public class EdqmStandardTermsCustomSynonymesLoader extends CsvLoader {
 		executeQuery(withLoadStatement(
 				"MATCH (e:" + EDQM_LABEL + " {code: " + row(TARGET_CODE)+ "}) " +
 						"MERGE (s:"+SYNONYME_LABEL+"{name: "+row(SYNONYME) + "}) " +
-						"CREATE (s)-[:"+SYNONYME_REFERENCES_NODE_LABEL+"]->(e)"
+						"MERGE (s)-[:"+SYNONYME_REFERENCES_NODE_LABEL+"]->(e)"
 		));
 
 	}

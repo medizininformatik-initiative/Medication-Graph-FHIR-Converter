@@ -1,11 +1,9 @@
 package de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject;
 
-import de.medizininformatikinitiative.medgraph.graphdbpopulator.loaders.EdqmStandardTermsLoader;
+import de.medizininformatikinitiative.medgraph.common.EDQM;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 /**
  * Represents a EDQM pharmaceutical dose form.
@@ -18,19 +16,15 @@ public class EdqmPharmaceuticalDoseForm extends EdqmConcept {
 	 * The characteristics (i.e. basic dose form, intended site, etc.) of this pharmaceutical dose form.
 	 */
 	@NotNull
-	private final List<EdqmConcept> characteristics;
+	private final Set<EdqmConcept> characteristics;
 
 	public EdqmPharmaceuticalDoseForm(@NotNull String code, @NotNull String name,
-	                                  @NotNull List<EdqmConcept> characteristics) {
-		super(code, name, "Pharmaceutical dose form");
-		if (!code.startsWith(EdqmStandardTermsLoader.EDQM_PDF_CLASS)) {
-			throw new IllegalArgumentException("Code for Pharmaceutical dose form concepts must start with \""
-					+ EdqmStandardTermsLoader.EDQM_PDF_CLASS + "-\"!");
-		}
-		this.characteristics = Collections.unmodifiableList(new ArrayList<>(characteristics));
+	                                  @NotNull Set<EdqmConcept> characteristics) {
+		super(code, name, EDQM.PHARMACEUTICAL_DOSE_FORM);
+		this.characteristics = Collections.unmodifiableSet(new HashSet<>(characteristics));
 	}
 
-	public @NotNull List<EdqmConcept> getCharacterristics() {
+	public @NotNull Set<EdqmConcept> getCharacterristics() {
 		return characteristics;
 	}
 }

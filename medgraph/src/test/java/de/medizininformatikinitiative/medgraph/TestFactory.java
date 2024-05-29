@@ -3,14 +3,15 @@ package de.medizininformatikinitiative.medgraph;
 import de.medizininformatikinitiative.medgraph.searchengine.db.DbAmount;
 import de.medizininformatikinitiative.medgraph.searchengine.db.DbDosage;
 import de.medizininformatikinitiative.medgraph.searchengine.model.*;
-import de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject.DetailedProduct;
-import de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject.Product;
-import de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject.Substance;
+import de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject.*;
 import de.medizininformatikinitiative.medgraph.searchengine.provider.BaseProvider;
 import de.medizininformatikinitiative.medgraph.searchengine.provider.MappedIdentifier;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Set;
+
+import static de.medizininformatikinitiative.medgraph.common.EDQM.*;
 
 /**
  * Provides and/or generates lots of sample entities.
@@ -95,9 +96,9 @@ public class TestFactory {
 			/**
 			 * Prednisolut, powder and solvent in which the powder is to be solved before being injected.
 			 * <p>
-			 * The powder and solvent are two separate drugs. The latter only specifies 2ml of a solvent with no
-			 * active ingredient. The former contains 10.48mg of prednisolone hydrogensuccinate, respectively
-			 * 7.83mg of prednisolone.
+			 * The powder and solvent are two separate drugs. The latter only specifies 2ml of a solvent with no active
+			 * ingredient. The former contains 10.48mg of prednisolone hydrogensuccinate, respectively 7.83mg of
+			 * prednisolone.
 			 */
 			public static final DetailedProduct PREDNISOLUT = new DetailedProduct(6,
 					"Prednisolut® 10 mg L, Pulver und Lösungsmittel zur Herstellung einer Injektionslösung",
@@ -129,6 +130,64 @@ public class TestFactory {
 			return new Product(product.getId(), product.getName());
 		}
 	}
+
+	public static class DoseForms {
+		public static class Characteristics {
+			/**
+			 * Powder as a basic dose form.
+			 */
+			public static final EdqmConcept POWDER = new EdqmConcept("0066", "Powder", BASIC_DOSE_FORM);
+			/**
+			 * A solution, which is a basic dose form.
+			 */
+			public static final EdqmConcept SOLUTION = new EdqmConcept("0083", "Solution", BASIC_DOSE_FORM);
+			/**
+			 * Granules, which are a basic dose form.
+			 */
+			public static final EdqmConcept GRANULES = new EdqmConcept("0053", "Granules", BASIC_DOSE_FORM);
+			/**
+			 * Parenteral application, which is an intended site.
+			 */
+			public static final EdqmConcept PARENTERAL = new EdqmConcept("0033", "Parenteral", INTENDED_SITE);
+			/**
+			 * Oral application, which is an intended site.
+			 */
+			public static final EdqmConcept ORAL = new EdqmConcept("0031", "Oral", INTENDED_SITE);
+			/**
+			 * Conventional, which is the default release characteristic.
+			 */
+			public static final EdqmConcept CONVENTIONAL = new EdqmConcept("0047", "Conventional",
+					RELEASE_CHARACTERISTIC);
+		}
+
+		/**
+		 * Oral granules meant to be swallowed.
+		 */
+		public static final EdqmPharmaceuticalDoseForm GRANULES = new EdqmPharmaceuticalDoseForm("10204000", "Granules",
+				Set.of(Characteristics.GRANULES, Characteristics.CONVENTIONAL, Characteristics.ORAL));
+
+		/**
+		 * A solution which can be injected or infused into a patient.
+		 */
+		public static final EdqmPharmaceuticalDoseForm SOLUTION_FOR_INJECTION_OR_INFUSION =
+				new EdqmPharmaceuticalDoseForm("50060000", "Solution for injection/infusion",
+						Set.of(Characteristics.SOLUTION, Characteristics.CONVENTIONAL, Characteristics.PARENTERAL));
+
+		/**
+		 * A solution which can be injected into a patient.
+		 */
+		public static final EdqmPharmaceuticalDoseForm SOLUTION_FOR_INJECTION =
+				new EdqmPharmaceuticalDoseForm("11201000", "Solution for injection",
+						Set.of(Characteristics.SOLUTION, Characteristics.CONVENTIONAL, Characteristics.PARENTERAL));
+
+		/**
+		 * A powder meant to be dissolved to form a solution to be injected into a patient.
+		 */
+		public static final EdqmPharmaceuticalDoseForm POWDER_FOR_SOLUTION_FOR_INJECTION =
+				new EdqmPharmaceuticalDoseForm("11205000", "Powder for solution for injection",
+						Set.of(Characteristics.POWDER, Characteristics.CONVENTIONAL, Characteristics.PARENTERAL));
+	}
+
 
 	public static final Substance SAMPLE_SUBSTANCE_1 = Substances.ACETYLSALICYLIC_ACID;
 	public static final Substance SAMPLE_SUBSTANCE_2 = Substances.MIDAZOLAM;
