@@ -2,12 +2,15 @@ package de.medizininformatikinitiative.medgraph.tools.edqmscraper;
 
 import com.google.gson.annotations.SerializedName;
 
+import java.util.List;
+import java.util.Map;
+
 /**
  * Represents an object of interest from the EDQM Standard Terms database.
  *
  * @author Markus Budeus
  */
-public class EdqmStandardTermsObject {
+public class EdqmConcept {
 
 	/**
 	 * Class identifier for pharmaceutical dose forms, e.g. "granules for solution for injection"
@@ -53,13 +56,23 @@ public class EdqmStandardTermsObject {
 	@SerializedName("english")
 	private final String name;
 
+	/**
+	 * Known translations of this object's name.
+	 */
+	private final List<Translation> translations;
 
-	public EdqmStandardTermsObject(String objectClass, String code, String domain, String status, String name) {
+	@SerializedName("links")
+	private final Map<String, List<Link>> linksByClassName;
+
+	public EdqmConcept(String objectClass, String code, String domain, String status, String name,
+	                   List<Translation> translations, Map<String, List<Link>> linksByClassName) {
 		this.objectClass = objectClass;
 		this.code = code;
 		this.domain = domain;
 		this.status = status;
 		this.name = name;
+		this.translations = translations;
+		this.linksByClassName = linksByClassName;
 	}
 
 	public String getObjectClass() {
@@ -80,5 +93,13 @@ public class EdqmStandardTermsObject {
 
 	public String getName() {
 		return name;
+	}
+
+	public List<Translation> getTranslations() {
+		return translations;
+	}
+
+	public Map<String, List<Link>> getLinksByClassName() {
+		return linksByClassName;
 	}
 }

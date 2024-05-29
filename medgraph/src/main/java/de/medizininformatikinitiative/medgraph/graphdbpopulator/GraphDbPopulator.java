@@ -44,6 +44,8 @@ public class GraphDbPopulator {
 			"gsrs_matches.csv",
 			"edqm_objects.csv",
 			"pdf_relations.csv",
+			"edqm_translations.csv",
+			"dose_form_synonymes.csv",
 			"NOTICE.txt",
 	};
 
@@ -108,10 +110,14 @@ public class GraphDbPopulator {
 		loaders.add(new UcumLoader(session));
 		// GSRS UNIIs, RXCUIs, etc.
 		loaders.add(new UniiLoader(session));
-		// Custom synonymes
-		loaders.add(new CustomSynonymeLoader(session));
 		// Corresponding ingredients and their amounts
 		loaders.add(new IngredientCorrespondenceLoader(session));
+		// Custom synonymes
+		loaders.add(new CustomSynonymeLoader(session));
+		// Dose form translations
+		loaders.add(new EdqmStandardTermsTranslationsLoader(session));
+		// Custom dose form synonymes
+		loaders.add(new EdqmStandardTermsCustomSynonymesLoader(session));
 		// Coding System Nodes and connections to it
 		loaders.add(new CodingSystemNodeCreator(session));
 		// Synonymes from other nodes

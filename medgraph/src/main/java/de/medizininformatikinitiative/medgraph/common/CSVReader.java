@@ -4,6 +4,7 @@ import com.opencsv.CSVParser;
 import com.opencsv.CSVParserBuilder;
 import com.opencsv.CSVReaderBuilder;
 import com.opencsv.exceptions.CsvException;
+import de.medizininformatikinitiative.medgraph.graphdbpopulator.GraphDbPopulator;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -47,14 +48,20 @@ public class CSVReader implements AutoCloseable {
 	}
 
 	public List<String[]> readAll() throws IOException {
-		return wrapCsvException(reader::readAll);
+		List<String[]> lines = wrapCsvException(reader::readAll);
+		lines.removeIf(line -> line[0].startsWith(GraphDbPopulator.CSV_COMMENT_INDICATOR));
+		return lines;
 	}
 
 	/**
 	 * Reads the next line or returns null if the end of the file has been reached.
 	 */
 	public String[] readNext() throws IOException {
-		return wrapCsvException(reader::readNext);
+		String[] line;
+		do {
+			line = wrapCsvException(reader::readNext);
+		} while (line != null && line[0].startsWith(GraphDbPopulator.CSV_COMMENT_INDICATOR));
+		return line;
 	}
 
 	@Override
