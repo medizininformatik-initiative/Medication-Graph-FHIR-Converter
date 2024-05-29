@@ -1,13 +1,10 @@
 package de.medizininformatikinitiative.medgraph.graphdbpopulator;
 
 import de.medizininformatikinitiative.medgraph.graphdbpopulator.loaders.*;
-import org.neo4j.driver.Query;
-import org.neo4j.driver.Result;
+import de.medizininformatikinitiative.medgraph.searchengine.tools.DatabaseTools;
 import org.neo4j.driver.Session;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
@@ -15,13 +12,15 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import static org.neo4j.driver.Values.parameters;
-
 /**
  * @author Markus Budeus
  */
 public class GraphDbPopulator {
 
+	/**
+	 * If a line in a CSV file starts with this string, it is considered a comment.
+	 */
+	public static final String CSV_COMMENT_INDICATOR = "#";
 
 	private static final String[] REQUIRED_FILES = new String[]{
 			"CATALOGENTRY.CSV",
@@ -43,8 +42,8 @@ public class GraphDbPopulator {
 			"custom_synonymes.csv",
 			"dose_form_mapping.csv",
 			"gsrs_matches.csv",
-			"edqmObjects.csv",
-			"pdfRelations.csv",
+			"edqm_objects.csv",
+			"pdf_relations.csv",
 			"NOTICE.txt",
 	};
 
@@ -55,18 +54,7 @@ public class GraphDbPopulator {
 	 * constraints.
 	 */
 	public void clearDatabase(Session session) {
-		// Drop relationships
-		session.run("MATCH ()-[r]->() CALL { WITH r DELETE r } IN TRANSACTIONS OF 10000 ROWS");
-		// Drop nodes
-		session.run("MATCH (n) CALL { WITH n DETACH DELETE n } IN TRANSACTIONS OF 10000 ROWS");
-		// Load constraints
-		Result constraints = session.run("SHOW CONSTRAINTS YIELD name");
-		List<String> constraintNames = new ArrayList<>();
-		constraints.forEachRemaining(record -> constraintNames.add(record.get("name", (String) null)));
-		// Drop constraints
-		constraintNames.forEach(name -> {
-			session.run(new Query("DROP CONSTRAINT $constraint", parameters("constraint", name)));
-		});
+		DatabaseTools.clearDatabase(session);
 	}
 
 	/**
@@ -217,7 +205,7 @@ public class GraphDbPopulator {
 		for (String resource : REQUIRED_RESOURCE_FILES) {
 			InputStream stream = Objects.requireNonNull(GraphDbPopulator.class.getResourceAsStream("/" + resource));
 			Path targetPath = target.resolve(resource);
-			Files.copy(stream, targetPath, StandardCopyOption.REPLACE_EXISTING);
+			copyCsvAndStripComments(stream, targetPath);
 		}
 	}
 
@@ -239,6 +227,24 @@ public class GraphDbPopulator {
 		}
 
 		Files.delete(mmiTargetDir);
+	}
+
+	/**
+	 * Copies CSV data from the given input stream to the target path, overwriting any file which may reside there.
+	 * CSV Comments (lines starting with {@link #CSV_COMMENT_INDICATOR} are stripped.
+	 *
+	 * @param from the input stream to copy from
+	 * @param to the path to copy the CSV to
+	 * @throws IOException if an I/O operation failed
+	 */
+	private static void copyCsvAndStripComments(InputStream from, Path to) throws IOException {
+		try (BufferedReader reader = new BufferedReader(new InputStreamReader(from));
+		BufferedWriter writer = new BufferedWriter(new FileWriter(to.toFile()))) {
+			String line;
+			while ((line = reader.readLine()) != null) {
+				if (!line.startsWith(CSV_COMMENT_INDICATOR)) writer.write(line + '\n');
+			}
+		}
 	}
 
 }

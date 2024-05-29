@@ -38,9 +38,11 @@ public class EdqmPharmaceuticalDoseFormLoader extends EdqmStandardTermsObjectsLo
 		loadedObjects.forEach(edqmStandardTermsObject -> {
 			EdqmPharmaceuticalDoseForm pdf = (EdqmPharmaceuticalDoseForm) edqmStandardTermsObject;
 
-			writeRelations(pdf.getCode(), BASIC_DOSE_FORM_CLASS, pdf.getBasicDoseFormCodes(), writer);
-			writeRelations(pdf.getCode(), INTENDED_SITE_CLASS, pdf.getIntendedSiteCodes(), writer);
-			writeRelations(pdf.getCode(), RELEASE_CHARACTERISTICS_CLASS, pdf.getReleaseCharacteristicsCodes(), writer);
+			if (pdf.getDomain().contains("Human")) {
+				writeRelations(pdf.getCode(), BASIC_DOSE_FORM_CLASS, pdf.getBasicDoseFormCodes(), writer);
+				writeRelations(pdf.getCode(), INTENDED_SITE_CLASS, pdf.getIntendedSiteCodes(), writer);
+				writeRelations(pdf.getCode(), RELEASE_CHARACTERISTICS_CLASS, pdf.getReleaseCharacteristicsCodes(), writer);
+			}
 		});
 	}
 

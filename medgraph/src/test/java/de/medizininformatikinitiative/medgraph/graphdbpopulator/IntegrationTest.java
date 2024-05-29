@@ -1,6 +1,5 @@
 package de.medizininformatikinitiative.medgraph.graphdbpopulator;
 
-import de.medizininformatikinitiative.medgraph.Neo4jTest;
 import de.medizininformatikinitiative.medgraph.common.db.DatabaseConnection;
 import de.medizininformatikinitiative.medgraph.graphdbpopulator.loaders.EdqmStandardTermsLoader;
 import de.medizininformatikinitiative.medgraph.graphdbpopulator.loaders.Loader;
@@ -25,10 +24,10 @@ import static org.junit.jupiter.api.Assertions.*;
  * Runs the whole migration on a set of sample files.
  */
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-//@Disabled("This test wipes the target database. Also it needs to copy files to the Neo4j import directory " +
-//		"which is likely different if you have a different OS than mine and also write privileges are required. " +
-//		"Sadly, a platform-independent solution is tricky. I have not yet seen a way to inject the test files " +
-//		"into the Neo4j harness in a different way.")
+@Disabled("This test wipes the target database. Also it needs to copy files to the Neo4j import directory " +
+		"which is likely different if you have a different OS than mine and also write privileges are required. " +
+		"Sadly, a platform-independent solution is tricky. I have not yet seen a way to inject the test files " +
+		"into the Neo4j harness in a different way.")
 public class IntegrationTest {
 
 	private DatabaseConnection connection;
@@ -280,7 +279,7 @@ public class IntegrationTest {
 		Result result = session.run(
 				"MATCH (p:" + MMI_DOSE_FORM_LABEL + " {mmiName: 'Tbl.'})-[:" + DOSE_FORM_IS_EDQM + "]->" +
 						"(e:" + EDQM_LABEL + ":" + EDQM_PDF_LABEL + ")-[:" + EDQM_HAS_CHARACTERISTIC_LABEL + "]->" +
-						"(ch:" + EDQM_LABEL + "{type: '" + EdqmStandardTermsLoader.EDQM_BDF_CLASS + "'})" +
+						"(ch:" + EDQM_LABEL + "{type: '" + EdqmStandardTermsLoader.EDQM_BDF_TYPE + "'})" +
 						"RETURN e.code, ch.code "
 		);
 
@@ -295,7 +294,7 @@ public class IntegrationTest {
 		Result result = session.run("MATCH (e:" + EDQM_LABEL + ") RETURN COUNT(e)");
 
 		Record record = result.next();
-		assertEquals(getCsvEntries("/edqmObjects.csv", true), record.get(0).asInt(),
+		assertEquals(getCsvEntries("/edqm_objects.csv", true), record.get(0).asInt(),
 				"The number of EDQM nodes does not match the number of entries in its CSV source!");
 		assertFalse(result.hasNext());
 	}
@@ -306,7 +305,7 @@ public class IntegrationTest {
 				"(:" + EDQM_LABEL + ") RETURN COUNT(r)");
 
 		Record record = result.next();
-		assertEquals(getCsvEntries("/pdfRelations.csv", true), record.get(0).asInt(),
+		assertEquals(getCsvEntries("/pdf_relations.csv", true), record.get(0).asInt(),
 				"The number of EDQM node internal relations does not match the number of entries in its CSV source!");
 		assertFalse(result.hasNext());
 	}
@@ -321,7 +320,7 @@ public class IntegrationTest {
 	}
 
 	/**
-	 * Counts the non-empty lines in the given resource file which do not start with a "#".
+	 * Counts the non-blank lines in the given resource file which do not start with a "#".
 	 *
 	 * @param resourceName the resource file to read
 	 * @param hasHeader    if true, additionally deducts 1 from the result to account for a header line
@@ -333,7 +332,7 @@ public class IntegrationTest {
 			try (BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream))) {
 				String line;
 				while ((line = reader.readLine()) != null) {
-					if (!line.startsWith("#")) lines++;
+					if (!line.startsWith(GraphDbPopulator.CSV_COMMENT_INDICATOR) && !line.isBlank()) lines++;
 				}
 			}
 		}
