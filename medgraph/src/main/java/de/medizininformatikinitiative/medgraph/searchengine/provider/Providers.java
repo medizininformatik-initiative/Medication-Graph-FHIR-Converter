@@ -2,6 +2,7 @@ package de.medizininformatikinitiative.medgraph.searchengine.provider;
 
 import org.neo4j.driver.Session;
 
+import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
@@ -10,12 +11,15 @@ import java.util.stream.Stream;
  */
 public class Providers {
 
-	private static final LazyProvider PRODUCT_SYNONYMES = new LazyProvider(DatabaseProviders::getProductSynonymes);
-	private static final LazyProvider SUBSTANCE_SYNONYMES = new LazyProvider(DatabaseProviders::getSubstanceSynonymes);
+	private static final LazyProvider PRODUCT_SYNONYMES = new LazyProvider(DatabaseProviders::getProductSynonyms);
+	private static final LazyProvider SUBSTANCE_SYNONYMES = new LazyProvider(DatabaseProviders::getSubstanceSynonyms);
+	private static final LazyProvider EDQM_CONCEPT_IDENTIFIERS = new LazyProvider(
+			DatabaseProviders::getEdqmConceptIdentifiers);
 
 	/**
 	 * Returns a {@link BaseProvider} which contains all product names known in the database and their corresponding
 	 * products.
+	 *
 	 * @param session the session to access the data
 	 * @return the provider for product names
 	 */
@@ -26,11 +30,25 @@ public class Providers {
 	/**
 	 * Returns a {@link BaseProvider} which contains all substance names known in the database and their corresponding
 	 * substances.
+	 *
 	 * @param session the session to access the data
 	 * @return the provider for substance names
 	 */
 	public static BaseProvider<String> getSubstanceSynonymes(Session session) {
 		return SUBSTANCE_SYNONYMES.get(session);
+	}
+
+	/**
+	 * Returns a {@link BaseProvider} which contains all known EDQM Standard Term concepts with their known identifiers.
+	 * The provided
+	 * {@link de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject.Identifiable Identifiables} are
+	 * either {@link de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject.EdqmConcept EdqmConcepts}
+	 * or
+	 * {@link de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject.EdqmPharmaceuticalDoseForm
+	 * PharmaceuticalDoseForms}.
+	 */
+	public static BaseProvider<String> getEdqmConceptIdentifiers(Session session) {
+		return EDQM_CONCEPT_IDENTIFIERS.get(session);
 	}
 
 	public static class LazyProvider {
