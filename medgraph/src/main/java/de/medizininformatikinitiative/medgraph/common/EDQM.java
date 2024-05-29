@@ -27,10 +27,21 @@ public enum EDQM {
 	 */
 	private final int codeLength;
 
-	private EDQM(String shorthand, String typeFullName, int codeLength) {
+	EDQM(String shorthand, String typeFullName, int codeLength) {
 		this.shorthand = shorthand;
 		this.typeFullName = typeFullName;
 		this.codeLength = codeLength;
+	}
+
+	/**
+	 * Returns the {@link EDQM} concept class with the exact given type full name or null if no such concept exists.
+	 */
+	public static EDQM fromTypeFullName(String typeFullName) {
+		for (EDQM edqm : values()) {
+			if (edqm.getTypeFullName().equals(typeFullName))
+				 return edqm;
+		}
+		return null;
 	}
 
 	public String getShorthand() {

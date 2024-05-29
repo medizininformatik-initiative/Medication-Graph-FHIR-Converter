@@ -31,11 +31,7 @@ public class EdqmConcept implements Identifiable {
 	private final EDQM conceptType;
 
 	public EdqmConcept(@NotNull String code, @NotNull String name, @NotNull EDQM conceptType) {
-		this.code = code;
-		if (!code.startsWith(conceptType.getShorthand() + "-")) {
-			throw new IllegalArgumentException("The code of an EDQM concept of type " + conceptType +
-					" must start with \"" + conceptType.getShorthand() + "-\"!");
-		}
+		this.code = conceptType.validateAndCorrectCode(code);
 		this.name = name;
 		this.conceptType = conceptType;
 	}
