@@ -3,7 +3,7 @@ package de.medizininformatikinitiative.medgraph.searchengine.matcher;
 import de.medizininformatikinitiative.medgraph.searchengine.matcher.model.EditDistance;
 import de.medizininformatikinitiative.medgraph.searchengine.provider.MappedIdentifier;
 import de.medizininformatikinitiative.medgraph.searchengine.tracing.StringSetUsageStatement;
-import de.medizininformatikinitiative.medgraph.searchengine.tracing.Traceable;
+import de.medizininformatikinitiative.medgraph.searchengine.tracing.InputUsageTraceable;
 import org.apache.commons.text.similarity.LevenshteinDistance;
 
 import java.util.*;
@@ -73,7 +73,7 @@ public class LevenshteinSetMatcher extends SimpleMatcher<Set<String>, Levenshtei
 	}
 
 	public static class Match extends de.medizininformatikinitiative.medgraph.searchengine.matcher.model.ScoreBasedMatch<Set<String>>
-			implements Traceable<StringSetUsageStatement> {
+			implements InputUsageTraceable<StringSetUsageStatement> {
 
 		private final StringSetUsageStatement usageStatement;
 		private final List<EditDistance> editDistances;
@@ -82,7 +82,7 @@ public class LevenshteinSetMatcher extends SimpleMatcher<Set<String>, Levenshtei
 			super(match, score);
 			this.usageStatement = new StringSetUsageStatement(
 					match.identifier,
-					editDistances.stream().map(EditDistance::getValue2).collect(Collectors.toSet()));
+					editDistances.stream().map(EditDistance::getValue1).collect(Collectors.toSet()));
 			this.editDistances = editDistances;
 		}
 
