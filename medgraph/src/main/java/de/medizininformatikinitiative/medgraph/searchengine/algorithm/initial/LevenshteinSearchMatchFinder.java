@@ -53,7 +53,7 @@ public class LevenshteinSearchMatchFinder implements InitialMatchFinder {
 	public Stream<OriginalMatch> findInitialMatches(SearchQuery query) {
 		// TODO This looks repetitive
 
-		Stream<ScoreBasedMatch<Set<String>>> allMatches = Stream.empty();
+		Stream<LevenshteinSetMatcher.Match> allMatches = Stream.empty();
 		List<String> productKeywords = query.getProductNameKeywords();
 		List<String> substanceKeywords = query.getSubstanceNameKeywords();
 		if (!productKeywords.isEmpty()) {
@@ -69,7 +69,7 @@ public class LevenshteinSearchMatchFinder implements InitialMatchFinder {
 				.map(match -> new OriginalMatch((Matchable) match.getMatchedIdentifier().target));
 	}
 
-	private Stream<ScoreBasedMatch<Set<String>>> doMatching(IdentifierProvider<String> identifierProvider,
+	private Stream<LevenshteinSetMatcher.Match> doMatching(IdentifierProvider<String> identifierProvider,
 	                                                        List<String> searchKeywords) {
 		return levenshteinSetMatcher.match(TOKEN_TRANSFORMER.apply(searchKeywords),
 				substanceProvider.withTransformation(IDENTIFIER_TRANSFORMER));

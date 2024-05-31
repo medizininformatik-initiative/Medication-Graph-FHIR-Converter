@@ -10,8 +10,8 @@ package de.medizininformatikinitiative.medgraph.searchengine.stringtransformer;
  */
 public class CompoundTransformer<S,V,T> implements Transformer<S,T> {
 
-	private final Transformer<S,V> transformer1;
-	private final Transformer<V,T> transformer2;
+	protected final Transformer<S,V> transformer1;
+	protected final Transformer<V,T> transformer2;
 
 	CompoundTransformer(Transformer<S, V> transformer1, Transformer<V, T> transformer2) {
 		this.transformer1 = transformer1;
