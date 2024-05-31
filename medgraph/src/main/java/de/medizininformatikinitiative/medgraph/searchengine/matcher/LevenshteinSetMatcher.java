@@ -1,9 +1,13 @@
 package de.medizininformatikinitiative.medgraph.searchengine.matcher;
 
+import de.medizininformatikinitiative.medgraph.searchengine.matcher.model.EditDistance;
+import de.medizininformatikinitiative.medgraph.searchengine.provider.MappedIdentifier;
+import de.medizininformatikinitiative.medgraph.searchengine.tracing.StringSetUsageStatement;
+import de.medizininformatikinitiative.medgraph.searchengine.tracing.Traceable;
 import org.apache.commons.text.similarity.LevenshteinDistance;
 
-import java.util.Iterator;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * This matcher uses Levenshtein Distance to compare sets of strings. It works by finding the best-matching token from
@@ -20,48 +24,76 @@ import java.util.Set;
  *
  * @author Markus Budeus
  */
-public class LevenshteinSetMatcher extends ScoreBasedMatcher<Set<String>> {
+public class LevenshteinSetMatcher extends SimpleMatcher<Set<String>, LevenshteinSetMatcher.Match> {
+
+	// TODO Rewrite Javadoc
+	// TODO Rewrite tests
+
 	private final LevenshteinDistance distance = new LevenshteinDistance(2);
 
 	/**
 	 * Calculates a score based on the similarity between the two sets of strings. It compares each pair of entries
-	 * which can be taken from these sets.
+	 * which can be taken from these sets. If the score is greater than 0 (i.e. any match is found), a {@link Match} is
+	 * returned, otherwise this function returns null.
 	 */
-	public double calculateScore(Set<String> searchTerm, Set<String> target) {
-		int[][] distanceMatrix = new int[searchTerm.size()][target.size()];
-
-		Iterator<String> searchTermIterator = searchTerm.iterator();
-		for (int i = 0; i < distanceMatrix.length; i++) {
-			String searchTermValue = searchTermIterator.next();
-			Iterator<String> targetIterator = target.iterator();
-			for (int j = 0; j < distanceMatrix[i].length; j++) {
-				distanceMatrix[i][j] = distance.apply(searchTermValue, targetIterator.next());
-			}
-		}
-
-		int[] bestMatches = new int[searchTerm.size()];
-		for (int i = 0; i < distanceMatrix.length; i++) {
-			int best = Integer.MAX_VALUE;
-			for (int j = 0; j < distanceMatrix[i].length; j++) {
-				int current = distanceMatrix[i][j];
-				if (current >= 0 && best > current) {
-					best = current;
+	@Override
+	public Match match(Set<String> searchTerm, MappedIdentifier<Set<String>> identifier) {
+		Set<String> target = identifier.identifier;
+		List<EditDistance> resultDistances = new ArrayList<>();
+		for (String searchTermToken : searchTerm) {
+			int bestScore = Integer.MAX_VALUE;
+			String bestMatch = null;
+			for (String targetToken : target) {
+				int editDistance = distance.apply(searchTermToken, targetToken);
+				if (editDistance != -1 && editDistance < bestScore) {
+					bestScore = editDistance;
+					bestMatch = targetToken;
 				}
 			}
-			bestMatches[i] = best;
+			if (bestMatch != null) {
+				resultDistances.add(new EditDistance(searchTermToken, bestMatch, bestScore));
+			}
 		}
 
 		double score = 0;
-		for (int i : bestMatches) {
-			if (i < Integer.MAX_VALUE)
-				score += 1.0 / (i + 1);
+		for (EditDistance d : resultDistances) {
+			score += 1.0 / (d.getEditDistance() + 1);
 		}
 
-		return score / searchTerm.size();
+		if (score == 0) return null;
+
+		score = score / searchTerm.size();
+		return new Match(identifier, score, resultDistances);
+
 	}
 
 	@Override
 	protected boolean supportsParallelism() {
 		return true;
 	}
+
+	public static class Match extends de.medizininformatikinitiative.medgraph.searchengine.matcher.model.ScoreBasedMatch<Set<String>>
+			implements Traceable<StringSetUsageStatement> {
+
+		private final StringSetUsageStatement usageStatement;
+		private final List<EditDistance> editDistances;
+
+		private Match(MappedIdentifier<Set<String>> match, double score, List<EditDistance> editDistances) {
+			super(match, score);
+			this.usageStatement = new StringSetUsageStatement(
+					match.identifier,
+					editDistances.stream().map(EditDistance::getValue2).collect(Collectors.toSet()));
+			this.editDistances = editDistances;
+		}
+
+		public List<EditDistance> getEditDistances() {
+			return editDistances;
+		}
+
+		@Override
+		public StringSetUsageStatement getUsageStatement() {
+			return usageStatement;
+		}
+	}
+
 }
