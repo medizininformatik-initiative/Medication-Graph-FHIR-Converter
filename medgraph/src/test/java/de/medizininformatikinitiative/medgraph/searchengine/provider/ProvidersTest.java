@@ -3,7 +3,6 @@ package de.medizininformatikinitiative.medgraph.searchengine.provider;
 import de.medizininformatikinitiative.medgraph.Neo4jTest;
 import org.junit.jupiter.api.Test;
 
-import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -41,7 +40,6 @@ public class ProvidersTest extends Neo4jTest {
 
 	@Test
 	void edqmConceptsProvider() {
-		List<MappedIdentifier<String>> list = Providers.getEdqmConceptIdentifiers(session).getIdentifiers().toList();
 		assertEquals(Set.of(
 						new MappedIdentifier<>("Injektionslsg.", SOLUTION_FOR_INJECTION),
 						new MappedIdentifier<>("Inj.-Lsg.", SOLUTION_FOR_INJECTION),

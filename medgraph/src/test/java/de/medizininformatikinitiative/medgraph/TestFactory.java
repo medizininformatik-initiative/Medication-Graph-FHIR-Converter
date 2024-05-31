@@ -205,11 +205,12 @@ public class TestFactory {
 			new MappedIdentifier<>(SAMPLE_PRODUCT_3.getName(), SAMPLE_PRODUCT_3)
 	));
 
-	public static final SearchQuery SAMPLE_SEARCH_QUERY = new SearchQuery(
-			List.of("Aspirin"),
-			List.of("Acetylsalicylsäure"),
-			List.of(Dosage.of(10, "mg")),
-			List.of(new Amount(BigDecimal.ONE, "ml")));
+	public static final SearchQuery SAMPLE_SEARCH_QUERY = new SearchQuery.Builder()
+			.withProductNameKeywords(List.of("Aspirin"))
+			.withSubstanceNameKeywords(List.of("Acetylsalicylsäure"))
+			.withActiveIngredientDosages(List.of(Dosage.of(10, "mg")))
+			.withDrugAmounts(List.of(new Amount(BigDecimal.ONE, "ml")))
+			.build();
 
 	public static final DbAmount SAMPLE_DB_AMOUNT_1 = new DbAmount(new BigDecimal(5), "ml");
 	public static final DbAmount SAMPLE_DB_AMOUNT_2 = new DbAmount(new BigDecimal("7.5"), "g");
