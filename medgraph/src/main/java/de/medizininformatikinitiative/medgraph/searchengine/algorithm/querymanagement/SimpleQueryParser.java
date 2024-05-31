@@ -48,12 +48,12 @@ public class SimpleQueryParser implements QueryParser {
 				searchAmounts.add(dosage.amountNominator);
 		}
 
-		return new SearchQuery(
-				productTokens,
-				substanceTokens,
-				searchDosages,
-				searchAmounts
-		);
+		return new SearchQuery.Builder()
+				.withProductNameKeywords(productTokens)
+				.withSubstanceNameKeywords(substanceTokens)
+				.withActiveIngredientDosages(searchDosages)
+				.withDrugAmounts(searchAmounts)
+				.build();
 	}
 
 }

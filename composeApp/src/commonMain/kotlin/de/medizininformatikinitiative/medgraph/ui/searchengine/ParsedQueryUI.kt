@@ -28,12 +28,17 @@ import java.math.BigDecimal
 fun ParsedQueryUI() {
     ApplicationTheme {
         ParsedQueryUI(
-            SearchQuery(
-                listOf("Aspirin", "HEXAL"),
-                listOf("Acetylsalicylsäure", "Clopidogrel"),
-                listOf(Dosage.of(500, "mg"), Dosage.of(BigDecimal.TEN, "mg", BigDecimal.ONE, "ml")),
-                listOf(Amount(BigDecimal.ONE, "ml"))
-            ),
+            SearchQuery.Builder()
+                .withProductNameKeywords(listOf("Aspirin", "HEXAL"))
+                .withSubstanceNameKeywords(listOf("Acetylsalicylsäure", "Clopidogrel"))
+                .withActiveIngredientDosages(
+                    listOf(
+                        Dosage.of(500, "mg"),
+                        Dosage.of(BigDecimal.TEN, "mg", BigDecimal.ONE, "ml")
+                    )
+                )
+                .withDrugAmounts(listOf(Amount(BigDecimal.ONE, "ml")))
+                .build(),
             modifier = Modifier.fillMaxWidth()
         )
     }
