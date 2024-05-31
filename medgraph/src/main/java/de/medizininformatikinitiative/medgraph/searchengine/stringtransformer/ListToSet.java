@@ -22,7 +22,7 @@ public class ListToSet implements TraceableTransformer<List<String>, Set<String>
 	@Override
 	public StringListUsageStatement traceTransformation(List<String> input,
 	                                                    StringSetUsageStatement outputUsageStatement) {
-		assert apply(input).equals(outputUsageStatement.getInput());
+		assert apply(input).equals(outputUsageStatement.getOriginal());
 		Set<String> usedTokens = outputUsageStatement.getUsedParts();
 		Set<Integer> usedIndices = new HashSet<>(usedTokens.size());
 		for (int i = 0; i < input.size(); i++) {

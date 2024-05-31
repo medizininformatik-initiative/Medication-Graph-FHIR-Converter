@@ -1,20 +1,24 @@
 package de.medizininformatikinitiative.medgraph.searchengine.tracing;
 
+import org.jetbrains.annotations.NotNull;
+
 /**
+ * Simple implementation of {@link InputUsageStatement} which provides a field for the original input.
+ *
  * @author Markus Budeus
  */
 abstract class AbstractUsageStatement<T> implements InputUsageStatement<T> {
 
-	// TODO Javadoc
+	@NotNull
+	private final T original;
 
-	private final T input;
-
-	public AbstractUsageStatement(T input) {
-		this.input = input;
+	public AbstractUsageStatement(@NotNull T original) {
+		this.original = original;
 	}
 
 	@Override
-	public T getInput() {
-		return input;
+	@NotNull
+	public T getOriginal() {
+		return original;
 	}
 }

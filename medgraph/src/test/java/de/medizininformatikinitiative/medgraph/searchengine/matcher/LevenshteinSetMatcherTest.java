@@ -53,7 +53,7 @@ public class LevenshteinSetMatcherTest {
 						new EditDistance("House", "House", 0),
 						new EditDistance("Home", "House", 2)
 				),
-				Set.of("House")
+				Set.of("House", "Home")
 		);
 	}
 
@@ -70,7 +70,7 @@ public class LevenshteinSetMatcherTest {
 						new EditDistance("House", "House", 0),
 						new EditDistance("Party", "Party", 0)
 				),
-				Set.of("Party", "House")
+				Set.of("House", "Party")
 		);
 	}
 
@@ -85,7 +85,7 @@ public class LevenshteinSetMatcherTest {
 				Set.of(
 						new EditDistance("Huose", "House", 2)
 				),
-				Set.of("House")
+				Set.of("Huose")
 		);
 	}
 
@@ -102,9 +102,9 @@ public class LevenshteinSetMatcherTest {
 		// Huose -> House = 0.33
 		// 0.33 / 1 entry = 0.33
 		test(
-				Set.of("Midazolam"),
 				Set.of("Dormicum", "V", "5 mg/ml", "Bayer", "GmbH", "Midazolam"),
-				1,
+				Set.of("Midazolam"),
+				0.167,
 				Set.of(
 						new EditDistance("Midazolam", "Midazolam", 0)
 				),

@@ -1,29 +1,51 @@
 package de.medizininformatikinitiative.medgraph.searchengine.tracing;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
 /**
+ * Designates specific strings from a list of strings having been used.
+ *
  * @author Markus Budeus
+ * @see InputUsageStatement
  */
 public class StringListUsageStatement extends AbstractUsageStatement<List<String>> {
 
-	// TODO Javadoc
-	// TODO Test
-
+	/**
+	 * The indices of the strings within the input list which were used.
+	 */
+	@NotNull
 	private final Set<Integer> usedIndices;
 
-	public StringListUsageStatement(List<String> input, Set<Integer> usedIndices) {
-		super(input);
+	/**
+	 * Creates a new string list usage statement.
+	 *
+	 * @param original       the original list of strings from which some were used
+	 * @param usedIndices the index within the original list of each string that was used
+	 * @throws IllegalArgumentException if any element in the used indices is out of range for the original list
+	 * @throws NullPointerException     either argument is null or any element from usedIndices is null
+	 */
+	public StringListUsageStatement(@NotNull List<String> original, @NotNull Set<Integer> usedIndices) {
+		super(original);
 		this.usedIndices = usedIndices;
-		// TODO Verify the indices are valid for the input!
+		int inputSize = original.size();
+		for (int usedIndex : usedIndices) {
+			if (usedIndex < 0 || usedIndex >= inputSize) {
+				throw new IllegalArgumentException(
+						"The usedIndices list contains the element \"" + usedIndex +
+								"\", which is out of bounds for the original list of size " + inputSize + "!");
+			}
+		}
 	}
 
 	@Override
+	@NotNull
 	public List<String> getUnusedParts() {
-		List<String> unused = new ArrayList<>(getInput());
+		List<String> unused = new ArrayList<>(getOriginal());
 		for (int i : usedIndices) {
 			unused.set(i, null);
 		}
@@ -32,10 +54,12 @@ public class StringListUsageStatement extends AbstractUsageStatement<List<String
 	}
 
 	@Override
+	@NotNull
 	public List<String> getUsedParts() {
 		List<String> used = new ArrayList<>(usedIndices.size());
-		for (int i : usedIndices) {
-			used.add(getInput().get(i));
+		int inputSize = getOriginal().size();
+		for (int i = 0; i < inputSize; i++) {
+			if (usedIndices.contains(i)) used.add(getOriginal().get(i));
 		}
 		return used;
 	}
