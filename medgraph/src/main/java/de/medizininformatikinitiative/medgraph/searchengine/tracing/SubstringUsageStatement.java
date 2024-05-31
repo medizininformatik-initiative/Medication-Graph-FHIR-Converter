@@ -14,9 +14,6 @@ import java.util.List;
  */
 public class SubstringUsageStatement extends AbstractUsageStatement<String> {
 
-	// TODO Javadoc
-	// TODO Test
-
 	@NotNull
 	private final IntRange usedRange;
 

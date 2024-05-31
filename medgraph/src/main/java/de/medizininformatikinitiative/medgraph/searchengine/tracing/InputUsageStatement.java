@@ -22,8 +22,6 @@ import org.jetbrains.annotations.NotNull;
  */
 public interface InputUsageStatement<T> {
 
-	// TODO Javadoc
-
 	/**
 	 * Returns the original input for which the used and unused parts are reported by this instance.
 	 */

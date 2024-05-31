@@ -16,10 +16,10 @@ extends CompoundTransformer<S, V, T> implements TraceableTransformer<S, T, U, X>
 	}
 
 	@Override
-	public U traceTransformation(S input, X outputUsageStatement) {
+	public U reverseTransformUsageStatement(S input, X usageStatement) {
 		V input2 = transformer1.apply(input);
-		W tracing2 = getTransformer2().traceTransformation(input2, outputUsageStatement);
-		return getTransformer1().traceTransformation(input, tracing2);
+		W tracing2 = getTransformer2().reverseTransformUsageStatement(input2, usageStatement);
+		return getTransformer1().reverseTransformUsageStatement(input, tracing2);
 	}
 
 	@SuppressWarnings("unchecked")
