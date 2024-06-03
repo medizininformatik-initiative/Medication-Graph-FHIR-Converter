@@ -63,4 +63,18 @@ public class StringListUsageStatement extends AbstractUsageStatement<List<String
 		}
 		return used;
 	}
+
+	@Override
+	public boolean equals(Object object) {
+		if (this == object) return true;
+		if (object == null || getClass() != object.getClass()) return false;
+		if (!super.equals(object)) return false;
+		StringListUsageStatement that = (StringListUsageStatement) object;
+		return Objects.equals(usedIndices, that.usedIndices);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(super.hashCode(), usedIndices);
+	}
 }

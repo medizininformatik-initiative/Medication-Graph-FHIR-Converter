@@ -2,10 +2,7 @@ package de.medizininformatikinitiative.medgraph.searchengine.tracing;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Comparator;
-import java.util.List;
-import java.util.ArrayList;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Indicates that multiple non-overlapping sections of the input string has been used by an operation.
@@ -69,5 +66,19 @@ public class MultiSubstringUsageStatement extends AbstractUsageStatement<String>
 			builder.append(getOriginal(), range.getFrom(), range.getTo());
 		}
 		return builder.toString();
+	}
+
+	@Override
+	public boolean equals(Object object) {
+		if (this == object) return true;
+		if (object == null || getClass() != object.getClass()) return false;
+		if (!super.equals(object)) return false;
+		MultiSubstringUsageStatement that = (MultiSubstringUsageStatement) object;
+		return Objects.equals(usedRanges, that.usedRanges);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(super.hashCode(), usedRanges);
 	}
 }
