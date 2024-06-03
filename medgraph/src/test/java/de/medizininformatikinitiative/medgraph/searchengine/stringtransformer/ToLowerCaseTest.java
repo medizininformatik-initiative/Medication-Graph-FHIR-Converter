@@ -1,7 +1,7 @@
 package de.medizininformatikinitiative.medgraph.searchengine.stringtransformer;
 
 import de.medizininformatikinitiative.medgraph.searchengine.tracing.IntRange;
-import de.medizininformatikinitiative.medgraph.searchengine.tracing.MultiSubstringUsageStatement;
+import de.medizininformatikinitiative.medgraph.searchengine.tracing.DistinctMultiSubstringUsageStatement;
 import org.junit.jupiter.api.Test;
 
 import java.util.Set;
@@ -37,10 +37,10 @@ public class ToLowerCaseTest {
 	public void reverseTransform() {
 		String original = "Hallo welt,";
 		String output = "hallo welt,";
-		MultiSubstringUsageStatement usageStatement = new ToLowerCase().reverseTransformUsageStatement(original,
-				new MultiSubstringUsageStatement(output, Set.of(new IntRange(6, 10))));
+		DistinctMultiSubstringUsageStatement usageStatement = new ToLowerCase().reverseTransformUsageStatement(original,
+				new DistinctMultiSubstringUsageStatement(output, Set.of(new IntRange(6, 10))));
 
-		assertEquals(new MultiSubstringUsageStatement(original,
+		assertEquals(new DistinctMultiSubstringUsageStatement(original,
 				Set.of(new IntRange(6, 10))), usageStatement);
 	}
 
@@ -48,10 +48,10 @@ public class ToLowerCaseTest {
 	public void reverseTransformBlank() {
 		String original = "";
 		String output = "";
-		MultiSubstringUsageStatement usageStatement = new ToLowerCase().reverseTransformUsageStatement(original,
-				new MultiSubstringUsageStatement(output, Set.of()));
+		DistinctMultiSubstringUsageStatement usageStatement = new ToLowerCase().reverseTransformUsageStatement(original,
+				new DistinctMultiSubstringUsageStatement(output, Set.of()));
 
-		assertEquals(new MultiSubstringUsageStatement(original, Set.of()), usageStatement);
+		assertEquals(new DistinctMultiSubstringUsageStatement(original, Set.of()), usageStatement);
 	}
 
 }

@@ -1,7 +1,7 @@
 package de.medizininformatikinitiative.medgraph.searchengine.stringtransformer;
 
 import de.medizininformatikinitiative.medgraph.searchengine.tracing.IntRange;
-import de.medizininformatikinitiative.medgraph.searchengine.tracing.MultiSubstringUsageStatement;
+import de.medizininformatikinitiative.medgraph.searchengine.tracing.DistinctMultiSubstringUsageStatement;
 import de.medizininformatikinitiative.medgraph.searchengine.tracing.StringListUsageStatement;
 
 import java.util.ArrayList;
@@ -15,7 +15,7 @@ import java.util.Set;
  * @author Markus Budeus
  */
 public class WhitespaceTokenizer implements TraceableTransformer<String, List<String>,
-		MultiSubstringUsageStatement, StringListUsageStatement> {
+		DistinctMultiSubstringUsageStatement, StringListUsageStatement> {
 
 	private final boolean considerQuotes;
 
@@ -56,10 +56,10 @@ public class WhitespaceTokenizer implements TraceableTransformer<String, List<St
 		for (int i = 0; i < length; i++) {
 			char c = source.charAt(i);
 			if (c == ' ' && !openQuote) {
-				// The range goes until i (excluding), which means the space is not part of the range.
-				parts.add(new StringExtract(builder.toString(), new IntRange(wordStart, i)));
+				int wordEnd = i + 1;
+				parts.add(new StringExtract(builder.toString(), new IntRange(wordStart, wordEnd)));
 				builder.setLength(0);
-				wordStart = i + 1;
+				wordStart = wordEnd;
 			} else if (c == '"' && considerQuotes) {
 				openQuote = !openQuote;
 			} else {
@@ -74,8 +74,8 @@ public class WhitespaceTokenizer implements TraceableTransformer<String, List<St
 	}
 
 	@Override
-	public MultiSubstringUsageStatement reverseTransformUsageStatement(String input,
-	                                                              StringListUsageStatement usageStatement) {
+	public DistinctMultiSubstringUsageStatement reverseTransformUsageStatement(String input,
+	                                                                           StringListUsageStatement usageStatement) {
 		List<StringExtract> extracts = split(input);
 		if (!mapToValue(extracts).equals(usageStatement.getOriginal())) {
 			throw new IllegalArgumentException("Splitting the given input would not result in the original value " +
@@ -92,18 +92,18 @@ public class WhitespaceTokenizer implements TraceableTransformer<String, List<St
 			}
 		}
 
-		return new MultiSubstringUsageStatement(input, usedRanges);
+		return new DistinctMultiSubstringUsageStatement(input, usedRanges);
 	}
 
 	private static class StringExtract {
 		final String value;
 		/**
 		 * Where in the original word this part has been found. Please note this range includes any quotes around the
-		 * word.
+		 * word as well as succeeding spaces.
 		 * <p>
-		 * E.g., when splitting 'Siamese cat', the ranges would be [0:7] for 'Siamese' and [8:10] for 'cat'.
+		 * E.g., when splitting 'Siamese cat', the ranges would be [0:8] for 'Siamese' and [8:10] for 'cat'.
 		 * <p>
-		 * When splitting 'Holy "Hand Grenade"' with quoting enabled, the ranges would be [0:4] for 'Holy' and [5:19]
+		 * When splitting 'Holy "Hand Grenade"' with quoting enabled, the ranges would be [0:5] for 'Holy' and [5:19]
 		 * for 'Hand Grenade'
 		 */
 		final IntRange origin;

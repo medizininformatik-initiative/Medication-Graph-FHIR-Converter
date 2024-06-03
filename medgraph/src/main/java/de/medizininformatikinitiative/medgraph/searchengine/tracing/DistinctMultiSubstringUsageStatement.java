@@ -5,78 +5,67 @@ import org.jetbrains.annotations.NotNull;
 import java.util.*;
 
 /**
- * Indicates that multiple possibly overlapping sections of the input string has been used by an operation.
+ * Indicates that multiple non-overlapping sections of the input string has been used by an operation.
  *
  * @author Markus Budeus
  * @see InputUsageStatement
  */
-public class MultiSubstringUsageStatement extends SubstringUsageStatement {
+public class DistinctMultiSubstringUsageStatement extends SubstringUsageStatement {
 
 	/**
-	 * The used ranges of characters from the original string that were used.
+	 * The used ranges of characters from the original string that were used. Guaranteed to not overlap and sorted in
+	 * ascending order (i.e. lower ranges pointing to earlier parts of the string coming first)
 	 */
 	@NotNull
 	private final List<IntRange> usedRanges;
 
 	/**
-	 * Creates a new {@link MultiSubstringUsageStatement}.
+	 * Creates a new {@link DistinctMultiSubstringUsageStatement}.
 	 *
 	 * @param original   the original input string
 	 * @param usedRanges the ranges of characters from the string that were used
 	 * @throws NullPointerException     if any of the given ranges is null
-	 * @throws IllegalArgumentException if any of the given ranges is out of bounds for the original string
+	 * @throws IllegalArgumentException if any of the given ranges is out of bounds for the original string or if any of
+	 *                                  the ranges overlap
 	 */
-	public MultiSubstringUsageStatement(@NotNull String original, @NotNull Set<IntRange> usedRanges) {
+	public DistinctMultiSubstringUsageStatement(@NotNull String original, @NotNull Set<IntRange> usedRanges) {
 		super(original);
 
 		this.usedRanges = new ArrayList<>(usedRanges);
 		this.usedRanges.sort(Comparator.comparing(IntRange::getFrom));
 
+		int lastTo = 0;
 		int length = original.length();
 		for (IntRange range : this.usedRanges) {
 			if (range.getFrom() < 0 || range.getTo() > length) {
 				throw new IllegalArgumentException("Got the range " + range + " as used range, " +
 						"but it's out of bounds for the input string of length " + length);
 			}
+			if (range.getFrom() < lastTo) {
+				throw new IllegalArgumentException("The given used ranges overlap!");
+			}
+			lastTo = range.getTo();
 		}
 	}
 
 	@Override
 	@NotNull
 	public String getUnusedParts() {
-		return getUsedOrUnusedParts(false);
+		StringBuilder builder = new StringBuilder(getOriginal());
+		for (IntRange range : usedRanges.reversed()) {
+			builder.delete(range.getFrom(), range.getTo());
+		}
+		return builder.toString();
 	}
 
 	@Override
 	@NotNull
 	public String getUsedParts() {
-		return getUsedOrUnusedParts(true);
-	}
-
-	private String getUsedOrUnusedParts(boolean used) {
 		StringBuilder builder = new StringBuilder();
-		boolean[] usageArray = buildUsageArray();
-		String original = getOriginal();
-		for (int i = 0; i < original.length(); i++) {
-			if (usageArray[i] == used) {
-				builder.append(original.charAt(i));
-			}
+		for (IntRange range : usedRanges) {
+			builder.append(getOriginal(), range.getFrom(), range.getTo());
 		}
 		return builder.toString();
-	}
-
-	/**
-	 * Creates an array of the exact same length as the original string. Each value indicates if the corresponding
-	 * character is part of any used range.
-	 */
-	private boolean[] buildUsageArray() {
-		boolean[] usageArray = new boolean[getOriginal().length()];
-		for (IntRange range: usedRanges) {
-			for (int i = range.getFrom(); i < range.getTo(); i++) {
-				usageArray[i] = true;
-			}
-		}
-		return usageArray;
 	}
 
 	@Override
@@ -84,7 +73,7 @@ public class MultiSubstringUsageStatement extends SubstringUsageStatement {
 		if (this == object) return true;
 		if (object == null || getClass() != object.getClass()) return false;
 		if (!super.equals(object)) return false;
-		MultiSubstringUsageStatement that = (MultiSubstringUsageStatement) object;
+		DistinctMultiSubstringUsageStatement that = (DistinctMultiSubstringUsageStatement) object;
 		return Objects.equals(usedRanges, that.usedRanges);
 	}
 
@@ -95,7 +84,7 @@ public class MultiSubstringUsageStatement extends SubstringUsageStatement {
 
 	@Override
 	public String toString() {
-		return "MultiSubstringUsageStatement{" +
+		return "DistinctMultiSubstringUsageStatement{" +
 				"original=" + getOriginal() + ", " +
 				"usedRanges=" + usedRanges +
 				'}';

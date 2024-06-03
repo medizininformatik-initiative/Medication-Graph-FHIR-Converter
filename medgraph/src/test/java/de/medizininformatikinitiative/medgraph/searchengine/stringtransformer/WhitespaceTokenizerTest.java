@@ -2,7 +2,7 @@ package de.medizininformatikinitiative.medgraph.searchengine.stringtransformer;
 
 import de.medizininformatikinitiative.medgraph.UnitTest;
 import de.medizininformatikinitiative.medgraph.searchengine.tracing.IntRange;
-import de.medizininformatikinitiative.medgraph.searchengine.tracing.MultiSubstringUsageStatement;
+import de.medizininformatikinitiative.medgraph.searchengine.tracing.DistinctMultiSubstringUsageStatement;
 import de.medizininformatikinitiative.medgraph.searchengine.tracing.StringListUsageStatement;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -62,7 +62,7 @@ public class WhitespaceTokenizerTest extends UnitTest {
 	@ValueSource(booleans = {false, true})
 	public void reverseTransformSimpleTokenize(boolean quotingEnabled) {
 		String input = "Our House in the middle";
-		MultiSubstringUsageStatement usageStatement =
+		DistinctMultiSubstringUsageStatement usageStatement =
 				new WhitespaceTokenizer(quotingEnabled).reverseTransformUsageStatement(
 						input,
 						new StringListUsageStatement(
@@ -70,8 +70,8 @@ public class WhitespaceTokenizerTest extends UnitTest {
 								Set.of(1, 4)
 						)
 				);
-		assertEquals(new MultiSubstringUsageStatement(input, Set.of(
-				new IntRange(4, 9), new IntRange(17, 23)
+		assertEquals(new DistinctMultiSubstringUsageStatement(input, Set.of(
+				new IntRange(4, 10), new IntRange(17, 23)
 		)), usageStatement);
 	}
 
@@ -79,7 +79,7 @@ public class WhitespaceTokenizerTest extends UnitTest {
 	@ValueSource(booleans = {false, true})
 	public void reverseTransformBlankStringsWouldRemain(boolean quotingEnabled) {
 		String input = "of  our street, \t our House";
-		MultiSubstringUsageStatement usageStatement =
+		DistinctMultiSubstringUsageStatement usageStatement =
 				new WhitespaceTokenizer(quotingEnabled).reverseTransformUsageStatement(
 						input,
 						new StringListUsageStatement(
@@ -87,8 +87,8 @@ public class WhitespaceTokenizerTest extends UnitTest {
 								Set.of(0, 1, 2, 3)
 						)
 				);
-		assertEquals(new MultiSubstringUsageStatement(input, Set.of(
-				new IntRange(0, 2), new IntRange(4, 7), new IntRange(8, 15), new IntRange(18, 21)
+		assertEquals(new DistinctMultiSubstringUsageStatement(input, Set.of(
+				new IntRange(0, 3), new IntRange(4, 8), new IntRange(8, 16), new IntRange(18, 22)
 		)), usageStatement);
 	}
 
@@ -96,18 +96,18 @@ public class WhitespaceTokenizerTest extends UnitTest {
 	@ValueSource(booleans = {false, true})
 	public void reverseTransformEmptyString(boolean quotingEnabled) {
 		String input = "";
-		MultiSubstringUsageStatement usageStatement =
+		DistinctMultiSubstringUsageStatement usageStatement =
 				new WhitespaceTokenizer(quotingEnabled).reverseTransformUsageStatement(
 						input,
 						new StringListUsageStatement(List.of(), Set.of())
 				);
-		assertEquals(new MultiSubstringUsageStatement(input, Set.of()), usageStatement);
+		assertEquals(new DistinctMultiSubstringUsageStatement(input, Set.of()), usageStatement);
 	}
 
 	@Test
 	public void reverseTransformQuoting() {
 		String input = "Holy \"Hand Grenade\"";
-		MultiSubstringUsageStatement usageStatement =
+		DistinctMultiSubstringUsageStatement usageStatement =
 				new WhitespaceTokenizer(true).reverseTransformUsageStatement(
 						input,
 						new StringListUsageStatement(
@@ -115,14 +115,14 @@ public class WhitespaceTokenizerTest extends UnitTest {
 								Set.of(1)
 						)
 				);
-		assertEquals(new MultiSubstringUsageStatement(input,
+		assertEquals(new DistinctMultiSubstringUsageStatement(input,
 				Set.of(new IntRange(5, 19))), usageStatement);
 	}
 
 	@Test
 	public void reverseTransformQuotingWithQuotingDisabled() {
 		String input = "Holy \"Hand Grenade\"";
-		MultiSubstringUsageStatement usageStatement =
+		DistinctMultiSubstringUsageStatement usageStatement =
 				new WhitespaceTokenizer(false).reverseTransformUsageStatement(
 						input,
 						new StringListUsageStatement(
@@ -130,14 +130,14 @@ public class WhitespaceTokenizerTest extends UnitTest {
 								Set.of(1)
 						)
 				);
-		assertEquals(new MultiSubstringUsageStatement(input,
-				Set.of(new IntRange(5, 10))), usageStatement);
+		assertEquals(new DistinctMultiSubstringUsageStatement(input,
+				Set.of(new IntRange(5, 11))), usageStatement);
 	}
 
 	@Test
 	public void reverseTransformUnclosedQuote() {
 		String input = "\"Our House\" in \"the middle";
-		MultiSubstringUsageStatement usageStatement =
+		DistinctMultiSubstringUsageStatement usageStatement =
 				new WhitespaceTokenizer(true).reverseTransformUsageStatement(
 						input,
 						new StringListUsageStatement(
@@ -145,7 +145,7 @@ public class WhitespaceTokenizerTest extends UnitTest {
 								Set.of(2)
 						)
 				);
-		assertEquals(new MultiSubstringUsageStatement(input,
+		assertEquals(new DistinctMultiSubstringUsageStatement(input,
 				Set.of(new IntRange(15, 26))), usageStatement);
 	}
 

@@ -34,7 +34,7 @@ public class LevenshteinListMatcher extends SimpleMatcher<List<String>, Levensht
 	 * Initializes the matcher using the default allowed Levenshtein distance of 1.
 	 */
 	public LevenshteinListMatcher() {
-		this(1);
+		this(2);
 	}
 
 	public LevenshteinListMatcher(int threshold) {

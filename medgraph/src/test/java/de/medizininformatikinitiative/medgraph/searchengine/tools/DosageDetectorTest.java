@@ -1,5 +1,6 @@
 package de.medizininformatikinitiative.medgraph.searchengine.tools;
 
+import de.medizininformatikinitiative.medgraph.searchengine.algorithm.querymanagement.DosageQueryParser;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
@@ -239,6 +240,15 @@ class DosageDetectorTest {
 		assertEquals(2, dosages.size());
 		assertMatch(dosages.get(0), 16, 7, new BigDecimal("2.45"), "mg", null, null, null);
 		assertMatch(dosages.get(1), 24, 7, BigDecimal.valueOf(1), "mg", null, BigDecimal.ONE, "ml");
+	}
+
+	@Test
+	public void qualifierLikeNewUnit() {
+		List<DosageDetector.DetectedDosage> dosages = DosageDetector.detectDosages(
+				"Aspirin 500 mg 10mg/ml");
+		assertEquals(2, dosages.size());
+		assertMatch(dosages.get(0), 8, 6, new BigDecimal(500), "mg", null, null, null);
+		assertMatch(dosages.get(1), 15, 7, BigDecimal.TEN, "mg", null, BigDecimal.ONE, "ml");
 	}
 
 	public void assertSingleMatch(List<DosageDetector.DetectedDosage> list,
