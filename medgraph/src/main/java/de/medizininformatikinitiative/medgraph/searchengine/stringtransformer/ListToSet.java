@@ -32,7 +32,6 @@ public class ListToSet implements TraceableTransformer<List<String>, Set<String>
 			if (usedTokens.contains(input.get(i)))
 				usedIndices.add(i);
 		}
-		// TODO Test
 		return new StringListUsageStatement(input, usedIndices);
 	}
 }

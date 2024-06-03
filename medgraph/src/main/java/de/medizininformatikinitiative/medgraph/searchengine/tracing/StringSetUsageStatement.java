@@ -4,6 +4,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 /**
@@ -48,5 +49,19 @@ public class StringSetUsageStatement extends AbstractUsageStatement<Set<String>>
 	@NotNull
 	public Set<String> getUsedParts() {
 		return Collections.unmodifiableSet(usedTokens);
+	}
+
+	@Override
+	public boolean equals(Object object) {
+		if (this == object) return true;
+		if (object == null || getClass() != object.getClass()) return false;
+		if (!super.equals(object)) return false;
+		StringSetUsageStatement that = (StringSetUsageStatement) object;
+		return Objects.equals(usedTokens, that.usedTokens);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(super.hashCode(), usedTokens);
 	}
 }

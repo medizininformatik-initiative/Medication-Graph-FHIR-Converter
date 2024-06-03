@@ -2,9 +2,7 @@ package de.medizininformatikinitiative.medgraph.searchengine.tracing;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
+import java.util.Objects;
 
 /**
  * Indicates that a single, specific section of the input string has been used by an operation.
@@ -47,5 +45,19 @@ public class SubstringUsageStatement extends AbstractUsageStatement<String> {
 	@NotNull
 	public String getUsedParts() {
 		return getOriginal().substring(usedRange.getFrom(), usedRange.getTo());
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(super.hashCode(), usedRange);
+	}
+
+	@Override
+	public boolean equals(Object object) {
+		if (this == object) return true;
+		if (object == null || getClass() != object.getClass()) return false;
+		if (!super.equals(object)) return false;
+		SubstringUsageStatement that = (SubstringUsageStatement) object;
+		return Objects.equals(usedRange, that.usedRange);
 	}
 }
