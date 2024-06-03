@@ -138,6 +138,12 @@ public class DosageDetector {
 		String qualifier = null;
 		if (separatorIndex > currentIndex) {
 			// Separator is far away! Search for a qualifier.
+
+			// A qualifier may never start with a digit to avoid false positives on succeeding dosages!
+			if (Character.isDigit(value.charAt(currentIndex))) {
+				return result.complete();
+			}
+
 			for (int index = currentIndex; index < separatorIndex; index++) {
 				char current = value.charAt(index);
 				if (TERMINATOR_SIGNS.contains(current)) {

@@ -55,13 +55,13 @@ public class LevenshteinSearchMatchFinder implements InitialMatchFinder {
 
 		Stream<LevenshteinSetMatcher.Match> allMatches = Stream.empty();
 		List<String> productKeywords = query.getProductNameKeywords();
-		List<String> substanceKeywords = query.getSubstanceNameKeywords();
+//		List<String> substanceKeywords = query.getSubstanceNameKeywords();
 		if (!productKeywords.isEmpty()) {
 			allMatches = doMatching(productsProvider, productKeywords);
 		}
-		if (!substanceKeywords.isEmpty()) {
-			allMatches = Stream.concat(allMatches, doMatching(substanceProvider, substanceKeywords));
-		}
+//		if (!substanceKeywords.isEmpty()) {
+//			allMatches = Stream.concat(allMatches, doMatching(substanceProvider, substanceKeywords));
+//		}
 
 		// TODO This throws away all match info, which might be nice to have in the OriginalMatch instance for later reference
 		return allMatches

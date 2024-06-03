@@ -18,6 +18,8 @@ import java.util.List;
  */
 public class SimpleQueryParser implements QueryParser {
 
+	// TODO This class is broken as substanceTokens no longer work
+
 	private final RemoveDosageInformation dosageInfoRemover = new RemoveDosageInformation();
 	private final Transformer<String, List<String>> tokenizer =
 			new WhitespaceTokenizer()
@@ -50,7 +52,7 @@ public class SimpleQueryParser implements QueryParser {
 
 		return new SearchQuery.Builder()
 				.withProductNameKeywords(productTokens)
-				.withSubstances(substanceTokens)
+//				.withSubstances(substanceTokens)
 				.withActiveIngredientDosages(searchDosages)
 				.withDrugAmounts(searchAmounts)
 				.build();

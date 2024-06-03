@@ -50,7 +50,7 @@ public interface TraceableTransformer<S, T, U extends InputUsageStatement<S>, V 
 	U reverseTransformUsageStatement(S input, V usageStatement);
 
 	/**
-	 * Like {@link ##and(Transformer)}, but keeps the traceability. Obviously requires the chained transformer to
+	 * Like {@link #and(Transformer)}, but keeps the traceability. Obviously requires the chained transformer to
 	 * produce a {@link InputUsageStatement} compatible to this instance.
 	 *
 	 * @param transformer the transformer to chain with

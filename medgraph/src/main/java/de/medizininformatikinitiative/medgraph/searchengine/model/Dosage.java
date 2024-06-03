@@ -49,6 +49,21 @@ public class Dosage {
 	 * @param denominatorUnit   the denominator's unit
 	 * @return the constructed {@link Dosage}
 	 */
+	public static Dosage of(int nominatorAmount, @NotNull String nominatorUnit,
+	                        int denominatorAmount, @NotNull String denominatorUnit) {
+		return Dosage.of(new BigDecimal(nominatorAmount), nominatorUnit, new BigDecimal(denominatorAmount),
+				denominatorUnit);
+	}
+
+	/**
+	 * Constructs a ratio dosage with a nominator and a denominator.
+	 *
+	 * @param nominatorAmount   the nominator amount
+	 * @param nominatorUnit     the nominator's unit
+	 * @param denominatorAmount the denominator's amount
+	 * @param denominatorUnit   the denominator's unit
+	 * @return the constructed {@link Dosage}
+	 */
 	public static Dosage of(@NotNull BigDecimal nominatorAmount, @NotNull String nominatorUnit,
 	                        @NotNull BigDecimal denominatorAmount, @NotNull String denominatorUnit) {
 		return new Dosage(new Amount(nominatorAmount, nominatorUnit), null,
@@ -92,7 +107,8 @@ public class Dosage {
 	public String toString() {
 		String nominator = nominatorQualifier != null ? amountNominator + " " + nominatorQualifier : amountNominator.toString();
 		String denominator = amountDenominator != null ?
-				(amountDenominator.getNumber().equals(BigDecimal.ONE) ? amountDenominator.getUnit() : amountDenominator.toString())
+				(amountDenominator.getNumber()
+				                  .equals(BigDecimal.ONE) ? amountDenominator.getUnit() : amountDenominator.toString())
 				: null;
 		return denominator != null ? nominator + "/" + denominator : nominator;
 	}
