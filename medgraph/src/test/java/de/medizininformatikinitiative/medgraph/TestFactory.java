@@ -14,7 +14,8 @@ import java.util.Set;
 import static de.medizininformatikinitiative.medgraph.common.EDQM.*;
 
 /**
- * Provides and/or generates lots of sample entities.
+ * Provides and/or generates lots of sample entities. The entities provided here are also reflected in the Neo4j test
+ * database, whose definition can be found in {@link Neo4jDatabaseTestExtension}.
  *
  * @author Markus Budeus
  */
