@@ -22,10 +22,7 @@ public class ListToSet implements TraceableTransformer<List<String>, Set<String>
 	@Override
 	public StringListUsageStatement reverseTransformUsageStatement(List<String> input,
 	                                                               StringSetUsageStatement usageStatement) {
-		if (!apply(input).equals(usageStatement.getOriginal())) {
-			throw new IllegalArgumentException("The given output usage statement's original list is different than " +
-					"what this class would produce for the given input!");
-		}
+		Tools.ensureValidity(this, input, usageStatement);
 		Set<String> usedTokens = usageStatement.getUsedParts();
 		Set<Integer> usedIndices = new HashSet<>(usedTokens.size());
 		for (int i = 0; i < input.size(); i++) {

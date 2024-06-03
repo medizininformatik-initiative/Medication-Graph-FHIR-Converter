@@ -1,6 +1,10 @@
 package de.medizininformatikinitiative.medgraph.searchengine.stringtransformer;
 
+import de.medizininformatikinitiative.medgraph.searchengine.tracing.StringListUsageStatement;
+
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * This transformer removes special characters (',', ';', '|', '-', ':', '.', '®') from the end of each string if
@@ -8,7 +12,8 @@ import java.util.List;
  *
  * @author Markus Budeus
  */
-public class TrimSpecialSuffixSymbols implements Transformer<List<String>, List<String>> {
+public class TrimSpecialSuffixSymbols implements TraceableTransformer<List<String>, List<String>,
+		StringListUsageStatement, StringListUsageStatement> {
 
 	@Override
 	public List<String> apply(List<String> source) {
@@ -42,4 +47,25 @@ public class TrimSpecialSuffixSymbols implements Transformer<List<String>, List<
 		return s;
 	}
 
+	@Override
+	public StringListUsageStatement reverseTransformUsageStatement(List<String> input,
+	                                                               StringListUsageStatement usageStatement) {
+		Tools.ensureValidity(this, input, usageStatement);
+		if (input.size() == usageStatement.getUsedIndices().size()) {
+			return new StringListUsageStatement(input, usageStatement.getUsedIndices());
+		}
+
+		// Blank strings have been filtered out, we need to know at which indices
+		List<String> trimmedInputs = input.stream().map(this::trimSeperators).toList();
+		Set<Integer> usedIndices = new HashSet<>();
+		int encounteredBlanks = 0;
+		for (int i = 0; i < trimmedInputs.size(); i++) {
+			if (trimmedInputs.get(i).isBlank()) {
+				encounteredBlanks++;
+			} else {
+				if (usageStatement.getUsedIndices().contains(i - encounteredBlanks)) usedIndices.add(i);
+			}
+		}
+		return new StringListUsageStatement(input, usedIndices);
+	}
 }

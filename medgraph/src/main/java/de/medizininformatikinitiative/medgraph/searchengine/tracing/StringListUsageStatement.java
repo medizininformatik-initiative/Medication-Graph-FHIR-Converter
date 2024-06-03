@@ -64,6 +64,10 @@ public class StringListUsageStatement extends AbstractUsageStatement<List<String
 		return used;
 	}
 
+	public @NotNull Set<Integer> getUsedIndices() {
+		return usedIndices;
+	}
+
 	@Override
 	public boolean equals(Object object) {
 		if (this == object) return true;

@@ -81,4 +81,12 @@ public class MultiSubstringUsageStatement extends AbstractUsageStatement<String>
 	public int hashCode() {
 		return Objects.hash(super.hashCode(), usedRanges);
 	}
+
+	@Override
+	public String toString() {
+		return "MultiSubstringUsageStatement{" +
+				"original=" + getOriginal() + ", " +
+				"usedRanges=" + usedRanges +
+				'}';
+	}
 }
