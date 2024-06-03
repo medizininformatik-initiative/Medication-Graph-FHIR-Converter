@@ -55,7 +55,7 @@ public class DosageAndAmountInfoMatchJudgeTest extends UnitTest {
 
 		// No active ingredient dosages or drug amounts in query!
 		SearchQuery query = new SearchQuery.Builder()
-				.withSubstanceNameKeywords(List.of("Aspirin"))
+				.withSubstances(List.of(SAMPLE_SUBSTANCE_1))
 				.build();
 
 		if (batchMode) {
@@ -75,7 +75,7 @@ public class DosageAndAmountInfoMatchJudgeTest extends UnitTest {
 				new IllegalArgumentException("No database access should happen!"));
 
 		SearchQuery query = new SearchQuery.Builder()
-				.withSubstanceNameKeywords(List.of("Aspirin"))
+				.withSubstances(List.of(SAMPLE_SUBSTANCE_2))
 				.withActiveIngredientDosages(List.of(Dosage.of(400, "mg")))
 				.withDrugAmounts(List.of(new Amount(BigDecimal.ONE, null)))
 				.build();
@@ -95,7 +95,7 @@ public class DosageAndAmountInfoMatchJudgeTest extends UnitTest {
 		List<Dosage> queryDosages = List.of(Dosage.of(10, "mg"));
 
 		SearchQuery query = new SearchQuery.Builder()
-				.withSubstanceNameKeywords(List.of("Aspirin"))
+				.withSubstances(List.of(SAMPLE_SUBSTANCE_1))
 				.withActiveIngredientDosages(queryDosages)
 				.build();
 
@@ -118,7 +118,7 @@ public class DosageAndAmountInfoMatchJudgeTest extends UnitTest {
 		List<Amount> queryAmounts = List.of(new Amount(BigDecimal.ONE, "ml"));
 
 		SearchQuery query = new SearchQuery.Builder()
-				.withSubstanceNameKeywords(List.of("Aspirin"))
+				.withSubstances(List.of(SAMPLE_SUBSTANCE_1))
 				.withDrugAmounts(queryAmounts)
 				.build();
 
@@ -146,7 +146,7 @@ public class DosageAndAmountInfoMatchJudgeTest extends UnitTest {
 		List<Amount> queryAmounts = List.of(new Amount(BigDecimal.ONE, "ml"));
 
 		SearchQuery query = new SearchQuery.Builder()
-				.withSubstanceNameKeywords(List.of("Aspirin"))
+				.withSubstances(List.of(SAMPLE_SUBSTANCE_1))
 				.withActiveIngredientDosages(queryDosages)
 				.withDrugAmounts(queryAmounts)
 				.build();
@@ -181,7 +181,7 @@ public class DosageAndAmountInfoMatchJudgeTest extends UnitTest {
 		List<Amount> queryAmounts = List.of(new Amount(BigDecimal.ONE, "ml"));
 
 		SearchQuery query = new SearchQuery.Builder()
-				.withSubstanceNameKeywords(List.of("Aspirin"))
+				.withSubstances(List.of(SAMPLE_SUBSTANCE_1))
 				.withActiveIngredientDosages(queryDosages)
 				.withDrugAmounts(queryAmounts)
 				.build();
@@ -209,7 +209,7 @@ public class DosageAndAmountInfoMatchJudgeTest extends UnitTest {
 		List<Amount> queryAmounts = List.of(new Amount(BigDecimal.ONE, "ml"));
 
 		SearchQuery query = new SearchQuery.Builder()
-				.withSubstanceNameKeywords(List.of("Aspirin"))
+				.withSubstances(List.of(SAMPLE_SUBSTANCE_1))
 				.withActiveIngredientDosages(queryDosages)
 				.withDrugAmounts(queryAmounts)
 				.build();

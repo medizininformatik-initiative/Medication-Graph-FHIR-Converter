@@ -2,6 +2,7 @@ package de.medizininformatikinitiative.medgraph.searchengine.model;
 
 import de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject.EdqmConcept;
 import de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject.EdqmPharmaceuticalDoseForm;
+import de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject.Substance;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -19,7 +20,7 @@ public class SearchQuery {
 	@NotNull
 	private final List<String> productNameKeywords;
 	@NotNull
-	private final List<String> substanceNameKeywords;
+	private final List<Substance> substances;
 
 	@NotNull
 	private final List<Dosage> activeIngredientDosages;
@@ -34,13 +35,13 @@ public class SearchQuery {
 	private final List<EdqmConcept> doseFormCharacteristics;
 
 	public SearchQuery(@NotNull List<String> productNameKeywords,
-	                   @NotNull List<String> substanceNameKeywords,
+	                   @NotNull List<Substance> substances,
 	                   @NotNull List<? extends Dosage> activeIngredientDosages,
 	                   @NotNull List<? extends Amount> drugAmounts,
 	                   @NotNull List<EdqmPharmaceuticalDoseForm> doseForms,
 	                   @NotNull List<EdqmConcept> doseFormCharacteristics) {
 		this.productNameKeywords = productNameKeywords;
-		this.substanceNameKeywords = substanceNameKeywords;
+		this.substances = substances;
 		this.activeIngredientDosages = new ArrayList<>(activeIngredientDosages);
 		this.drugAmounts = new ArrayList<>(drugAmounts);
 		this.doseForms = doseForms;
@@ -56,11 +57,10 @@ public class SearchQuery {
 	}
 
 	/**
-	 * Returns a list of keywords for which so search in substance names.
+	 * Returns a list of substances which the searched product should contain.
 	 */
-	@NotNull
-	public List<String> getSubstanceNameKeywords() {
-		return substanceNameKeywords;
+	public @NotNull List<Substance> getSubstances() {
+		return substances;
 	}
 
 	/**
@@ -99,7 +99,7 @@ public class SearchQuery {
 		@Nullable
 		private List<String> productNameKeywords = null;
 		@Nullable
-		private List<String> substanceNameKeywords = null;
+		private List<Substance> substances = null;
 		@Nullable
 		private List<Dosage> activeIngredientDosages = null;
 		@Nullable
@@ -118,9 +118,9 @@ public class SearchQuery {
 			return this;
 		}
 
-		public Builder withSubstanceNameKeywords(
-				@Nullable List<String> substanceNameKeywords) {
-			this.substanceNameKeywords = substanceNameKeywords;
+		public Builder withSubstances(
+				@Nullable List<Substance> substances) {
+			this.substances = substances;
 			return this;
 		}
 
@@ -152,7 +152,7 @@ public class SearchQuery {
 		public SearchQuery build() {
 			return new SearchQuery(
 					emptyIfNull(productNameKeywords),
-					emptyIfNull(substanceNameKeywords),
+					emptyIfNull(substances),
 					emptyIfNull(activeIngredientDosages),
 					emptyIfNull(drugAmounts),
 					emptyIfNull(doseForms),
