@@ -30,7 +30,7 @@ fun ParsedQueryUI() {
         ParsedQueryUI(
             SearchQuery.Builder()
                 .withProductNameKeywords(listOf("Aspirin", "HEXAL"))
-                .withSubstanceNameKeywords(listOf("Acetylsalicylsäure", "Clopidogrel"))
+                .withSubstances(listOf("Acetylsalicylsäure", "Clopidogrel"))
                 .withActiveIngredientDosages(
                     listOf(
                         Dosage.of(500, "mg"),

@@ -50,7 +50,7 @@ public class SimpleQueryParser implements QueryParser {
 
 		return new SearchQuery.Builder()
 				.withProductNameKeywords(productTokens)
-				.withSubstanceNameKeywords(substanceTokens)
+				.withSubstances(substanceTokens)
 				.withActiveIngredientDosages(searchDosages)
 				.withDrugAmounts(searchAmounts)
 				.build();

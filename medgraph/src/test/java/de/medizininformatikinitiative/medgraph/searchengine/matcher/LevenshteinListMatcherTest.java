@@ -17,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 public class LevenshteinListMatcherTest extends UnitTest {
 
-	private LevenshteinListMatcher sut = new LevenshteinListMatcher(1);
+	private final LevenshteinListMatcher sut = new LevenshteinListMatcher(1);
 
 	@Test
 	void simpleExample() {

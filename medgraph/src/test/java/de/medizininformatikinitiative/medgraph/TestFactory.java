@@ -208,7 +208,7 @@ public class TestFactory {
 
 	public static final SearchQuery SAMPLE_SEARCH_QUERY = new SearchQuery.Builder()
 			.withProductNameKeywords(List.of("Aspirin"))
-			.withSubstanceNameKeywords(List.of("Acetylsalicylsäure"))
+			.withSubstances(List.of("Acetylsalicylsäure"))
 			.withActiveIngredientDosages(List.of(Dosage.of(10, "mg")))
 			.withDrugAmounts(List.of(new Amount(BigDecimal.ONE, "ml")))
 			.build();
