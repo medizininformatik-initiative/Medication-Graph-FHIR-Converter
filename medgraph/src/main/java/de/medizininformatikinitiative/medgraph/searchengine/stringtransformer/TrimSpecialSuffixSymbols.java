@@ -8,7 +8,7 @@ import java.util.Set;
 
 /**
  * This transformer removes special characters (',', ';', '|', '-', ':', '.', '®') from the end of each string if
- * present. If this were to leave a string empty, it is removed from the set.
+ * present. If this were to leave a string blank, it is removed from the set.
  *
  * @author Markus Budeus
  */

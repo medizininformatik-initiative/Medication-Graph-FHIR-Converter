@@ -10,7 +10,7 @@ import java.util.*;
  * @author Markus Budeus
  * @see InputUsageStatement
  */
-public class MultiSubstringUsageStatement extends AbstractUsageStatement<String> {
+public class MultiSubstringUsageStatement extends SubstringUsageStatement {
 
 	/**
 	 * The used ranges of characters from the original string that were used. Guaranteed to not overlap and sorted in
@@ -88,5 +88,10 @@ public class MultiSubstringUsageStatement extends AbstractUsageStatement<String>
 				"original=" + getOriginal() + ", " +
 				"usedRanges=" + usedRanges +
 				'}';
+	}
+
+	@Override
+	public Set<IntRange> getUsedRanges() {
+		return new HashSet<>(usedRanges);
 	}
 }
