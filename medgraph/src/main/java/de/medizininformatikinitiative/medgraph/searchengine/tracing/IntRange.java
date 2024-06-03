@@ -1,5 +1,7 @@
 package de.medizininformatikinitiative.medgraph.searchengine.tracing;
 
+import java.util.Objects;
+
 /**
  * Represents a range between two integers, the lower bound being inclusive and the upper bound being exclusive.
  *
@@ -36,6 +38,19 @@ public class IntRange {
 
 	public int getTo() {
 		return to;
+	}
+
+	@Override
+	public boolean equals(Object object) {
+		if (this == object) return true;
+		if (object == null || getClass() != object.getClass()) return false;
+		IntRange range = (IntRange) object;
+		return from == range.from && to == range.to;
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(from, to);
 	}
 
 	@Override

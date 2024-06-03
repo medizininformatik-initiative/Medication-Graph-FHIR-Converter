@@ -1,10 +1,12 @@
 package de.medizininformatikinitiative.medgraph.searchengine.stringtransformer;
 
+import de.medizininformatikinitiative.medgraph.searchengine.tracing.StringListUsageStatement;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
 import java.util.List;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -42,6 +44,51 @@ public class TrimSpecialSuffixSymbolsTest {
 	public void trimEmpty() {
 		assertEquals(List.of(),
 				new TrimSpecialSuffixSymbols().apply(List.of()));
+	}
+
+	@Test
+	public void reverseTransformTrimSpecialSuffix() {
+		List<String> input = List.of("Rivaroxaban®", "Tabletten");
+		StringListUsageStatement usageStatement = new TrimSpecialSuffixSymbols().reverseTransformUsageStatement(input,
+				new StringListUsageStatement(List.of("Rivaroxaban", "Tabletten"), Set.of(1)));
+
+		assertEquals(new StringListUsageStatement(input, Set.of(1)), usageStatement);
+	}
+
+	@Test
+	public void reverseTransformTrimMultiple() {
+		List<String> input = List.of("Rivaroxaban®,", "Film-Tbl.");
+		StringListUsageStatement usageStatement = new TrimSpecialSuffixSymbols().reverseTransformUsageStatement(input,
+				new StringListUsageStatement(List.of("Rivaroxaban", "Film-Tbl"), Set.of(0, 1)));
+
+		assertEquals(new StringListUsageStatement(input, Set.of(0, 1)), usageStatement);
+	}
+
+	@Test
+	public void reverseTransformTrimBlank() {
+		List<String> input = List.of("", "Mouse", "---", "Water", "Free");
+		StringListUsageStatement usageStatement = new TrimSpecialSuffixSymbols().reverseTransformUsageStatement(input,
+				new StringListUsageStatement(List.of("Mouse", "Water", "Free"), Set.of(0, 2)));
+
+		assertEquals(new StringListUsageStatement(input, Set.of(1, 4)), usageStatement);
+	}
+
+	@Test
+	public void reverseTransformTrimToBlank() {
+		List<String> input = List.of("-");
+		StringListUsageStatement usageStatement = new TrimSpecialSuffixSymbols().reverseTransformUsageStatement(input,
+				new StringListUsageStatement(List.of(), Set.of()));
+
+		assertEquals(new StringListUsageStatement(input, Set.of()), usageStatement);
+	}
+
+	@Test
+	public void reverseTransformTrimEmpty() {
+		List<String> input = List.of();
+		StringListUsageStatement usageStatement = new TrimSpecialSuffixSymbols().reverseTransformUsageStatement(input,
+				new StringListUsageStatement(List.of(), Set.of()));
+
+		assertEquals(new StringListUsageStatement(input, Set.of()), usageStatement);
 	}
 
 }
