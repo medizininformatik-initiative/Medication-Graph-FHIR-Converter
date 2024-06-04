@@ -8,6 +8,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.LinkedHashSet;
 import java.util.List;
 
 /**
@@ -95,74 +96,77 @@ public class SearchQuery {
 		return doseFormCharacteristics;
 	}
 
+	/**
+	 * Builder for search queries. Note that when using this builder, you cannot remove already-added information
+	 * and the created lists will remove duplicates.
+	 */
 	public static class Builder {
-		@Nullable
-		private List<String> productNameKeywords = null;
-		@Nullable
-		private List<Substance> substances = null;
-		@Nullable
-		private List<Dosage> activeIngredientDosages = null;
-		@Nullable
-		private List<Amount> drugAmounts = null;
-		@Nullable
-		private List<EdqmPharmaceuticalDoseForm> doseForms = null;
-		@Nullable
-		private List<EdqmConcept> doseFormCharacteristics = null;
+		@NotNull
+		private final List<String> productNameKeywords = new ArrayList<>();
+		@NotNull
+		private final List<Substance> substances = new ArrayList<>();
+		@NotNull
+		private final List<Dosage> activeIngredientDosages = new ArrayList<>();
+		@NotNull
+		private final List<Amount> drugAmounts = new ArrayList<>();
+		@NotNull
+		private final List<EdqmPharmaceuticalDoseForm> doseForms = new ArrayList<>();
+		@NotNull
+		private final List<EdqmConcept> doseFormCharacteristics = new ArrayList<>();
 
 		public Builder() {
 
 		}
 
-		public Builder withProductNameKeywords(@Nullable List<String> productNameKeywords) {
-			this.productNameKeywords = productNameKeywords;
+		public Builder withProductNameKeywords(@NotNull List<String> productNameKeywords) {
+			this.productNameKeywords.addAll(productNameKeywords);
 			return this;
 		}
 
 		public Builder withSubstances(
-				@Nullable List<Substance> substances) {
-			this.substances = substances;
+				@NotNull List<Substance> substances) {
+			this.substances.addAll(substances);
 			return this;
 		}
 
 		public Builder withActiveIngredientDosages(
-				@Nullable List<Dosage> activeIngredientDosages) {
-			this.activeIngredientDosages = activeIngredientDosages;
+				@NotNull List<Dosage> activeIngredientDosages) {
+			this.activeIngredientDosages.addAll(activeIngredientDosages);
 			return this;
 		}
 
 		public Builder withDrugAmounts(
-				@Nullable List<Amount> drugAmounts) {
-			this.drugAmounts = drugAmounts;
+				@NotNull List<Amount> drugAmounts) {
+			this.drugAmounts.addAll(drugAmounts);
 			return this;
 		}
 
 		public Builder withDoseFormCharacteristics(
-				@Nullable List<EdqmConcept> doseFormCharacteristics) {
-			this.doseFormCharacteristics = doseFormCharacteristics;
+				@NotNull List<EdqmConcept> doseFormCharacteristics) {
+			this.doseFormCharacteristics.addAll(doseFormCharacteristics);
 			return this;
 		}
 
 		public Builder withDoseForms(
-				@Nullable List<EdqmPharmaceuticalDoseForm> doseForms) {
-			this.doseForms = doseForms;
+				@NotNull List<EdqmPharmaceuticalDoseForm> doseForms) {
+			this.doseForms.addAll(doseForms);
 			return this;
 		}
 
 		@SuppressWarnings("ConstantConditions")
 		public SearchQuery build() {
 			return new SearchQuery(
-					emptyIfNull(productNameKeywords),
-					emptyIfNull(substances),
-					emptyIfNull(activeIngredientDosages),
-					emptyIfNull(drugAmounts),
-					emptyIfNull(doseForms),
-					emptyIfNull(doseFormCharacteristics)
+					distinct(productNameKeywords),
+					distinct(substances),
+					distinct(activeIngredientDosages),
+					distinct(drugAmounts),
+					distinct(doseForms),
+					distinct(doseFormCharacteristics)
 			);
 		}
 
-		private <T> @NotNull List<T> emptyIfNull(@Nullable List<T> list) {
-			if (list == null) return Collections.emptyList();
-			return list;
+		private <T> @NotNull List<T> distinct(@NotNull List<T> list) {
+			return new ArrayList<>(new LinkedHashSet<>(list));
 		}
 	}
 }
