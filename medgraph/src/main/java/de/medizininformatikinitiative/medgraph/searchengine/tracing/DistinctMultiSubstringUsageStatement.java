@@ -95,4 +95,11 @@ public class DistinctMultiSubstringUsageStatement extends SubstringUsageStatemen
 		return new HashSet<>(usedRanges);
 	}
 
+	/**
+	 * Returns the used ranges as sorted list, with the ranges sorted by their start numbers, in ascending order.
+	 */
+	public List<IntRange> getUsedRangesAsList() {
+		return new ArrayList<>(usedRanges);
+	}
+
 }

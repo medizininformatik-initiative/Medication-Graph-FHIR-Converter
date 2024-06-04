@@ -5,7 +5,8 @@ import org.junit.jupiter.api.Test;
 
 import java.util.Set;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * @author Markus Budeus
@@ -44,7 +45,7 @@ public class MultiSubstringUsageStatementTest extends UnitTest {
 	@Test
 	void rangesOverlap() {
 		MultiSubstringUsageStatement sut = new MultiSubstringUsageStatement("long long string",
-				Set.of(new IntRange(0, 3), new IntRange(3, 6),						new IntRange(4, 8)));
+				Set.of(new IntRange(0, 3), new IntRange(3, 6), new IntRange(4, 8)));
 		assertEquals("long lon", sut.getUsedParts());
 		assertEquals("g string", sut.getUnusedParts());
 	}
@@ -111,6 +112,43 @@ public class MultiSubstringUsageStatementTest extends UnitTest {
 				Set.of(new IntRange(0, 0)));
 		assertEquals("", sut.getUsedParts());
 		assertEquals("", sut.getUnusedParts());
+	}
+
+	@Test
+	void distinct() {
+		MultiSubstringUsageStatement sut = new MultiSubstringUsageStatement("What a wonderful world",
+				Set.of(
+						new IntRange(0, 4),      // What__________________
+						new IntRange(2, 6),      // __at a________________
+						new IntRange(16, 19),   // ________________ wo___
+						new IntRange(19, 22)    // ___________________rld
+				));
+		assertEquals("What a world", sut.getUsedParts());
+		assertEquals("What a world", sut.distinct().getUsedParts());
+		assertEquals(Set.of(new IntRange(0, 6), new IntRange(16, 22)), sut.distinct().getUsedRanges());
+	}
+
+	@Test
+	void rangelessDistinct() {
+		MultiSubstringUsageStatement sut = new MultiSubstringUsageStatement("What a wonderful world",
+				Set.of());
+		assertEquals("What a wonderful world", sut.distinct().getOriginal());
+		assertEquals(Set.of(), sut.distinct().getUsedRanges());
+	}
+
+	@Test
+	void emptyDistinct() {
+		MultiSubstringUsageStatement sut = new MultiSubstringUsageStatement("", Set.of());
+		assertEquals(Set.of(), sut.distinct().getUsedRanges());
+	}
+
+	@Test
+	void distinctWithoutOverlaps() {
+		MultiSubstringUsageStatement sut = new MultiSubstringUsageStatement("Waterfall",
+				Set.of(new IntRange(0, 4), new IntRange(5, 8)));
+
+		assertEquals("Watefal", sut.distinct().getUsedParts());
+		assertEquals(Set.of(new IntRange(0, 4), new IntRange(5, 8)), sut.distinct().getUsedRanges());
 	}
 
 }
