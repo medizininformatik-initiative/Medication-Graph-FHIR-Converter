@@ -53,6 +53,36 @@ public class MultiSubstringUsageStatement extends SubstringUsageStatement {
 		return getUsedOrUnusedParts(true);
 	}
 
+	/**
+	 * Returns a {@link DistinctMultiSubstringUsageStatement} which provides the same used parts of the same original
+	 * string as this instance, but without overlapping regions, as those are merged into a single used region. Regions
+	 * directly adjacent to each other are also merged. In that sense, information about parts having been used twice
+	 * and/or with distinct other parts of the string, is lost.
+	 *
+	 * @return a {@link DistinctMultiSubstringUsageStatement} representing this usage statement without overlapping
+	 * regions
+	 */
+	public DistinctMultiSubstringUsageStatement distinct() {
+		boolean[] usageArray = buildUsageArray();
+		boolean currentlyInRange = false;
+		int start = 0;
+		Set<IntRange> ranges = new HashSet<>();
+		for (int i = 0; i <= usageArray.length; i++) {
+			if (i < usageArray.length && usageArray[i]) {
+				if (!currentlyInRange) {
+					start = i;
+					currentlyInRange = true;
+				}
+			} else {
+				if (currentlyInRange) {
+					ranges.add(new IntRange(start, i));
+					currentlyInRange = false;
+				}
+			}
+		}
+		return new DistinctMultiSubstringUsageStatement(getOriginal(), ranges);
+	}
+
 	private String getUsedOrUnusedParts(boolean used) {
 		StringBuilder builder = new StringBuilder();
 		boolean[] usageArray = buildUsageArray();
@@ -71,7 +101,7 @@ public class MultiSubstringUsageStatement extends SubstringUsageStatement {
 	 */
 	private boolean[] buildUsageArray() {
 		boolean[] usageArray = new boolean[getOriginal().length()];
-		for (IntRange range: usedRanges) {
+		for (IntRange range : usedRanges) {
 			for (int i = range.getFrom(); i < range.getTo(); i++) {
 				usageArray[i] = true;
 			}

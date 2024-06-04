@@ -40,6 +40,13 @@ public class IntRange {
 		return to;
 	}
 
+	/**
+	 * Returns the size of this range, i.e. the value of <code>{@link #getTo()} - {@link #getFrom()}</code>
+	 */
+	public int getSize() {
+		return to - from;
+	}
+
 	@Override
 	public boolean equals(Object object) {
 		if (this == object) return true;
