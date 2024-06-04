@@ -57,6 +57,9 @@ public class StepwiseGeneralQueryParser {
 	 *               usage statement for those parts
 	 * @return the usage statement as returned by the function, but remapped to reflect what parts of the original,
 	 * full-sized query have been used.
+	 * @throws IllegalStateException if the action returns a usage statement which does not have the value passed the
+	 *                               action as its original value
+	 * @throws NullPointerException  if action is null or it returns a null usage statement
 	 */
 	public SubstringUsageStatement useRemainingQueryParts(Function<String, SubstringUsageStatement> action) {
 		SubstringUsageStatement usageStatement = action.apply(queryUsageStatement.getUnusedParts());
@@ -123,6 +126,7 @@ public class StepwiseGeneralQueryParser {
 	/**
 	 * Merges the given usage statements, creating a substring usage statement which uses all regions of the original
 	 * strings which either of the given statements do.
+	 *
 	 * @throws IllegalArgumentException if the two statements do not have the same original string
 	 */
 	private MultiSubstringUsageStatement merge(SubstringUsageStatement statement1, SubstringUsageStatement statement2) {
