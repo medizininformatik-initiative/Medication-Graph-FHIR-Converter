@@ -27,10 +27,25 @@ public class RawQuery {
 	@NotNull
 	public final String substance;
 
-	public RawQuery(@NotNull String query, @NotNull String product, @NotNull String substance) {
+	/**
+	 * Query text for dosages (e.g. "10 ml") entered by the user.
+	 */
+	@NotNull
+	public final String dosages;
+
+	/**
+	 * Query text for dose forms entered by the user.
+	 */
+	@NotNull
+	public final String doseForms;
+
+	public RawQuery(@NotNull String query, @NotNull String product, @NotNull String substance, @NotNull String dosages,
+	                @NotNull String doseForms) {
 		this.query = query;
 		this.product = product;
 		this.substance = substance;
+		this.dosages = dosages;
+		this.doseForms = doseForms;
 	}
 
 	@Override
