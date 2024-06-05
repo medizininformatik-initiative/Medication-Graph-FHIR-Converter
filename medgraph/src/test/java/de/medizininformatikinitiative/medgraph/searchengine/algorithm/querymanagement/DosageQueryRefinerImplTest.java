@@ -19,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 /**
  * @author Markus Budeus
  */
-public class DosageQueryRefinerTest extends UnitTest {
+public class DosageQueryRefinerImplTest extends UnitTest {
 
 	private DosageQueryRefiner sut;
 

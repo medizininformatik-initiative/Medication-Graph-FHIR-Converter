@@ -44,15 +44,17 @@ class SearchEngineViewModelTest : UnitTest() {
         sut.queryViewModel.queryText = "Query"
         sut.queryViewModel.productQueryText = "Prod"
         sut.queryViewModel.substanceQueryText = "Subst"
-        sut.parseQuery()
+        sut.queryViewModel.dosageQueryText = "Dosage"
+        sut.queryViewModel.doseFormQueryText = "Df"
+        sut.refineQuery()
 
-        verify(queryParser).parse(ArgumentMatchers.eq(RawQuery("Query", "Prod", "Subst")))
+        verify(queryParser).parse(ArgumentMatchers.eq(RawQuery("Query", "Prod", "Subst", "Dosage", "Df")))
         assertEquals(sampleQuery, sut.parsedQuery)
     }
 
     @Test
     fun executeQuery() {
-        sut.parseQuery()
+        sut.refineQuery()
         runBlocking {
             sut.executeQuery()!!.join()
         }
@@ -65,7 +67,7 @@ class SearchEngineViewModelTest : UnitTest() {
     @Test
     fun executeFailingQuery() {
         `when`(queryExecutor.executeQuery(any())).thenThrow(RuntimeException("This went horribly wrong."))
-        sut.parseQuery()
+        sut.refineQuery()
         runBlocking {
             sut.executeQuery()!!.join()
         }
@@ -100,7 +102,7 @@ class SearchEngineViewModelTest : UnitTest() {
         `when`(queryExecutor.executeQuery(any())).thenReturn(resultList)
 
         runBlocking {
-            sut.parseQuery()
+            sut.refineQuery()
             sut.executeQuery()!!.join()
         }
 
@@ -117,7 +119,7 @@ class SearchEngineViewModelTest : UnitTest() {
         `when`(queryExecutor.executeQuery(any())).thenReturn(listOf(OriginalMatch(Product(2, "B"))))
 
         runBlocking {
-            sut.parseQuery()
+            sut.refineQuery()
             sut.executeQuery()!!.join()
         }
 

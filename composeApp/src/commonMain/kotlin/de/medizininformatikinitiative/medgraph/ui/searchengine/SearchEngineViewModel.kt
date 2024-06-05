@@ -1,19 +1,18 @@
 package de.medizininformatikinitiative.medgraph.ui.searchengine
 
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import cafe.adriel.voyager.core.model.ScreenModel
 import cafe.adriel.voyager.core.model.screenModelScope
 import de.medizininformatikinitiative.medgraph.searchengine.QueryExecutor
 import de.medizininformatikinitiative.medgraph.searchengine.algorithm.querymanagement.QueryParser
+import de.medizininformatikinitiative.medgraph.searchengine.algorithm.querymanagement.QueryRefiner
+import de.medizininformatikinitiative.medgraph.searchengine.algorithm.querymanagement.RefinedQuery
 import de.medizininformatikinitiative.medgraph.searchengine.algorithm.querymanagement.SimpleQueryParser
 import de.medizininformatikinitiative.medgraph.searchengine.model.SearchQuery
-import de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject.MatchingObject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.job
 import kotlinx.coroutines.launch
 
 /**
@@ -22,33 +21,39 @@ import kotlinx.coroutines.launch
  * @author Markus Budeus
  */
 open class SearchEngineViewModel(
-    private val queryParser: QueryParser = SimpleQueryParser(),
+    private val queryRefiner: QueryRefiner = StubQueryRefiner(),
     private val queryExecutor: QueryExecutor = StubQueryExecutor()
 ) : ScreenModel {
 
     val queryViewModel = QueryViewModel()
 
-    private val parsedQueryState = mutableStateOf<SearchQuery?>(null)
-
     /**
-     * The current parsed query.
+     * The current refined query.
      */
-    val parsedQuery by parsedQueryState
+    var refinedQuery by mutableStateOf<RefinedQuery?>(null)
+        private set
 
-    private val queryExecutionState = mutableStateOf(false)
     /**
      * Whether a query is currently being executed.
      */
-    val queryExecutionUnderway by queryExecutionState
+    var queryExecutionUnderway by mutableStateOf(false)
+        private set
 
     val resultsViewModel = SearchResultsListViewModel()
+
+    var queryRefiningUnderway by mutableStateOf(false)
+        private set
+
+    /**
+     * Whether this view model is currently busy refining or executing a query.
+     */
+    var busy by mutableStateOf(false)
+        private set
 
     /**
      * Parses the query as given in the [queryViewModel].
      */
-    fun parseQuery() {
-        parsedQueryState.value = queryParser.parse(queryViewModel.createQuery())
-    }
+    fun refineQuery(): Job? = requestAsyncAction { syncRefineQuery() }
 
     /**
      * Executes the currently parsed query. Has no effect if there is no parsed query currently.
@@ -56,22 +61,7 @@ open class SearchEngineViewModel(
      *
      * @return if a new execution job started, the job, otherwise null
      */
-    fun executeQuery(): Job? {
-        synchronized(this) {
-            if (queryExecutionUnderway) return null
-            queryExecutionState.value = true
-        }
-        val query = parsedQuery
-        resultsViewModel.clearResults()
-        if  (query == null) return null
-        return screenModelScope.launch (Dispatchers.IO) {
-            try {
-                resultsViewModel.assignResults(queryExecutor.executeQuery(query))
-            } finally {
-                queryExecutionState.value = false
-            }
-        }
-    }
+    fun executeQuery(): Job? = requestAsyncAction { syncExecuteQuery() }
 
     /**
      * Parses the current query and then executes it.
@@ -79,8 +69,48 @@ open class SearchEngineViewModel(
      * @return the job representing the query execution or null if the query execution could not start successfully
      */
     fun parseAndExecuteQuery(): Job? {
-        parseQuery()
+        refineQuery()
         return executeQuery()
+    }
+
+    private fun syncRefineQuery() {
+        try {
+            queryRefiningUnderway = true
+            refinedQuery = queryRefiner.refine(queryViewModel.createQuery());
+        } finally {
+            queryRefiningUnderway = false
+        }
+    }
+
+    private fun syncExecuteQuery() {
+        queryExecutionUnderway = true
+        try {
+            resultsViewModel.clearResults()
+            val query = refinedQuery?.searchQuery
+            if (query == null) return
+            resultsViewModel.assignResults(queryExecutor.executeQuery(query))
+        } finally {
+            queryExecutionUnderway = false
+        }
+    }
+
+    private fun requestAsyncAction(action: suspend () -> Unit): Job? {
+        if (busy) {
+            return null;
+        }
+        synchronized(this) {
+            if (busy) {
+                return null;
+            }
+            busy = true;
+        }
+        return screenModelScope.launch(Dispatchers.IO) {
+            try {
+                action()
+            } finally {
+                busy = false
+            }
+        }
     }
 
 }

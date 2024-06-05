@@ -26,7 +26,7 @@ private fun SearchEngineUI() {
     viewModel.queryViewModel.queryText = "500 mg"
     viewModel.queryViewModel.productQueryText = "Aspirin"
     viewModel.queryViewModel.substanceQueryText = "ASS"
-    viewModel.parseQuery()
+    viewModel.refineQuery()
     ApplicationTheme {
         SearchEngineUI(viewModel)
     }
@@ -105,7 +105,7 @@ fun ParseAndExecuteButtonRow(viewModel: SearchEngineViewModel, modifier: Modifie
         Row(
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            Button(onClick = viewModel::parseQuery) {
+            Button(onClick = viewModel::refineQuery) {
                 Text(StringRes.search_engine_dialog_parse)
             }
             Button(
