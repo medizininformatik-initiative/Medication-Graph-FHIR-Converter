@@ -1,4 +1,4 @@
-package de.medizininformatikinitiative.medgraph.ui.searchengine
+package de.medizininformatikinitiative.medgraph.ui.searchengine.query
 
 import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.layout.*

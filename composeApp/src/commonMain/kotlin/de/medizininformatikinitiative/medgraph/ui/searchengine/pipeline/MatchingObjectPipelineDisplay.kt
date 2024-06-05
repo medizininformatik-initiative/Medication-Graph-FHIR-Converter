@@ -14,8 +14,7 @@ import androidx.compose.ui.unit.dp
 import de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject.*
 import de.medizininformatikinitiative.medgraph.searchengine.model.pipelinestep.ScoredJudgement
 import de.medizininformatikinitiative.medgraph.searchengine.model.pipelinestep.Transformation
-import de.medizininformatikinitiative.medgraph.ui.searchengine.DetailedMatchableObjectUI
-import de.medizininformatikinitiative.medgraph.ui.searchengine.MatchableObjectUI
+import de.medizininformatikinitiative.medgraph.ui.searchengine.results.DetailedMatchableObjectUI
 import de.medizininformatikinitiative.medgraph.ui.theme.ApplicationTheme
 
 @Composable

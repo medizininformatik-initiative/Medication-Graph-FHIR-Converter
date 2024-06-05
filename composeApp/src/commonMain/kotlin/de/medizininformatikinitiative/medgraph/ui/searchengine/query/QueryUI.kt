@@ -1,15 +1,11 @@
-package de.medizininformatikinitiative.medgraph.ui.searchengine
+package de.medizininformatikinitiative.medgraph.ui.searchengine.query
 
 import androidx.compose.animation.animateContentSize
 import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.text.isTypedEvent
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.input.key.Key
-import androidx.compose.ui.input.key.key
-import androidx.compose.ui.input.key.onKeyEvent
 import androidx.compose.ui.unit.dp
 import de.medizininformatikinitiative.medgraph.ui.resources.StringRes
 import de.medizininformatikinitiative.medgraph.ui.theme.ApplicationTheme

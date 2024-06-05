@@ -1,4 +1,4 @@
-package de.medizininformatikinitiative.medgraph.ui.searchengine
+package de.medizininformatikinitiative.medgraph.ui.searchengine.query
 
 import de.medizininformatikinitiative.medgraph.searchengine.algorithm.querymanagement.QueryRefiner
 import de.medizininformatikinitiative.medgraph.searchengine.algorithm.querymanagement.RefinedQuery

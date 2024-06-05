@@ -1,4 +1,4 @@
-package de.medizininformatikinitiative.medgraph.ui.searchengine
+package de.medizininformatikinitiative.medgraph.ui.searchengine.query
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf

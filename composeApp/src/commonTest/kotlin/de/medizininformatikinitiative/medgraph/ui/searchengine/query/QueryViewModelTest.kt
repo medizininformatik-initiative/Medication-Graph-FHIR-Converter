@@ -1,4 +1,4 @@
-package de.medizininformatikinitiative.medgraph.ui.searchengine
+package de.medizininformatikinitiative.medgraph.ui.searchengine.query
 
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test

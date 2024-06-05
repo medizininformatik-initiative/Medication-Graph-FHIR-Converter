@@ -15,6 +15,9 @@ import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import de.medizininformatikinitiative.medgraph.ui.resources.StringRes
+import de.medizininformatikinitiative.medgraph.ui.searchengine.query.QueryUI
+import de.medizininformatikinitiative.medgraph.ui.searchengine.query.SearchQueryUI
+import de.medizininformatikinitiative.medgraph.ui.searchengine.results.SearchResultsListUI
 import de.medizininformatikinitiative.medgraph.ui.theme.ApplicationTheme
 import de.medizininformatikinitiative.medgraph.ui.theme.CorporateDesign
 import de.medizininformatikinitiative.medgraph.ui.theme.templates.Button
