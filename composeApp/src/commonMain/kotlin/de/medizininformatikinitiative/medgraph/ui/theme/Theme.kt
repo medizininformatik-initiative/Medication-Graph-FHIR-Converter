@@ -6,6 +6,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.runtime.staticCompositionLocalOf
+import androidx.compose.ui.graphics.Color
 
 private val LightColorPalette = ThemeColors(
     lightColors(
@@ -17,9 +18,13 @@ private val LightColorPalette = ThemeColors(
     weakSuccess = TUMWeb.TumGreen2,
     strongSuccess = TUMWeb.TumGreenDark,
     weakFailure = TUMWeb.TumRed2,
-    strongFailure = TUMWeb.TumRedDark,
+    strongFailure = Color.Red,
     surfaceHighlight = TUMWeb.TumOrange2,
-    surface2 = TUMWeb.TumBlueBright1
+    surface2 = TUMWeb.TumBlueBright1,
+    highlightProduct = CorporateDesign.Main.TUMBlue,
+    highlightSubstance = TUMWeb.TumGreenDark,
+    highlightDosage = TUMWeb.TumBlueLight,
+    highlightDoseForm = TUMWeb.TumRed,
 )
 
 private val LocalColors = staticCompositionLocalOf { LightColorPalette }
