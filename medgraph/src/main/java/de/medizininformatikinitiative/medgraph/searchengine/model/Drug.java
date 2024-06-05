@@ -1,5 +1,6 @@
 package de.medizininformatikinitiative.medgraph.searchengine.model;
 
+import de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject.EdqmPharmaceuticalDoseForm;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -16,14 +17,14 @@ public class Drug {
 	@Nullable
 	private final String doseForm;
 	@Nullable
-	private final String edqmDoseForm;
+	private final EdqmPharmaceuticalDoseForm edqmDoseForm;
 	@Nullable
 	private final Amount amount;
 
 	@NotNull
 	private final List<ActiveIngredient> activeIngredients;
 
-	public Drug(@Nullable String doseForm, @Nullable String edqmDoseForm, @Nullable Amount amount,
+	public Drug(@Nullable String doseForm, @Nullable EdqmPharmaceuticalDoseForm edqmDoseForm, @Nullable Amount amount,
 	            @NotNull List<ActiveIngredient> activeIngredients) {
 		this.doseForm = doseForm;
 		this.edqmDoseForm = edqmDoseForm;
@@ -43,7 +44,7 @@ public class Drug {
 	 * Returns the EDQM dose form of this drug or null if none exists or is known.
 	 */
 	@Nullable
-	public String getEdqmDoseForm() {
+	public EdqmPharmaceuticalDoseForm getEdqmDoseForm() {
 		return edqmDoseForm;
 	}
 
@@ -85,9 +86,10 @@ public class Drug {
 		if (this == o) return true;
 		if (o == null || getClass() != o.getClass()) return false;
 		Drug drug = (Drug) o;
-		return Objects.equals(doseForm, drug.doseForm) && Objects.equals(edqmDoseForm,
-				drug.edqmDoseForm) && Objects.equals(amount, drug.amount) && Objects.equals(
-				activeIngredients, drug.activeIngredients);
+		return Objects.equals(doseForm, drug.doseForm)
+				&& Objects.equals(edqmDoseForm, drug.edqmDoseForm)
+				&& Objects.equals(amount, drug.amount)
+				&& Objects.equals(activeIngredients, drug.activeIngredients);
 	}
 
 	@Override

@@ -43,7 +43,7 @@ public class TestFactory {
 			public static final DetailedProduct ASPIRIN = new DetailedProduct(1,
 					"Aspirin Complex Granulat-Sticks 500 mg/30 mg Granulat",
 					List.of("10000001"),
-					List.of(new Drug("Gran. zum Einnehmen", "Granules", new Amount(BigDecimal.ONE, null),
+					List.of(new Drug("Gran. zum Einnehmen", DoseForms.GRANULES, new Amount(BigDecimal.ONE, null),
 							List.of(new ActiveIngredient(Substances.ACETYLSALICYLIC_ACID.getName(),
 									new Amount(new BigDecimal(500), "mg"))))));
 
@@ -54,7 +54,7 @@ public class TestFactory {
 			public static final DetailedProduct DORMICUM_15 = new DetailedProduct(2,
 					"Dormicum® 15 mg/3 ml Injektionslösung",
 					List.of("10000002"),
-					List.of(new Drug("Injektions-/Infusionslsg.", "Solution for injection/infusion",
+					List.of(new Drug("Injektions-/Infusionslsg.", DoseForms.SOLUTION_FOR_INJECTION_OR_INFUSION,
 							new Amount(new BigDecimal(3), "ml"),
 							List.of(new CorrespondingActiveIngredient(Substances.MIDAZOLAM_HYDROCHLORIDE.getName(),
 									new Amount(new BigDecimal("16.68"), "mg"),
@@ -68,7 +68,7 @@ public class TestFactory {
 			public static final DetailedProduct DORMICUM_5 = new DetailedProduct(3,
 					"Dormicum® V 5 mg/5 ml Injektionslösung",
 					List.of("10000003"),
-					List.of(new Drug("Injektions-/Infusionslsg.", "Solution for injection/infusion",
+					List.of(new Drug("Injektions-/Infusionslsg.", DoseForms.SOLUTION_FOR_INJECTION_OR_INFUSION,
 							new Amount(new BigDecimal(5), "ml"),
 							List.of(new CorrespondingActiveIngredient(Substances.MIDAZOLAM_HYDROCHLORIDE.getName(),
 									new AmountRange(new BigDecimal("5.5"), new BigDecimal("5.7"), "mg"),
@@ -82,7 +82,7 @@ public class TestFactory {
 			public static final DetailedProduct ANAPEN = new DetailedProduct(4,
 					"Anapen 300 µg kohlpharma Injektionslösung",
 					List.of("10000004", "10000005"),
-					List.of(new Drug("Injektionslsg.", "Solution for injection",
+					List.of(new Drug("Injektionslsg.", DoseForms.SOLUTION_FOR_INJECTION,
 							new Amount(new BigDecimal("0.3"), "ml"),
 							List.of(new ActiveIngredient(Substances.EPINEPHRINE.getName(),
 									new Amount(new BigDecimal("300"), "ug"))))));
@@ -106,7 +106,7 @@ public class TestFactory {
 					"Prednisolut® 10 mg L, Pulver und Lösungsmittel zur Herstellung einer Injektionslösung",
 					List.of("01343446"),
 					List.of(
-							new Drug("Pulver zur Herst. e. Inj.-Lsg.", "Powder for solution for injection",
+							new Drug("Pulver zur Herst. e. Inj.-Lsg.", DoseForms.POWDER_FOR_SOLUTION_FOR_INJECTION,
 									new Amount(BigDecimal.ONE, null),
 									List.of(new CorrespondingActiveIngredient(
 											Substances.PREDNISOLONE_HYDROGENSUCCINATE.getName(),
