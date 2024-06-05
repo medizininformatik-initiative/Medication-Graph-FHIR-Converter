@@ -27,8 +27,11 @@ public class UnitLoader extends CatalogEntryLoader {
 				"CREATE CONSTRAINT unitMmiCodeConstraint IF NOT EXISTS FOR (u:" + DatabaseDefinitions.UNIT_LABEL + ") REQUIRE u.mmiCode IS UNIQUE"
 		);
 		executeQuery(withFilteredLoadStatement(UNIT_CATALOG_ID,
-						"CREATE (u:" + DatabaseDefinitions.UNIT_LABEL +
-						" {mmiCode: " + row(CODE) + ", mmiName: " + row(NAME) + ", print: " + row(NAME) + "})"
+				"CREATE (u:" + DatabaseDefinitions.UNIT_LABEL +
+						" {mmiCode: " + row(CODE) +
+						", mmiName: " + row(NAME) +
+						", name: " + row(NAME) +
+						", print: " + row(NAME) + "})"
 		));
 	}
 
