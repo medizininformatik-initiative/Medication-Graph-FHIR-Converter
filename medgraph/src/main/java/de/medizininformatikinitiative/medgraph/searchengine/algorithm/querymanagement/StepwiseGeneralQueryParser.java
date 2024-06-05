@@ -49,9 +49,9 @@ public class StepwiseGeneralQueryParser {
 	 * original query. For example:<br> The original query string is "Earth Wind Fire". During the first invocation, the
 	 * action is passed this query string and returns a usage statement indicating it used the part "Wind ".<br> During
 	 * the next invocation, the function is passed the remaining query, which is "Earth Fire". It returns a usage
-	 * statement which indicates it used the part "Fire" from "Earth Fire". In that case, the return value of this
-	 * function is a usage statement which indicates that the part "Fire" (region [6:10]) from the original string
-	 * "Earth Wind Fire" was used. (I.e. region [11:15]).
+	 * statement which indicates it used the part "Fire" from "Earth Fire" (region [6:10]). In that case, the return
+	 * value of this function is a usage statement which indicates that the part "Fire" from the original string "Earth
+	 * Wind Fire" was used. (I.e. region [11:15]).
 	 *
 	 * @param action the action to invoke, which is passed the currently unsued parts of the query and must return a
 	 *               usage statement for those parts

@@ -21,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.*;
 /**
  * @author Markus Budeus
  */
-public class DoseFormQueryRefinerTest extends UnitTest {
+public class DoseFormQueryRefinerImplTest extends UnitTest {
 
 	private DoseFormQueryRefiner sut;
 

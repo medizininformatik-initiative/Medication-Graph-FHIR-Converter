@@ -17,6 +17,7 @@ import androidx.compose.ui.unit.dp
 import de.medizininformatikinitiative.medgraph.searchengine.model.Amount
 import de.medizininformatikinitiative.medgraph.searchengine.model.Dosage
 import de.medizininformatikinitiative.medgraph.searchengine.model.SearchQuery
+import de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject.Substance
 import de.medizininformatikinitiative.medgraph.ui.resources.StringRes
 import de.medizininformatikinitiative.medgraph.ui.theme.ApplicationTheme
 import de.medizininformatikinitiative.medgraph.ui.theme.CorporateDesign
@@ -30,7 +31,7 @@ fun ParsedQueryUI() {
         ParsedQueryUI(
             SearchQuery.Builder()
                 .withProductNameKeywords(listOf("Aspirin", "HEXAL"))
-                .withSubstances(listOf("Acetylsalicylsäure", "Clopidogrel"))
+                .withSubstances(listOf(Substance(1, "Acetylsalicylsäure"), Substance(2, "Clopidogrel")))
                 .withActiveIngredientDosages(
                     listOf(
                         Dosage.of(500, "mg"),
@@ -56,7 +57,7 @@ fun ParsedQueryUI(query: SearchQuery, modifier: Modifier = Modifier) {
         Separator(StringRes.parsed_query_dialog_product)
         TextBoxes(query.productNameKeywords, textColor = CorporateDesign.Secondary.DarkBlue)
         Separator(StringRes.parsed_query_dialog_substance)
-        TextBoxes(query.substanceNameKeywords, textColor = CorporateDesign.Emphasis.Orange)
+        TextBoxes(query.substances, textColor = CorporateDesign.Emphasis.Orange)
         Separator(StringRes.parsed_query_dialog_dosages)
         TextBoxes(query.activeIngredientDosages, textColor = CorporateDesign.Emphasis.Green)
         Separator(StringRes.parsed_query_dialog_amounts)
