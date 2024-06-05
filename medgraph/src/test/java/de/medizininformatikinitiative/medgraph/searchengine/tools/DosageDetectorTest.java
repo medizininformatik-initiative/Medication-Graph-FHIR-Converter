@@ -1,6 +1,5 @@
 package de.medizininformatikinitiative.medgraph.searchengine.tools;
 
-import de.medizininformatikinitiative.medgraph.searchengine.algorithm.querymanagement.DosageQueryParser;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;

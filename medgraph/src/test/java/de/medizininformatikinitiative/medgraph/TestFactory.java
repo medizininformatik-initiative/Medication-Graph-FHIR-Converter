@@ -5,7 +5,6 @@ import de.medizininformatikinitiative.medgraph.searchengine.db.DbDosage;
 import de.medizininformatikinitiative.medgraph.searchengine.model.*;
 import de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject.*;
 import de.medizininformatikinitiative.medgraph.searchengine.provider.BaseProvider;
-import de.medizininformatikinitiative.medgraph.searchengine.provider.MappedIdentifier;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -197,13 +196,40 @@ public class TestFactory {
 	public static final Product SAMPLE_PRODUCT_2 = Products.DORMICUM_15;
 	public static final Product SAMPLE_PRODUCT_3 = Products.DORMICUM_5;
 
-	public static final BaseProvider<String> PRODUCTS_AND_SUBSTANCES_PROVIDER = BaseProvider.ofIdentifiers(List.of(
-			new MappedIdentifier<>(SAMPLE_SUBSTANCE_1.getName(), SAMPLE_SUBSTANCE_1),
-			new MappedIdentifier<>(SAMPLE_SUBSTANCE_2.getName(), SAMPLE_SUBSTANCE_2),
-			new MappedIdentifier<>(SAMPLE_SUBSTANCE_3.getName(), SAMPLE_SUBSTANCE_3),
-			new MappedIdentifier<>(SAMPLE_PRODUCT_1.getName(), SAMPLE_PRODUCT_1),
-			new MappedIdentifier<>(SAMPLE_PRODUCT_2.getName(), SAMPLE_PRODUCT_2),
-			new MappedIdentifier<>(SAMPLE_PRODUCT_3.getName(), SAMPLE_PRODUCT_3)
+	/**
+	 * Provider which provides all substances and products given in this test factory.
+	 */
+	public static final BaseProvider<String> PRODUCTS_AND_SUBSTANCES_PROVIDER = BaseProvider.ofIdentifiableNames(
+			Set.of(
+					Products.ASPIRIN,
+					Products.DORMICUM_15,
+					Products.DORMICUM_5,
+					Products.ANAPEN,
+					Products.ASEPTODERM,
+					Products.PREDNISOLUT,
+					Substances.ACETYLSALICYLIC_ACID,
+					Substances.MIDAZOLAM,
+					Substances.MIDAZOLAM_HYDROCHLORIDE,
+					Substances.EPINEPHRINE,
+					Substances.WATER,
+					Substances.PREDNISOLONE,
+					Substances.PREDNISOLONE_HYDROGENSUCCINATE
+			));
+
+	/**
+	 * Provider which provides all EDQM dose forms and characteristics given in this test factory.
+	 */
+	public static final BaseProvider<String> EDQM_PROVIDER = BaseProvider.ofIdentifiableNames(Set.of(
+			DoseForms.Characteristics.POWDER,
+			DoseForms.Characteristics.SOLUTION,
+			DoseForms.Characteristics.GRANULES,
+			DoseForms.Characteristics.PARENTERAL,
+			DoseForms.Characteristics.ORAL,
+			DoseForms.Characteristics.CONVENTIONAL,
+			DoseForms.GRANULES,
+			DoseForms.SOLUTION_FOR_INJECTION_OR_INFUSION,
+			DoseForms.SOLUTION_FOR_INJECTION,
+			DoseForms.POWDER_FOR_SOLUTION_FOR_INJECTION
 	));
 
 	public static final SearchQuery SAMPLE_SEARCH_QUERY = new SearchQuery.Builder()

@@ -3,6 +3,7 @@ package de.medizininformatikinitiative.medgraph.searchengine.algorithm.querymana
 import de.medizininformatikinitiative.medgraph.UnitTest;
 import de.medizininformatikinitiative.medgraph.searchengine.model.Amount;
 import de.medizininformatikinitiative.medgraph.searchengine.model.Dosage;
+import de.medizininformatikinitiative.medgraph.searchengine.model.SearchQuery;
 import de.medizininformatikinitiative.medgraph.searchengine.tracing.IntRange;
 import de.medizininformatikinitiative.medgraph.searchengine.tracing.DistinctMultiSubstringUsageStatement;
 import org.junit.jupiter.api.BeforeEach;
@@ -12,19 +13,19 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.Set;
 
-import static de.medizininformatikinitiative.medgraph.searchengine.algorithm.querymanagement.DosageQueryParser.Result;
+import static de.medizininformatikinitiative.medgraph.searchengine.algorithm.querymanagement.DosageQueryRefiner.Result;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * @author Markus Budeus
  */
-public class DosageQueryParserTest extends UnitTest {
+public class DosageQueryRefinerTest extends UnitTest {
 
-	private DosageQueryParser sut;
+	private DosageQueryRefiner sut;
 
 	@BeforeEach
 	void setUp() {
-		sut = new DosageQueryParser();
+		sut = new DosageQueryRefiner();
 	}
 
 	@Test
@@ -54,6 +55,23 @@ public class DosageQueryParserTest extends UnitTest {
 		assertEquals(List.of(), result.getDosages());
 		assertEquals(List.of(), result.getAmounts());
 		assertEquals(new DistinctMultiSubstringUsageStatement("Tranexamsäure", Set.of()), result.getUsageStatement());
+	}
+
+	@Test
+	public void incrementallyApply() {
+		Result r1 = sut.parse("500 mg");
+		Result r2 = sut.parse("10 ml");
+
+		SearchQuery.Builder builder = new SearchQuery.Builder();
+		r1.incrementallyApply(builder);
+		r2.incrementallyApply(builder);
+
+		Dosage d1 = Dosage.of(500, "mg");
+		Dosage d2 = Dosage.of(10, "ml");
+		SearchQuery query = builder.build();
+
+		assertEquals(List.of(d1, d2), query.getActiveIngredientDosages());
+		assertEquals(List.of(d1.amountNominator, d2.amountNominator), query.getDrugAmounts());
 	}
 
 }
