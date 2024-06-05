@@ -3,12 +3,14 @@ package de.medizininformatikinitiative.medgraph.ui.searchengine.query
 import androidx.compose.animation.animateContentSize
 import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.layout.*
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import de.medizininformatikinitiative.medgraph.ui.resources.StringRes
 import de.medizininformatikinitiative.medgraph.ui.theme.ApplicationTheme
+import de.medizininformatikinitiative.medgraph.ui.theme.localColors
 import de.medizininformatikinitiative.medgraph.ui.theme.templates.Button
 import de.medizininformatikinitiative.medgraph.ui.theme.templates.TextField
 import de.medizininformatikinitiative.medgraph.ui.tools.captureEnterPress
@@ -34,9 +36,15 @@ fun QueryUI(
     ) {
         var expanded by remember { mutableStateOf(false) }
 
+        val queryTextTransformation = UsageStatementBasedColorTransformation(
+            viewModel.dosageGeneralSearchTermUsageStatement, MaterialTheme.localColors.highlightDosage,
+            viewModel.doseFormGeneralSearchTermUsageStatement, MaterialTheme.localColors.highlightDoseForm
+        )
+
         TextField(
             viewModel.queryText,
             { v -> viewModel.queryText = v },
+            visualTransformation = queryTextTransformation,
             label = StringRes.query_dialog_query_text,
             modifier = Modifier.fillMaxWidth()
                 .captureEnterPress(onEnterPressed)
@@ -82,6 +90,8 @@ fun AdditionalQueryUIElements(
             TextField(
                 viewModel.dosageQueryText,
                 { v -> viewModel.dosageQueryText = v },
+                visualTransformation = UsageStatementBasedColorTransformation(
+                    viewModel.dosageUsageStatement, MaterialTheme.localColors.highlightDosage),
                 label = StringRes.query_dialog_dosage_query_text,
                 modifier = Modifier
                     .weight(1f)
@@ -90,6 +100,8 @@ fun AdditionalQueryUIElements(
             TextField(
                 viewModel.doseFormQueryText,
                 { v -> viewModel.doseFormQueryText = v },
+                visualTransformation = UsageStatementBasedColorTransformation(
+                    viewModel.doseFormUsageStatement, MaterialTheme.localColors.highlightDoseForm),
                 label = StringRes.query_dialog_dose_form_query_text,
                 modifier = Modifier
                     .weight(1f)

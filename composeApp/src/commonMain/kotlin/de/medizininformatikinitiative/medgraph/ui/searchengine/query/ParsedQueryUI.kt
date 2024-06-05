@@ -21,6 +21,7 @@ import de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject
 import de.medizininformatikinitiative.medgraph.ui.resources.StringRes
 import de.medizininformatikinitiative.medgraph.ui.theme.ApplicationTheme
 import de.medizininformatikinitiative.medgraph.ui.theme.CorporateDesign
+import de.medizininformatikinitiative.medgraph.ui.theme.localColors
 import de.medizininformatikinitiative.medgraph.ui.theme.templates.clipToBox
 import java.math.BigDecimal
 
@@ -55,17 +56,17 @@ fun SearchQueryUI(query: SearchQuery, modifier: Modifier = Modifier) {
     ) {
 
         Separator(StringRes.parsed_query_dialog_product_keywords)
-        TextBoxes(query.productNameKeywords, textColor = CorporateDesign.Secondary.DarkBlue)
+        TextBoxes(query.productNameKeywords, textColor = MaterialTheme.localColors.highlightProduct)
         Separator(StringRes.parsed_query_dialog_substance)
-        TextBoxes(query.substances, textColor = CorporateDesign.Emphasis.Orange)
+        TextBoxes(query.substances, textColor = MaterialTheme.localColors.highlightSubstance)
         Separator(StringRes.parsed_query_dialog_dosages)
-        TextBoxes(query.activeIngredientDosages, textColor = CorporateDesign.Emphasis.Green)
+        TextBoxes(query.activeIngredientDosages, textColor = MaterialTheme.localColors.highlightDosage)
         Separator(StringRes.parsed_query_dialog_amounts)
-        TextBoxes(query.drugAmounts, textColor = CorporateDesign.Emphasis.Green)
+        TextBoxes(query.drugAmounts, textColor = MaterialTheme.localColors.highlightDosage)
         Separator(StringRes.parsed_query_dialog_dose_forms)
-        TextBoxes(query.doseForms, textColor = CorporateDesign.Secondary.DarkBlue)
+        TextBoxes(query.doseForms, textColor = MaterialTheme.localColors.highlightDoseForm)
         Separator(StringRes.parsed_query_dialog_dose_form_characteristics)
-        TextBoxes(query.doseFormCharacteristics, textColor = CorporateDesign.Secondary.DarkBlue)
+        TextBoxes(query.doseFormCharacteristics, textColor = MaterialTheme.localColors.highlightDoseForm)
 
     }
 

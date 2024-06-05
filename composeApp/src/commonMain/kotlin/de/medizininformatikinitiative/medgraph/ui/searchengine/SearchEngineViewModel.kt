@@ -71,10 +71,12 @@ open class SearchEngineViewModel(
      */
     fun refineAndExecuteQuery(): Job? = requestAsyncAction { syncRefineQuery(); syncExecuteQuery() }
 
-    private suspend fun syncRefineQuery() {
+    private fun syncRefineQuery() {
         try {
             queryRefiningUnderway = true
-            refinedQuery = queryRefiner.refine(queryViewModel.createQuery());
+            val refinedQuery = queryRefiner.refine(queryViewModel.createQuery());
+            this.refinedQuery = refinedQuery
+            queryViewModel.applyRefiningResult(refinedQuery)
         } finally {
             queryRefiningUnderway = false
         }

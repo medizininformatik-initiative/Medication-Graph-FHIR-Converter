@@ -3,7 +3,9 @@ package de.medizininformatikinitiative.medgraph.ui.searchengine.query
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import de.medizininformatikinitiative.medgraph.searchengine.algorithm.querymanagement.RefinedQuery
 import de.medizininformatikinitiative.medgraph.searchengine.model.RawQuery
+import de.medizininformatikinitiative.medgraph.searchengine.tracing.SubstringUsageStatement
 
 /**
  * View model for the query input dialog.
@@ -18,6 +20,22 @@ class QueryViewModel {
     var dosageQueryText by mutableStateOf("")
     var doseFormQueryText by mutableStateOf("")
 
+    var dosageGeneralSearchTermUsageStatement by mutableStateOf<SubstringUsageStatement?>(null)
+    var doseFormGeneralSearchTermUsageStatement by mutableStateOf<SubstringUsageStatement?>(null)
+    var dosageUsageStatement by mutableStateOf<SubstringUsageStatement?>(null)
+    var doseFormUsageStatement by mutableStateOf<SubstringUsageStatement?>(null)
+
     fun createQuery() = RawQuery(queryText, productQueryText, substanceQueryText, dosageQueryText, doseFormQueryText)
+
+    /**
+     * Applies the given refining result to this view model, allowing it to color the query texts according to how
+     * they were used in the given refined query.
+     */
+    fun applyRefiningResult(refinedQuery: RefinedQuery) {
+        dosageGeneralSearchTermUsageStatement = refinedQuery.dosageGeneralSearchTermUsageStatement
+        doseFormGeneralSearchTermUsageStatement = refinedQuery.doseFormGeneralSearchTermUsageStatement
+        dosageUsageStatement = refinedQuery.dosageUsageStatement
+        doseFormUsageStatement = refinedQuery.doseFormUsageStatement
+    }
 
 }

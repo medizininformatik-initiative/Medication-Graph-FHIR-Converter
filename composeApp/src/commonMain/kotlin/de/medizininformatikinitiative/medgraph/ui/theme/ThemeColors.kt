@@ -35,6 +35,22 @@ data class ThemeColors(
      * Color to be used for surfaces on top of a different surface.
      */
     val surface2: Color,
+    /**
+     * Color to be used to indicate something is a product.
+     */
+    val highlightProduct: Color,
+    /**
+     * Color to be used to indicate something is a substance.
+     */
+    val highlightSubstance: Color,
+    /**
+     * Color to be used to indicate something is a dose form or dose form characteristic.
+     */
+    val highlightDoseForm: Color,
+    /**
+     * Color to be used to indicate something is a dosage or amount.
+     */
+    val highlightDosage: Color,
 ) {
     val primary: Color get() = material.primary
     val primaryVariant: Color get() = material.primaryVariant
