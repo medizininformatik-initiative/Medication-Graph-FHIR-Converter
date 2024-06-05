@@ -1,9 +1,12 @@
 package de.medizininformatikinitiative.medgraph.searchengine.db;
 
+import de.medizininformatikinitiative.medgraph.common.EDQM;
 import de.medizininformatikinitiative.medgraph.searchengine.model.*;
 import de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject.DetailedProduct;
-import org.neo4j.driver.*;
+import de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject.EdqmConcept;
+import de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject.EdqmPharmaceuticalDoseForm;
 import org.neo4j.driver.Record;
+import org.neo4j.driver.*;
 
 import java.math.BigDecimal;
 import java.util.*;
@@ -18,28 +21,6 @@ import static org.neo4j.driver.Values.parameters;
  * @author Markus Budeus
  */
 public class Neo4jCypherDatabase implements Database {
-
-	public static void main(String[] args) {
-		System.out.println("MATCH (p:" + PRODUCT_LABEL + ") " +
-				"WHERE p.mmiId IN $productIds " +
-				"OPTIONAL MATCH (p)-[:" + PRODUCT_CONTAINS_DRUG_LABEL + "]->(d:" + DRUG_LABEL + ") " +
-				"OPTIONAL MATCH (d)-[:" + DRUG_HAS_DOSE_FORM_LABEL + "]->(df:" + MMI_DOSE_FORM_LABEL + ") " +
-				"OPTIONAL MATCH (df)-[:" + DOSE_FORM_IS_EDQM + "]->(ef:" + EDQM_LABEL + ") " +
-				"OPTIONAL MATCH (d)-[:" + DRUG_HAS_UNIT_LABEL + "]->(du:" + UNIT_LABEL + ") " +
-				"OPTIONAL MATCH (d)-[:" + DRUG_CONTAINS_INGREDIENT_LABEL + "]->(i:" + MMI_INGREDIENT_LABEL + " {isActive: true})-[:" + INGREDIENT_IS_SUBSTANCE_LABEL + "]->(is:" + SUBSTANCE_LABEL + ") " +
-				"OPTIONAL MATCH (i)-[:" + INGREDIENT_CORRESPONDS_TO_LABEL + "]->(ci:" + INGREDIENT_LABEL + ")-[:" + INGREDIENT_IS_SUBSTANCE_LABEL + "]->(cs:" + SUBSTANCE_LABEL + ") " +
-				"OPTIONAL MATCH (i)-[:" + INGREDIENT_HAS_UNIT_LABEL + "]->(iu:" + UNIT_LABEL + ") " +
-				"OPTIONAL MATCH (ci)-[:" + INGREDIENT_HAS_UNIT_LABEL + "]->(cu:" + UNIT_LABEL + ") " +
-				"WITH p, d, df, du, ef, collect(CASE WHEN NOT i IS NULL THEN {" +
-				"iName:is.name,iMassFrom:i.massFrom,iMassTo:i.massTo,iUnit:iu.print," +
-				"cName:cs.name,cMassFrom:ci.massFrom,cMassTo:ci.massTo,cUnit:(CASE WHEN cu.ucumCs IS NULL THEN cu.mmiName ELSE cu.ucumCs END)} ELSE NULL END) AS ingredients " +
-				"WITH p, " +
-				"collect(CASE WHEN NOT d IS NULL THEN {doseForm:df.mmiName, edqm:ef.name, amount:d.amount, unit:du.print, ingredients:ingredients} ELSE NULL END) AS drugs " +
-				"OPTIONAL MATCH (p)<-[:" + PACKAGE_BELONGS_TO_PRODUCT_LABEL + "]-(pk:" + PACKAGE_LABEL + ")<-[:" + CODE_REFERENCE_RELATIONSHIP_NAME + "]-(pzn:" + PZN_LABEL + ") " +
-				"RETURN p.mmiId AS productId, p.name as productName, " +
-				"drugs, " +
-				"collect(pzn.code) AS pzns");
-	}
 
 	private static final Comparator<Drug> drugComparator;
 
@@ -93,25 +74,29 @@ public class Neo4jCypherDatabase implements Database {
 		if (productIds.isEmpty()) return Collections.emptySet();
 
 		Result result = session.run(new Query(
-				"MATCH (p:" + PRODUCT_LABEL + ") " +
-						"WHERE p.mmiId IN $productIds " +
-						"OPTIONAL MATCH (p)-[:" + PRODUCT_CONTAINS_DRUG_LABEL + "]->(d:" + DRUG_LABEL + ") " +
-						"OPTIONAL MATCH (d)-[:" + DRUG_HAS_DOSE_FORM_LABEL + "]->(df:" + MMI_DOSE_FORM_LABEL + ") " +
-						"OPTIONAL MATCH (df)-[:" + DOSE_FORM_IS_EDQM + "]->(ef:" + EDQM_LABEL + ") " +
-						"OPTIONAL MATCH (d)-[:" + DRUG_HAS_UNIT_LABEL + "]->(du:" + UNIT_LABEL + ") " +
-						"OPTIONAL MATCH (d)-[:" + DRUG_CONTAINS_INGREDIENT_LABEL + "]->(i:" + MMI_INGREDIENT_LABEL + " {isActive: true})-[:" + INGREDIENT_IS_SUBSTANCE_LABEL + "]->(is:" + SUBSTANCE_LABEL + ") " +
-						"OPTIONAL MATCH (i)-[:" + INGREDIENT_CORRESPONDS_TO_LABEL + "]->(ci:" + INGREDIENT_LABEL + ")-[:" + INGREDIENT_IS_SUBSTANCE_LABEL + "]->(cs:" + SUBSTANCE_LABEL + ") " +
-						"OPTIONAL MATCH (i)-[:" + INGREDIENT_HAS_UNIT_LABEL + "]->(iu:" + UNIT_LABEL + ") " +
-						"OPTIONAL MATCH (ci)-[:" + INGREDIENT_HAS_UNIT_LABEL + "]->(cu:" + UNIT_LABEL + ") " +
-						"WITH p, d, df, du, ef, collect(CASE WHEN NOT i IS NULL THEN {" +
-						"iName:is.name,iMassFrom:i.massFrom,iMassTo:i.massTo,iUnit:(CASE WHEN iu.ucumCs IS NULL THEN iu.mmiName ELSE iu.ucumCs END)," +
-						"cName:cs.name,cMassFrom:ci.massFrom,cMassTo:ci.massTo,cUnit:(CASE WHEN cu.ucumCs IS NULL THEN cu.mmiName ELSE cu.ucumCs END)} ELSE NULL END) AS ingredients " +
-						"WITH p, " +
-						"collect(CASE WHEN NOT d IS NULL THEN {doseForm:df.mmiName, edqm:ef.name, amount:d.amount, unit:du.print, ingredients:ingredients} ELSE NULL END) AS drugs " +
-						"OPTIONAL MATCH (p)<-[:" + PACKAGE_BELONGS_TO_PRODUCT_LABEL + "]-(pk:" + PACKAGE_LABEL + ")<-[:" + CODE_REFERENCE_RELATIONSHIP_NAME + "]-(pzn:" + PZN_LABEL + ") " +
-						"RETURN p.mmiId AS productId, p.name as productName, " +
-						"drugs, " +
-						"collect(pzn.code) AS pzns",
+				// Don't ask questions. Yes this query is complicated, but doing all of this via a single query
+				// allows the database engine to make lotsa nice query performance enhancements.
+				"MATCH (p:"+PRODUCT_LABEL+") WHERE p.mmiId IN $productIds\n" +
+						"OPTIONAL MATCH (p)-[:"+PRODUCT_CONTAINS_DRUG_LABEL+"]->(d:"+DRUG_LABEL+")\n" +
+						"CALL {\n" +
+						"    WITH d\n" +
+						"    OPTIONAL MATCH (d)-[:"+DRUG_HAS_DOSE_FORM_LABEL+"]->(df:"+MMI_DOSE_FORM_LABEL+")\n" +
+						"    OPTIONAL MATCH (df)-[:"+DOSE_FORM_IS_EDQM+"]->(ef:"+EDQM_LABEL+")\n" +
+						"    OPTIONAL MATCH (ef)-[:"+EDQM_HAS_CHARACTERISTIC_LABEL+"]->(ec:"+ EDQM_LABEL+")\n" +
+						"    RETURN df, ef, collect(CASE WHEN ec IS NULL THEN NULL ELSE {name:ec.name,type:ec.type,code:ec.code} END) AS characteristics\n" +
+						"}\n" +
+						"CALL {\n" +
+						"    WITH d\n" +
+						"    OPTIONAL MATCH (d)-[:"+DRUG_CONTAINS_INGREDIENT_LABEL+"]->(i:"+MMI_INGREDIENT_LABEL+" {isActive: true})-[:"+INGREDIENT_IS_SUBSTANCE_LABEL+"]->(is:"+SUBSTANCE_LABEL+")\n" +
+						"    OPTIONAL MATCH (i)-[:"+INGREDIENT_CORRESPONDS_TO_LABEL+"]->(ci:"+INGREDIENT_LABEL+")-[:"+INGREDIENT_IS_SUBSTANCE_LABEL+"]->(cs:"+SUBSTANCE_LABEL+")\n" +
+						"    OPTIONAL MATCH (i)-[:"+INGREDIENT_HAS_UNIT_LABEL+"]->(iu:"+UNIT_LABEL+")\n" +
+						"    OPTIONAL MATCH (ci)-[:"+INGREDIENT_HAS_UNIT_LABEL+"]->(cu:"+UNIT_LABEL+")\n" +
+						"    RETURN collect(CASE WHEN NOT i IS NULL THEN {iName:is.name,iMassFrom:i.massFrom,iMassTo:i.massTo,iUnit:(CASE WHEN iu.ucumCs IS NULL THEN iu.mmiName ELSE iu.ucumCs END),cName:cs.name,cMassFrom:ci.massFrom,cMassTo:ci.massTo,cUnit:(CASE WHEN cu.ucumCs IS NULL THEN cu.mmiName ELSE cu.ucumCs END)} ELSE NULL END) AS ingredients\n" +
+						"}\n" +
+						"OPTIONAL MATCH (d)-[:"+DRUG_HAS_UNIT_LABEL+"]->(du:"+UNIT_LABEL+")\n" +
+						"WITH p, collect(CASE WHEN NOT d IS NULL THEN {mmiDoseForm:df.mmiName, edqmDoseForm:(CASE WHEN ef IS NULL THEN NULL ELSE {name:ef.name,code:ef.code,characteristics:characteristics} END), amount:d.amount, unit:(CASE WHEN du.ucumCs IS NULL THEN du.mmiName ELSE du.ucumCs END), ingredients:ingredients} ELSE NULL END) AS drugs\n" +
+						"OPTIONAL MATCH (p)<-[:"+PACKAGE_BELONGS_TO_PRODUCT_LABEL+"]-(pk:"+PACKAGE_LABEL+")<-[:"+CODE_REFERENCE_RELATIONSHIP_NAME+"]-(pzn:"+PZN_LABEL+")\n" +
+						"RETURN p.mmiId AS productId, p.name as productName, drugs, collect(pzn.code) AS pzns",
 				parameters("productIds", productIds)
 		));
 
@@ -129,12 +114,29 @@ public class Neo4jCypherDatabase implements Database {
 	}
 
 	private Drug parseToDrug(Value value) {
-		String doseForm = value.get("doseForm").asString(null);
-		String edqm = value.get("edqm").asString(null);
+		String doseForm = value.get("mmiDoseForm").asString(null);
+		EdqmPharmaceuticalDoseForm edqm = parseToPdf(value.get("edqmDoseForm"));
 		BigDecimal amount = toBigDecimal(value.get("amount").asString(null));
 		String unit = value.get("unit").asString(null);
 		List<ActiveIngredient> ingredients = value.get("ingredients").asList(this::parseToActiveIngredient);
 		return new Drug(doseForm, edqm, new Amount(amount, unit), ingredients);
+	}
+
+	private EdqmPharmaceuticalDoseForm parseToPdf(Value value) {
+		if (value.isNull()) return null;
+		return new EdqmPharmaceuticalDoseForm(
+				value.get("code").asString(),
+				value.get("name").asString(),
+				value.get("characteristics").asList(this::parseToConcept)
+		);
+	}
+
+	private EdqmConcept parseToConcept(Value value) {
+		return new EdqmConcept(
+				value.get("code").asString(),
+				value.get("name").asString(),
+				Objects.requireNonNull(EDQM.fromTypeFullName(value.get("type").asString()))
+		);
 	}
 
 	private ActiveIngredient parseToActiveIngredient(Value value) {
