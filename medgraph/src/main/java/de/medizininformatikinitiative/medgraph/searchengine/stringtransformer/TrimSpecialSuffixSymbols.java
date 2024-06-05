@@ -2,13 +2,11 @@ package de.medizininformatikinitiative.medgraph.searchengine.stringtransformer;
 
 import de.medizininformatikinitiative.medgraph.searchengine.tracing.StringListUsageStatement;
 
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 /**
  * This transformer removes special characters (',', ';', '|', '-', ':', '.', '®') from the end of each string if
- * present. If this were to leave a string blank, it is removed from the set.
+ * present. Note this may leave strings blank!
  *
  * @author Markus Budeus
  */
@@ -18,12 +16,8 @@ public class TrimSpecialSuffixSymbols implements TraceableTransformer<List<Strin
 	@Override
 	public List<String> apply(List<String> source) {
 		if (source.isEmpty()) return source;
-		List<String> result = source.stream().map(this::trimSeperators)
-		                            .filter(s -> !s.isBlank())
-		                            .toList();
-		if (result.isEmpty())
-			System.err.println("Warning! List " + source + " became empty after trimming separators!");
-		return result;
+		return source.stream().map(this::trimSeperators)
+		             .toList();
 	}
 
 	private String trimSeperators(String s) {
@@ -51,21 +45,6 @@ public class TrimSpecialSuffixSymbols implements TraceableTransformer<List<Strin
 	public StringListUsageStatement reverseTransformUsageStatement(List<String> input,
 	                                                               StringListUsageStatement usageStatement) {
 		Tools.ensureValidity(this, input, usageStatement);
-		if (input.size() == usageStatement.getUsedIndices().size()) {
-			return new StringListUsageStatement(input, usageStatement.getUsedIndices());
-		}
-
-		// Blank strings have been filtered out, we need to know at which indices
-		List<String> trimmedInputs = input.stream().map(this::trimSeperators).toList();
-		Set<Integer> usedIndices = new HashSet<>();
-		int encounteredBlanks = 0;
-		for (int i = 0; i < trimmedInputs.size(); i++) {
-			if (trimmedInputs.get(i).isBlank()) {
-				encounteredBlanks++;
-			} else {
-				if (usageStatement.getUsedIndices().contains(i - encounteredBlanks)) usedIndices.add(i);
-			}
-		}
-		return new StringListUsageStatement(input, usedIndices);
+		return new StringListUsageStatement(input, usageStatement.getUsedIndices());
 	}
 }

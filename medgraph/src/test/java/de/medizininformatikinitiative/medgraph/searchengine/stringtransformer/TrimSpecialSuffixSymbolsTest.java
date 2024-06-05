@@ -36,7 +36,7 @@ public class TrimSpecialSuffixSymbolsTest {
 
 	@Test
 	public void trimToBlank() {
-		assertEquals(List.of(),
+		assertEquals(List.of(""),
 				new TrimSpecialSuffixSymbols().apply(List.of("-")));
 	}
 
@@ -65,19 +65,10 @@ public class TrimSpecialSuffixSymbolsTest {
 	}
 
 	@Test
-	public void reverseTransformTrimBlank() {
-		List<String> input = List.of("", "Mouse", "---", "Water", "Free");
-		StringListUsageStatement usageStatement = new TrimSpecialSuffixSymbols().reverseTransformUsageStatement(input,
-				new StringListUsageStatement(List.of("Mouse", "Water", "Free"), Set.of(0, 2)));
-
-		assertEquals(new StringListUsageStatement(input, Set.of(1, 4)), usageStatement);
-	}
-
-	@Test
 	public void reverseTransformTrimToBlank() {
 		List<String> input = List.of("-");
 		StringListUsageStatement usageStatement = new TrimSpecialSuffixSymbols().reverseTransformUsageStatement(input,
-				new StringListUsageStatement(List.of(), Set.of()));
+				new StringListUsageStatement(List.of(""), Set.of()));
 
 		assertEquals(new StringListUsageStatement(input, Set.of()), usageStatement);
 	}
