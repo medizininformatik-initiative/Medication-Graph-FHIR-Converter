@@ -11,10 +11,7 @@ import de.medizininformatikinitiative.medgraph.searchengine.QueryExecutor
 import de.medizininformatikinitiative.medgraph.searchengine.algorithm.PerSessionQueryManager
 import de.medizininformatikinitiative.medgraph.searchengine.algorithm.SimpleQueryExecutor
 import de.medizininformatikinitiative.medgraph.searchengine.algorithm.initial.LevenshteinSearchMatchFinder
-import de.medizininformatikinitiative.medgraph.searchengine.algorithm.querymanagement.DosageQueryRefiner
-import de.medizininformatikinitiative.medgraph.searchengine.algorithm.querymanagement.DoseFormQueryRefiner
-import de.medizininformatikinitiative.medgraph.searchengine.algorithm.querymanagement.QueryRefiner
-import de.medizininformatikinitiative.medgraph.searchengine.algorithm.querymanagement.QueryRefinerImpl
+import de.medizininformatikinitiative.medgraph.searchengine.algorithm.querymanagement.*
 import de.medizininformatikinitiative.medgraph.searchengine.algorithm.refining.ExperimentalRefiner
 import de.medizininformatikinitiative.medgraph.searchengine.db.Neo4jCypherDatabase
 import de.medizininformatikinitiative.medgraph.searchengine.provider.Providers
@@ -34,7 +31,8 @@ class SearchEngineScreen : Screen {
                 { session ->
                     QueryRefinerImpl(
                         DosageQueryRefiner(),
-                        DoseFormQueryRefiner(Providers.getEdqmConceptIdentifiers(session))
+                        DoseFormQueryRefiner(Providers.getEdqmConceptIdentifiers(session)),
+                        SubstanceQueryRefiner(Providers.getSubstanceSynonymes(session))
                     )
                 },
                 { session ->
