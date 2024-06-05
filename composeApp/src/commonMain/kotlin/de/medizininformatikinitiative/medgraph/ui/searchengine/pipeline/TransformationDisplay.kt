@@ -17,8 +17,8 @@ import de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject
 import de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject.Substance
 import de.medizininformatikinitiative.medgraph.searchengine.model.pipelinestep.Transformation
 import de.medizininformatikinitiative.medgraph.ui.resources.StringRes
-import de.medizininformatikinitiative.medgraph.ui.searchengine.MatchableObjectUI
-import de.medizininformatikinitiative.medgraph.ui.searchengine.TextBox
+import de.medizininformatikinitiative.medgraph.ui.searchengine.results.MatchableObjectUI
+import de.medizininformatikinitiative.medgraph.ui.searchengine.query.TextBox
 import de.medizininformatikinitiative.medgraph.ui.theme.ApplicationTheme
 import de.medizininformatikinitiative.medgraph.ui.theme.localColors
 

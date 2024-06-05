@@ -8,9 +8,12 @@ import cafe.adriel.voyager.core.model.screenModelScope
 import de.medizininformatikinitiative.medgraph.searchengine.QueryExecutor
 import de.medizininformatikinitiative.medgraph.searchengine.algorithm.querymanagement.QueryRefiner
 import de.medizininformatikinitiative.medgraph.searchengine.algorithm.querymanagement.RefinedQuery
+import de.medizininformatikinitiative.medgraph.ui.searchengine.query.QueryViewModel
+import de.medizininformatikinitiative.medgraph.ui.searchengine.query.StubQueryExecutor
+import de.medizininformatikinitiative.medgraph.ui.searchengine.query.StubQueryRefiner
+import de.medizininformatikinitiative.medgraph.ui.searchengine.results.SearchResultsListViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 /**

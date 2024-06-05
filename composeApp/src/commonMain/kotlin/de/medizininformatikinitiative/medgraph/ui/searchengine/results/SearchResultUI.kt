@@ -1,4 +1,4 @@
-package de.medizininformatikinitiative.medgraph.ui.searchengine
+package de.medizininformatikinitiative.medgraph.ui.searchengine.results
 
 import androidx.compose.animation.animateContentSize
 import androidx.compose.desktop.ui.tooling.preview.Preview
@@ -22,6 +22,7 @@ import de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject
 import de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject.Matchable
 import de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject.Product
 import de.medizininformatikinitiative.medgraph.ui.resources.StringRes
+import de.medizininformatikinitiative.medgraph.ui.searchengine.query.TextBox
 import de.medizininformatikinitiative.medgraph.ui.theme.ApplicationTheme
 import de.medizininformatikinitiative.medgraph.ui.theme.CorporateDesign
 import de.medizininformatikinitiative.medgraph.ui.theme.localColors
