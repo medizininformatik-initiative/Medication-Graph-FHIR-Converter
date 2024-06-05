@@ -5,6 +5,7 @@ import de.medizininformatikinitiative.medgraph.UnitTest;
 import de.medizininformatikinitiative.medgraph.searchengine.model.SearchQuery;
 import de.medizininformatikinitiative.medgraph.searchengine.provider.BaseProvider;
 import de.medizininformatikinitiative.medgraph.searchengine.provider.MappedIdentifier;
+import org.checkerframework.checker.units.qual.C;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -41,7 +42,7 @@ public class DoseFormQueryRefinerTest extends UnitTest {
 	void simpleMatch() {
 		Result result = sut.parse("Tranexamic acid granules");
 		assertEquals(List.of(GRANULES), result.getDoseForms());
-		assertEquals(Collections.emptyList(), result.getCharacteristics());
+		assertEquals(List.of(Characteristics.GRANULES), result.getCharacteristics());
 		assertEquals("granules", result.getUsageStatement().getUsedParts().trim());
 	}
 
@@ -49,15 +50,15 @@ public class DoseFormQueryRefinerTest extends UnitTest {
 	void multiMatch() {
 		Result result = sut.parse("Prednisolon oral granules");
 		assertEquals(List.of(GRANULES), result.getDoseForms());
-		assertEquals(List.of(Characteristics.ORAL), result.getCharacteristics());
+		assertEqualsIgnoreOrder(List.of(Characteristics.ORAL, Characteristics.GRANULES), result.getCharacteristics());
 		assertEquals("oral granules", result.getUsageStatement().getUsedParts().trim());
 	}
 
 	@Test
 	void overlappingMatch() {
 		Result result = sut.parse("Prednisolon powder for solution for injection");
-		assertEquals(List.of(POWDER_FOR_SOLUTION_FOR_INJECTION), result.getDoseForms());
-		assertEquals(List.of(), result.getCharacteristics());
+		assertEqualsIgnoreOrder(List.of(POWDER_FOR_SOLUTION_FOR_INJECTION, SOLUTION_FOR_INJECTION), result.getDoseForms());
+		assertEqualsIgnoreOrder(List.of(Characteristics.POWDER, Characteristics.SOLUTION), result.getCharacteristics());
 		assertEquals("powder for solution for injection", result.getUsageStatement().getUsedParts().trim());
 	}
 
@@ -65,8 +66,9 @@ public class DoseFormQueryRefinerTest extends UnitTest {
 	void multiMatchWithOverlap() {
 		Result result = sut.parse(
 				"Prednisolon oral powder for solution for injection"); // Yeah I know this one makes no sense...
-		assertEquals(List.of(POWDER_FOR_SOLUTION_FOR_INJECTION), result.getDoseForms());
-		assertEquals(List.of(Characteristics.ORAL), result.getCharacteristics());
+		assertEqualsIgnoreOrder(List.of(POWDER_FOR_SOLUTION_FOR_INJECTION, SOLUTION_FOR_INJECTION), result.getDoseForms());
+		assertEqualsIgnoreOrder(List.of(Characteristics.ORAL, Characteristics.POWDER, Characteristics.SOLUTION),
+				result.getCharacteristics());
 		assertEquals("oral powder for solution for injection", result.getUsageStatement().getUsedParts().trim());
 	}
 
@@ -81,6 +83,7 @@ public class DoseFormQueryRefinerTest extends UnitTest {
 		SearchQuery query = builder.build();
 
 		assertEquals(List.of(SOLUTION_FOR_INJECTION, GRANULES), query.getDoseForms());
-		assertEquals(Set.of(Characteristics.ORAL, Characteristics.PARENTERAL), new HashSet<>(query.getDoseFormCharacteristics()));
+		assertEqualsIgnoreOrder(List.of(Characteristics.ORAL, Characteristics.PARENTERAL, Characteristics.GRANULES,
+				Characteristics.SOLUTION), query.getDoseFormCharacteristics());
 	}
 }
