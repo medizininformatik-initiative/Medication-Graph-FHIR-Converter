@@ -53,7 +53,7 @@ public class DoseFormQueryRefiner implements PartialQueryRefiner<DoseFormQueryRe
 			                      }
 		                      });
 
-		removeOverlaps(matches);
+//		removeOverlaps(matches);
 
 		List<EdqmPharmaceuticalDoseForm> doseForms = new ArrayList<>();
 		List<EdqmConcept> characteristics = new ArrayList<>();
@@ -79,64 +79,64 @@ public class DoseFormQueryRefiner implements PartialQueryRefiner<DoseFormQueryRe
 		return new Result(doseForms, characteristics, usageStatement);
 	}
 
-	/**
-	 * Removes matches from the given list if they overlap with each other. The match which consists of more tokens from
-	 * the identifier survives. If two overlapping matches have the same amount of identifier tokens, the first one in
-	 * the list survives.
-	 */
-	private void removeOverlaps(List<LevenshteinListMatcher.Match> matches) {
-		for (int i = matches.size() - 1; i > 0; i--) {
-			LevenshteinListMatcher.Match current = matches.get(i);
-			for (int j = i - 1; j >= 0; j--) {
-				LevenshteinListMatcher.Match opponent = matches.get(j);
-				if (overlap(current, opponent)) {
-					// Well, one of you has to die.
-					if (firstHasPriority(opponent, current)) {
-						matches.remove(i);
-						break;
-					} else {
-						matches.remove(j);
-						i--;
-					}
-				}
-			}
-		}
-	}
-
-	/**
-	 * Assuming one of the given matches has to be eliminated from the result, determines if the first one
-	 * shall be the one to survive. Instances of {@link EdqmPharmaceuticalDoseForm} have priority over simple
-	 * {@link EdqmConcept}-instances. If this does not decide the match, whoever uses more tokens has priority.
-	 * If then it is still a draw, the first match gets priority.
-	 */
-	private boolean firstHasPriority(LevenshteinListMatcher.Match match1, LevenshteinListMatcher.Match match2) {
-		if ((match1.getMatchedIdentifier().target instanceof EdqmPharmaceuticalDoseForm)
-				&& !(match2.getMatchedIdentifier().target instanceof EdqmPharmaceuticalDoseForm)) {
-			return true;
-		} else if (!(match1.getMatchedIdentifier().target instanceof EdqmPharmaceuticalDoseForm)
-				&& (match2.getMatchedIdentifier().target instanceof EdqmPharmaceuticalDoseForm)) {
-			return false;
-		} else {
-			if (match1.getUsageStatement().getUsedIndices().size() >=
-					match2.getUsageStatement().getUsedIndices().size()) {
-				return true;
-			} else {
-				return false;
-			}
-		}
-
-	}
-
-	/**
-	 * Returns whether the source tokens from the two given matches overlap.
-	 */
-	private boolean overlap(LevenshteinListMatcher.Match match1, LevenshteinListMatcher.Match match2) {
-		Set<Integer> set1 = match1.getUsageStatement().getUsedIndices();
-		Set<Integer> set2 = match2.getUsageStatement().getUsedIndices();
-		HashSet<Integer> union = new HashSet<>(set1);
-		union.addAll(set2);
-		return union.size() < set1.size() + set2.size();
-	}
+//	/**
+//	 * Removes matches from the given list if they overlap with each other. The match which consists of more tokens from
+//	 * the identifier survives. If two overlapping matches have the same amount of identifier tokens, the first one in
+//	 * the list survives.
+//	 */
+//	private void removeOverlaps(List<LevenshteinListMatcher.Match> matches) {
+//		for (int i = matches.size() - 1; i > 0; i--) {
+//			LevenshteinListMatcher.Match current = matches.get(i);
+//			for (int j = i - 1; j >= 0; j--) {
+//				LevenshteinListMatcher.Match opponent = matches.get(j);
+//				if (overlap(current, opponent)) {
+//					// Well, one of you has to die.
+//					if (firstHasPriority(opponent, current)) {
+//						matches.remove(i);
+//						break;
+//					} else {
+//						matches.remove(j);
+//						i--;
+//					}
+//				}
+//			}
+//		}
+//	}
+//
+//	/**
+//	 * Assuming one of the given matches has to be eliminated from the result, determines if the first one
+//	 * shall be the one to survive. Instances of {@link EdqmPharmaceuticalDoseForm} have priority over simple
+//	 * {@link EdqmConcept}-instances. If this does not decide the match, whoever uses more tokens has priority.
+//	 * If then it is still a draw, the first match gets priority.
+//	 */
+//	private boolean firstHasPriority(LevenshteinListMatcher.Match match1, LevenshteinListMatcher.Match match2) {
+//		if ((match1.getMatchedIdentifier().target instanceof EdqmPharmaceuticalDoseForm)
+//				&& !(match2.getMatchedIdentifier().target instanceof EdqmPharmaceuticalDoseForm)) {
+//			return true;
+//		} else if (!(match1.getMatchedIdentifier().target instanceof EdqmPharmaceuticalDoseForm)
+//				&& (match2.getMatchedIdentifier().target instanceof EdqmPharmaceuticalDoseForm)) {
+//			return false;
+//		} else {
+//			if (match1.getUsageStatement().getUsedIndices().size() >=
+//					match2.getUsageStatement().getUsedIndices().size()) {
+//				return true;
+//			} else {
+//				return false;
+//			}
+//		}
+//
+//	}
+//
+//	/**
+//	 * Returns whether the source tokens from the two given matches overlap.
+//	 */
+//	private boolean overlap(LevenshteinListMatcher.Match match1, LevenshteinListMatcher.Match match2) {
+//		Set<Integer> set1 = match1.getUsageStatement().getUsedIndices();
+//		Set<Integer> set2 = match2.getUsageStatement().getUsedIndices();
+//		HashSet<Integer> union = new HashSet<>(set1);
+//		union.addAll(set2);
+//		return union.size() < set1.size() + set2.size();
+//	}
 
 	public static class Result implements PartialQueryRefiner.Result {
 		private final List<EdqmPharmaceuticalDoseForm> doseForms;
