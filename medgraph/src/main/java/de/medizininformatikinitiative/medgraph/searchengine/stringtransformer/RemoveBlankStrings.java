@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * A transformer which removes empty strings from a list.
+ * A transformer which removes blank strings from a list.
  *
  * @author Markus Budeus
  */
