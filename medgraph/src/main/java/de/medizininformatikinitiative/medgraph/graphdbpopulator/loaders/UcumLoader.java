@@ -84,10 +84,11 @@ public class UcumLoader extends Loader {
 			UcumDefinition definition = ucumDefinitionEntry.getValue();
 			executeQuery(
 					"MATCH (u:" + UNIT_LABEL + " {mmiCode: $mmiCode}) " +
-							"SET u:" + UCUM_LABEL + " " +
-							"SET u.ucumCs = $ucumCs " +
-							"SET u.ucumCi = $ucumCi " +
-							"SET u.print = $print ",
+							"SET u:" + UCUM_LABEL + ", " +
+							"u.ucumCs = $ucumCs, " +
+							"u.ucumCi = $ucumCi, " +
+							"u.print = $print, " +
+							"u.name = $ucumCs ",
 					"mmiCode", mmiCode, "ucumCs", definition.caseSensitiveUnit,
 					"ucumCi", definition.caseInsensitiveUnit, "print", definition.printUnit
 			);

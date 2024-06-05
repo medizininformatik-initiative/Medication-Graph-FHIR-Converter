@@ -91,10 +91,10 @@ public class Neo4jCypherDatabase implements Database {
 						"    OPTIONAL MATCH (i)-[:"+INGREDIENT_CORRESPONDS_TO_LABEL+"]->(ci:"+INGREDIENT_LABEL+")-[:"+INGREDIENT_IS_SUBSTANCE_LABEL+"]->(cs:"+SUBSTANCE_LABEL+")\n" +
 						"    OPTIONAL MATCH (i)-[:"+INGREDIENT_HAS_UNIT_LABEL+"]->(iu:"+UNIT_LABEL+")\n" +
 						"    OPTIONAL MATCH (ci)-[:"+INGREDIENT_HAS_UNIT_LABEL+"]->(cu:"+UNIT_LABEL+")\n" +
-						"    RETURN collect(CASE WHEN NOT i IS NULL THEN {iName:is.name,iMassFrom:i.massFrom,iMassTo:i.massTo,iUnit:(CASE WHEN iu.ucumCs IS NULL THEN iu.mmiName ELSE iu.ucumCs END),cName:cs.name,cMassFrom:ci.massFrom,cMassTo:ci.massTo,cUnit:(CASE WHEN cu.ucumCs IS NULL THEN cu.mmiName ELSE cu.ucumCs END)} ELSE NULL END) AS ingredients\n" +
+						"    RETURN collect(CASE WHEN NOT i IS NULL THEN {iName:is.name,iMassFrom:i.massFrom,iMassTo:i.massTo,iUnit:iu.name,cName:cs.name,cMassFrom:ci.massFrom,cMassTo:ci.massTo,cUnit:cu.name} ELSE NULL END) AS ingredients\n" +
 						"}\n" +
 						"OPTIONAL MATCH (d)-[:"+DRUG_HAS_UNIT_LABEL+"]->(du:"+UNIT_LABEL+")\n" +
-						"WITH p, collect(CASE WHEN NOT d IS NULL THEN {mmiDoseForm:df.mmiName, edqmDoseForm:(CASE WHEN ef IS NULL THEN NULL ELSE {name:ef.name,code:ef.code,characteristics:characteristics} END), amount:d.amount, unit:(CASE WHEN du.ucumCs IS NULL THEN du.mmiName ELSE du.ucumCs END), ingredients:ingredients} ELSE NULL END) AS drugs\n" +
+						"WITH p, collect(CASE WHEN NOT d IS NULL THEN {mmiDoseForm:df.mmiName, edqmDoseForm:(CASE WHEN ef IS NULL THEN NULL ELSE {name:ef.name,code:ef.code,characteristics:characteristics} END), amount:d.amount, unit:du.name, ingredients:ingredients} ELSE NULL END) AS drugs\n" +
 						"OPTIONAL MATCH (p)<-[:"+PACKAGE_BELONGS_TO_PRODUCT_LABEL+"]-(pk:"+PACKAGE_LABEL+")<-[:"+CODE_REFERENCE_RELATIONSHIP_NAME+"]-(pzn:"+PZN_LABEL+")\n" +
 						"RETURN p.mmiId AS productId, p.name as productName, drugs, collect(pzn.code) AS pzns",
 				parameters("productIds", productIds)
