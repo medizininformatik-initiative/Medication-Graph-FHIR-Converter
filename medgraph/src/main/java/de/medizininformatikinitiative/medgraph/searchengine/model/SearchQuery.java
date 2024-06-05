@@ -118,35 +118,59 @@ public class SearchQuery {
 
 		}
 
+		/**
+		 * Adds the given keywords to the list of product name keywords maintained by this builder.
+		 * @return this instance
+		 */
 		public Builder withProductNameKeywords(@NotNull List<String> productNameKeywords) {
 			this.productNameKeywords.addAll(productNameKeywords);
 			return this;
 		}
 
+		/**
+		 * Adds the given substances to the list of substances maintained by this builder.
+		 * @return this instance
+		 */
 		public Builder withSubstances(
 				@NotNull List<Substance> substances) {
 			this.substances.addAll(substances);
 			return this;
 		}
 
+		/**
+		 * Adds the given dosages to the list of active ingredient dosages maintained by this builder.
+		 * @return this instance
+		 */
 		public Builder withActiveIngredientDosages(
 				@NotNull List<Dosage> activeIngredientDosages) {
 			this.activeIngredientDosages.addAll(activeIngredientDosages);
 			return this;
 		}
 
+		/**
+		 * Adds the given amounts to the list of drug amounts maintained by this builder.
+		 * @return this instance
+		 */
 		public Builder withDrugAmounts(
 				@NotNull List<Amount> drugAmounts) {
 			this.drugAmounts.addAll(drugAmounts);
 			return this;
 		}
 
+		/**
+		 * Adds the given EDQM concepts to the list of dose form characteristics maintained by this builder.
+		 * @return this instance
+		 */
 		public Builder withDoseFormCharacteristics(
 				@NotNull List<EdqmConcept> doseFormCharacteristics) {
 			this.doseFormCharacteristics.addAll(doseFormCharacteristics);
 			return this;
 		}
 
+		/**
+		 * Adds the given EDQM pharmaceutical dose forms to the list of dose forms maintained by this builder.
+		 * @return this instance
+		 */
 		public Builder withDoseForms(
 				@NotNull List<EdqmPharmaceuticalDoseForm> doseForms) {
 			this.doseForms.addAll(doseForms);

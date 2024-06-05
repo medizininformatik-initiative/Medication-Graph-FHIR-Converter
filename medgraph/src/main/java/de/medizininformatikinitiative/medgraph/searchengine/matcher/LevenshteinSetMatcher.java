@@ -74,7 +74,7 @@ public class LevenshteinSetMatcher extends SimpleMatcher<Set<String>, Levenshtei
 		if (score == 0) return null;
 
 		score = score / searchTerm.size();
-		return new Match(identifier, score, resultDistances);
+		return new Match(identifier, searchTerm, score, resultDistances);
 
 	}
 
@@ -101,10 +101,10 @@ public class LevenshteinSetMatcher extends SimpleMatcher<Set<String>, Levenshtei
 		 */
 		private final List<EditDistance> editDistances;
 
-		private Match(MappedIdentifier<Set<String>> match, double score, List<EditDistance> editDistances) {
+		private Match(MappedIdentifier<Set<String>> match, Set<String> searchTerm, double score, List<EditDistance> editDistances) {
 			super(match, score);
 			this.usageStatement = new StringSetUsageStatement(
-					match.identifier,
+					searchTerm,
 					editDistances.stream().map(EditDistance::getValue1).collect(Collectors.toSet()));
 			this.editDistances = editDistances;
 		}

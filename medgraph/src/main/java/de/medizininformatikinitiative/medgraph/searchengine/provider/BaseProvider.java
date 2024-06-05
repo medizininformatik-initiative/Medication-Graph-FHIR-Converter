@@ -1,5 +1,6 @@
 package de.medizininformatikinitiative.medgraph.searchengine.provider;
 
+import de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject.Identifiable;
 import de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject.Matchable;
 
 import java.util.ArrayList;
@@ -26,12 +27,12 @@ public class BaseProvider<S> implements IdentifierStream<S> {
 	}
 
 
-	public static BaseProvider<String> ofMatchableNames(Collection<Matchable> targets) {
-		return BaseProvider.ofMatchables(targets, Matchable::getName);
+	public static BaseProvider<String> ofIdentifiableNames(Collection<Identifiable> targets) {
+		return BaseProvider.ofIdentifiables(targets, Identifiable::getName);
 	}
 
-	public static <S> BaseProvider<S> ofMatchables(Collection<Matchable> targets,
-	                                                    Function<Matchable, S> identifierExtractor) {
+	public static <S> BaseProvider<S> ofIdentifiables(Collection<Identifiable> targets,
+	                                                  Function<Identifiable, S> identifierExtractor) {
 		List<MappedIdentifier<S>> resultList = new ArrayList<>(targets.size());
 		targets.forEach(t -> resultList.add(new MappedIdentifier<>(identifierExtractor.apply(t), t)));
 		return new BaseProvider<>(resultList);

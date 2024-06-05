@@ -39,6 +39,10 @@ public class RawQuery {
 	@NotNull
 	public final String doseForms;
 
+	public RawQuery(@NotNull String query) {
+		this(query, "", "", "", "");
+	}
+
 	public RawQuery(@NotNull String query, @NotNull String product, @NotNull String substance, @NotNull String dosages,
 	                @NotNull String doseForms) {
 		this.query = query;

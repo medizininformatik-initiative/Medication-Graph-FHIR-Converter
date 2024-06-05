@@ -1,6 +1,7 @@
 package de.medizininformatikinitiative.medgraph.searchengine.algorithm.querymanagement;
 
 import de.medizininformatikinitiative.medgraph.searchengine.matcher.LevenshteinListMatcher;
+import de.medizininformatikinitiative.medgraph.searchengine.model.SearchQuery;
 import de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject.EdqmConcept;
 import de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject.EdqmPharmaceuticalDoseForm;
 import de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject.Identifiable;
@@ -18,7 +19,7 @@ import java.util.*;
  *
  * @author Markus Budeus
  */
-public class DoseFormQueryParser {
+public class DoseFormQueryRefiner implements PartialQueryRefiner<DoseFormQueryRefiner.Result> {
 
 	private final LevenshteinListMatcher levenshteinListMatcher = new LevenshteinListMatcher(1);
 	private final TraceableTransformer<String, List<String>, DistinctMultiSubstringUsageStatement, StringListUsageStatement> transformer =
@@ -26,7 +27,7 @@ public class DoseFormQueryParser {
 					.andTraceable(new WhitespaceTokenizer(false));
 	private final IdentifierProvider<List<String>> edqmConceptsProvider;
 
-	public DoseFormQueryParser(BaseProvider<String> edqmConceptsProvider) {
+	public DoseFormQueryRefiner(BaseProvider<String> edqmConceptsProvider) {
 		this.edqmConceptsProvider = edqmConceptsProvider
 				.parallel().withTransformation(transformer);
 	}
@@ -90,17 +91,40 @@ public class DoseFormQueryParser {
 				LevenshteinListMatcher.Match opponent = matches.get(j);
 				if (overlap(current, opponent)) {
 					// Well, one of you has to die.
-					if (current.getUsageStatement().getUsedIndices().size() >
-							opponent.getUsageStatement().getUsedIndices().size()) {
-						matches.remove(j); // Opponent has less tokens, so he dies
-						i--;
-					} else {
-						matches.remove(i); // Current dies
+					if (firstHasPriority(opponent, current)) {
+						matches.remove(i);
 						break;
+					} else {
+						matches.remove(j);
+						i--;
 					}
 				}
 			}
 		}
+	}
+
+	/**
+	 * Assuming one of the given matches has to be eliminated from the result, determines if the first one
+	 * shall be the one to survive. Instances of {@link EdqmPharmaceuticalDoseForm} have priority over simple
+	 * {@link EdqmConcept}-instances. If this does not decide the match, whoever uses more tokens has priority.
+	 * If then it is still a draw, the first match gets priority.
+	 */
+	private boolean firstHasPriority(LevenshteinListMatcher.Match match1, LevenshteinListMatcher.Match match2) {
+		if ((match1.getMatchedIdentifier().target instanceof EdqmPharmaceuticalDoseForm)
+				&& !(match2.getMatchedIdentifier().target instanceof EdqmPharmaceuticalDoseForm)) {
+			return true;
+		} else if (!(match1.getMatchedIdentifier().target instanceof EdqmPharmaceuticalDoseForm)
+				&& (match2.getMatchedIdentifier().target instanceof EdqmPharmaceuticalDoseForm)) {
+			return false;
+		} else {
+			if (match1.getUsageStatement().getUsedIndices().size() >=
+					match2.getUsageStatement().getUsedIndices().size()) {
+				return true;
+			} else {
+				return false;
+			}
+		}
+
 	}
 
 	/**
@@ -114,7 +138,7 @@ public class DoseFormQueryParser {
 		return union.size() < set1.size() + set2.size();
 	}
 
-	public static class Result implements InputUsageTraceable<DistinctMultiSubstringUsageStatement> {
+	public static class Result implements PartialQueryRefiner.Result {
 		private final List<EdqmPharmaceuticalDoseForm> doseForms;
 		private final List<EdqmConcept> characteristics;
 		private final DistinctMultiSubstringUsageStatement usageStatement;
@@ -137,6 +161,12 @@ public class DoseFormQueryParser {
 
 		public List<EdqmConcept> getCharacteristics() {
 			return characteristics;
+		}
+
+		@Override
+		public void incrementallyApply(SearchQuery.Builder searchQueryBuilder) {
+			searchQueryBuilder.withDoseForms(doseForms)
+					.withDoseFormCharacteristics(characteristics);
 		}
 	}
 

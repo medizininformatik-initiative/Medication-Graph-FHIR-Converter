@@ -33,7 +33,8 @@ public class StringSetUsageStatement extends AbstractUsageStatement<Set<String>>
 		this.usedTokens = usedTokens;
 		for (String token : usedTokens) {
 			if (!original.contains(token)) throw new IllegalArgumentException(
-					"The token \"" + token + "\" is given as part of usedTokens, but is not part of the original string set!");
+					"The token \"" + token + "\" is given as part of usedTokens, but is not part of the original string set" +
+							"(which is \"" + original + "\")!");
 		}
 	}
 

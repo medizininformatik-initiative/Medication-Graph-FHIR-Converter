@@ -17,6 +17,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 public class SimpleQueryParserTest {
 
+	// TODO Scrape this class if necessary, then delete it along with the SimpleQueryParser
 	private SimpleQueryParser sut;
 
 	@BeforeEach
@@ -24,16 +25,16 @@ public class SimpleQueryParserTest {
 		sut = new SimpleQueryParser();
 	}
 
-	@Test
-	public void parseProducts() {
-		SearchQuery query = sut.parse(new RawQuery("ProductA ProductB", "Aspirin", ""));
-		assertNotNull(query.getProductNameKeywords());
-		assertTrue(query.getProductNameKeywords().contains("ProductA"));
-		assertTrue(query.getProductNameKeywords().contains("ProductB"));
-		assertTrue(query.getProductNameKeywords().contains("Aspirin"));
-		assertFalse(query.getProductNameKeywords().contains("AspirinProductA"));
-		assertFalse(query.getProductNameKeywords().contains("ProductBAspirin"));
-	}
+//	@Test
+//	public void parseProducts() {
+//		SearchQuery query = sut.parse(new RawQuery("ProductA ProductB", "Aspirin", ""));
+//		assertNotNull(query.getProductNameKeywords());
+//		assertTrue(query.getProductNameKeywords().contains("ProductA"));
+//		assertTrue(query.getProductNameKeywords().contains("ProductB"));
+//		assertTrue(query.getProductNameKeywords().contains("Aspirin"));
+//		assertFalse(query.getProductNameKeywords().contains("AspirinProductA"));
+//		assertFalse(query.getProductNameKeywords().contains("ProductBAspirin"));
+//	}
 
 //	@Test
 //	public void parseSubstances() {
@@ -71,21 +72,21 @@ public class SimpleQueryParserTest {
 //		assertEquals(List.of("Aspirin-Bayer"), query.getProductNameKeywords());
 //	}
 
-	@Test
-	public void keywordSeparation() {
-		SearchQuery query = sut.parse(new RawQuery("Tranexamsäure PUREN", "Bayer", ""));
-
-		assertTrue(query.getProductNameKeywords().contains("Tranexamsäure"));
-		assertTrue(query.getProductNameKeywords().contains("PUREN"));
-		assertTrue(query.getProductNameKeywords().contains("Bayer"));
-		assertEquals(3, query.getProductNameKeywords().size());
-	}
-
-	@Test
-	public void keywordQuoting() {
-		SearchQuery query = sut.parse(new RawQuery("\"Tranexamsäure PUREN\"", "", ""));
-
-		assertEquals(List.of("Tranexamsäure PUREN"), query.getProductNameKeywords());
-	}
+//	@Test
+//	public void keywordSeparation() {
+//		SearchQuery query = sut.parse(new RawQuery("Tranexamsäure PUREN", "Bayer", ""));
+//
+//		assertTrue(query.getProductNameKeywords().contains("Tranexamsäure"));
+//		assertTrue(query.getProductNameKeywords().contains("PUREN"));
+//		assertTrue(query.getProductNameKeywords().contains("Bayer"));
+//		assertEquals(3, query.getProductNameKeywords().size());
+//	}
+//
+//	@Test
+//	public void keywordQuoting() {
+//		SearchQuery query = sut.parse(new RawQuery("\"Tranexamsäure PUREN\"", "", ""));
+//
+//		assertEquals(List.of("Tranexamsäure PUREN"), query.getProductNameKeywords());
+//	}
 
 }
