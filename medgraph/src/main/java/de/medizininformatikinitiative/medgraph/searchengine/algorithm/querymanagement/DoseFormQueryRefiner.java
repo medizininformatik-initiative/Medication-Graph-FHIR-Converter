@@ -29,7 +29,8 @@ public class DoseFormQueryRefiner implements PartialQueryRefiner<DoseFormQueryRe
 
 	public DoseFormQueryRefiner(BaseProvider<String> edqmConceptsProvider) {
 		this.edqmConceptsProvider = edqmConceptsProvider
-				.parallel().withTransformation(transformer);
+				.parallel()
+				.withTransformation(transformer);
 	}
 
 	/**
@@ -43,14 +44,17 @@ public class DoseFormQueryRefiner implements PartialQueryRefiner<DoseFormQueryRe
 		List<LevenshteinListMatcher.Match> matches = new ArrayList<>();
 
 		levenshteinListMatcher.match(transformer.apply(query), edqmConceptsProvider)
-		                      .forEach(match -> {
-			                      Identifiable target = match.getMatchedIdentifier().target;
+		                      .filter(match -> {
 			                      if (match.getMatchedIdentifier().target instanceof EdqmConcept) {
-				                      matches.add(match);
-			                      } else {
-				                      System.err.print(
-						                      "Warning: The provider provided an Identifiable which is no EdqmConcept! (Got " + target + ")");
+				                      return true;
 			                      }
+			                      System.err.println(
+					                      "Warning: The provider provided an Identifiable which is no EdqmConcept! (Got " + match.getMatchedIdentifier().target + ")");
+			                      return false;
+		                      }).forEach(m -> {
+								  synchronized (this) {
+									  matches.add(m);
+								  }
 		                      });
 
 //		removeOverlaps(matches);
@@ -166,7 +170,7 @@ public class DoseFormQueryRefiner implements PartialQueryRefiner<DoseFormQueryRe
 		@Override
 		public void incrementallyApply(SearchQuery.Builder searchQueryBuilder) {
 			searchQueryBuilder.withDoseForms(doseForms)
-					.withDoseFormCharacteristics(characteristics);
+			                  .withDoseFormCharacteristics(characteristics);
 		}
 	}
 

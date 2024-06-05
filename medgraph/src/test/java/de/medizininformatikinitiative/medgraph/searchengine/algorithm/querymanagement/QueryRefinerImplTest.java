@@ -25,7 +25,8 @@ public class QueryRefinerImplTest extends UnitTest {
 	void setUp() {
 		sut = new QueryRefinerImpl(
 				new DosageQueryRefiner(),
-				new DoseFormQueryRefiner(EDQM_PROVIDER)
+				new DoseFormQueryRefiner(EDQM_PROVIDER),
+				new SubstanceQueryRefiner(SUBSTANCES_PROVIDER)
 		);
 	}
 
@@ -149,8 +150,11 @@ public class QueryRefinerImplTest extends UnitTest {
 
 
 		assertEqualsIgnoreOrder(List.of("Dormicum", "Bayer"), searchQuery.getProductNameKeywords());
-		assertEquals(List.of(Substances.MIDAZOLAM), searchQuery.getSubstances());
-		assertEqualsIgnoreOrder(List.of(Dosage.of(5, "mg", 1, "ml")), searchQuery.getActiveIngredientDosages());
+		assertEqualsIgnoreOrder(List.of(Substances.MIDAZOLAM_HYDROCHLORIDE, Substances.MIDAZOLAM), searchQuery.getSubstances());
+		assertEqualsIgnoreOrder(List.of(
+				Dosage.of(5, "mg", 1, "ml"),
+				Dosage.of(3, "ml")
+		), searchQuery.getActiveIngredientDosages());
 		assertEquals(List.of(new Amount(new BigDecimal(3), "ml")), searchQuery.getDrugAmounts());
 		assertEquals(List.of(), searchQuery.getDoseForms());
 		assertEquals(List.of(DoseForms.Characteristics.SOLUTION), searchQuery.getDoseFormCharacteristics());
@@ -158,7 +162,7 @@ public class QueryRefinerImplTest extends UnitTest {
 		assertUsedParts(List.of("5mg/ml"), refinedQuery.getDosageGeneralSearchTermUsageStatement());
 		assertUsedParts(List.of("solution"), refinedQuery.getDoseFormGeneralSearchTermUsageStatement());
 		assertUsedParts(List.of("3 ml"), refinedQuery.getDosageUsageStatement());
-		assertUsedParts(List.of(), refinedQuery.getDoseFormUsageStatement());
+		assertNull(refinedQuery.getDoseFormUsageStatement());
 	}
 
 	@Test
@@ -175,14 +179,14 @@ public class QueryRefinerImplTest extends UnitTest {
 		SearchQuery searchQuery = refinedQuery.getSearchQuery();
 
 		assertEqualsIgnoreOrder(List.of("Prednisolon", "Prednisolut"), searchQuery.getProductNameKeywords());
-		assertEquals(List.of(Substances.PREDNISOLONE), searchQuery.getSubstances());
+		assertEqualsIgnoreOrder(List.of(Substances.PREDNISOLONE, Substances.PREDNISOLONE_HYDROGENSUCCINATE), searchQuery.getSubstances());
 		assertEquals(List.of(), searchQuery.getActiveIngredientDosages());
 		assertEquals(List.of(), searchQuery.getDrugAmounts());
 		assertEquals(List.of(DoseForms.GRANULES), searchQuery.getDoseForms());
 		// Characteristics left out, because supplying the Granules characteristic may make sense, but
 		// it could also be left out because we have the corresponding dose form.
 
-		assertUsedParts(List.of(""), refinedQuery.getDosageGeneralSearchTermUsageStatement());
+		assertUsedParts(List.of(), refinedQuery.getDosageGeneralSearchTermUsageStatement());
 		assertUsedParts(List.of("granules"), refinedQuery.getDoseFormGeneralSearchTermUsageStatement());
 		assertNull(refinedQuery.getDosageUsageStatement());
 		assertNull(refinedQuery.getDoseFormUsageStatement());

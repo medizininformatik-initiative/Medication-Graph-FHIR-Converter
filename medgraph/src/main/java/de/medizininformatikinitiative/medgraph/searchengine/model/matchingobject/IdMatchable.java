@@ -39,9 +39,6 @@ public abstract class IdMatchable implements Matchable {
 
 	@Override
 	public String toString() {
-		return getClass().getSimpleName()+"{" +
-				"id=" + id +
-				", name='" + name + '\'' +
-				'}';
+		return name;
 	}
 }

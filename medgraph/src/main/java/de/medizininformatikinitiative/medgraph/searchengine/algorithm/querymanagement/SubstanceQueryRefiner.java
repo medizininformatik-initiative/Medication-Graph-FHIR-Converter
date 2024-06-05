@@ -12,6 +12,8 @@ import de.medizininformatikinitiative.medgraph.searchengine.tracing.SubstringUsa
 
 import java.util.*;
 
+import static org.apache.commons.lang3.BooleanUtils.forEach;
+
 /**
  * Partial query refiner which resolves substances from the search term.
  *
@@ -40,15 +42,19 @@ public class SubstanceQueryRefiner implements PartialQueryRefiner<SubstanceQuery
 		Set<String> usedTokens = new HashSet<>();
 		levenshteinSetMatcher
 				.match(TRANSFORMER.apply(query), substanceProvider.withTransformation(TRANSFORMER))
-				.filter(Objects::nonNull)
-				.forEach(match -> {
+				.filter(match -> {
 					Identifiable target = match.getMatchedIdentifier().target;
-					if (target instanceof Substance s) {
-						substances.add(s);
+					if (target instanceof Substance) {
+						return true;
+					}
+					System.err.println("Warning: The provider passed to the SubstanceQueryRefiner provided an " +
+							"object which is not a substance: " + target);
+					return false;
+				})
+				.forEach(match -> {
+					synchronized (this) {
+						substances.add((Substance) match.getMatchedIdentifier().target);
 						usedTokens.addAll(match.getUsageStatement().getUsedTokens());
-					} else {
-						System.err.println("Warning: The provider passed to the SubstanceQueryRefiner provided an " +
-								"object which is not a substance: " + target);
 					}
 				});
 

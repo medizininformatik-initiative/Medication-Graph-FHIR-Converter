@@ -3,20 +3,15 @@ package de.medizininformatikinitiative.medgraph.searchengine.algorithm.querymana
 import de.medizininformatikinitiative.medgraph.TestFactory;
 import de.medizininformatikinitiative.medgraph.UnitTest;
 import de.medizininformatikinitiative.medgraph.searchengine.model.SearchQuery;
-import de.medizininformatikinitiative.medgraph.searchengine.provider.BaseProvider;
-import de.medizininformatikinitiative.medgraph.searchengine.provider.MappedIdentifier;
-import org.checkerframework.checker.units.qual.C;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import static de.medizininformatikinitiative.medgraph.TestFactory.DoseForms.*;
 import static de.medizininformatikinitiative.medgraph.searchengine.algorithm.querymanagement.DoseFormQueryRefiner.Result;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * @author Markus Budeus

@@ -18,8 +18,6 @@ import java.util.function.Function;
  */
 public class QueryRefinerImpl implements QueryRefiner {
 
-	// TODO Substance handling.
-
 	/**
 	 * The partial refiner which extracts and refines dosage information.
 	 */
@@ -28,14 +26,20 @@ public class QueryRefinerImpl implements QueryRefiner {
 	 * The partial refiner which extracts and refines dose form information.
 	 */
 	private final DoseFormQueryRefiner doseFormQueryRefiner;
+	/**
+	 * The partial refiner which resolves substances based on the query.
+	 */
+	private final SubstanceQueryRefiner substanceQueryRefiner;
 
 	private final Transformer<String, List<String>> keywordExtractor =
 			new WhitespaceTokenizer(true)
 					.and(new TrimSpecialSuffixSymbols());
 
-	public QueryRefinerImpl(DosageQueryRefiner dosageQueryRefiner, DoseFormQueryRefiner doseFormQueryRefiner) {
+	public QueryRefinerImpl(DosageQueryRefiner dosageQueryRefiner, DoseFormQueryRefiner doseFormQueryRefiner,
+	                        SubstanceQueryRefiner substanceQueryRefiner) {
 		this.dosageQueryRefiner = dosageQueryRefiner;
 		this.doseFormQueryRefiner = doseFormQueryRefiner;
+		this.substanceQueryRefiner = substanceQueryRefiner;
 	}
 
 	public RefinedQuery refine(RawQuery query) {
@@ -46,24 +50,33 @@ public class QueryRefinerImpl implements QueryRefiner {
 
 		SearchQuery.Builder searchQueryBuilder = new SearchQuery.Builder();
 
+		// Dosages
 		SubstringUsageStatement dosageUsageStatement =
 				applyPartialQueryRefiner(query.dosages, dosageQueryRefiner, searchQueryBuilder);
 		SubstringUsageStatement dosageGeneralSearchTermUsageStatement =
 				applyPartialQueryRefinerUsingStepwiseQueryParser(generalQueryParser, dosageQueryRefiner,
 						searchQueryBuilder);
+
+		// Dose Forms
 		SubstringUsageStatement doseFormUsageStatement =
 				applyPartialQueryRefiner(query.doseForms, doseFormQueryRefiner, searchQueryBuilder);
 		SubstringUsageStatement doseFormGeneralSearchTermUsageStatement =
 				applyPartialQueryRefinerUsingStepwiseQueryParser(generalQueryParser, doseFormQueryRefiner,
 						searchQueryBuilder);
 
-		List<String> productKeywords = new ArrayList<>(extractKeywords(query.product));
+		// Preparation for Substances and Products, as those both use whatever remains from the general query
 		String remainingGeneralQueryParts = "";
 		if (generalQueryParser != null) {
 			remainingGeneralQueryParts = generalQueryParser.getQueryUsageStatement().getUnusedParts();
 		}
-		productKeywords.addAll(extractKeywords(remainingGeneralQueryParts));
 
+		// Substances
+		applyPartialQueryRefiner(remainingGeneralQueryParts, substanceQueryRefiner, searchQueryBuilder);
+		applyPartialQueryRefiner(query.substance, substanceQueryRefiner, searchQueryBuilder);
+
+		// Product keywords
+		List<String> productKeywords = new ArrayList<>(extractKeywords(query.product));
+		productKeywords.addAll(extractKeywords(remainingGeneralQueryParts));
 		searchQueryBuilder.withProductNameKeywords(productKeywords);
 
 		return new RefinedQuery(
