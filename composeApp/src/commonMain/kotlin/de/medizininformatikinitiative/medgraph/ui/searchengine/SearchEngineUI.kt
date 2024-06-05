@@ -37,7 +37,7 @@ fun SearchEngineUI(viewModel: SearchEngineViewModel, modifier: Modifier = Modifi
     Column(modifier = modifier) {
         RawAndParsedQueryUI(
             viewModel, modifier = Modifier
-                .height(250.dp)
+                .height(280.dp)
                 .fillMaxWidth()
         )
         ParseAndExecuteButtonRow(viewModel, modifier = Modifier.fillMaxWidth())
@@ -69,22 +69,29 @@ fun RawAndParsedQueryUI(viewModel: SearchEngineViewModel, modifier: Modifier = M
     ) {
         QueryUI(
             viewModel.queryViewModel,
-            modifier = Modifier.weight(1f),
-            onEnterPressed = viewModel::parseAndExecuteQuery,
+            modifier = Modifier.weight(1.5f),
+            onEnterPressed = viewModel::refineAndExecuteQuery,
         )
 
         Divider(
             modifier = Modifier
-                .padding(horizontal = 16.dp)
+                .padding(horizontal = 16.dp, vertical = 4.dp)
                 .fillMaxHeight()
                 .width(1.dp)
         )
 
-        val parsedQuery = viewModel.parsedQuery
-        if (parsedQuery != null) {
-            ParsedQueryUI(parsedQuery, modifier = Modifier.weight(1f))
-        } else {
-            Box(modifier = Modifier.weight(1f))
+        val parsedQuery = viewModel.refinedQuery?.searchQuery
+        Box(modifier = Modifier.weight(1f).fillMaxHeight()) {
+            if (viewModel.queryRefiningUnderway) {
+                CircularProgressIndicator(
+                    modifier = Modifier.width(48.dp)
+                        .align(Alignment.Center),
+                    color = CorporateDesign.Main.TUMBlue,
+                    backgroundColor = CorporateDesign.Secondary.LighterBlue
+                )
+            } else if (parsedQuery != null) {
+                SearchQueryUI(parsedQuery, modifier = Modifier.fillMaxWidth())
+            }
         }
     }
 }
@@ -105,19 +112,22 @@ fun ParseAndExecuteButtonRow(viewModel: SearchEngineViewModel, modifier: Modifie
         Row(
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            Button(onClick = viewModel::refineQuery) {
+            Button(
+                onClick = viewModel::refineQuery,
+                enabled = !viewModel.busy
+            ) {
                 Text(StringRes.search_engine_dialog_parse)
             }
             Button(
                 onClick = viewModel::executeQuery,
-                enabled = viewModel.parsedQuery != null && !viewModel.queryExecutionUnderway
+                enabled = viewModel.refinedQuery != null && !viewModel.busy
             ) {
                 Text(StringRes.search_engine_dialog_execute)
             }
 
             Button(
-                onClick = { viewModel.parseAndExecuteQuery() },
-                enabled = !viewModel.queryExecutionUnderway,
+                onClick = { viewModel.refineAndExecuteQuery() },
+                enabled = !viewModel.busy,
             ) {
                 Text(StringRes.search_engine_dialog_parse_execute)
             }

@@ -1,10 +1,11 @@
 package de.medizininformatikinitiative.medgraph.ui.searchengine
 
+import androidx.compose.animation.animateContentSize
 import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.isTypedEvent
 import androidx.compose.material.Text
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.input.key.key
@@ -33,7 +34,9 @@ fun QueryUI(
 ) {
     Column(
         modifier = modifier
+            .animateContentSize()
     ) {
+        var expanded by remember { mutableStateOf(false) }
 
         TextField(
             viewModel.queryText,
@@ -42,19 +45,60 @@ fun QueryUI(
             modifier = Modifier.fillMaxWidth()
                 .captureEnterPress(onEnterPressed)
         )
-        TextField(
-            viewModel.productQueryText,
-            { v -> viewModel.productQueryText = v },
-            label = StringRes.query_dialog_product_query_text,
-            modifier = Modifier.fillMaxWidth()
-                .captureEnterPress(onEnterPressed)
-        )
-        TextField(
-            viewModel.substanceQueryText,
-            { v -> viewModel.substanceQueryText = v },
-            label = StringRes.query_dialog_substance_query_text,
-            modifier = Modifier.fillMaxWidth()
-                .captureEnterPress(onEnterPressed)
-        )
+
+        Button({ expanded = !expanded }) {
+            Text(StringRes.query_dialog_expand)
+        }
+
+        if (expanded) {
+            AdditionalQueryUIElements(viewModel, modifier = Modifier.fillMaxWidth(), onEnterPressed = onEnterPressed)
+        }
+    }
+}
+
+@Composable
+fun AdditionalQueryUIElements(
+    viewModel: QueryViewModel,
+    modifier: Modifier = Modifier,
+    onEnterPressed: () -> Unit = {}
+) {
+    Column(modifier = Modifier) {
+        Row(horizontalArrangement = Arrangement.spacedBy(4.dp), modifier = Modifier.fillMaxWidth()) {
+            TextField(
+                viewModel.productQueryText,
+                { v -> viewModel.productQueryText = v },
+                label = StringRes.query_dialog_product_query_text,
+                modifier = Modifier
+                    .weight(1f)
+                    .captureEnterPress(onEnterPressed)
+            )
+            TextField(
+                viewModel.substanceQueryText,
+                { v -> viewModel.substanceQueryText = v },
+                label = StringRes.query_dialog_substance_query_text,
+                modifier = Modifier
+                    .weight(1f)
+                    .captureEnterPress(onEnterPressed)
+            )
+        }
+
+        Row(horizontalArrangement = Arrangement.spacedBy(4.dp), modifier = Modifier.fillMaxWidth()) {
+            TextField(
+                viewModel.dosageQueryText,
+                { v -> viewModel.dosageQueryText = v },
+                label = StringRes.query_dialog_dosage_query_text,
+                modifier = Modifier
+                    .weight(1f)
+                    .captureEnterPress(onEnterPressed)
+            )
+            TextField(
+                viewModel.doseFormQueryText,
+                { v -> viewModel.doseFormQueryText = v },
+                label = StringRes.query_dialog_dose_form_query_text,
+                modifier = Modifier
+                    .weight(1f)
+                    .captureEnterPress(onEnterPressed)
+            )
+        }
     }
 }
