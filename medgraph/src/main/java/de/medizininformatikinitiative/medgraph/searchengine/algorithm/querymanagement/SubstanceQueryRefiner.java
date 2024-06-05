@@ -10,9 +10,10 @@ import de.medizininformatikinitiative.medgraph.searchengine.tracing.DistinctMult
 import de.medizininformatikinitiative.medgraph.searchengine.tracing.StringSetUsageStatement;
 import de.medizininformatikinitiative.medgraph.searchengine.tracing.SubstringUsageStatement;
 
-import java.util.*;
-
-import static org.apache.commons.lang3.BooleanUtils.forEach;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
  * Partial query refiner which resolves substances from the search term.
@@ -25,7 +26,7 @@ public class SubstanceQueryRefiner implements PartialQueryRefiner<SubstanceQuery
 			new ToLowerCase().
 					andTraceable(new WhitespaceTokenizer())
 					.andTraceable(new TrimSpecialSuffixSymbols())
-//					.andTraceable(new RemoveBlankStrings()); TODO
+					.andTraceable(new RemoveBlankStrings())
 					.andTraceable(new ListToSet());
 
 	private final LevenshteinSetMatcher levenshteinSetMatcher = new LevenshteinSetMatcher();

@@ -22,7 +22,7 @@ class UI {
             application {
                 ApplicationTheme {
                     val windowState = rememberWindowState()
-                    windowState.size = DpSize(1200.dp, 600.dp)
+                    windowState.size = DpSize(1200.dp, 900.dp)
 
                     Window(
                         onCloseRequest = ::exitApplication,
