@@ -52,6 +52,10 @@ public class StringSetUsageStatement extends AbstractUsageStatement<Set<String>>
 		return Collections.unmodifiableSet(usedTokens);
 	}
 
+	public @NotNull Set<String> getUsedTokens() {
+		return new HashSet<>(usedTokens);
+	}
+
 	@Override
 	public boolean equals(Object object) {
 		if (this == object) return true;

@@ -36,7 +36,7 @@ public class UnitTest {
 		if (expected == null && actual == null) return;
 		assertNotNull(expected, "Expected null, but got "+ actual);
 		assertNotNull(actual, "Expected "+expected+", but got null!");
-		assertEquals(expected.size(), actual.size(), "The two lists have different sizes!");
+		assertEquals(expected.size(), actual.size(), "Expected "+expected+", but got "+actual);
 
 		// Their sets may overlap, but duplicate elements may still differ in how often they occur
 		assertEquals(toOccurrenceMap(expected), toOccurrenceMap(actual),
