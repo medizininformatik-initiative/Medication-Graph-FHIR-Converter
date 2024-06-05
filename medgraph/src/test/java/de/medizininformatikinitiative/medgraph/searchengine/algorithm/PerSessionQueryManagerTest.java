@@ -3,12 +3,17 @@ package de.medizininformatikinitiative.medgraph.searchengine.algorithm;
 import de.medizininformatikinitiative.medgraph.UnitTest;
 import de.medizininformatikinitiative.medgraph.common.db.DatabaseConnection;
 import de.medizininformatikinitiative.medgraph.searchengine.QueryExecutor;
+import de.medizininformatikinitiative.medgraph.searchengine.algorithm.querymanagement.QueryRefiner;
+import de.medizininformatikinitiative.medgraph.searchengine.algorithm.querymanagement.RefinedQuery;
+import de.medizininformatikinitiative.medgraph.searchengine.model.RawQuery;
 import de.medizininformatikinitiative.medgraph.searchengine.model.SearchQuery;
 import de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject.MatchingObject;
 import de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject.Merge;
 import de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject.OriginalMatch;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.neo4j.driver.Session;
@@ -27,8 +32,10 @@ import static org.mockito.Mockito.when;
 /**
  * @author Markus Budeus
  */
-public class PerSessionQueryExecutorTest extends UnitTest {
+public class PerSessionQueryManagerTest extends UnitTest {
 
+	@Mock
+	private QueryRefiner queryRefiner;
 	@Mock
 	private QueryExecutor queryExecutor;
 	@Mock
@@ -37,11 +44,13 @@ public class PerSessionQueryExecutorTest extends UnitTest {
 	private Session session1;
 	@Mock
 	private SearchQuery query;
+	@Mock
+	private RawQuery rawQuery;
 
 	private boolean sessionClosed;
 
 
-	private PerSessionQueryExecutor sut;
+	private PerSessionQueryManager sut;
 
 	@BeforeEach
 	void setUp() {
@@ -52,56 +61,76 @@ public class PerSessionQueryExecutorTest extends UnitTest {
 			return null;
 		}).when(session1).close();
 
-		sut = new PerSessionQueryExecutor(s ->  queryExecutor, connection);
+		sut = new PerSessionQueryManager(s -> queryRefiner, s -> queryExecutor, connection);
 	}
 
-	@Test
-	public void sessionNotReused() {
+	@ParameterizedTest(name = "Refiner: {0}")
+	@ValueSource(booleans = {true, false})
+	public void sessionNotReused(boolean useRefiner) {
 		Session session2 = mock(Session.class);
 		when(connection.createSession()).thenReturn(session1)
-				.thenReturn(session2);
+		                                .thenReturn(session2);
 
 		AtomicReference<Session> session = new AtomicReference<>();
-		sut = new PerSessionQueryExecutor(s -> {
+		sut = new PerSessionQueryManager(s -> {
+			session.set(s);
+			return queryRefiner;
+		}, s -> {
 			session.set(s);
 			return queryExecutor;
 		}, connection);
 
-		sut.executeQuery(query);
+		refineOrExecute(useRefiner);
 		assertSame(session1, session.get());
-		sut.executeQuery(query);
+		refineOrExecute(useRefiner);
 		assertSame(session2, session.get());
 	}
 
-	@Test
-	public void sessionOpenDuringQueryExecutorInvocation() {
+	@ParameterizedTest(name = "Refiner: {0}")
+	@ValueSource(booleans = {true, false})
+	public void sessionOpenDuringQueryExecutorOrRefinerInvocation(boolean refiner) {
 		AtomicBoolean sessionWasClosed = new AtomicBoolean(true);
 		when(queryExecutor.executeQuery(any())).thenAnswer(req -> {
 			sessionWasClosed.set(sessionClosed);
 			return null;
 		});
+		when(queryRefiner.refine(any())).thenAnswer(req -> {
+			sessionWasClosed.set(sessionClosed);
+			return null;
+		});
 
-		sut.executeQuery(query);
+		refineOrExecute(refiner);
 		assertFalse(sessionWasClosed.get());
 	}
 
-	@Test
-	public void sessionClosedAfterExecution() {
-		sut.executeQuery(query);
+	@ParameterizedTest(name = "Refiner: {0}")
+	@ValueSource(booleans = {true, false})
+	public void sessionClosedAfterExecution(boolean refiner) {
+		refineOrExecute(refiner);
 		assertTrue(sessionClosed);
 	}
 
-	@Test
-	public void sessionClosedInCaseOfCrash() {
+	@ParameterizedTest(name = "Refiner: {0}")
+	@ValueSource(booleans = {true, false})
+	public void sessionClosedInCaseOfCrash(boolean refiner) {
 		when(queryExecutor.executeQuery(any())).thenThrow(new RuntimeException("This went downhill quickly..."));
+		when(queryRefiner.refine(any())).thenThrow(new RuntimeException("This went downhill VERY quickly..."));
 		assertThrows(RuntimeException.class, () -> {
-			sut.executeQuery(query);
+			refineOrExecute(refiner);
 		});
 		assertTrue(sessionClosed);
 	}
 
 	@Test
-	public void correctResultReturned() {
+	public void correctRefinementResultReturned() {
+		RefinedQuery refinedQuery = mock(RefinedQuery.class);
+		when(queryRefiner.refine(rawQuery)).thenReturn(refinedQuery);
+
+		assertEquals(refinedQuery, sut.refine(rawQuery));
+	}
+
+	@Test
+	public void correctExecutionResultReturned() {
 		List<MatchingObject> resultList = List.of(
 				new OriginalMatch(SAMPLE_PRODUCT_1),
 				new Merge(List.of(new OriginalMatch(SAMPLE_PRODUCT_2), new OriginalMatch(SAMPLE_PRODUCT_2)))
@@ -109,6 +138,13 @@ public class PerSessionQueryExecutorTest extends UnitTest {
 		when(queryExecutor.executeQuery(query)).thenReturn(resultList);
 
 		assertEquals(resultList, sut.executeQuery(query));
+	}
+
+	private void refineOrExecute(boolean refine) {
+		if (refine)
+			sut.refine(rawQuery);
+		else
+			sut.executeQuery(query);
 	}
 
 

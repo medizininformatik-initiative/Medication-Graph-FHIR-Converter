@@ -6,13 +6,11 @@ import androidx.compose.runtime.setValue
 import cafe.adriel.voyager.core.model.ScreenModel
 import cafe.adriel.voyager.core.model.screenModelScope
 import de.medizininformatikinitiative.medgraph.searchengine.QueryExecutor
-import de.medizininformatikinitiative.medgraph.searchengine.algorithm.querymanagement.QueryParser
 import de.medizininformatikinitiative.medgraph.searchengine.algorithm.querymanagement.QueryRefiner
 import de.medizininformatikinitiative.medgraph.searchengine.algorithm.querymanagement.RefinedQuery
-import de.medizininformatikinitiative.medgraph.searchengine.algorithm.querymanagement.SimpleQueryParser
-import de.medizininformatikinitiative.medgraph.searchengine.model.SearchQuery
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 /**
@@ -68,12 +66,9 @@ open class SearchEngineViewModel(
      *
      * @return the job representing the query execution or null if the query execution could not start successfully
      */
-    fun parseAndExecuteQuery(): Job? {
-        refineQuery()
-        return executeQuery()
-    }
+    fun refineAndExecuteQuery(): Job? = requestAsyncAction { syncRefineQuery(); syncExecuteQuery() }
 
-    private fun syncRefineQuery() {
+    private suspend fun syncRefineQuery() {
         try {
             queryRefiningUnderway = true
             refinedQuery = queryRefiner.refine(queryViewModel.createQuery());

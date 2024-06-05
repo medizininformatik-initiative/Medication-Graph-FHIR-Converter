@@ -26,9 +26,9 @@ import java.math.BigDecimal
 
 @Composable
 @Preview
-fun ParsedQueryUI() {
+fun SearchQueryUI() {
     ApplicationTheme {
-        ParsedQueryUI(
+        SearchQueryUI(
             SearchQuery.Builder()
                 .withProductNameKeywords(listOf("Aspirin", "HEXAL"))
                 .withSubstances(listOf(Substance(1, "Acetylsalicylsäure"), Substance(2, "Clopidogrel")))
@@ -46,7 +46,7 @@ fun ParsedQueryUI() {
 }
 
 @Composable
-fun ParsedQueryUI(query: SearchQuery, modifier: Modifier = Modifier) {
+fun SearchQueryUI(query: SearchQuery, modifier: Modifier = Modifier) {
 
     Column(
         modifier = modifier
@@ -54,7 +54,7 @@ fun ParsedQueryUI(query: SearchQuery, modifier: Modifier = Modifier) {
             .verticalScroll(rememberScrollState())
     ) {
 
-        Separator(StringRes.parsed_query_dialog_product)
+        Separator(StringRes.parsed_query_dialog_product_keywords)
         TextBoxes(query.productNameKeywords, textColor = CorporateDesign.Secondary.DarkBlue)
         Separator(StringRes.parsed_query_dialog_substance)
         TextBoxes(query.substances, textColor = CorporateDesign.Emphasis.Orange)
@@ -62,6 +62,10 @@ fun ParsedQueryUI(query: SearchQuery, modifier: Modifier = Modifier) {
         TextBoxes(query.activeIngredientDosages, textColor = CorporateDesign.Emphasis.Green)
         Separator(StringRes.parsed_query_dialog_amounts)
         TextBoxes(query.drugAmounts, textColor = CorporateDesign.Emphasis.Green)
+        Separator(StringRes.parsed_query_dialog_dose_forms)
+        TextBoxes(query.doseForms, textColor = CorporateDesign.Secondary.DarkBlue)
+        Separator(StringRes.parsed_query_dialog_dose_form_characteristics)
+        TextBoxes(query.doseFormCharacteristics, textColor = CorporateDesign.Secondary.DarkBlue)
 
     }
 

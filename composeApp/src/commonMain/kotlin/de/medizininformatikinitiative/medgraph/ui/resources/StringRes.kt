@@ -73,10 +73,19 @@ class StringRes {
         val query_dialog_query_text = "Query"
 
         @JvmStatic
-        val query_dialog_product_query_text = "Query (products only)"
+        val query_dialog_expand = "Advanced..."
 
         @JvmStatic
-        val query_dialog_substance_query_text = "Query (substances only)"
+        val query_dialog_product_query_text = "Product Name"
+
+        @JvmStatic
+        val query_dialog_substance_query_text = "Active Ingredient Name"
+
+        @JvmStatic
+        val query_dialog_dosage_query_text = "Dosage"
+
+        @JvmStatic
+        val query_dialog_dose_form_query_text = "Dose Form"
 
         @JvmStatic
         val search_engine_dialog_parse = "Parse"
@@ -88,16 +97,22 @@ class StringRes {
         val search_engine_dialog_parse_execute = "Parse and Search"
 
         @JvmStatic
-        val parsed_query_dialog_product = "Product"
+        val parsed_query_dialog_product_keywords = "Product (keywords)"
 
         @JvmStatic
-        val parsed_query_dialog_substance = "Substance"
+        val parsed_query_dialog_substance = "Substances"
 
         @JvmStatic
         val parsed_query_dialog_dosages = "Dosages"
 
         @JvmStatic
-        val parsed_query_dialog_amounts = "Drug amounts"
+        val parsed_query_dialog_amounts = "Drug Amounts"
+
+        @JvmStatic
+        val parsed_query_dialog_dose_forms = "Pharmaceutical Dose Forms"
+
+        @JvmStatic
+        val parsed_query_dialog_dose_form_characteristics = "Dose Form Characteristics"
 
         @JvmStatic
         val query_result_too_many_matches = "Query returned {0} matches. Only the first {1} results are shown."

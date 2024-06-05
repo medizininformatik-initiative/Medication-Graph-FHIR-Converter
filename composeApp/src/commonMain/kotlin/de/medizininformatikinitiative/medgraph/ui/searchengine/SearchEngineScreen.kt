@@ -8,10 +8,13 @@ import cafe.adriel.voyager.core.model.rememberScreenModel
 import cafe.adriel.voyager.core.screen.Screen
 import de.medizininformatikinitiative.medgraph.common.db.ConnectionConfiguration
 import de.medizininformatikinitiative.medgraph.searchengine.QueryExecutor
-import de.medizininformatikinitiative.medgraph.searchengine.algorithm.PerSessionQueryExecutor
+import de.medizininformatikinitiative.medgraph.searchengine.algorithm.PerSessionQueryManager
 import de.medizininformatikinitiative.medgraph.searchengine.algorithm.SimpleQueryExecutor
 import de.medizininformatikinitiative.medgraph.searchengine.algorithm.initial.LevenshteinSearchMatchFinder
-import de.medizininformatikinitiative.medgraph.searchengine.algorithm.querymanagement.SimpleQueryParser
+import de.medizininformatikinitiative.medgraph.searchengine.algorithm.querymanagement.DosageQueryRefiner
+import de.medizininformatikinitiative.medgraph.searchengine.algorithm.querymanagement.DoseFormQueryRefiner
+import de.medizininformatikinitiative.medgraph.searchengine.algorithm.querymanagement.QueryRefiner
+import de.medizininformatikinitiative.medgraph.searchengine.algorithm.querymanagement.QueryRefinerImpl
 import de.medizininformatikinitiative.medgraph.searchengine.algorithm.refining.ExperimentalRefiner
 import de.medizininformatikinitiative.medgraph.searchengine.db.Neo4jCypherDatabase
 import de.medizininformatikinitiative.medgraph.searchengine.provider.Providers
@@ -23,29 +26,34 @@ import de.medizininformatikinitiative.medgraph.searchengine.provider.Providers
  */
 class SearchEngineScreen : Screen {
 
-    private val queryParser = SimpleQueryParser()
-    private val queryExecutor: QueryExecutor;
+    private val queryManager: PerSessionQueryManager;
 
     init {
-        queryExecutor = PerSessionQueryExecutor(
-            { session ->
-                SimpleQueryExecutor(
-                    LevenshteinSearchMatchFinder(
-                        Providers.getProductSynonymes(session),
-                        Providers.getSubstanceSynonymes(session)
-                    ),
-                    ExperimentalRefiner(session, Neo4jCypherDatabase(session))
-                )
-            },
-            // TODO This may fail horribly, introduce better error management, i.e. display errors on UI
-            ConnectionConfiguration.getDefault().createConnection()
-        )
+        queryManager =
+            PerSessionQueryManager(
+                { session ->
+                    QueryRefinerImpl(
+                        DosageQueryRefiner(),
+                        DoseFormQueryRefiner(Providers.getEdqmConceptIdentifiers(session))
+                    )
+                },
+                { session ->
+                    SimpleQueryExecutor(
+                        LevenshteinSearchMatchFinder(
+                            Providers.getProductSynonymes(session),
+                            Providers.getSubstanceSynonymes(session)
+                        ),
+                        ExperimentalRefiner(session, Neo4jCypherDatabase(session))
+                    )
+                },
+                ConnectionConfiguration.getDefault().createConnection()
+            )
     }
 
     @Composable
     override fun Content() {
         SearchEngineUI(
-            rememberScreenModel { SearchEngineViewModel(queryParser, queryExecutor) },
+            rememberScreenModel { SearchEngineViewModel(queryManager, queryManager) },
             modifier = Modifier.padding(16.dp)
         )
     }
