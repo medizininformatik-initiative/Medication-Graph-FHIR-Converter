@@ -12,7 +12,7 @@ import java.util.function.Consumer;
 class Leaf<S> extends Node<S> {
 
 	private List<S> contents;
-	private final String sortingGroup;
+	private String sortingGroup;
 
 	Leaf(List<? extends S> contents, String sortingGroup) {
 		this.contents = new ArrayList<>(contents);
@@ -22,6 +22,11 @@ class Leaf<S> extends Node<S> {
 	@Override
 	public String getSortingGroup() {
 		return sortingGroup;
+	}
+
+	@Override
+	void setSortingGroup(String sortingGroup) {
+		this.sortingGroup = sortingGroup;
 	}
 
 	@Override
@@ -100,6 +105,12 @@ class Leaf<S> extends Node<S> {
 	@Override
 	protected String getName() {
 		return null;
+	}
+
+	@Override
+	protected Node<S> cloneTree() {
+		List<S> contents = new ArrayList<>(this.contents);
+		return new Leaf<>(contents, sortingGroup);
 	}
 
 }

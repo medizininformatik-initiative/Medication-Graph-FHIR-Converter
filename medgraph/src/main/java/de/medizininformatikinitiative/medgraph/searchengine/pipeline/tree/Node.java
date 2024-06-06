@@ -8,8 +8,8 @@ import java.util.function.Consumer;
 
 /**
  * A node of the {@link SubSortingTree}.
- * @param <S> the type of objects within the tree
  *
+ * @param <S> the type of objects within the tree
  * @author Markus Budeus
  */
 public abstract class Node<S> {
@@ -18,9 +18,11 @@ public abstract class Node<S> {
 
 	public abstract String getSortingGroup();
 
+	abstract void setSortingGroup(String sortingGroup);
+
 	/**
-	 * Searches for the keys of the given map in this node. If found, they are removed from their node
-	 * and replaced by the given list of entries.
+	 * Searches for the keys of the given map in this node. If found, they are removed from their node and replaced by
+	 * the given list of entries.
 	 */
 	abstract void batchReplace(Map<S, List<S>> replacements);
 
@@ -39,8 +41,8 @@ public abstract class Node<S> {
 	public abstract boolean isEmpty();
 
 	/**
-	 * Performs a sorting step at this node. Returns the new node to be used at this position, since a node may be
-	 * split upon sorting.
+	 * Performs a sorting step at this node. Returns the new node to be used at this position, since a node may be split
+	 * upon sorting.
 	 */
 	protected abstract Node<S> sort(SortDirective<S> sortDirective);
 
@@ -73,4 +75,12 @@ public abstract class Node<S> {
 	protected abstract void appendDescriptionInternal(StringBuilder sb, int depth);
 
 	protected abstract String getName();
+
+	/**
+	 * Clones this node including all children, but <b>does not</b> clone the elements managed by the tree. As a result,
+	 * both this instance and the returned instance reference the same objects as elements.
+	 *
+	 * @return a clone of this node and all children
+	 */
+	protected abstract Node<S> cloneTree();
 }
