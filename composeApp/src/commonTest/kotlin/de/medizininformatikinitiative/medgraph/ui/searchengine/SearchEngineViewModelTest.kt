@@ -43,6 +43,7 @@ class SearchEngineViewModelTest : UnitTest() {
         `when`(queryRefiner.refine(any())).thenReturn(refinedQuery)
         `when`(queryExecutor.executeQuery(any())).thenReturn(sampleSearchResult)
         sut = SearchEngineViewModel(queryRefiner, queryExecutor)
+        sut.queryViewModel.expanded = true
     }
 
     @Test
@@ -160,6 +161,7 @@ class SearchEngineViewModelTest : UnitTest() {
             refinementStateValid.set(
                 sut.busy && sut.queryRefiningUnderway
             )
+            return@thenAnswer refinedQuery
         }
         `when`(queryExecutor.executeQuery(any())).thenAnswer {
             executionStateValid.set(

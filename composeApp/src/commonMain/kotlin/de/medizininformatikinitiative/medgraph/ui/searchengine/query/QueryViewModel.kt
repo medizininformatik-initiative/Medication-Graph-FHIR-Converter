@@ -14,6 +14,11 @@ import de.medizininformatikinitiative.medgraph.searchengine.tracing.SubstringUsa
  */
 class QueryViewModel {
 
+    /**
+     * Whether additional search query fields besides queryText shall be shown.
+     */
+    var expanded by mutableStateOf(false)
+
     var queryText by mutableStateOf("")
     var productQueryText by mutableStateOf("")
     var substanceQueryText by mutableStateOf("")
@@ -25,7 +30,13 @@ class QueryViewModel {
     var dosageUsageStatement by mutableStateOf<SubstringUsageStatement?>(null)
     var doseFormUsageStatement by mutableStateOf<SubstringUsageStatement?>(null)
 
-    fun createQuery() = RawQuery(queryText, productQueryText, substanceQueryText, dosageQueryText, doseFormQueryText)
+    fun createQuery(): RawQuery {
+        if (!expanded) {
+            return RawQuery(queryText)
+        } else {
+            return RawQuery(queryText, productQueryText, substanceQueryText, dosageQueryText, doseFormQueryText)
+        }
+    }
 
     /**
      * Applies the given refining result to this view model, allowing it to color the query texts according to how
