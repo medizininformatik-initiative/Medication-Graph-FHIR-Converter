@@ -3,6 +3,7 @@ package de.medizininformatikinitiative.medgraph.ui.common.db
 import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Button
+import androidx.compose.material.Checkbox
 import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
@@ -62,23 +63,34 @@ private fun ConnectionInfoTextFields(viewModel: ConnectionDialogViewModel) {
         label = { Text(StringRes.db_connection_dialog_user) },
         modifier = Modifier.fillMaxWidth()
     )
-    OutlinedTextField(
-        password, { value -> viewModel.setPassword(value) },
-        enabled = !testingConnection,
-        label = {
-            Text(
-                StringRes.db_connection_dialog_password +
-                        (if (passwordUnchanged && !passwordFocus)
-                            " " + StringRes.db_connection_dialog_password_unchanged else "")
-            )
-        },
-        placeholder = {
-            if (passwordUnchanged) Text(StringRes.db_connection_dialog_password_unchanged)
-        },
-        visualTransformation = if (passwordUnchanged) VisualTransformation.None else PasswordVisualTransformation(),
+
+
+    Row(verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier.fillMaxWidth()
-            .onFocusChanged { focusState -> passwordFocus = focusState.hasFocus }
-    )
+    ) {
+
+        OutlinedTextField(
+            password, { value -> viewModel.setPassword(value) },
+            enabled = !testingConnection,
+            label = {
+                Text(
+                    StringRes.db_connection_dialog_password +
+                            (if (passwordUnchanged && !passwordFocus)
+                                " " + StringRes.db_connection_dialog_password_unchanged else "")
+                )
+            },
+            placeholder = {
+                if (passwordUnchanged) Text(StringRes.db_connection_dialog_password_unchanged)
+            },
+            visualTransformation = if (passwordUnchanged) VisualTransformation.None else PasswordVisualTransformation(),
+            modifier = Modifier.weight(1f)
+                .onFocusChanged { focusState -> passwordFocus = focusState.hasFocus }
+        )
+
+        Checkbox(viewModel.savePassword.value, { checked -> viewModel.savePassword.value = checked })
+        Text(StringRes.db_connection_dialog_save_password)
+    }
+
 }
 
 @Composable

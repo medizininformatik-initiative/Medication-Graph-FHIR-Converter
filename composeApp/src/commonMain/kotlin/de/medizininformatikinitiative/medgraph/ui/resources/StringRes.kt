@@ -70,6 +70,9 @@ class StringRes {
         val db_connection_dialog_password_unchanged = "(unchanged)"
 
         @JvmStatic
+        val db_connection_dialog_save_password = "Save password"
+
+        @JvmStatic
         val query_dialog_query_text = "Query"
 
         @JvmStatic
