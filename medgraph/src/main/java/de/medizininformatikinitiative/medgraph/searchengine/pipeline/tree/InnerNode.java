@@ -15,18 +15,27 @@ import java.util.function.Consumer;
 class InnerNode<S> extends Node<S> {
 
 	private final List<Node<S>> children;
-	private final String sortingGroup;
-	private final SortDirective<S> appliedSortDirective;
+	private String sortingGroup;
+	/**
+	 * The reason why the tree splits at this node. The usual reason is a sorting step having been applied, in which
+	 * case this is a {@link SortDirective}.
+	 */
+	private final SplitCause splitCause;
 
-	InnerNode(List<? extends Node<S>> children, String sortingGroup, SortDirective<S> appliedSortDirective) {
+	InnerNode(List<? extends Node<S>> children, String sortingGroup, SplitCause splitCause) {
 		this.children = new ArrayList<>(children);
 		this.sortingGroup = sortingGroup;
-		this.appliedSortDirective = appliedSortDirective;
+		this.splitCause = splitCause;
 	}
 
 	@Override
 	public String getSortingGroup() {
 		return sortingGroup;
+	}
+
+	@Override
+	void setSortingGroup(String sortingGroup) {
+		this.sortingGroup = sortingGroup;
 	}
 
 	@Override
@@ -42,7 +51,7 @@ class InnerNode<S> extends Node<S> {
 	@Override
 	public List<S> getTopContents() {
 		if (isEmpty()) return new ArrayList<>();
-		return children.get(0).getTopContents();
+		return children.getFirst().getTopContents();
 	}
 
 	@Override
@@ -75,7 +84,6 @@ class InnerNode<S> extends Node<S> {
 	}
 
 	private void executeActionOnChildrenAndRemoveIfEmpty(Consumer<Node<S>> action) {
-		int l = children.size();
 		for (int i = 0; i < children.size();) {
 			Node<S> child = children.get(i);
 			action.accept(child);
@@ -99,7 +107,14 @@ class InnerNode<S> extends Node<S> {
 
 	@Override
 	protected String getName() {
-		return appliedSortDirective.name;
+		return splitCause.getName();
+	}
+
+	@Override
+	protected Node<S> cloneTree() {
+		List<Node<S>> newChildren = new ArrayList<>();
+		children.forEach(child -> newChildren.add(child.cloneTree()));
+		return new InnerNode<>(newChildren, sortingGroup, splitCause);
 	}
 
 }

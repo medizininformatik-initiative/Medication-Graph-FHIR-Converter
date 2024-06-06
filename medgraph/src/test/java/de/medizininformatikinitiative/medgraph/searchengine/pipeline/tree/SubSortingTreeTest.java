@@ -7,7 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * @author Markus Budeus
@@ -152,6 +152,33 @@ public class SubSortingTreeTest {
 		sut.clearDuplicates();
 
 		assertEquals(List.of("B2", "B1", "A2", "A1", "B3", "A3"), sut.getContents());
+	}
+
+	@Test
+	public void merge() {
+		List<Integer> initial1 = List.of(1, 1, 3, 2, 5, 4);
+		List<Integer> initial2 = List.of(61, 33, 73, 41, 1, 82, 94, 14, 24);
+
+		SubSortingTree<Integer> tree1 = new SubSortingTree<>(initial1);
+		SubSortingTree<Integer> tree2 = new SubSortingTree<>(initial2);
+
+		tree2.applySortingStep(new ScoreSortDirective<>("last digit descending",
+				value -> (double) (value % 10), null));
+		assertEquals(List.of(94, 14, 24, 33, 73, 82, 61, 41, 1), tree2.getContents());
+
+		SubSortingTree<Integer> merge = SubSortingTree.merge(tree1, tree2);
+		assertEquals(List.of(
+				1, 1, 3, 2, 5, 4,
+				94, 14, 24, 33, 73, 82, 61, 41, 1
+		), merge.getContents());
+
+		merge.applySortingStep(new ScoreSortDirective<>("number ascending",
+				value -> (double) -value, null));
+		assertEquals(List.of(
+				1, 1, 2, 3, 4, 5,
+				14, 24, 94, 33, 73, 82, 1, 41, 61
+		), merge.getContents());
+		assertEquals(List.of(1, 1), merge.getTopContents());
 	}
 
 }
