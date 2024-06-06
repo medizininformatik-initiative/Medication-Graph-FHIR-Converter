@@ -20,12 +20,12 @@ import static org.junit.jupiter.api.Assertions.*;
 /**
  * @author Markus Budeus
  */
-public class OngoingMatchingTest {
+public class OngoingRefinementTest {
 
 	@ParameterizedTest
 	@ValueSource(booleans = {true, false})
 	public void applyFilter(boolean ensureSurvival) {
-		OngoingMatching sut = createSut(List.of(
+		OngoingRefinement sut = createSut(List.of(
 				SAMPLE_PRODUCT_1,
 				SAMPLE_SUBSTANCE_1,
 				SAMPLE_SUBSTANCE_3
@@ -43,7 +43,7 @@ public class OngoingMatchingTest {
 	@ParameterizedTest
 	@ValueSource(booleans = {true, false})
 	public void applyFilterWithSurvivalInQuestion(boolean ensureSurvival) {
-		OngoingMatching sut = createSut(List.of(
+		OngoingRefinement sut = createSut(List.of(
 				SAMPLE_SUBSTANCE_1,
 				SAMPLE_SUBSTANCE_3
 		));
@@ -65,7 +65,7 @@ public class OngoingMatchingTest {
 	@ParameterizedTest
 	@ValueSource(booleans = {true, false})
 	public void applyScoreJudge(boolean ensureSurvival) {
-		OngoingMatching sut = createSut(List.of(
+		OngoingRefinement sut = createSut(List.of(
 				new Substance(98, ""),
 				new Product(102, "Dope"),
 				new Product(100, ""),
@@ -88,7 +88,7 @@ public class OngoingMatchingTest {
 	@ParameterizedTest
 	@ValueSource(booleans = {true, false})
 	public void applyScoreJudgeWithSurvivalInQuestion(boolean ensureSurvival) {
-		OngoingMatching sut = createSut(List.of(
+		OngoingRefinement sut = createSut(List.of(
 				new Substance(98, ""),
 				new Product(102, "Dope"),
 				new Product(100, ""),
@@ -114,7 +114,7 @@ public class OngoingMatchingTest {
 
 	@Test
 	public void transform() {
-		OngoingMatching sut = createSut(List.of(
+		OngoingRefinement sut = createSut(List.of(
 				SAMPLE_SUBSTANCE_1,
 				SAMPLE_PRODUCT_1,
 				SAMPLE_PRODUCT_2
@@ -140,7 +140,7 @@ public class OngoingMatchingTest {
 
 	@Test
 	public void transformWithMerge() {
-		OngoingMatching sut = createSut(List.of(
+		OngoingRefinement sut = createSut(List.of(
 				SAMPLE_SUBSTANCE_1,
 				SAMPLE_PRODUCT_1,
 				SAMPLE_PRODUCT_2
@@ -172,7 +172,7 @@ public class OngoingMatchingTest {
 
 	@Test
 	public void sortAndTransformWithMerge() {
-		OngoingMatching sut = createSut(List.of(
+		OngoingRefinement sut = createSut(List.of(
 				SAMPLE_SUBSTANCE_2,
 				SAMPLE_SUBSTANCE_1,
 				SAMPLE_PRODUCT_1,
@@ -205,7 +205,7 @@ public class OngoingMatchingTest {
 
 	@Test
 	public void multipleActions() {
-		OngoingMatching sut = createSut(List.of(
+		OngoingRefinement sut = createSut(List.of(
 				new Substance(97, ""),
 				new Product(32, "Not so dope"),
 				new Product(67, ""),
@@ -246,8 +246,8 @@ public class OngoingMatchingTest {
 		assertEquals(ProductOnlyFilter.NAME, judgementList.getFirst().getName());
 	}
 
-	private OngoingMatching createSut(List<Matchable> matchables) {
-		return new OngoingMatching(matchables.stream().map(OriginalMatch::new).toList(), SAMPLE_SEARCH_QUERY);
+	private OngoingRefinement createSut(List<Matchable> matchables) {
+		return new OngoingRefinement(matchables.stream().map(OriginalMatch::new).toList(), SAMPLE_SEARCH_QUERY);
 	}
 
 

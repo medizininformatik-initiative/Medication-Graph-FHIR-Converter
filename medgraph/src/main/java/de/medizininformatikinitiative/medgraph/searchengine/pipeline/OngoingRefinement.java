@@ -22,13 +22,22 @@ import java.util.*;
  *
  * @author Markus Budeus
  */
-public class OngoingMatching {
+public class OngoingRefinement {
 
 	private final SubSortingTree<MatchingObject> currentMatches;
 	private final SearchQuery query;
 
-	public OngoingMatching(List<? extends MatchingObject> matchList, SearchQuery query) {
-		currentMatches = new SubSortingTree<>(matchList);
+	public OngoingRefinement(List<? extends MatchingObject> matchList, SearchQuery query) {
+		this(new SubSortingTree<>(matchList), query);
+	}
+
+	/**
+	 * Creates a new {@link OngoingRefinement}-instance which manages the given tree.
+	 * @param matchList the {@link SubSortingTree} to manage
+	 * @param query the query to use for refinements
+	 */
+	public OngoingRefinement(SubSortingTree<MatchingObject> matchList, SearchQuery query) {
+		currentMatches = matchList;
 		this.query = query;
 	}
 
@@ -70,9 +79,9 @@ public class OngoingMatching {
 		//
 		// First, we feed all current matches into the transformer.
 		// Then, we construct new TransformedObject-instances for every output of each transformation.
-		//
 		// Now, intuitively, the final step is to replace each MatchingObject with its transformations using
-		// batchReplace.
+		// SubSortingTree.batchReplace.
+		//
 		// However, there is one issue: The MatchTransformer may have generated the same output within the
 		// transformations of different inputs. For example, say we transform substances into products by searching
 		// for products which use the substance as their active ingredient. But, product [A] may be a combination
