@@ -4,15 +4,19 @@ import de.medizininformatikinitiative.medgraph.searchengine.matcher.LevenshteinL
 import de.medizininformatikinitiative.medgraph.searchengine.model.SearchQuery;
 import de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject.EdqmConcept;
 import de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject.EdqmPharmaceuticalDoseForm;
-import de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject.Identifiable;
 import de.medizininformatikinitiative.medgraph.searchengine.provider.BaseProvider;
 import de.medizininformatikinitiative.medgraph.searchengine.provider.IdentifierProvider;
+import de.medizininformatikinitiative.medgraph.searchengine.stringtransformer.RemoveBlankStrings;
 import de.medizininformatikinitiative.medgraph.searchengine.stringtransformer.ToLowerCase;
 import de.medizininformatikinitiative.medgraph.searchengine.stringtransformer.TraceableTransformer;
 import de.medizininformatikinitiative.medgraph.searchengine.stringtransformer.WhitespaceTokenizer;
-import de.medizininformatikinitiative.medgraph.searchengine.tracing.*;
+import de.medizininformatikinitiative.medgraph.searchengine.tracing.DistinctMultiSubstringUsageStatement;
+import de.medizininformatikinitiative.medgraph.searchengine.tracing.StringListUsageStatement;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
  * Extracts dose form data from a human-written query string.
@@ -21,6 +25,10 @@ import java.util.*;
  */
 public class DoseFormQueryRefiner implements PartialQueryRefiner<DoseFormQueryRefiner.Result> {
 
+	private static final int EQUAL_PRIORITY = 0;
+	private static final int FIRST_HAS_PRIORITY = 1;
+	private static final int SECOND_HAS_PRIORITY = 2;
+
 	// TODO This one has too many false positives.
 	//  Remove overlaps if one of the overlaps has a higher edit distance
 	//  Also maybe make allowed spelling errors limited by compared word length
@@ -28,7 +36,8 @@ public class DoseFormQueryRefiner implements PartialQueryRefiner<DoseFormQueryRe
 	private final LevenshteinListMatcher levenshteinListMatcher = new LevenshteinListMatcher(1);
 	private final TraceableTransformer<String, List<String>, DistinctMultiSubstringUsageStatement, StringListUsageStatement> transformer =
 			new ToLowerCase()
-					.andTraceable(new WhitespaceTokenizer(false));
+					.andTraceable(new WhitespaceTokenizer(false))
+					.andTraceable(new RemoveBlankStrings());
 	private final IdentifierProvider<List<String>> edqmConceptsProvider;
 
 	public DoseFormQueryRefiner(BaseProvider<String> edqmConceptsProvider) {
@@ -56,12 +65,12 @@ public class DoseFormQueryRefiner implements PartialQueryRefiner<DoseFormQueryRe
 					                      "Warning: The provider provided an Identifiable which is no EdqmConcept! (Got " + match.getMatchedIdentifier().target + ")");
 			                      return false;
 		                      }).forEach(m -> {
-								  synchronized (this) {
-									  matches.add(m);
-								  }
+			                      synchronized (this) {
+				                      matches.add(m);
+			                      }
 		                      });
 
-//		removeOverlaps(matches);
+		removeProblematicOverlaps(matches);
 
 		List<EdqmPharmaceuticalDoseForm> doseForms = new ArrayList<>();
 		List<EdqmConcept> characteristics = new ArrayList<>();
@@ -87,64 +96,54 @@ public class DoseFormQueryRefiner implements PartialQueryRefiner<DoseFormQueryRe
 		return new Result(doseForms, characteristics, usageStatement);
 	}
 
-//	/**
-//	 * Removes matches from the given list if they overlap with each other. The match which consists of more tokens from
-//	 * the identifier survives. If two overlapping matches have the same amount of identifier tokens, the first one in
-//	 * the list survives.
-//	 */
-//	private void removeOverlaps(List<LevenshteinListMatcher.Match> matches) {
-//		for (int i = matches.size() - 1; i > 0; i--) {
-//			LevenshteinListMatcher.Match current = matches.get(i);
-//			for (int j = i - 1; j >= 0; j--) {
-//				LevenshteinListMatcher.Match opponent = matches.get(j);
-//				if (overlap(current, opponent)) {
-//					// Well, one of you has to die.
-//					if (firstHasPriority(opponent, current)) {
-//						matches.remove(i);
-//						break;
-//					} else {
-//						matches.remove(j);
-//						i--;
-//					}
-//				}
-//			}
-//		}
-//	}
-//
-//	/**
-//	 * Assuming one of the given matches has to be eliminated from the result, determines if the first one
-//	 * shall be the one to survive. Instances of {@link EdqmPharmaceuticalDoseForm} have priority over simple
-//	 * {@link EdqmConcept}-instances. If this does not decide the match, whoever uses more tokens has priority.
-//	 * If then it is still a draw, the first match gets priority.
-//	 */
-//	private boolean firstHasPriority(LevenshteinListMatcher.Match match1, LevenshteinListMatcher.Match match2) {
-//		if ((match1.getMatchedIdentifier().target instanceof EdqmPharmaceuticalDoseForm)
-//				&& !(match2.getMatchedIdentifier().target instanceof EdqmPharmaceuticalDoseForm)) {
-//			return true;
-//		} else if (!(match1.getMatchedIdentifier().target instanceof EdqmPharmaceuticalDoseForm)
-//				&& (match2.getMatchedIdentifier().target instanceof EdqmPharmaceuticalDoseForm)) {
-//			return false;
-//		} else {
-//			if (match1.getUsageStatement().getUsedIndices().size() >=
-//					match2.getUsageStatement().getUsedIndices().size()) {
-//				return true;
-//			} else {
-//				return false;
-//			}
-//		}
-//
-//	}
-//
-//	/**
-//	 * Returns whether the source tokens from the two given matches overlap.
-//	 */
-//	private boolean overlap(LevenshteinListMatcher.Match match1, LevenshteinListMatcher.Match match2) {
-//		Set<Integer> set1 = match1.getUsageStatement().getUsedIndices();
-//		Set<Integer> set2 = match2.getUsageStatement().getUsedIndices();
-//		HashSet<Integer> union = new HashSet<>(set1);
-//		union.addAll(set2);
-//		return union.size() < set1.size() + set2.size();
-//	}
+	/**
+	 * Removes matches from the given list if they overlap with each other and if one of the matches of each overlapping
+	 * pair is considered to be less relevant.
+	 */
+	private void removeProblematicOverlaps(List<LevenshteinListMatcher.Match> matches) {
+		for (int i = matches.size() - 1; i > 0; i--) {
+			LevenshteinListMatcher.Match current = matches.get(i);
+			for (int j = i - 1; j >= 0; j--) {
+				LevenshteinListMatcher.Match opponent = matches.get(j);
+				if (overlap(current, opponent)) {
+					// Remove Overlap if required
+					int overlapPriority = checkPriorityOnOverlap(opponent, current);
+					if (overlapPriority == FIRST_HAS_PRIORITY) {
+						matches.remove(i);
+						break;
+					} else if (overlapPriority == SECOND_HAS_PRIORITY) {
+						matches.remove(j);
+						i--;
+					}
+				}
+			}
+		}
+	}
+
+	/**
+	 * Returns a code indicating which one of these matches is more relevant or if they are equally relevant, assuming
+	 * they overlap in the source. The return value is either {@link #FIRST_HAS_PRIORITY}, {@link #SECOND_HAS_PRIORITY}
+	 * or {@link #EQUAL_PRIORITY}
+	 */
+	private int checkPriorityOnOverlap(LevenshteinListMatcher.Match match1, LevenshteinListMatcher.Match match2) {
+		int editDistance1 = match1.getDistance().getEditDistance();
+		int editDistance2 = match2.getDistance().getEditDistance();
+
+		if (editDistance1 > editDistance2) return SECOND_HAS_PRIORITY;
+		else if (editDistance2 > editDistance1) return  FIRST_HAS_PRIORITY;
+		return EQUAL_PRIORITY;
+	}
+
+	/**
+	 * Returns whether the source tokens from the two given matches overlap.
+	 */
+	private boolean overlap(LevenshteinListMatcher.Match match1, LevenshteinListMatcher.Match match2) {
+		Set<Integer> set1 = match1.getUsageStatement().getUsedIndices();
+		Set<Integer> set2 = match2.getUsageStatement().getUsedIndices();
+		HashSet<Integer> union = new HashSet<>(set1);
+		union.addAll(set2);
+		return union.size() < set1.size() + set2.size();
+	}
 
 	public static class Result implements PartialQueryRefiner.Result {
 		private final List<EdqmPharmaceuticalDoseForm> doseForms;
