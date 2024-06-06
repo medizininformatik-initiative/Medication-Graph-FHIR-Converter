@@ -62,8 +62,7 @@ public class EdqmConcept implements Identifiable {
 		if (this == object) return true;
 		if (object == null || getClass() != object.getClass()) return false;
 		EdqmConcept that = (EdqmConcept) object;
-		return Objects.equals(code, that.code) && Objects.equals(name,
-				that.name) && Objects.equals(conceptType, that.conceptType);
+		return Objects.equals(code, that.code) && Objects.equals(name, that.name);
 	}
 
 	@Override

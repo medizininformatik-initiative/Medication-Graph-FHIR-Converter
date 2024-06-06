@@ -7,6 +7,8 @@ import de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject
 import de.medizininformatikinitiative.medgraph.searchengine.pipeline.OngoingMatching;
 import de.medizininformatikinitiative.medgraph.searchengine.pipeline.judge.ProductOnlyFilter;
 import de.medizininformatikinitiative.medgraph.searchengine.pipeline.judge.dosage.DosageAndAmountInfoMatchJudge;
+import de.medizininformatikinitiative.medgraph.searchengine.pipeline.judge.doseform.DoseFormCharacteristicJudge;
+import de.medizininformatikinitiative.medgraph.searchengine.pipeline.judge.doseform.PharmaceuticalDoseFormJudge;
 import de.medizininformatikinitiative.medgraph.searchengine.pipeline.transformer.ProductDetailsResolver;
 import de.medizininformatikinitiative.medgraph.searchengine.pipeline.transformer.SubstanceToProductResolver;
 import de.medizininformatikinitiative.medgraph.searchengine.pipeline.tree.SubSortingTree;
@@ -29,11 +31,16 @@ public class ExperimentalRefiner implements MatchRefiner {
 	private final DosageAndAmountInfoMatchJudge dosageJudge;
 
 	private final ProductDetailsResolver productDetailsResolver;
+	
+	private final PharmaceuticalDoseFormJudge doseFormJudge;
+	private final DoseFormCharacteristicJudge doseFormCharacteristicJudge;
 
 	public ExperimentalRefiner(Session session, Database database) {
 		substanceToProductResolver = new SubstanceToProductResolver(session);
 		dosageJudge = new DosageAndAmountInfoMatchJudge(database, 0.1);
 		productDetailsResolver = new ProductDetailsResolver(database);
+		doseFormJudge = new PharmaceuticalDoseFormJudge(0.1);
+		doseFormCharacteristicJudge = new DoseFormCharacteristicJudge(0.1);
 	}
 
 	/**
@@ -61,6 +68,8 @@ public class ExperimentalRefiner implements MatchRefiner {
 		}
 
 		matching.applyScoreJudge(dosageJudge, true);
+		matching.applyScoreJudge(doseFormJudge, true);
+		matching.applyScoreJudge(doseFormCharacteristicJudge, true);
 
 		// TODO Master's Thesis Matcher included a sort by substrings found step here, I'll leave it out for now
 		//      as it is of little importance
