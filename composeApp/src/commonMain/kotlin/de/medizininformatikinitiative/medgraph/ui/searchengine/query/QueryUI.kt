@@ -34,8 +34,6 @@ fun QueryUI(
         modifier = modifier
             .animateContentSize()
     ) {
-        var expanded by remember { mutableStateOf(false) }
-
         val queryTextTransformation = UsageStatementBasedColorTransformation(
             viewModel.dosageGeneralSearchTermUsageStatement, MaterialTheme.localColors.highlightDosage,
             viewModel.doseFormGeneralSearchTermUsageStatement, MaterialTheme.localColors.highlightDoseForm
@@ -50,11 +48,11 @@ fun QueryUI(
                 .captureEnterPress(onEnterPressed)
         )
 
-        Button({ expanded = !expanded }) {
+        Button({ viewModel.expanded = !viewModel.expanded }) {
             Text(StringRes.query_dialog_expand)
         }
 
-        if (expanded) {
+        if (viewModel.expanded) {
             AdditionalQueryUIElements(viewModel, modifier = Modifier.fillMaxWidth(), onEnterPressed = onEnterPressed)
         }
     }
