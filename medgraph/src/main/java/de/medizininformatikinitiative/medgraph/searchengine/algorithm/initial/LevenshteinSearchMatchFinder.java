@@ -51,28 +51,17 @@ public class LevenshteinSearchMatchFinder implements InitialMatchFinder {
 
 	@Override
 	public Stream<OriginalMatch> findInitialMatches(SearchQuery query) {
-		// TODO This looks repetitive
-
 		Stream<LevenshteinSetMatcher.Match> allMatches = Stream.empty();
 		List<String> productKeywords = query.getProductNameKeywords();
-//		List<String> substanceKeywords = query.getSubstanceNameKeywords();
 		if (!productKeywords.isEmpty()) {
-			allMatches = doMatching(productsProvider, productKeywords);
+			allMatches = levenshteinSetMatcher.match(TOKEN_TRANSFORMER.apply(productKeywords),
+					productsProvider.withTransformation(IDENTIFIER_TRANSFORMER));
 		}
-//		if (!substanceKeywords.isEmpty()) {
-//			allMatches = Stream.concat(allMatches, doMatching(substanceProvider, substanceKeywords));
-//		}
 
 		// TODO This throws away all match info, which might be nice to have in the OriginalMatch instance for later reference
 		return allMatches
 				.sorted(Comparator.reverseOrder())
 				.map(match -> new OriginalMatch((Matchable) match.getMatchedIdentifier().target));
-	}
-
-	private Stream<LevenshteinSetMatcher.Match> doMatching(IdentifierProvider<String> identifierProvider,
-	                                                        List<String> searchKeywords) {
-		return levenshteinSetMatcher.match(TOKEN_TRANSFORMER.apply(searchKeywords),
-				substanceProvider.withTransformation(IDENTIFIER_TRANSFORMER));
 	}
 
 }
