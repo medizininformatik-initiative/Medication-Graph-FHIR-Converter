@@ -127,7 +127,7 @@ class GraphDbPopulatorScreenModel(
         DatabaseConnection.createDefault().use {
             it.createSession().use { session ->
                 val loaders = graphDbPopulator.prepareLoaders(session)
-                executionTotalMajorStepsNumber = loaders.size + 3
+                executionTotalMajorStepsNumber = loaders.size + 2
 
                 executionMajorStepIndex = 1
                 executionMajorStep = StringRes.graph_db_populator_clearing_db
