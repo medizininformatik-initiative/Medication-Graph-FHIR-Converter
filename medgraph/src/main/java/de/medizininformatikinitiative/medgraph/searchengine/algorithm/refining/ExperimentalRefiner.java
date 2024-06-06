@@ -76,13 +76,15 @@ public class ExperimentalRefiner implements MatchRefiner {
 		matching.applyFilter(productOnlyFilter, false);
 
 		matching.applyScoreJudge(dosageJudge, true);
+
+		matching.transformMatches(productDetailsResolver); // Product details are required for the subsequent judges.
+
 		matching.applyScoreJudge(doseFormJudge, true);
 		matching.applyScoreJudge(doseFormCharacteristicJudge, true);
 
 		// TODO Master's Thesis Matcher included a sort by substrings found step here, I'll leave it out for now
 		//      as it is of little importance
 
-		matching.transformMatches(productDetailsResolver);
 
 		return matching.getCurrentMatchesTree();
 	}

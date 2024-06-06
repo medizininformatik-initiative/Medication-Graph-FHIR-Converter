@@ -21,6 +21,10 @@ import java.util.*;
  */
 public class DoseFormQueryRefiner implements PartialQueryRefiner<DoseFormQueryRefiner.Result> {
 
+	// TODO This one has too many false positives.
+	//  Remove overlaps if one of the overlaps has a higher edit distance
+	//  Also maybe make allowed spelling errors limited by compared word length
+
 	private final LevenshteinListMatcher levenshteinListMatcher = new LevenshteinListMatcher(1);
 	private final TraceableTransformer<String, List<String>, DistinctMultiSubstringUsageStatement, StringListUsageStatement> transformer =
 			new ToLowerCase()

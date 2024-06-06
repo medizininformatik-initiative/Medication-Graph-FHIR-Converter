@@ -57,8 +57,6 @@ fun SearchQueryUI(query: SearchQuery, modifier: Modifier = Modifier) {
 
         Separator(StringRes.parsed_query_dialog_product_keywords)
         TextBoxes(query.productNameKeywords, textColor = MaterialTheme.localColors.highlightProduct)
-        Separator(StringRes.parsed_query_dialog_substance)
-        TextBoxes(query.substances, textColor = MaterialTheme.localColors.highlightSubstance)
         Separator(StringRes.parsed_query_dialog_dosages)
         TextBoxes(query.activeIngredientDosages, textColor = MaterialTheme.localColors.highlightDosage)
         Separator(StringRes.parsed_query_dialog_amounts)
@@ -67,6 +65,8 @@ fun SearchQueryUI(query: SearchQuery, modifier: Modifier = Modifier) {
         TextBoxes(query.doseForms, textColor = MaterialTheme.localColors.highlightDoseForm)
         Separator(StringRes.parsed_query_dialog_dose_form_characteristics)
         TextBoxes(query.doseFormCharacteristics, textColor = MaterialTheme.localColors.highlightDoseForm)
+        Separator(StringRes.parsed_query_dialog_substance)
+        TextBoxes(query.substances, textColor = MaterialTheme.localColors.highlightSubstance)
 
     }
 
