@@ -1,6 +1,6 @@
 package de.medizininformatikinitiative.medgraph.searchengine.algorithm.querymanagement;
 
-import de.medizininformatikinitiative.medgraph.searchengine.matcher.LevenshteinListMatcher;
+import de.medizininformatikinitiative.medgraph.searchengine.matcher.EditDistanceListMatcher;
 import de.medizininformatikinitiative.medgraph.searchengine.model.SearchQuery;
 import de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject.EdqmConcept;
 import de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject.EdqmPharmaceuticalDoseForm;
@@ -29,7 +29,7 @@ public class DoseFormQueryRefiner implements PartialQueryRefiner<DoseFormQueryRe
 	private static final int FIRST_HAS_PRIORITY = 1;
 	private static final int SECOND_HAS_PRIORITY = 2;
 
-	private final LevenshteinListMatcher levenshteinListMatcher = new LevenshteinListMatcher(1);
+	private final EditDistanceListMatcher editDistanceListMatcher = new EditDistanceListMatcher(1);
 	private final TraceableTransformer<String, List<String>, DistinctMultiSubstringUsageStatement, StringListUsageStatement> transformer =
 			new ToLowerCase()
 					.andTraceable(new WhitespaceTokenizer(false))
@@ -50,10 +50,10 @@ public class DoseFormQueryRefiner implements PartialQueryRefiner<DoseFormQueryRe
 	 * information on where in the query string they were found
 	 */
 	public Result parse(String query) {
-		List<LevenshteinListMatcher.Match> matches = new ArrayList<>();
+		List<EditDistanceListMatcher.Match> matches = new ArrayList<>();
 
-		levenshteinListMatcher.match(transformer.apply(query), edqmConceptsProvider)
-		                      .filter(match -> {
+		editDistanceListMatcher.match(transformer.apply(query), edqmConceptsProvider)
+		                       .filter(match -> {
 			                      if (match.getMatchedIdentifier().target instanceof EdqmConcept) {
 				                      return true;
 			                      }
@@ -96,11 +96,11 @@ public class DoseFormQueryRefiner implements PartialQueryRefiner<DoseFormQueryRe
 	 * Removes matches from the given list if they overlap with each other and if one of the matches of each overlapping
 	 * pair is considered to be less relevant.
 	 */
-	private void removeProblematicOverlaps(List<LevenshteinListMatcher.Match> matches) {
+	private void removeProblematicOverlaps(List<EditDistanceListMatcher.Match> matches) {
 		for (int i = matches.size() - 1; i > 0; i--) {
-			LevenshteinListMatcher.Match current = matches.get(i);
+			EditDistanceListMatcher.Match current = matches.get(i);
 			for (int j = i - 1; j >= 0; j--) {
-				LevenshteinListMatcher.Match opponent = matches.get(j);
+				EditDistanceListMatcher.Match opponent = matches.get(j);
 				if (overlap(current, opponent)) {
 					// Remove Overlap if required
 					int overlapPriority = checkPriorityOnOverlap(opponent, current);
@@ -121,7 +121,7 @@ public class DoseFormQueryRefiner implements PartialQueryRefiner<DoseFormQueryRe
 	 * they overlap in the source. The return value is either {@link #FIRST_HAS_PRIORITY}, {@link #SECOND_HAS_PRIORITY}
 	 * or {@link #EQUAL_PRIORITY}
 	 */
-	private int checkPriorityOnOverlap(LevenshteinListMatcher.Match match1, LevenshteinListMatcher.Match match2) {
+	private int checkPriorityOnOverlap(EditDistanceListMatcher.Match match1, EditDistanceListMatcher.Match match2) {
 		int editDistance1 = match1.getDistance().getEditDistance();
 		int editDistance2 = match2.getDistance().getEditDistance();
 
@@ -133,7 +133,7 @@ public class DoseFormQueryRefiner implements PartialQueryRefiner<DoseFormQueryRe
 	/**
 	 * Returns whether the source tokens from the two given matches overlap.
 	 */
-	private boolean overlap(LevenshteinListMatcher.Match match1, LevenshteinListMatcher.Match match2) {
+	private boolean overlap(EditDistanceListMatcher.Match match1, EditDistanceListMatcher.Match match2) {
 		Set<Integer> set1 = match1.getUsageStatement().getUsedIndices();
 		Set<Integer> set2 = match2.getUsageStatement().getUsedIndices();
 		HashSet<Integer> union = new HashSet<>(set1);
