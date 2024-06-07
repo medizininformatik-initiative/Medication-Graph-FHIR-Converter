@@ -3,6 +3,7 @@ package de.medizininformatikinitiative.medgraph.searchengine.pipeline.judge;
 import de.medizininformatikinitiative.medgraph.searchengine.model.SearchQuery;
 import de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject.Matchable;
 import de.medizininformatikinitiative.medgraph.searchengine.model.pipelinestep.ScoredJudgement;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
@@ -13,9 +14,10 @@ import java.util.List;
  */
 public abstract class ScoreJudge implements Judge<ScoredJudgement> {
 
+	@Nullable
 	private final Double passingScore;
 
-	public ScoreJudge(Double passingScore) {
+	public ScoreJudge(@Nullable Double passingScore) {
 		this.passingScore = passingScore;
 	}
 
@@ -56,8 +58,9 @@ public abstract class ScoreJudge implements Judge<ScoredJudgement> {
 	}
 
 	/**
-	 * Returns the minimun required score to pass this judge.
+	 * Returns the minimun required score to pass this judge or null if there is no minimum required score to pass.
 	 */
+	@Nullable
 	public Double getPassingScore() {
 		return passingScore;
 	}
