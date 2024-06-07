@@ -22,11 +22,11 @@ public class CorrespondingActiveIngredient extends ActiveIngredient {
 	 * hydrochloride, this would be 15mg [of midazolam]).
 	 */
 	@Nullable
-	private final Amount correspondingSubstanceAmount;
+	private final AmountOrRange correspondingSubstanceAmount;
 
-	public CorrespondingActiveIngredient(@NotNull String substanceName, @Nullable Amount amount,
+	public CorrespondingActiveIngredient(@NotNull String substanceName, @Nullable AmountOrRange amount,
 	                                     @NotNull String correspondingSubstanceName,
-	                                     @Nullable Amount correspondingSubstanceAmount) {
+	                                     @Nullable AmountOrRange correspondingSubstanceAmount) {
 		super(substanceName, amount);
 		this.correspondingSubstanceName = correspondingSubstanceName;
 		this.correspondingSubstanceAmount = correspondingSubstanceAmount;
@@ -44,7 +44,7 @@ public class CorrespondingActiveIngredient extends ActiveIngredient {
 	 * Returns the amount of the substance this ingredient corresponds to. (If the actual substance were 16.68mg of
 	 * midazolam hydrochloride, this would be 15mg [of midazolam]).
 	 */
-	public @Nullable Amount getCorrespondingSubstanceAmount() {
+	public @Nullable AmountOrRange getCorrespondingSubstanceAmount() {
 		return correspondingSubstanceAmount;
 	}
 

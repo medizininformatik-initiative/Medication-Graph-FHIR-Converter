@@ -12,7 +12,7 @@ import java.util.Objects;
  *
  * @author Markus Budeus
  */
-public class Amount {
+public final class Amount implements AmountOrRange {
 
 	/**
 	 * The amount number.
@@ -43,8 +43,14 @@ public class Amount {
 	 * Returns the unit of this amount.
 	 */
 	@Nullable
+	@Override
 	public String getUnit() {
 		return unit;
+	}
+
+	@Override
+	public boolean containsOrEquals(Amount amount, BigDecimal delta) {
+		return number.compareTo(amount.getNumber()) == 0 && Objects.equals(getUnit(), amount.getUnit());
 	}
 
 	@Override

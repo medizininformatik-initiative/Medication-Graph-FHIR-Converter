@@ -21,9 +21,9 @@ public class ActiveIngredient {
 	 * The ingredient's amount.
 	 */
 	@Nullable
-	private final Amount amount;
+	private final AmountOrRange amount;
 
-	public ActiveIngredient(@NotNull String substanceName, @Nullable Amount amount) {
+	public ActiveIngredient(@NotNull String substanceName, @Nullable AmountOrRange amount) {
 		this.substanceName = substanceName;
 		this.amount = amount;
 	}
@@ -40,7 +40,7 @@ public class ActiveIngredient {
 	 * Returns the amount of this active ingredient, if known.
 	 */
 	@Nullable
-	public Amount getAmount() {
+	public AmountOrRange getAmount() {
 		return amount;
 	}
 
