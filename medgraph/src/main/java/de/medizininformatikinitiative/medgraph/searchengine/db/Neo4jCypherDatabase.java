@@ -41,35 +41,6 @@ public class Neo4jCypherDatabase implements Database {
 	}
 
 	@Override
-	public Set<DbDosagesByProduct> getDrugDosagesByProduct(Collection<Long> productIds) {
-		Result result = session.run(new Query(
-				"MATCH (p:" + PRODUCT_LABEL + ")\n" +
-						"WHERE p.mmiId IN $mmiIds\n" +
-						"MATCH (p)--(d:" + DRUG_LABEL + ")--(i:" + INGREDIENT_LABEL + " {isActive: true})\n" +
-						"OPTIONAL MATCH (i)-[:" + INGREDIENT_CORRESPONDS_TO_LABEL + "]-(ic:" + INGREDIENT_LABEL + ")\n" +
-						"OPTIONAL MATCH (d)--(du:" + UNIT_LABEL + ")\n" +
-						"WITH p, d, du, [i,ic] AS ingredients\n" +
-						"UNWIND ingredients as i\n" +
-						"WITH p, d, du, i WHERE NOT i IS NULL\n" +
-						"MATCH (i)--(u:Unit)\n" +
-						"WITH p.mmiId AS productId, d.mmiId AS drugId,\n" +
-						"{amount:d.amount, unit:du.print} AS drugAmount, " +
-						"collect({amountFrom:i.massFrom,amountTo:i.massTo," +
-						"unit:(CASE WHEN u.ucumCs IS NULL THEN u.mmiName ELSE u.ucumCs END)" +
-						"}) AS dosage\n" +
-						"WITH productId, collect({drugId:drugId, amount:drugAmount, dosage:dosage}) AS drugDosages\n" +
-						"RETURN productId, drugDosages",
-				parameters("mmiIds", productIds)
-		));
-
-		Set<DbDosagesByProduct> resultSet = new HashSet<>();
-		result.forEachRemaining(record -> {
-			resultSet.add(new DbDosagesByProduct(record));
-		});
-		return resultSet;
-	}
-
-	@Override
 	public Set<DetailedProduct> getDetailedProductInfo(Collection<Long> productIds) {
 		if (productIds.isEmpty()) return Collections.emptySet();
 

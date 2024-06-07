@@ -16,17 +16,6 @@ public interface Database {
 	// TODO: A Cache Proxy implementation of this interface could be made, might reduce performance overhead from DB reads
 
 	/**
-	 * Retrieves drug dosage information for the products with the given ids.
-	 *
-	 * @param productIds the product ids for which to retrieve the information from the database.
-	 * @return a set of {@link DbDosagesByProduct}-instances containing the requested data for each product which could
-	 * be found
-	 * @deprecated use {@link #getDetailedProductInfo(Collection)} instead
-	 */
-	@Deprecated
-	Set<DbDosagesByProduct> getDrugDosagesByProduct(Collection<Long> productIds);
-
-	/**
 	 * Acquires detailed information about the products with the given product ids. Ids which cannot be resolved into a
 	 * product are discarded.
 	 *
