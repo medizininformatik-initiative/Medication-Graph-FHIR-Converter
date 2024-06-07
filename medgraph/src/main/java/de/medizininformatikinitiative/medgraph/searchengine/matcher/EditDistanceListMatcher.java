@@ -1,24 +1,26 @@
 package de.medizininformatikinitiative.medgraph.searchengine.matcher;
 
+import de.medizininformatikinitiative.medgraph.searchengine.matcher.editdistance.EditDistanceService;
 import de.medizininformatikinitiative.medgraph.searchengine.matcher.model.EditDistance;
 import de.medizininformatikinitiative.medgraph.searchengine.provider.MappedIdentifier;
 import de.medizininformatikinitiative.medgraph.searchengine.tracing.InputUsageTraceable;
 import de.medizininformatikinitiative.medgraph.searchengine.tracing.IntRange;
 import de.medizininformatikinitiative.medgraph.searchengine.tracing.StringListUsageStatement;
-import org.apache.commons.text.similarity.LevenshteinDistance;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.OptionalInt;
 import java.util.Set;
 
 /**
  * This matcher matches search terms (as string lists) against identifiers in the following way: For the identifier, the
  * amount of tokens is counted (which we refer to as <b>n</b>). If the search term has fewer tokens, the match is
  * considered unsuccessful. Otherwise, each combination of <b>n</b> consecutive terms from the search term is taken and
- * joined usings spaces. Using the Levenshtein distance, the resulting string is compared against the identifier, whose
- * terms are also joined together using spaces. If the Levenshtein distance is less or equal to a specified theshold,
- * these terms are considered a match.
+ * joined usings spaces. Using the a given {@link EditDistanceService}, the resulting string is compared against the
+ * identifier, whose terms are also joined together using spaces. If the edit distance provides a result, these terms
+ * are considered a match.
  * <p>
  * Only a single list of consecutive terms is matched. If multiple matches can be found within the search term, the best
  * match (with the lowest Levenshtein distance) is used. If there are multiple equally good matches, the first one is
@@ -26,19 +28,19 @@ import java.util.Set;
  *
  * @author Markus Budeus
  */
-public class LevenshteinListMatcher extends SimpleMatcher<List<String>, LevenshteinListMatcher.Match> {
+public class EditDistanceListMatcher extends SimpleMatcher<List<String>, EditDistanceListMatcher.Match> {
 
-	private final LevenshteinDistance levenshteinDistance;
+	private final EditDistanceService editDistanceService;
 
 	/**
-	 * Initializes the matcher using the default allowed Levenshtein distance of 1.
+	 * Creates a new {@link EditDistanceListMatcher}. Please not the given {@link EditDistanceService} should strongly
+	 * limit what is considered a match, otherwise lots of matches will be generated. (I.e. whenever
+	 * {@link EditDistanceService#apply(String, String)} returns a nonempty result, a match is generated)
+	 *
+	 * @param editDistanceService the edit distance service to use
 	 */
-	public LevenshteinListMatcher() {
-		this(2);
-	}
-
-	public LevenshteinListMatcher(int threshold) {
-		levenshteinDistance = new LevenshteinDistance(threshold);
+	public EditDistanceListMatcher(@NotNull EditDistanceService editDistanceService) {
+		this.editDistanceService = editDistanceService;
 	}
 
 	@Override
@@ -78,9 +80,9 @@ public class LevenshteinListMatcher extends SimpleMatcher<List<String>, Levensht
 	private EditDistance getDistance(String[] searchTermTokens, String[] identifierTokens) {
 		String searchTerm = String.join(" ", searchTermTokens);
 		String identifier = String.join(" ", identifierTokens);
-		int distance = this.levenshteinDistance.apply(searchTerm, identifier);
-		if (distance != -1) {
-			return new EditDistance(searchTerm, identifier, distance);
+		OptionalInt distance = editDistanceService.apply(searchTerm, identifier);
+		if (distance.isPresent()) {
+			return new EditDistance(searchTerm, identifier, distance.getAsInt());
 		}
 		return null;
 	}

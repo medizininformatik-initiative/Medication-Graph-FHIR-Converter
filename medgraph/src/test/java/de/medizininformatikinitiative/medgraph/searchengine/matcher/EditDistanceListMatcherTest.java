@@ -2,6 +2,7 @@ package de.medizininformatikinitiative.medgraph.searchengine.matcher;
 
 import de.medizininformatikinitiative.medgraph.TestFactory;
 import de.medizininformatikinitiative.medgraph.UnitTest;
+import de.medizininformatikinitiative.medgraph.searchengine.matcher.editdistance.LevenshteinDistanceService;
 import de.medizininformatikinitiative.medgraph.searchengine.matcher.model.EditDistance;
 import de.medizininformatikinitiative.medgraph.searchengine.provider.MappedIdentifier;
 import org.junit.jupiter.api.Test;
@@ -15,9 +16,9 @@ import static org.junit.jupiter.api.Assertions.*;
 /**
  * @author Markus Budeus
  */
-public class LevenshteinListMatcherTest extends UnitTest {
+public class EditDistanceListMatcherTest extends UnitTest {
 
-	private final LevenshteinListMatcher sut = new LevenshteinListMatcher(1);
+	private final EditDistanceListMatcher sut = new EditDistanceListMatcher(new LevenshteinDistanceService(1));
 
 	@Test
 	void simpleExample() {
@@ -105,7 +106,7 @@ public class LevenshteinListMatcherTest extends UnitTest {
 			EditDistance expectedEditDistance,
 			Set<Integer> expectedUsedSearchTermTokens
 	) {
-		LevenshteinListMatcher.Match match = sut.match(searchTerm,
+		EditDistanceListMatcher.Match match = sut.match(searchTerm,
 				new MappedIdentifier<>(identifier, TestFactory.SAMPLE_PRODUCT_1));
 		if (expectedEditDistance == null) {
 			assertNull(match);
