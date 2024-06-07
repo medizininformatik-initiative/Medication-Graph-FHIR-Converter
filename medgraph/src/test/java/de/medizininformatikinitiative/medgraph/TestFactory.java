@@ -1,6 +1,5 @@
 package de.medizininformatikinitiative.medgraph;
 
-import de.medizininformatikinitiative.medgraph.searchengine.db.DbAmount;
 import de.medizininformatikinitiative.medgraph.searchengine.db.DbDosage;
 import de.medizininformatikinitiative.medgraph.searchengine.model.*;
 import de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject.*;
@@ -254,14 +253,12 @@ public class TestFactory {
 			.withDrugAmounts(List.of(new Amount(BigDecimal.ONE, "ml")))
 			.build();
 
-	public static final DbAmount SAMPLE_DB_AMOUNT_1 = new DbAmount(new BigDecimal(5), "ml");
-	public static final DbAmount SAMPLE_DB_AMOUNT_2 = new DbAmount(new BigDecimal("7.5"), "g");
-	public static final DbAmount SAMPLE_DB_AMOUNT_3 = new DbAmount(BigDecimal.ONE, null);
-
-	public static final DbDosage SAMPLE_DB_DOSAGE_1 = new DbDosage(BigDecimal.ONE, "mg");
-	public static final DbDosage SAMPLE_DB_DOSAGE_2 = new DbDosage(new BigDecimal("1.4"), new BigDecimal("1.6"), "mg");
-
-	public static final DbDosage SAMPLE_DB_DOSAGE_3 = new DbDosage(new BigDecimal(500), "ug");
+	public static final Amount SAMPLE_AMOUNT_1 = new Amount(new BigDecimal(5), "ml");
+	public static final Amount SAMPLE_AMOUNT_2 = new Amount(new BigDecimal("7.5"), "g");
+	public static final Amount SAMPLE_AMOUNT_3 = new Amount(BigDecimal.ONE, null);
+	public static final Amount SAMPLE_AMOUNT_4 = new Amount(BigDecimal.ONE, "mg");
+	public static final Amount SAMPLE_AMOUNT_5 = new Amount(new BigDecimal(500), "ug");
+	public static final AmountRange SAMPLE_AMOUNT_RANGE = new AmountRange(new BigDecimal("1.4"), new BigDecimal("1.6"), "mg");
 
 	@SafeVarargs
 	private static <T> BaseProvider<T> join(BaseProvider<T>... providers) {
@@ -270,6 +267,26 @@ public class TestFactory {
 			stream = Stream.concat(stream, provider.getIdentifiers());
 		}
 		return BaseProvider.ofIdentifiers(stream.toList());
+	}
+
+	/**
+	 * Builds a {@link DetailedProduct} with default values set for all unspecified fields.
+	 * @param id the id of the product
+	 * @param drugs the drugs the product consists of
+	 * @return a corresponding {@link DetailedProduct}
+	 */
+	public static DetailedProduct buildDetailedProduct(long id, List<Drug> drugs) {
+		return new DetailedProduct(id, "Sample", List.of(), drugs);
+	}
+
+	/**
+	 * Builds a drug, with default values used for the dose form.
+	 * @param drugAmount the drug amount
+	 * @param ingredients the drug's ingredients
+	 * @return a corresponding {@link Drug}
+	 */
+	public static Drug buildDrug(Amount drugAmount, List<ActiveIngredient> ingredients) {
+		return new Drug("Unknown", null, drugAmount, ingredients);
 	}
 
 }

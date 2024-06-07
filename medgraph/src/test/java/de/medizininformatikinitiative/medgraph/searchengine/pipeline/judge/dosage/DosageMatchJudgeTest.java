@@ -1,10 +1,6 @@
 package de.medizininformatikinitiative.medgraph.searchengine.pipeline.judge.dosage;
 
-import de.medizininformatikinitiative.medgraph.searchengine.db.DbAmount;
-import de.medizininformatikinitiative.medgraph.searchengine.db.DbDosage;
-import de.medizininformatikinitiative.medgraph.searchengine.db.DbDrugDosage;
-import de.medizininformatikinitiative.medgraph.searchengine.model.Amount;
-import de.medizininformatikinitiative.medgraph.searchengine.model.Dosage;
+import de.medizininformatikinitiative.medgraph.searchengine.model.*;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -25,56 +21,56 @@ public class DosageMatchJudgeTest {
 	/**
 	 * 1325.94 milligrams of prodrug, respective 1000 mg of active ingredient.
 	 */
-	private static final List<DbDrugDosage> METHYLPREDNISOLUTE_1000 = List.of(
-			new DbDrugDosage(new DbAmount(BigDecimal.ONE, null), List.of(
-					new DbDosage(new BigDecimal("1325.94"), "mg"),
-					new DbDosage(new BigDecimal(1000), "mg")
+	private static final List<Drug> METHYLPREDNISOLUTE_1000 = List.of(
+			new Drug(null, null, new Amount(BigDecimal.ONE, null), List.of(
+					new ActiveIngredient("A", new Amount(new BigDecimal("1325.94"), "mg")),
+					new ActiveIngredient("A", new Amount(new BigDecimal(1000), "mg"))
 			))
 	);
 
 	/**
 	 * 0.5 milligrams of prodrug, respective 0.423 mg of active ingredient in 1 ml fluid.
 	 */
-	private static final List<DbDrugDosage> BERBERIL_EYE_DROPS = List.of(
-			new DbDrugDosage(new DbAmount(BigDecimal.ONE, "ml"), List.of(
-					new DbDosage(new BigDecimal("0.5"), "mg"),
-					new DbDosage(new BigDecimal("0.423"), "mg")
+	private static final List<Drug> BERBERIL_EYE_DROPS = List.of(
+			new Drug(null, null, new Amount(BigDecimal.ONE, "ml"), List.of(
+					new ActiveIngredient("A", new Amount(new BigDecimal("0.5"), "mg")),
+					new ActiveIngredient("A", new Amount(new BigDecimal("0.423"), "mg"))
 			))
 	);
 
 	/**
 	 * 500 milligrams of active ingredient in 5ml fluid.
 	 */
-	private static final List<DbDrugDosage> TRANEXAMIC_ACID = List.of(
-			new DbDrugDosage(new DbAmount(new BigDecimal(5), "ml"), List.of(
-					new DbDosage(new BigDecimal("500"), "mg")
+	private static final List<Drug> TRANEXAMIC_ACID = List.of(
+			new Drug(null, null, new Amount(new BigDecimal(5), "ml"), List.of(
+					new ActiveIngredient("A", new Amount(new BigDecimal("500"), "mg"))
 			))
 	);
 
 	/**
 	 * 450-550 milligrams of active ingredient in 5ml fluid.
 	 */
-	private static final List<DbDrugDosage> INACCURATE_DOSAGE = List.of(
-			new DbDrugDosage(new DbAmount(new BigDecimal(5), "ml"), List.of(
-					new DbDosage(new BigDecimal(450), new BigDecimal(550), "mg")
+	private static final List<Drug> INACCURATE_DOSAGE = List.of(
+			new Drug(null, null, new Amount(new BigDecimal(5), "ml"), List.of(
+					new ActiveIngredient("A", new AmountRange(new BigDecimal(450), new BigDecimal(550), "mg"))
 			))
 	);
 
 	/**
 	 * 500 milligrams of active ingredient in 1 tablet (no amount unit).
 	 */
-	private static final List<DbDrugDosage> ASPIRIN_500_TABLET = List.of(
-			new DbDrugDosage(new DbAmount(BigDecimal.ONE, null), List.of(
-					new DbDosage(new BigDecimal("500"), "mg")
+	private static final List<Drug> ASPIRIN_500_TABLET = List.of(
+			new Drug(null, null, new Amount(BigDecimal.ONE, null), List.of(
+					new ActiveIngredient("A", new Amount(new BigDecimal("500"), "mg"))
 			))
 	);
 
 	/**
 	 * 100 milligrams of active ingredient with no specified drug amount.
 	 */
-	private static final List<DbDrugDosage> GENERIC_MEDICATION = List.of(
-			new DbDrugDosage(null, List.of(
-					new DbDosage(new BigDecimal("100"), "mg")
+	private static final List<Drug> GENERIC_MEDICATION = List.of(
+			new Drug(null, null, null, List.of(
+					new ActiveIngredient("A", new Amount(new BigDecimal("100"), "mg"))
 			))
 	);
 
