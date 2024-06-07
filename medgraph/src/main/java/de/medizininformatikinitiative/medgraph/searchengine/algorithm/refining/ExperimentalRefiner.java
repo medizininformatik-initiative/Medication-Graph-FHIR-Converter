@@ -61,6 +61,7 @@ public class ExperimentalRefiner implements MatchRefiner {
 		                                            .map(OriginalMatch::new).toList();
 		OngoingRefinement substanceBasedSearch = new OngoingRefinement(substanceObjects, query);
 		substanceBasedSearch.transformMatches(substanceToProductResolver);
+		// TODO Ordering, and therefore relevance of substance search terms is completely lost as of now
 
 		// Merge the products resolved from substances with the products from the initial search
 		SubSortingTree<MatchingObject> productMatches = new SubSortingTree<>(initialMatches);

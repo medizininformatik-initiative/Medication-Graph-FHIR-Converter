@@ -139,7 +139,8 @@ class DosageDetectorTest {
 
 	@Test
 	public void multiDosageTablets() {
-		List<DosageDetector.DetectedDosage> dosages = DosageDetector.detectDosages("talvosilen forte 500 mg / 30 mg Hartkapseln");
+		List<DosageDetector.DetectedDosage> dosages = DosageDetector.detectDosages(
+				"talvosilen forte 500 mg / 30 mg Hartkapseln");
 		assertEquals(2, dosages.size());
 		assertMatch(dosages.get(0), 17, 6, BigDecimal.valueOf(500), "mg", null, null, null);
 		assertMatch(dosages.get(1), 26, 5, BigDecimal.valueOf(30), "mg", null, null, null);
@@ -243,11 +244,16 @@ class DosageDetectorTest {
 
 	@Test
 	public void qualifierLikeNewUnit() {
-		List<DosageDetector.DetectedDosage> dosages = DosageDetector.detectDosages(
-				"Aspirin 500 mg 10mg/ml");
+		List<DosageDetector.DetectedDosage> dosages = DosageDetector.detectDosages("Aspirin 500 mg 10mg/ml");
 		assertEquals(2, dosages.size());
 		assertMatch(dosages.get(0), 8, 6, new BigDecimal(500), "mg", null, null, null);
 		assertMatch(dosages.get(1), 15, 7, BigDecimal.TEN, "mg", null, BigDecimal.ONE, "ml");
+	}
+
+	@Test
+	public void lengthOfKnownSynonymUsed() {
+		List<DosageDetector.DetectedDosage> dosages = DosageDetector.detectDosages("Darbepoetin alfa 100 Mikrogramm");
+		assertSingleMatch(dosages, 17, 14, 100, "μg", null, null, null);
 	}
 
 	public void assertSingleMatch(List<DosageDetector.DetectedDosage> list,
