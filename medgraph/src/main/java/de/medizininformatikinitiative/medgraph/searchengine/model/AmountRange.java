@@ -11,7 +11,7 @@ import java.util.Objects;
  *
  * @author Markus Budeus
  */
-public class AmountRange extends Amount {
+public final class AmountRange implements AmountOrRange {
 
 	/**
 	 * Creates a new {@link Amount} or {@link AmountRange} depending on whether an upper range end is specified or not.
@@ -21,21 +21,37 @@ public class AmountRange extends Amount {
 	 * @param unit         the unit of the amount
 	 * @return if toOrNull is null, a corresponding {@link Amount}-instance, otherwise an {@link AmountRange}
 	 */
-	public static Amount ofNullableUpperEnd(@NotNull BigDecimal fromOrNumber, @Nullable BigDecimal toOrNull,
-	                                        @Nullable String unit) {
+	public static AmountOrRange ofNullableUpperEnd(@NotNull BigDecimal fromOrNumber, @Nullable BigDecimal toOrNull,
+	                                               @Nullable String unit) {
 		if (toOrNull == null) return new Amount(fromOrNumber, unit);
 		return new AmountRange(fromOrNumber, toOrNull, unit);
 	}
 
+	/**
+	 * The lower end of the amount range.
+	 */
+	@NotNull
+	private final BigDecimal from;
 	/**
 	 * The upper end of the amount range.
 	 */
 	@NotNull
 	private final BigDecimal to;
 
+	/**
+	 * The unit of this amount range or null if no unit is specified.
+	 */
+	@Nullable
+	private final String unit;
+
 	public AmountRange(@NotNull BigDecimal from, @NotNull BigDecimal to, @Nullable String unit) {
-		super(from, unit);
+		this.from = from;
 		this.to = to;
+		if (to.compareTo(from) < 0) {
+			throw new IllegalArgumentException(
+					"The range start (" + from + ") must be less than the range end (" + to + ")");
+		}
+		this.unit = unit;
 	}
 
 	/**
@@ -51,7 +67,19 @@ public class AmountRange extends Amount {
 	 */
 	@NotNull
 	public BigDecimal getFrom() {
-		return getNumber();
+		return from;
+	}
+
+	@Nullable
+	public String getUnit() {
+		return unit;
+	}
+
+	@Override
+	public boolean containsOrEquals(Amount amount, BigDecimal delta) {
+		if (!Objects.equals(getUnit(), amount.getUnit())) return false;
+		BigDecimal number = amount.getNumber();
+		return from.compareTo(number) <= 0 && to.compareTo(number) >= 0;
 	}
 
 	@Override
@@ -70,6 +98,6 @@ public class AmountRange extends Amount {
 
 	@Override
 	public String toString() {
-		return getNumber() + "-" + to + (getUnit() != null ? getUnit() : "");
+		return from + "-" + to + (getUnit() != null ? getUnit() : "");
 	}
 }

@@ -101,13 +101,13 @@ public class DosageMatchJudge {
 	 * @param drug         the drug whose dosage information in which to search the best match to the target dosage
 	 * @param targetDosage the target dosage for which to search the best match
 	 * @return the score of the best match found
-	 * @see #judgeRelative(Amount, Amount, Dosage)
+	 * @see #judgeRelative(AmountOrRange, Amount, Dosage)
 	 */
 	private static double judgeRelative(Drug drug, Dosage targetDosage) {
 		Amount drugAmount = drug.getAmount();
 		if (drugAmount == null) return 0;
 		double bestScore = 0;
-		for (Amount activeIngredientAmount : getActiveIngredientDosages(drug)) {
+		for (AmountOrRange activeIngredientAmount : getActiveIngredientDosages(drug)) {
 			bestScore = Math.max(bestScore, judgeRelative(activeIngredientAmount, drugAmount, targetDosage));
 		}
 		return bestScore;
@@ -126,7 +126,7 @@ public class DosageMatchJudge {
 		// Check if drug dosage matches target dosage. If the drug features multiple ingredients each with their own
 		// dosage, take the best match.
 		double bestAmountMatch = 0;
-		for (Amount amount : getActiveIngredientDosages(drug)) {
+		for (AmountOrRange amount : getActiveIngredientDosages(drug)) {
 			if (matchesAbsolute(amount, targetDosage)) {
 				bestAmountMatch = ABSOLUTE_MATCH_SCORE;
 				break;
@@ -140,15 +140,13 @@ public class DosageMatchJudge {
 	 * provide a unit, then no unit comparison is performed, i.e. the unit is always considered to match. But if a unit
 	 * is provided, it must match.
 	 */
-	private static boolean matchesAbsolute(Amount amount, Dosage targetDosage) {
+	private static boolean matchesAbsolute(AmountOrRange amount, Dosage targetDosage) {
 		Amount targetAmount = targetDosage.amountNominator;
-		if (!matchesAbsolute(amount, targetAmount.getNumber(), BigDecimal.ZERO))
-			return false;
-
-		if (targetAmount.getUnit() != null) {
-			return targetAmount.getUnit().equals(amount.getUnit());
+		if (targetAmount.getUnit() == null) {
+			// Target amount has no unit! Apply unit from other amount to ensure it matches.
+			targetAmount = new Amount(targetAmount.getNumber(), amount.getUnit());
 		}
-		return true;
+		return amount.containsOrEquals(targetAmount);
 	}
 
 	/**
@@ -166,71 +164,35 @@ public class DosageMatchJudge {
 	 *
 	 * @throws NullPointerException if the target dosage has no denominator
 	 */
-	private static double judgeRelative(Amount activeIngredientAmount, Amount drugAmount, Dosage targetDosage) {
+	private static double judgeRelative(AmountOrRange activeIngredientAmount, Amount drugAmount, Dosage targetDosage) {
 		assert targetDosage.amountDenominator != null;
-		if (!Objects.equals(targetDosage.amountDenominator.getUnit(), drugAmount.getUnit())) return 0;
-		if (!Objects.equals(targetDosage.amountNominator.getUnit(), activeIngredientAmount.getUnit())) return 0;
-
-		BigDecimal activeIngredientAmountFrom = activeIngredientAmount.getNumber();
-		BigDecimal activeIngredientAmountTo = null;
-		if (activeIngredientAmount instanceof AmountRange r) {
-			activeIngredientAmountFrom = r.getFrom();
-			activeIngredientAmountTo = r.getTo();
-		}
-
+		if (!Objects.equals(drugAmount.getUnit(), targetDosage.amountDenominator.getUnit())) return 0;
 		// Attempt perfect match
-		if (matchesAbsolute(activeIngredientAmount, targetDosage.amountNominator.getNumber(), BigDecimal.ZERO)
-				&& matchesAbsolute(drugAmount, targetDosage.amountDenominator.getNumber(), BigDecimal.ZERO)) {
+		if (activeIngredientAmount.containsOrEquals(targetDosage.amountNominator) &&
+				drugAmount.containsOrEquals(targetDosage.amountDenominator)) {
 			return PERFECT_RELATIVE_MATCH_SCORE;
 		}
 
 		// Attempt normalized match by dividing the dosage by the drug amount to get the normalized dosage.
-		BigDecimal normalizedAmountLocalFrom = activeIngredientAmountFrom.setScale(4, RoundingMode.UNNECESSARY)
-		                                                                 .divide(drugAmount.getNumber(),
-				                                                                 RoundingMode.HALF_UP);
-		Amount resultAmount;
-		if (activeIngredientAmountTo != null) {
-			BigDecimal normalizedAmountLocalTo = activeIngredientAmountTo.setScale(4, RoundingMode.UNNECESSARY)
-			                                                  .divide(drugAmount.getNumber(),
-					                                                  RoundingMode.HALF_UP);
-			resultAmount = new AmountRange(normalizedAmountLocalFrom, normalizedAmountLocalTo, activeIngredientAmount.getUnit());
-		} else {
-			resultAmount = new Amount(normalizedAmountLocalFrom, activeIngredientAmount.getUnit());
-		}
-		BigDecimal normalizedAmountOther = targetDosage.amountNominator.getNumber().setScale(4, RoundingMode.HALF_UP)
-		                                                               .divide(targetDosage.amountDenominator.getNumber(),
-				                                                               RoundingMode.HALF_UP);
+		BigDecimal targetNominator = targetDosage.amountNominator.getNumber();
+		BigDecimal targetDenominator = targetDosage.amountDenominator.getNumber();
 
-		if (matchesAbsolute(resultAmount, normalizedAmountOther, EPSILON)) {
+		BigDecimal normalizedTarget = targetNominator.divide(targetDenominator, 4, RoundingMode.HALF_DOWN);
+		BigDecimal adaptedTarget = normalizedTarget.multiply(drugAmount.getNumber());
+
+		if (activeIngredientAmount.containsOrEquals(new Amount(adaptedTarget, targetDosage.amountNominator.getUnit()),
+				EPSILON)) {
 			return NORMALIZED_RELATIVE_MATCH_SCORE;
 		}
-		return 0;
-	}
 
-	/**
-	 * Compares the given amount with the target number.
-	 *
-	 * @param source the range or value to compare to the target
-	 * @param target the target to which to compare the range or value
-	 * @param delta  if the source is not a range, the maximum allowed difference between the soruce and target which is
-	 *               considered a match
-	 * @return true if target is sufficiently close to rangeFrom in case rangeTo is null, or if target is between
-	 * rangeFrom and rangeTo
-	 */
-	private static boolean matchesAbsolute(@NotNull Amount source,
-	                                       @NotNull BigDecimal target, @NotNull BigDecimal delta) {
-		if (source instanceof AmountRange range) {
-			return range.getFrom().compareTo(target) <= 0 && range.getTo().compareTo(target) >= 0;
-		} else {
-			return source.getNumber().subtract(target).abs().compareTo(delta) <= 0;
-		}
+		return 0;
 	}
 
 	/**
 	 * Returns the amounts of this drug's active ingredients, including dosages of any corresponding ingredients.
 	 */
-	private static List<Amount> getActiveIngredientDosages(Drug d) {
-		List<Amount> list = new ArrayList<>();
+	private static List<AmountOrRange> getActiveIngredientDosages(Drug d) {
+		List<AmountOrRange> list = new ArrayList<>();
 		for (ActiveIngredient ingredient : d.getActiveIngredients()) {
 			list.add(ingredient.getAmount());
 			if (ingredient instanceof CorrespondingActiveIngredient c) {

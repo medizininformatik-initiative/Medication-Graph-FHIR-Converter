@@ -115,7 +115,7 @@ public class Neo4jCypherDatabase implements Database {
 		BigDecimal massFrom = toBigDecimal(value.get("iMassFrom").asString(null));
 		BigDecimal massTo = toBigDecimal(value.get("iMassTo").asString(null));
 		String unit = value.get("iUnit").asString(null);
-		Amount amount;
+		AmountOrRange amount;
 		if (massFrom == null) {
 			amount = null;
 		} else {
@@ -125,7 +125,7 @@ public class Neo4jCypherDatabase implements Database {
 		String correspondingName = value.get("cName").asString(null);
 		if (correspondingName != null) {
 			BigDecimal correspondingMassFrom = toBigDecimal(value.get("cMassFrom").asString(null));
-			Amount correspondingAmount;
+			AmountOrRange correspondingAmount;
 			if (correspondingMassFrom == null) {
 				correspondingAmount = null;
 			} else {
