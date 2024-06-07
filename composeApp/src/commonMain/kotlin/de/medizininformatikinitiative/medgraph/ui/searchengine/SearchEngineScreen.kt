@@ -39,7 +39,6 @@ class SearchEngineScreen : Screen {
                     SimpleQueryExecutor(
                         LevenshteinSearchMatchFinder(
                             Providers.getProductSynonymes(session),
-                            Providers.getSubstanceSynonymes(session)
                         ),
                         ExperimentalRefiner(session, Neo4jCypherDatabase(session))
                     )

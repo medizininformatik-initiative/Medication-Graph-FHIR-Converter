@@ -1,12 +1,11 @@
 package de.medizininformatikinitiative.medgraph.searchengine.algorithm.initial;
 
-import de.medizininformatikinitiative.medgraph.searchengine.matcher.LevenshteinSetMatcher;
-import de.medizininformatikinitiative.medgraph.searchengine.matcher.model.ScoreBasedMatch;
+import de.medizininformatikinitiative.medgraph.searchengine.matcher.EditDistanceSetMatcher;
+import de.medizininformatikinitiative.medgraph.searchengine.matcher.editdistance.LevenshteinDistanceService;
 import de.medizininformatikinitiative.medgraph.searchengine.model.SearchQuery;
 import de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject.Matchable;
 import de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject.OriginalMatch;
 import de.medizininformatikinitiative.medgraph.searchengine.provider.BaseProvider;
-import de.medizininformatikinitiative.medgraph.searchengine.provider.IdentifierProvider;
 import de.medizininformatikinitiative.medgraph.searchengine.provider.IdentifierStream;
 import de.medizininformatikinitiative.medgraph.searchengine.stringtransformer.*;
 
@@ -17,8 +16,7 @@ import java.util.stream.Stream;
 
 /**
  * This initial match finder relies on matchers working with the Levenshtein Distance to find initial matches. It
- * searches known products and substances based on {@link SearchQuery#getProductNameKeywords()} and
- * {@link SearchQuery#getSubstanceNameKeywords()}.
+ * searches known products based on {@link SearchQuery#getProductNameKeywords()}.
  *
  * @author Markus Budeus
  */
@@ -33,25 +31,22 @@ public class LevenshteinSearchMatchFinder implements InitialMatchFinder {
 					.and(new TrimSpecialSuffixSymbols())
 					.and(TOKEN_TRANSFORMER);
 
-	private final LevenshteinSetMatcher levenshteinSetMatcher = new LevenshteinSetMatcher();
+	private final EditDistanceSetMatcher levenshteinSetMatcher = new EditDistanceSetMatcher(new LevenshteinDistanceService(2));
 
 	private final IdentifierStream<String> productsProvider;
-	private final IdentifierStream<String> substanceProvider;
 
 	/**
 	 * Creates a new {@link LevenshteinSearchMatchFinder}.
 	 *
 	 * @param productsProvider  the provider of product names and corresponding products in which to search
-	 * @param substanceProvider the provider of substance names and corresponding substances in which to search
 	 */
-	public LevenshteinSearchMatchFinder(BaseProvider<String> productsProvider, BaseProvider<String> substanceProvider) {
+	public LevenshteinSearchMatchFinder(BaseProvider<String> productsProvider) {
 		this.productsProvider = productsProvider.parallel();
-		this.substanceProvider = substanceProvider.parallel();
 	}
 
 	@Override
 	public Stream<OriginalMatch> findInitialMatches(SearchQuery query) {
-		Stream<LevenshteinSetMatcher.Match> allMatches = Stream.empty();
+		Stream<EditDistanceSetMatcher.Match> allMatches = Stream.empty();
 		List<String> productKeywords = query.getProductNameKeywords();
 		if (!productKeywords.isEmpty()) {
 			allMatches = levenshteinSetMatcher.match(TOKEN_TRANSFORMER.apply(productKeywords),

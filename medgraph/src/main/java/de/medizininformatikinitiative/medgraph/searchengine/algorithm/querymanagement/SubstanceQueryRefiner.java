@@ -1,6 +1,7 @@
 package de.medizininformatikinitiative.medgraph.searchengine.algorithm.querymanagement;
 
-import de.medizininformatikinitiative.medgraph.searchengine.matcher.LevenshteinSetMatcher;
+import de.medizininformatikinitiative.medgraph.searchengine.matcher.EditDistanceSetMatcher;
+import de.medizininformatikinitiative.medgraph.searchengine.matcher.editdistance.LevenshteinDistanceService;
 import de.medizininformatikinitiative.medgraph.searchengine.model.SearchQuery;
 import de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject.Identifiable;
 import de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject.Substance;
@@ -29,7 +30,7 @@ public class SubstanceQueryRefiner implements PartialQueryRefiner<SubstanceQuery
 					.andTraceable(new RemoveBlankStrings())
 					.andTraceable(new ListToSet());
 
-	private final LevenshteinSetMatcher levenshteinSetMatcher = new LevenshteinSetMatcher();
+	private final EditDistanceSetMatcher editDistanceSetMatcher = new EditDistanceSetMatcher(new LevenshteinDistanceService(2));
 
 	private final IdentifierStream<String> substanceProvider;
 
@@ -41,7 +42,7 @@ public class SubstanceQueryRefiner implements PartialQueryRefiner<SubstanceQuery
 	public Result parse(String query) {
 		List<Substance> substances = new ArrayList<>();
 		Set<String> usedTokens = new HashSet<>();
-		levenshteinSetMatcher
+		editDistanceSetMatcher
 				.match(TRANSFORMER.apply(query), substanceProvider.withTransformation(TRANSFORMER))
 				.filter(match -> {
 					Identifiable target = match.getMatchedIdentifier().target;
