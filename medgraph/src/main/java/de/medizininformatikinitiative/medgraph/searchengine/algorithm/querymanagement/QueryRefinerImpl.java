@@ -2,10 +2,7 @@ package de.medizininformatikinitiative.medgraph.searchengine.algorithm.querymana
 
 import de.medizininformatikinitiative.medgraph.searchengine.model.RawQuery;
 import de.medizininformatikinitiative.medgraph.searchengine.model.SearchQuery;
-import de.medizininformatikinitiative.medgraph.searchengine.stringtransformer.RemoveBlankStrings;
-import de.medizininformatikinitiative.medgraph.searchengine.stringtransformer.Transformer;
-import de.medizininformatikinitiative.medgraph.searchengine.stringtransformer.TrimSpecialSuffixSymbols;
-import de.medizininformatikinitiative.medgraph.searchengine.stringtransformer.WhitespaceTokenizer;
+import de.medizininformatikinitiative.medgraph.searchengine.stringtransformer.*;
 import de.medizininformatikinitiative.medgraph.searchengine.tracing.SubstringUsageStatement;
 
 import java.util.ArrayList;
@@ -35,7 +32,8 @@ public class QueryRefinerImpl implements QueryRefiner {
 	private final Transformer<String, List<String>> keywordExtractor =
 			new WhitespaceTokenizer(true)
 					.and(new TrimSpecialSuffixSymbols())
-					.and(new RemoveBlankStrings());
+					.and(new RemoveBlankStrings())
+					.and(new MinimumTokenLength(2));
 
 	public QueryRefinerImpl(DosageQueryRefiner dosageQueryRefiner, DoseFormQueryRefiner doseFormQueryRefiner,
 	                        SubstanceQueryRefiner substanceQueryRefiner) {

@@ -29,6 +29,7 @@ public class SubstanceQueryRefiner implements PartialQueryRefiner<SubstanceQuery
 					andTraceable(new WhitespaceTokenizer())
 					.andTraceable(new TrimSpecialSuffixSymbols())
 					.andTraceable(new RemoveBlankStrings())
+					.andTraceable(new MinimumTokenLength(2))
 					.andTraceable(new ListToSet());
 
 	private final EditDistanceSetMatcher editDistanceSetMatcher = new EditDistanceSetMatcher(

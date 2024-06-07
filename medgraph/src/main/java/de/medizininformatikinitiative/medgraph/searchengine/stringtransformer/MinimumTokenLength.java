@@ -8,42 +8,38 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * A transformer which removes blank strings from a list.
+ * Transformer which removes all tokens which have less than a specified length.
  *
  * @author Markus Budeus
  */
-public class RemoveBlankStrings implements TraceableTransformer<List<String>, List<String>,
+public class MinimumTokenLength implements TraceableTransformer<List<String>, List<String>,
 		StringListUsageStatement, StringListUsageStatement> {
+	private final int minLength;
+
+	public MinimumTokenLength(int minLength) {
+		this.minLength = minLength;
+	}
 
 	@Override
 	public List<String> apply(List<String> source) {
-		ArrayList<String> result = new ArrayList<>(source);
-		for (int i = 0; i < result.size(); i++) {
-			String entry = result.get(i);
-			if (entry == null || entry.isBlank()) {
-				result.remove(i);
-				i--;
-			}
-		}
-		return result;
+		List<String> newList = new ArrayList<>(source);
+		newList.removeIf(s -> s.length() < minLength);
+		return newList;
 	}
 
 	@Override
 	public StringListUsageStatement reverseTransformUsageStatement(List<String> input,
 	                                                               StringListUsageStatement usageStatement) {
 		Tools.ensureValidity(this, input, usageStatement);
-		if (input.size() == usageStatement.getOriginal().size()) {
-			return usageStatement;
-		}
 
-		// Blank strings have been filtered out, we need to know at which indices
+		Set<Integer> sourceUsedIndices = usageStatement.getUsedIndices();
 		Set<Integer> usedIndices = new HashSet<>();
-		int encounteredBlanks = 0;
+		int offset = 0;
 		for (int i = 0; i < input.size(); i++) {
-			if (input.get(i).isBlank()) {
-				encounteredBlanks++;
-			} else {
-				if (usageStatement.getUsedIndices().contains(i - encounteredBlanks)) usedIndices.add(i);
+			if (input.get(i).length() < minLength) {
+				offset++;
+			} else if (sourceUsedIndices.contains(i - offset)) {
+				usedIndices.add(i);
 			}
 		}
 		return new StringListUsageStatement(input, usedIndices);
