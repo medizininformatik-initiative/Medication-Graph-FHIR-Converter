@@ -17,10 +17,7 @@ import androidx.compose.ui.unit.dp
 import de.medizininformatikinitiative.medgraph.searchengine.model.Amount
 import de.medizininformatikinitiative.medgraph.searchengine.model.CorrespondingActiveIngredient
 import de.medizininformatikinitiative.medgraph.searchengine.model.Drug
-import de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject.DetailedProduct
-import de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject.IdMatchable
-import de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject.Matchable
-import de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject.Product
+import de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject.*
 import de.medizininformatikinitiative.medgraph.ui.resources.StringRes
 import de.medizininformatikinitiative.medgraph.ui.searchengine.query.TextBox
 import de.medizininformatikinitiative.medgraph.ui.theme.ApplicationTheme
@@ -45,7 +42,7 @@ private fun MatchableObjectUI() {
                     listOf("01343446"),
                     listOf(
                         Drug(
-                            "Pulver zur Herst. e. Inj.-Lsg.", "Powder for solution for injection",
+                            "Pulver zur Herst. e. Inj.-Lsg.", EdqmPharmaceuticalDoseForm("PDF-11205000", "Powder for solution for injection", emptyList()),
                             Amount(BigDecimal.ONE, null),
                             listOf(
                                 CorrespondingActiveIngredient(

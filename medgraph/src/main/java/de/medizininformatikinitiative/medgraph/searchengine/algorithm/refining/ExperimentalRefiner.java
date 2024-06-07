@@ -8,6 +8,7 @@ import de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject
 import de.medizininformatikinitiative.medgraph.searchengine.pipeline.OngoingRefinement;
 import de.medizininformatikinitiative.medgraph.searchengine.pipeline.judge.ProductOnlyFilter;
 import de.medizininformatikinitiative.medgraph.searchengine.pipeline.judge.dosage.DosageAndAmountInfoMatchJudge;
+import de.medizininformatikinitiative.medgraph.searchengine.pipeline.judge.dosage.DosagesInProductNameJudge;
 import de.medizininformatikinitiative.medgraph.searchengine.pipeline.judge.doseform.DoseFormCharacteristicJudge;
 import de.medizininformatikinitiative.medgraph.searchengine.pipeline.judge.doseform.PharmaceuticalDoseFormJudge;
 import de.medizininformatikinitiative.medgraph.searchengine.pipeline.transformer.ProductDetailsResolver;
@@ -35,6 +36,7 @@ public class ExperimentalRefiner implements MatchRefiner {
 
 	private final PharmaceuticalDoseFormJudge doseFormJudge;
 	private final DoseFormCharacteristicJudge doseFormCharacteristicJudge;
+	private final DosagesInProductNameJudge dosagesInProductNameJudge;
 
 	public ExperimentalRefiner(Session session, Database database) {
 		substanceToProductResolver = new SubstanceToProductResolver(session);
@@ -42,6 +44,7 @@ public class ExperimentalRefiner implements MatchRefiner {
 		productDetailsResolver = new ProductDetailsResolver(database);
 		doseFormJudge = new PharmaceuticalDoseFormJudge(0.1);
 		doseFormCharacteristicJudge = new DoseFormCharacteristicJudge(0.1);
+		dosagesInProductNameJudge = new DosagesInProductNameJudge(null);
 	}
 
 	/**
@@ -80,10 +83,7 @@ public class ExperimentalRefiner implements MatchRefiner {
 		matching.applyScoreJudge(dosageJudge, true);
 		matching.applyScoreJudge(doseFormJudge, true);
 		matching.applyScoreJudge(doseFormCharacteristicJudge, true);
-
-		// TODO Master's Thesis Matcher included a sort by substrings found step here, I'll leave it out for now
-		//      as it is of little importance
-
+		matching.applyScoreJudge(dosagesInProductNameJudge, false);
 
 		return matching.getCurrentMatchesTree();
 	}
