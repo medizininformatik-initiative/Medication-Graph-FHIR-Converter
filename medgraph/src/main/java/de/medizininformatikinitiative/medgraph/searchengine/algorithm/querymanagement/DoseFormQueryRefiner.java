@@ -1,6 +1,7 @@
 package de.medizininformatikinitiative.medgraph.searchengine.algorithm.querymanagement;
 
 import de.medizininformatikinitiative.medgraph.searchengine.matcher.EditDistanceListMatcher;
+import de.medizininformatikinitiative.medgraph.searchengine.matcher.editdistance.LevenshteinDistanceService;
 import de.medizininformatikinitiative.medgraph.searchengine.model.SearchQuery;
 import de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject.EdqmConcept;
 import de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject.EdqmPharmaceuticalDoseForm;
@@ -29,7 +30,7 @@ public class DoseFormQueryRefiner implements PartialQueryRefiner<DoseFormQueryRe
 	private static final int FIRST_HAS_PRIORITY = 1;
 	private static final int SECOND_HAS_PRIORITY = 2;
 
-	private final EditDistanceListMatcher editDistanceListMatcher = new EditDistanceListMatcher(1);
+	private final EditDistanceListMatcher editDistanceListMatcher = new EditDistanceListMatcher(new LevenshteinDistanceService(1));
 	private final TraceableTransformer<String, List<String>, DistinctMultiSubstringUsageStatement, StringListUsageStatement> transformer =
 			new ToLowerCase()
 					.andTraceable(new WhitespaceTokenizer(false))

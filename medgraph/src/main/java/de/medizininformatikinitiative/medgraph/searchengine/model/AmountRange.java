@@ -83,17 +83,17 @@ public final class AmountRange implements AmountOrRange {
 	}
 
 	@Override
-	public boolean equals(Object o) {
-		if (this == o) return true;
-		if (o == null || getClass() != o.getClass()) return false;
-		if (!super.equals(o)) return false;
-		AmountRange that = (AmountRange) o;
-		return Objects.equals(to, that.to);
+	public boolean equals(Object object) {
+		if (this == object) return true;
+		if (object == null || getClass() != object.getClass()) return false;
+		AmountRange that = (AmountRange) object;
+		return Objects.equals(from, that.from) && Objects.equals(to,
+				that.to) && Objects.equals(unit, that.unit);
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(super.hashCode(), to);
+		return Objects.hash(from, to, unit);
 	}
 
 	@Override
