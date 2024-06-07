@@ -38,7 +38,7 @@ public class ExperimentalRefiner implements MatchRefiner {
 
 	public ExperimentalRefiner(Session session, Database database) {
 		substanceToProductResolver = new SubstanceToProductResolver(session);
-		dosageJudge = new DosageAndAmountInfoMatchJudge(database, 0.1);
+		dosageJudge = new DosageAndAmountInfoMatchJudge(0.1);
 		productDetailsResolver = new ProductDetailsResolver(database);
 		doseFormJudge = new PharmaceuticalDoseFormJudge(0.1);
 		doseFormCharacteristicJudge = new DoseFormCharacteristicJudge(0.1);
@@ -75,10 +75,9 @@ public class ExperimentalRefiner implements MatchRefiner {
 		// If we only recieved products as input, everything should pass this filter
 		matching.applyFilter(productOnlyFilter, false);
 
-		matching.applyScoreJudge(dosageJudge, true);
-
 		matching.transformMatches(productDetailsResolver); // Product details are required for the subsequent judges.
 
+		matching.applyScoreJudge(dosageJudge, true);
 		matching.applyScoreJudge(doseFormJudge, true);
 		matching.applyScoreJudge(doseFormCharacteristicJudge, true);
 

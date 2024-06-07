@@ -1,6 +1,5 @@
 package de.medizininformatikinitiative.medgraph.searchengine.pipeline.judge.dosage;
 
-import de.medizininformatikinitiative.medgraph.searchengine.db.DbAmount;
 import de.medizininformatikinitiative.medgraph.searchengine.model.Amount;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -30,7 +29,7 @@ public class DrugAmountMatchJudgeTest {
 
 	@Test
 	public void noTargetAmounts() {
-		List<DbAmount> drugAmounts = List.of(new DbAmount(new BigDecimal(5), "ml"));
+		List<Amount> drugAmounts = List.of(new Amount(new BigDecimal(5), "ml"));
 		assertEquals(NO_AMOUNTS_SCORE, sut.judge(drugAmounts, List.of()));
 	}
 
@@ -43,7 +42,7 @@ public class DrugAmountMatchJudgeTest {
 	@Test
 	public void simpleAmountMatch() {
 		List<Amount> targetAmounts = List.of(new Amount(new BigDecimal(5), "ml"));
-		List<DbAmount> drugAmounts = List.of(new DbAmount(new BigDecimal(5), "ml"));
+		List<Amount> drugAmounts = List.of(new Amount(new BigDecimal(5), "ml"));
 
 		assertEquals(MATCH_SCORE, sut.judge(drugAmounts, targetAmounts));
 	}
@@ -51,7 +50,7 @@ public class DrugAmountMatchJudgeTest {
 	@Test
 	public void simpleMismatch() {
 		List<Amount> targetAmounts = List.of(new Amount(new BigDecimal(10), "ml"));
-		List<DbAmount> drugAmounts = List.of(new DbAmount(new BigDecimal(5), "ml"));
+		List<Amount> drugAmounts = List.of(new Amount(new BigDecimal(5), "ml"));
 
 		assertEquals(0, sut.judge(drugAmounts, targetAmounts));
 	}
@@ -59,7 +58,7 @@ public class DrugAmountMatchJudgeTest {
 	@Test
 	public void unitlessMatch() {
 		List<Amount> targetAmounts = List.of(new Amount(new BigDecimal(5), null));
-		List<DbAmount> drugAmounts = List.of(new DbAmount(new BigDecimal(5), "ml"));
+		List<Amount> drugAmounts = List.of(new Amount(new BigDecimal(5), "ml"));
 
 		assertEquals(UNITLESS_MATCH_SCORE, sut.judge(drugAmounts, targetAmounts));
 	}
@@ -67,7 +66,7 @@ public class DrugAmountMatchJudgeTest {
 	@Test
 	public void unitlessPerfectMatch() {
 		List<Amount> targetAmounts = List.of(new Amount(new BigDecimal("2.8"), null));
-		List<DbAmount> drugAmounts = List.of(new DbAmount(new BigDecimal("2.8"), null));
+		List<Amount> drugAmounts = List.of(new Amount(new BigDecimal("2.8"), null));
 
 		assertEquals(MATCH_SCORE, sut.judge(drugAmounts, targetAmounts));
 	}
@@ -75,7 +74,7 @@ public class DrugAmountMatchJudgeTest {
 	@Test
 	public void unitMismatch() {
 		List<Amount> targetAmounts = List.of(new Amount(new BigDecimal(10), "ml"));
-		List<DbAmount> drugAmounts = List.of(new DbAmount(new BigDecimal(10), "g"));
+		List<Amount> drugAmounts = List.of(new Amount(new BigDecimal(10), "g"));
 
 		assertEquals(0, sut.judge(drugAmounts, targetAmounts));
 	}
@@ -83,7 +82,7 @@ public class DrugAmountMatchJudgeTest {
 	@Test
 	public void nullUnitMismatch() {
 		List<Amount> targetAmounts = List.of(new Amount(new BigDecimal(8), "ml"));
-		List<DbAmount> drugAmounts = List.of(new DbAmount(new BigDecimal(8), null));
+		List<Amount> drugAmounts = List.of(new Amount(new BigDecimal(8), null));
 
 		assertEquals(0, sut.judge(drugAmounts, targetAmounts));
 	}
@@ -91,10 +90,10 @@ public class DrugAmountMatchJudgeTest {
 	@Test
 	public void matchesOneOfMultiple() {
 		List<Amount> targetAmounts = List.of(new Amount(new BigDecimal("7.2"), "ml"));
-		List<DbAmount> drugAmounts = List.of(
-				new DbAmount(new BigDecimal(8), null),
-				new DbAmount(new BigDecimal("7.2"), "mg"),
-				new DbAmount(new BigDecimal("7.2"), "ml")
+		List<Amount> drugAmounts = List.of(
+				new Amount(new BigDecimal(8), null),
+				new Amount(new BigDecimal("7.2"), "mg"),
+				new Amount(new BigDecimal("7.2"), "ml")
 		);
 
 		assertEquals(MATCH_SCORE, sut.judge(drugAmounts, targetAmounts));
@@ -103,10 +102,10 @@ public class DrugAmountMatchJudgeTest {
 	@Test
 	public void matchesUnitlessOfMultiple() {
 		List<Amount> targetAmounts = List.of(new Amount(new BigDecimal("7.2"), null));
-		List<DbAmount> drugAmounts = List.of(
-				new DbAmount(new BigDecimal(8), null),
-				new DbAmount(new BigDecimal("7.2"), "mg"),
-				new DbAmount(new BigDecimal("7.2"), "ml")
+		List<Amount> drugAmounts = List.of(
+				new Amount(new BigDecimal(8), null),
+				new Amount(new BigDecimal("7.2"), "mg"),
+				new Amount(new BigDecimal("7.2"), "ml")
 		);
 
 		assertEquals(UNITLESS_MATCH_SCORE, sut.judge(drugAmounts, targetAmounts));
@@ -115,10 +114,10 @@ public class DrugAmountMatchJudgeTest {
 	@Test
 	public void matchesNoneOfMultiple() {
 		List<Amount> targetAmounts = List.of(new Amount(new BigDecimal("7.5"), "ml"));
-		List<DbAmount> drugAmounts = List.of(
-				new DbAmount(new BigDecimal(8), null),
-				new DbAmount(new BigDecimal("7.5"), "mg"),
-				new DbAmount(new BigDecimal(10), "ml")
+		List<Amount> drugAmounts = List.of(
+				new Amount(new BigDecimal(8), null),
+				new Amount(new BigDecimal("7.5"), "mg"),
+				new Amount(new BigDecimal(10), "ml")
 		);
 
 		assertEquals(0, sut.judge(drugAmounts, targetAmounts));
@@ -127,10 +126,10 @@ public class DrugAmountMatchJudgeTest {
 	@Test
 	public void selectsBestMatch() {
 		List<Amount> targetAmounts = List.of(new Amount(new BigDecimal("20"), null));
-		List<DbAmount> drugAmounts = List.of(
-				new DbAmount(new BigDecimal(20), "mg"), // Unitless match
-				new DbAmount(new BigDecimal(8), null),
-				new DbAmount(new BigDecimal(20), null) // Full match
+		List<Amount> drugAmounts = List.of(
+				new Amount(new BigDecimal(20), "mg"), // Unitless match
+				new Amount(new BigDecimal(8), null),
+				new Amount(new BigDecimal(20), null) // Full match
 		);
 
 		assertEquals(MATCH_SCORE, sut.judge(drugAmounts, targetAmounts));
@@ -143,11 +142,11 @@ public class DrugAmountMatchJudgeTest {
 				new Amount(new BigDecimal("20"), "mg"),
 				new Amount(new BigDecimal("20"), null)
 		);
-		List<DbAmount> drugAmounts = List.of(
-				new DbAmount(new BigDecimal(5), "mg"),
-				new DbAmount(new BigDecimal(20), "mg"), // Unitless match
-				new DbAmount(new BigDecimal(8), null),
-				new DbAmount(new BigDecimal(20), null) // Full match
+		List<Amount> drugAmounts = List.of(
+				new Amount(new BigDecimal(5), "mg"),
+				new Amount(new BigDecimal(20), "mg"), // Unitless match
+				new Amount(new BigDecimal(8), null),
+				new Amount(new BigDecimal(20), null) // Full match
 		);
 
 		assertEquals(UNITLESS_MATCH_SCORE + MATCH_SCORE + MATCH_SCORE, sut.judge(drugAmounts, targetAmounts));
