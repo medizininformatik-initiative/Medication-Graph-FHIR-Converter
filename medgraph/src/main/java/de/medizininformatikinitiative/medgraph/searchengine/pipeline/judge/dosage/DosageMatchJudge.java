@@ -1,6 +1,5 @@
 package de.medizininformatikinitiative.medgraph.searchengine.pipeline.judge.dosage;
 
-import de.medizininformatikinitiative.medgraph.searchengine.db.DbDrugDosage;
 import de.medizininformatikinitiative.medgraph.searchengine.model.*;
 import org.jetbrains.annotations.NotNull;
 
@@ -11,7 +10,7 @@ import java.util.List;
 import java.util.Objects;
 
 /**
- * This class assigns scores based on how well given {@link Dosage}s match {@link DbDrugDosage}-data from the database.
+ * This class assigns scores based on how well given {@link Dosage}s match {@link Drug}-data from the database.
  *
  * @author Markus Budeus
  */
