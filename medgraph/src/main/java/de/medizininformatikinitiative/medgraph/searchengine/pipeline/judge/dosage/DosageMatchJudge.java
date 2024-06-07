@@ -199,6 +199,7 @@ public class DosageMatchJudge {
 				list.add(c.getCorrespondingSubstanceAmount());
 			}
 		}
+		list.removeIf(Objects::isNull);
 		return list;
 	}
 

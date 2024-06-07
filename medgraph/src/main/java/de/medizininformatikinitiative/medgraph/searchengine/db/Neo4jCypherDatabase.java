@@ -87,10 +87,11 @@ public class Neo4jCypherDatabase implements Database {
 	private Drug parseToDrug(Value value) {
 		String doseForm = value.get("mmiDoseForm").asString(null);
 		EdqmPharmaceuticalDoseForm edqm = parseToPdf(value.get("edqmDoseForm"));
-		BigDecimal amount = toBigDecimal(value.get("amount").asString(null));
+		BigDecimal amountValue = toBigDecimal(value.get("amount").asString(null));
 		String unit = value.get("unit").asString(null);
+		Amount amount = amountValue != null ? new Amount(amountValue, unit) : null;
 		List<ActiveIngredient> ingredients = value.get("ingredients").asList(this::parseToActiveIngredient);
-		return new Drug(doseForm, edqm, new Amount(amount, unit), ingredients);
+		return new Drug(doseForm, edqm, amount, ingredients);
 	}
 
 	private EdqmPharmaceuticalDoseForm parseToPdf(Value value) {
