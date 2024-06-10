@@ -93,7 +93,7 @@ class DosageDetectorTest {
 	public void otherUnit() {
 		List<DosageDetector.DetectedDosage> dosages = DosageDetector.detectDosages(
 				"Berotec® N 100 µg Dosier-Aerosol, Druckgasinhalation, Lösung");
-		assertSingleMatch(dosages, 11, 6, 100, "μg", null, null, null);
+		assertSingleMatch(dosages, 11, 6, 100, "ug", null, null, null);
 	}
 
 	@Test
@@ -113,14 +113,14 @@ class DosageDetectorTest {
 	public void badUnitSpacing() {
 		List<DosageDetector.DetectedDosage> dosages = DosageDetector.detectDosages(
 				"Medication I invented 100 µg/ ml oof");
-		assertSingleMatch(dosages, 22, 10, 100, "μg", null, 1, "ml");
+		assertSingleMatch(dosages, 22, 10, 100, "ug", null, 1, "ml");
 	}
 
 	@Test
 	public void moreBadUnitSpacing() {
 		List<DosageDetector.DetectedDosage> dosages = DosageDetector.detectDosages(
 				"Medication I invented 100µg/10 ml oof");
-		assertSingleMatch(dosages, 22, 11, 100, "μg", null, 10, "ml");
+		assertSingleMatch(dosages, 22, 11, 100, "ug", null, 10, "ml");
 	}
 
 	@Test
@@ -199,7 +199,7 @@ class DosageDetectorTest {
 		assertEquals(3, dosages.size());
 		assertMatch(dosages.get(0), 23, 12, BigDecimal.valueOf(7500), "I.E.", null, BigDecimal.ONE, "ml");
 		assertMatch(dosages.get(1), 36, 12, BigDecimal.valueOf(3500), "I.E.", null, BigDecimal.ONE, "ml");
-		assertMatch(dosages.get(2), 49, 8, BigDecimal.valueOf(20), "μg", null, BigDecimal.ONE, "ml");
+		assertMatch(dosages.get(2), 49, 8, BigDecimal.valueOf(20), "ug", null, BigDecimal.ONE, "ml");
 	}
 
 	@Test
@@ -253,7 +253,7 @@ class DosageDetectorTest {
 	@Test
 	public void lengthOfKnownSynonymUsed() {
 		List<DosageDetector.DetectedDosage> dosages = DosageDetector.detectDosages("Darbepoetin alfa 100 Mikrogramm");
-		assertSingleMatch(dosages, 17, 14, 100, "μg", null, null, null);
+		assertSingleMatch(dosages, 17, 14, 100, "ug", null, null, null);
 	}
 
 	public void assertSingleMatch(List<DosageDetector.DetectedDosage> list,
