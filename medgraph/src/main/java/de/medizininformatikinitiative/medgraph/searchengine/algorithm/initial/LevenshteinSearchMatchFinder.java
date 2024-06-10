@@ -4,6 +4,8 @@ import de.medizininformatikinitiative.medgraph.searchengine.matcher.EditDistance
 import de.medizininformatikinitiative.medgraph.searchengine.matcher.editdistance.LevenshteinDistanceService;
 import de.medizininformatikinitiative.medgraph.searchengine.model.SearchQuery;
 import de.medizininformatikinitiative.medgraph.searchengine.model.identifiable.Matchable;
+import de.medizininformatikinitiative.medgraph.searchengine.model.identifier.Identifier;
+import de.medizininformatikinitiative.medgraph.searchengine.model.identifier.OriginalIdentifier;
 import de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject.OriginalMatch;
 import de.medizininformatikinitiative.medgraph.searchengine.provider.BaseProvider;
 import de.medizininformatikinitiative.medgraph.searchengine.provider.IdentifierStream;
@@ -47,8 +49,9 @@ public class LevenshteinSearchMatchFinder implements InitialMatchFinder {
 	@Override
 	public Stream<OriginalMatch> findInitialMatches(SearchQuery query) {
 		Stream<EditDistanceSetMatcher.Match> allMatches = Stream.empty();
-		List<String> productKeywords = query.getProductNameKeywords();
-		if (!productKeywords.isEmpty()) {
+		Identifier<List<String>> productKeywords = new OriginalIdentifier<>(query.getProductNameKeywords(),
+				OriginalIdentifier.Source.SEARCH_QUERY);
+		if (!productKeywords.getIdentifier().isEmpty()) {
 			allMatches = levenshteinSetMatcher.match(TOKEN_TRANSFORMER.apply(productKeywords),
 					productsProvider.withTransformation(IDENTIFIER_TRANSFORMER));
 		}

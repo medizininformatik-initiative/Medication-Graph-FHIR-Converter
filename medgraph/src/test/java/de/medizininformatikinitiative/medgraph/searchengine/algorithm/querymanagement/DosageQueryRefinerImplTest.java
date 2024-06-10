@@ -4,8 +4,9 @@ import de.medizininformatikinitiative.medgraph.UnitTest;
 import de.medizininformatikinitiative.medgraph.searchengine.model.Amount;
 import de.medizininformatikinitiative.medgraph.searchengine.model.Dosage;
 import de.medizininformatikinitiative.medgraph.searchengine.model.SearchQuery;
-import de.medizininformatikinitiative.medgraph.searchengine.tracing.IntRange;
+import de.medizininformatikinitiative.medgraph.searchengine.model.identifier.OriginalIdentifier;
 import de.medizininformatikinitiative.medgraph.searchengine.tracing.DistinctMultiSubstringUsageStatement;
+import de.medizininformatikinitiative.medgraph.searchengine.tracing.IntRange;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -30,7 +31,7 @@ public class DosageQueryRefinerImplTest extends UnitTest {
 
 	@Test
 	public void simpleDosage() {
-		Result result = sut.parse("Aspirin 500 mg");
+		Result result = parse("Aspirin 500 mg");
 
 		assertEquals(List.of(Dosage.of(500, "mg")), result.getDosages());
 		assertEquals(List.of(new Amount(new BigDecimal(500), "mg")), result.getAmounts());
@@ -40,7 +41,7 @@ public class DosageQueryRefinerImplTest extends UnitTest {
 
 	@Test
 	public void multipleDosages() {
-		Result result = sut.parse("Aspirin 500 mg 10mg/ml");
+		Result result = parse("Aspirin 500 mg 10mg/ml");
 
 		assertEquals(List.of(Dosage.of(500, "mg"), Dosage.of(10, "mg", 1, "ml")), result.getDosages());
 		assertEquals(List.of(new Amount(new BigDecimal(500), "mg")), result.getAmounts());
@@ -50,7 +51,7 @@ public class DosageQueryRefinerImplTest extends UnitTest {
 
 	@Test
 	public void noDosages() {
-		Result result = sut.parse("Tranexamsäure");
+		Result result = parse("Tranexamsäure");
 
 		assertEquals(List.of(), result.getDosages());
 		assertEquals(List.of(), result.getAmounts());
@@ -59,8 +60,8 @@ public class DosageQueryRefinerImplTest extends UnitTest {
 
 	@Test
 	public void incrementallyApply() {
-		Result r1 = sut.parse("500 mg");
-		Result r2 = sut.parse("10 ml");
+		Result r1 = parse("500 mg");
+		Result r2 = parse("10 ml");
 
 		SearchQuery.Builder builder = new SearchQuery.Builder();
 		r1.incrementallyApply(builder);
@@ -72,6 +73,10 @@ public class DosageQueryRefinerImplTest extends UnitTest {
 
 		assertEquals(List.of(d1, d2), query.getActiveIngredientDosages());
 		assertEquals(List.of(d1.amountNominator, d2.amountNominator), query.getDrugAmounts());
+	}
+
+	private Result parse(String query) {
+		return sut.parse(new OriginalIdentifier<>(query, OriginalIdentifier.Source.RAW_QUERY));
 	}
 
 }

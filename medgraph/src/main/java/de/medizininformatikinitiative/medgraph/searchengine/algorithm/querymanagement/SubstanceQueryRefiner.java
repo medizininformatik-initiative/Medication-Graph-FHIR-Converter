@@ -5,6 +5,7 @@ import de.medizininformatikinitiative.medgraph.searchengine.matcher.editdistance
 import de.medizininformatikinitiative.medgraph.searchengine.model.SearchQuery;
 import de.medizininformatikinitiative.medgraph.searchengine.model.identifiable.Identifiable;
 import de.medizininformatikinitiative.medgraph.searchengine.model.identifiable.Substance;
+import de.medizininformatikinitiative.medgraph.searchengine.model.identifier.Identifier;
 import de.medizininformatikinitiative.medgraph.searchengine.provider.IdentifierStream;
 import de.medizininformatikinitiative.medgraph.searchengine.stringtransformer.*;
 import de.medizininformatikinitiative.medgraph.searchengine.tracing.DistinctMultiSubstringUsageStatement;
@@ -47,11 +48,12 @@ public class SubstanceQueryRefiner implements PartialQueryRefiner<SubstanceQuery
 	}
 
 	@Override
-	public Result parse(String query) {
+	public Result parse(Identifier<String> query) {
 		List<Substance> substances = new ArrayList<>();
 		Set<String> usedTokens = new HashSet<>();
+		Identifier<Set<String>> transformedQuery = TRANSFORMER.apply(query);
 		editDistanceSetMatcher
-				.match(TRANSFORMER.apply(query), substanceProvider.withTransformation(TRANSFORMER))
+				.match(transformedQuery, substanceProvider.withTransformation(TRANSFORMER))
 				.filter(match -> {
 					Identifiable target = match.getMatchedIdentifier().target;
 					if (target instanceof Substance) {
@@ -70,7 +72,7 @@ public class SubstanceQueryRefiner implements PartialQueryRefiner<SubstanceQuery
 
 		DistinctMultiSubstringUsageStatement usageStatement =
 				TRANSFORMER.reverseTransformUsageStatement(query,
-						new StringSetUsageStatement(TRANSFORMER.apply(query), usedTokens));
+						new StringSetUsageStatement(transformedQuery.getIdentifier(), usedTokens));
 
 		return new Result(substances, usageStatement);
 	}

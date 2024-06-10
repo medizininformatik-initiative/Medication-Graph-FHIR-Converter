@@ -1,6 +1,7 @@
 package de.medizininformatikinitiative.medgraph.searchengine.matcher;
 
 import de.medizininformatikinitiative.medgraph.searchengine.matcher.model.ScoreBasedMatch;
+import de.medizininformatikinitiative.medgraph.searchengine.model.identifier.Identifier;
 import de.medizininformatikinitiative.medgraph.searchengine.provider.MappedIdentifier;
 
 import java.util.Set;
@@ -10,12 +11,12 @@ import java.util.Set;
  *
  * @author Markus Budeus
  */
-public class SubstringPresenceMatcher extends Matcher<String, Set<String>, ScoreBasedMatch<String>> {
+public class SubstringPresenceMatcher extends Matcher<Set<String>, String, ScoreBasedMatch<Set<String>, String>> {
 
 	@Override
-	protected ScoreBasedMatch<String> match(Set<String> searchTerm, MappedIdentifier<String> mi) {
-		double score = getScore(searchTerm, mi.identifier.getIdentifier());
-		if (score > 0) return new ScoreBasedMatch<>(mi, score);
+	protected ScoreBasedMatch<Set<String>, String> match(Identifier<Set<String>> searchTerm, MappedIdentifier<String> mi) {
+		double score = getScore(searchTerm.getIdentifier(), mi.identifier.getIdentifier());
+		if (score > 0) return new ScoreBasedMatch<>(searchTerm, mi, score);
 		return null;
 	}
 

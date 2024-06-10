@@ -95,8 +95,8 @@ public class SearchQuery {
 	}
 
 	/**
-	 * Builder for search queries. Note that when using this builder, you cannot remove already-added information
-	 * and the created lists will remove duplicates.
+	 * Builder for search queries. Note that when using this builder, you cannot remove already-added information and
+	 * the created lists will remove duplicates.
 	 */
 	public static class Builder {
 		@NotNull
@@ -118,6 +118,7 @@ public class SearchQuery {
 
 		/**
 		 * Adds the given keywords to the list of product name keywords maintained by this builder.
+		 *
 		 * @return this instance
 		 */
 		public Builder withProductNameKeywords(@NotNull List<String> productNameKeywords) {
@@ -127,6 +128,7 @@ public class SearchQuery {
 
 		/**
 		 * Adds the given substances to the list of substances maintained by this builder.
+		 *
 		 * @return this instance
 		 */
 		public Builder withSubstances(
@@ -137,6 +139,7 @@ public class SearchQuery {
 
 		/**
 		 * Adds the given dosages to the list of active ingredient dosages maintained by this builder.
+		 *
 		 * @return this instance
 		 */
 		public Builder withActiveIngredientDosages(
@@ -147,6 +150,7 @@ public class SearchQuery {
 
 		/**
 		 * Adds the given amounts to the list of drug amounts maintained by this builder.
+		 *
 		 * @return this instance
 		 */
 		public Builder withDrugAmounts(
@@ -157,6 +161,7 @@ public class SearchQuery {
 
 		/**
 		 * Adds the given EDQM concepts to the list of dose form characteristics maintained by this builder.
+		 *
 		 * @return this instance
 		 */
 		public Builder withDoseFormCharacteristics(
@@ -167,6 +172,7 @@ public class SearchQuery {
 
 		/**
 		 * Adds the given EDQM pharmaceutical dose forms to the list of dose forms maintained by this builder.
+		 *
 		 * @return this instance
 		 */
 		public Builder withDoseForms(

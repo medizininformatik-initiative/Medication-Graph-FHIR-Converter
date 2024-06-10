@@ -2,6 +2,7 @@ package de.medizininformatikinitiative.medgraph.searchengine.matcher;
 
 import de.medizininformatikinitiative.medgraph.searchengine.matcher.editdistance.EditDistanceService;
 import de.medizininformatikinitiative.medgraph.searchengine.matcher.model.EditDistance;
+import de.medizininformatikinitiative.medgraph.searchengine.model.identifier.Identifier;
 import de.medizininformatikinitiative.medgraph.searchengine.provider.MappedIdentifier;
 import de.medizininformatikinitiative.medgraph.searchengine.tracing.InputUsageTraceable;
 import de.medizininformatikinitiative.medgraph.searchengine.tracing.StringSetUsageStatement;
@@ -44,10 +45,11 @@ public class EditDistanceSetMatcher extends SimpleMatcher<Set<String>, EditDista
 	 * returned, otherwise this function returns null.
 	 */
 	@Override
-	public Match match(Set<String> searchTerm, MappedIdentifier<Set<String>> mi) {
+	public Match match(Identifier<Set<String>> searchTerm, MappedIdentifier<Set<String>> mi) {
 		Set<String> target = mi.identifier.getIdentifier();
 		List<EditDistance> resultDistances = new ArrayList<>();
-		for (String searchTermToken : searchTerm) {
+		Set<String> searchTermTokens = searchTerm.getIdentifier();
+		for (String searchTermToken : searchTermTokens) {
 			int bestScore = Integer.MAX_VALUE;
 			String bestMatch = null;
 			for (String targetToken : target) {
@@ -69,8 +71,8 @@ public class EditDistanceSetMatcher extends SimpleMatcher<Set<String>, EditDista
 
 		if (score == 0) return null;
 
-		score = score / searchTerm.size();
-		return new Match(mi, searchTerm, score, resultDistances);
+		score = score / searchTermTokens.size();
+		return new Match(searchTerm, mi, score, resultDistances);
 
 	}
 
@@ -84,7 +86,7 @@ public class EditDistanceSetMatcher extends SimpleMatcher<Set<String>, EditDista
 	 * parts of the search term were used in the match as well as edit distance information allowing you to see which
 	 * edit distances between which words were considered for the scoring.
 	 */
-	public static class Match extends de.medizininformatikinitiative.medgraph.searchengine.matcher.model.ScoreBasedMatch<Set<String>>
+	public static class Match extends de.medizininformatikinitiative.medgraph.searchengine.matcher.model.ScoreBasedMatch<Set<String>, Set<String>>
 			implements InputUsageTraceable<StringSetUsageStatement> {
 
 		/**
@@ -97,11 +99,11 @@ public class EditDistanceSetMatcher extends SimpleMatcher<Set<String>, EditDista
 		 */
 		private final List<EditDistance> editDistances;
 
-		private Match(MappedIdentifier<Set<String>> match, Set<String> searchTerm, double score,
+		private Match(Identifier<Set<String>> searchTerm, MappedIdentifier<Set<String>> match, double score,
 		              List<EditDistance> editDistances) {
-			super(match, score);
+			super(searchTerm, match, score);
 			this.usageStatement = new StringSetUsageStatement(
-					searchTerm,
+					searchTerm.getIdentifier(),
 					editDistances.stream().map(EditDistance::getValue1).collect(Collectors.toSet()));
 			this.editDistances = editDistances;
 		}

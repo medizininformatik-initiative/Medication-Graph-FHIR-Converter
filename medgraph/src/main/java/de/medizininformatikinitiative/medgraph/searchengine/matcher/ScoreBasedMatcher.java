@@ -1,7 +1,7 @@
 package de.medizininformatikinitiative.medgraph.searchengine.matcher;
 
-import de.medizininformatikinitiative.medgraph.searchengine.matcher.model.DistanceBasedMatch;
 import de.medizininformatikinitiative.medgraph.searchengine.matcher.model.ScoreBasedMatch;
+import de.medizininformatikinitiative.medgraph.searchengine.model.identifier.Identifier;
 import de.medizininformatikinitiative.medgraph.searchengine.provider.MappedIdentifier;
 
 /**
@@ -11,12 +11,12 @@ import de.medizininformatikinitiative.medgraph.searchengine.provider.MappedIdent
  * @param <S> the type of search term and target objects used
  * @author Markus Budeus
  */
-public abstract class ScoreBasedMatcher<S> extends SimpleMatcher<S, ScoreBasedMatch<S>> {
+public abstract class ScoreBasedMatcher<S> extends SimpleMatcher<S, ScoreBasedMatch<S, S>> {
 
 	@Override
-	protected ScoreBasedMatch<S> match(S searchTerm, MappedIdentifier<S> mi) {
-		double score = calculateScore(searchTerm, mi.identifier.getIdentifier());
-		if (score > 0) return new ScoreBasedMatch<>(mi, score);
+	protected ScoreBasedMatch<S, S> match(Identifier<S> searchTerm, MappedIdentifier<S> mi) {
+		double score = calculateScore(searchTerm.getIdentifier(), mi.identifier.getIdentifier());
+		if (score > 0) return new ScoreBasedMatch<>(searchTerm, mi, score);
 		return null;
 	}
 

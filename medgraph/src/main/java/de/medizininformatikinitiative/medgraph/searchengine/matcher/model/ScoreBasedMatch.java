@@ -1,5 +1,6 @@
 package de.medizininformatikinitiative.medgraph.searchengine.matcher.model;
 
+import de.medizininformatikinitiative.medgraph.searchengine.model.identifier.Identifier;
 import de.medizininformatikinitiative.medgraph.searchengine.provider.MappedIdentifier;
 import org.jetbrains.annotations.NotNull;
 
@@ -9,7 +10,7 @@ import org.jetbrains.annotations.NotNull;
  *
  * @author Markus Budeus
  */
-public class ScoreBasedMatch<S> extends Match<S> implements Comparable<ScoreBasedMatch<?>> {
+public class ScoreBasedMatch<S, T> extends Match<S, T> implements Comparable<ScoreBasedMatch<?, ?>> {
 	private final double score;
 
 	/**
@@ -18,8 +19,8 @@ public class ScoreBasedMatch<S> extends Match<S> implements Comparable<ScoreBase
 	 * @param matchedIdentifier the matched identifier
 	 * @param score             the score assigned to the identifier according to the matcher's metric
 	 */
-	public ScoreBasedMatch(MappedIdentifier<S> matchedIdentifier, double score) {
-		super(matchedIdentifier);
+	public ScoreBasedMatch(Identifier<S> searchTerm, MappedIdentifier<T> matchedIdentifier, double score) {
+		super(searchTerm, matchedIdentifier);
 		this.score = score;
 	}
 
@@ -31,7 +32,7 @@ public class ScoreBasedMatch<S> extends Match<S> implements Comparable<ScoreBase
 	}
 
 	@Override
-	public int compareTo(@NotNull ScoreBasedMatch<?> o) {
+	public int compareTo(@NotNull ScoreBasedMatch<?,?> o) {
 		return Double.compare(score, o.score);
 	}
 }

@@ -4,10 +4,12 @@ import de.medizininformatikinitiative.medgraph.TestFactory;
 import de.medizininformatikinitiative.medgraph.UnitTest;
 import de.medizininformatikinitiative.medgraph.searchengine.model.SearchQuery;
 import de.medizininformatikinitiative.medgraph.searchengine.model.identifiable.EdqmPharmaceuticalDoseForm;
+import de.medizininformatikinitiative.medgraph.searchengine.model.identifier.OriginalIdentifier;
 import de.medizininformatikinitiative.medgraph.searchengine.provider.BaseProvider;
 import de.medizininformatikinitiative.medgraph.searchengine.provider.MappedIdentifier;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.internal.matchers.Or;
 
 import java.util.Collections;
 import java.util.List;
@@ -30,7 +32,7 @@ public class DoseFormQueryRefinerImplTest extends UnitTest {
 
 	@Test
 	void noMatch() {
-		Result result = sut.parse("Aspirin 100mg");
+		Result result = parse("Aspirin 100mg");
 		assertEquals(Collections.emptyList(), result.getDoseForms());
 		assertEquals(Collections.emptyList(), result.getCharacteristics());
 		assertEquals(Collections.emptySet(), result.getUsageStatement().getUsedRanges());
@@ -38,7 +40,7 @@ public class DoseFormQueryRefinerImplTest extends UnitTest {
 
 	@Test
 	void simpleMatch() {
-		Result result = sut.parse("Tranexamic acid granules");
+		Result result = parse("Tranexamic acid granules");
 		assertEquals(List.of(GRANULES), result.getDoseForms());
 		assertEquals(List.of(Characteristics.GRANULES), result.getCharacteristics());
 		assertEquals("granules", result.getUsageStatement().getUsedParts().trim());
@@ -46,7 +48,7 @@ public class DoseFormQueryRefinerImplTest extends UnitTest {
 
 	@Test
 	void multiMatch() {
-		Result result = sut.parse("Prednisolon oral granules");
+		Result result = parse("Prednisolon oral granules");
 		assertEquals(List.of(GRANULES), result.getDoseForms());
 		assertEqualsIgnoreOrder(List.of(Characteristics.ORAL, Characteristics.GRANULES), result.getCharacteristics());
 		assertEquals("oral granules", result.getUsageStatement().getUsedParts().trim());
@@ -54,7 +56,7 @@ public class DoseFormQueryRefinerImplTest extends UnitTest {
 
 	@Test
 	void overlappingMatch() {
-		Result result = sut.parse("Prednisolon powder for solution for injection");
+		Result result = parse("Prednisolon powder for solution for injection");
 		assertEqualsIgnoreOrder(List.of(POWDER_FOR_SOLUTION_FOR_INJECTION, SOLUTION_FOR_INJECTION),
 				result.getDoseForms());
 		assertEqualsIgnoreOrder(List.of(Characteristics.POWDER, Characteristics.SOLUTION), result.getCharacteristics());
@@ -63,7 +65,7 @@ public class DoseFormQueryRefinerImplTest extends UnitTest {
 
 	@Test
 	void multiMatchWithOverlap() {
-		Result result = sut.parse(
+		Result result = parse(
 				"Prednisolon oral powder for solution for injection"); // Yeah I know this one makes no sense...
 		assertEqualsIgnoreOrder(List.of(POWDER_FOR_SOLUTION_FOR_INJECTION, SOLUTION_FOR_INJECTION),
 				result.getDoseForms());
@@ -74,8 +76,8 @@ public class DoseFormQueryRefinerImplTest extends UnitTest {
 
 	@Test
 	void incrementallyApply() {
-		Result r1 = sut.parse("Prednisolon parenteral solution for injection");
-		Result r2 = sut.parse("Tranexamsäure oral granules parenteral");
+		Result r1 = parse("Prednisolon parenteral solution for injection");
+		Result r2 = parse("Tranexamsäure oral granules parenteral");
 
 		SearchQuery.Builder builder = new SearchQuery.Builder();
 		r1.incrementallyApply(builder);
@@ -98,12 +100,16 @@ public class DoseFormQueryRefinerImplTest extends UnitTest {
 		)));
 
 		// Problem is: "Gum" only has an edit distance of "1" to "zum". But we still don't want it as a result.
-		Result r1 = sut.parse("Sulfamethoxzaol 400mg Susp. zum Einnehmen");
+		Result r1 = parse("Sulfamethoxzaol 400mg Susp. zum Einnehmen");
 		assertEquals(List.of(suspension), r1.getDoseForms());
 
 		// Here however, Gum is the only one written correctly, so it should win - altough this is probably not
 		// what the user meant...
-		Result r2 = sut.parse("Sulfamethoxzaol 400mg Susp. gum Einnehmen");
+		Result r2 = parse("Sulfamethoxzaol 400mg Susp. gum Einnehmen");
 		assertEquals(List.of(gum), r2.getDoseForms());
+	}
+
+	private Result parse(String query) {
+		return sut.parse(new OriginalIdentifier<>(query, OriginalIdentifier.Source.RAW_QUERY));
 	}
 }

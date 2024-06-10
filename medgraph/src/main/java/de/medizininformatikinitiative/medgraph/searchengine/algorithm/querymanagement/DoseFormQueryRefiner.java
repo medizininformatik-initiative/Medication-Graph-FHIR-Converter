@@ -5,6 +5,7 @@ import de.medizininformatikinitiative.medgraph.searchengine.matcher.editdistance
 import de.medizininformatikinitiative.medgraph.searchengine.model.SearchQuery;
 import de.medizininformatikinitiative.medgraph.searchengine.model.identifiable.EdqmConcept;
 import de.medizininformatikinitiative.medgraph.searchengine.model.identifiable.EdqmPharmaceuticalDoseForm;
+import de.medizininformatikinitiative.medgraph.searchengine.model.identifier.Identifier;
 import de.medizininformatikinitiative.medgraph.searchengine.provider.BaseProvider;
 import de.medizininformatikinitiative.medgraph.searchengine.provider.IdentifierProvider;
 import de.medizininformatikinitiative.medgraph.searchengine.stringtransformer.RemoveBlankStrings;
@@ -36,7 +37,7 @@ public class DoseFormQueryRefiner implements PartialQueryRefiner<DoseFormQueryRe
 			//   1 for 5-7 characters
 			//   2 for 8-10 characters
 			//   3 for 11 or more characters
-			new FlexibleLevenshteinDistanceService(l -> Math.min(3, (l-2) / 3))
+			new FlexibleLevenshteinDistanceService(l -> Math.min(3, (l - 2) / 3))
 	);
 	private final TraceableTransformer<String, List<String>, DistinctMultiSubstringUsageStatement, StringListUsageStatement> transformer =
 			new ToLowerCase()
@@ -51,28 +52,29 @@ public class DoseFormQueryRefiner implements PartialQueryRefiner<DoseFormQueryRe
 	}
 
 	/**
-	 * Extracts dose form information from the given query string.
+	 * Extracts dose form information from the given query identifier.
 	 *
-	 * @param query the query string from which to extract information
+	 * @param query the query identifier from which to extract information
 	 * @return a {@link Result}-object providing the detected dose forms and dose form characteristics as well as
 	 * information on where in the query string they were found
 	 */
-	public Result parse(String query) {
+	public Result parse(Identifier<String> query) {
 		List<EditDistanceListMatcher.Match> matches = new ArrayList<>();
+		Identifier<List<String>> transformedQuery = transformer.apply(query);
 
-		editDistanceListMatcher.match(transformer.apply(query), edqmConceptsProvider)
+		editDistanceListMatcher.match(transformedQuery, edqmConceptsProvider)
 		                       .filter(match -> {
-			                      if (match.getMatchedIdentifier().target instanceof EdqmConcept) {
-				                      return true;
-			                      }
-			                      System.err.println(
-					                      "Warning: The provider provided an Identifiable which is no EdqmConcept! (Got " + match.getMatchedIdentifier().target + ")");
-			                      return false;
-		                      }).forEach(m -> {
-			                      synchronized (this) {
-				                      matches.add(m);
-			                      }
-		                      });
+			                       if (match.getMatchedIdentifier().target instanceof EdqmConcept) {
+				                       return true;
+			                       }
+			                       System.err.println(
+					                       "Warning: The provider provided an Identifiable which is no EdqmConcept! (Got " + match.getMatchedIdentifier().target + ")");
+			                       return false;
+		                       }).forEach(m -> {
+			                       synchronized (this) {
+				                       matches.add(m);
+			                       }
+		                       });
 
 		removeProblematicOverlaps(matches);
 
@@ -91,7 +93,7 @@ public class DoseFormQueryRefiner implements PartialQueryRefiner<DoseFormQueryRe
 		});
 
 		// Construct a new StringListUsageStatement which covers all used tokens of the search term
-		StringListUsageStatement completeUsageStatement = new StringListUsageStatement(transformer.apply(query),
+		StringListUsageStatement completeUsageStatement = new StringListUsageStatement(transformedQuery.getIdentifier(),
 				usedTokens);
 		// Then reverse this usage statement back to the original query
 		DistinctMultiSubstringUsageStatement usageStatement = transformer.reverseTransformUsageStatement(query,
@@ -134,7 +136,7 @@ public class DoseFormQueryRefiner implements PartialQueryRefiner<DoseFormQueryRe
 		int editDistance2 = match2.getDistance().getEditDistance();
 
 		if (editDistance1 > editDistance2) return SECOND_HAS_PRIORITY;
-		else if (editDistance2 > editDistance1) return  FIRST_HAS_PRIORITY;
+		else if (editDistance2 > editDistance1) return FIRST_HAS_PRIORITY;
 		return EQUAL_PRIORITY;
 	}
 

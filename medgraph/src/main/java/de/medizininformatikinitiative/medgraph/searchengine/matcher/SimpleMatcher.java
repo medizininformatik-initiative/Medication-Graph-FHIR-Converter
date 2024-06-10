@@ -8,6 +8,6 @@ import de.medizininformatikinitiative.medgraph.searchengine.matcher.model.Match;
  * @param <R> the type of match result provided
  * @author Markus Budeus
  */
-public abstract class SimpleMatcher<S, R extends Match<S>> extends Matcher<S, S, R> {
+public abstract class SimpleMatcher<S, R extends Match<S, S>> extends Matcher<S, S, R> {
 
 }

@@ -3,6 +3,7 @@ package de.medizininformatikinitiative.medgraph.searchengine.algorithm.querymana
 import de.medizininformatikinitiative.medgraph.searchengine.model.Amount;
 import de.medizininformatikinitiative.medgraph.searchengine.model.Dosage;
 import de.medizininformatikinitiative.medgraph.searchengine.model.SearchQuery;
+import de.medizininformatikinitiative.medgraph.searchengine.model.identifier.Identifier;
 import de.medizininformatikinitiative.medgraph.searchengine.tools.DosageDetector;
 import de.medizininformatikinitiative.medgraph.searchengine.tracing.DistinctMultiSubstringUsageStatement;
 import de.medizininformatikinitiative.medgraph.searchengine.tracing.IntRange;
@@ -27,8 +28,8 @@ public class DosageQueryRefiner implements PartialQueryRefiner<DosageQueryRefine
 	 * @return a {@link Result}-object providing the detected dosages and amounts as well as information on where in the
 	 * query string it was found
 	 */
-	public Result parse(String query) {
-		List<DosageDetector.DetectedDosage> detectedDosages = DosageDetector.detectDosages(query);
+	public Result parse(Identifier<String> query) {
+		List<DosageDetector.DetectedDosage> detectedDosages = DosageDetector.detectDosages(query.getIdentifier());
 
 		List<Dosage> searchDosages = new ArrayList<>();
 		List<Amount> searchAmounts = new ArrayList<>();
@@ -43,7 +44,7 @@ public class DosageQueryRefiner implements PartialQueryRefiner<DosageQueryRefine
 				searchAmounts.add(dosage.amountNominator);
 		}
 
-		return new Result(searchDosages, searchAmounts, new DistinctMultiSubstringUsageStatement(query, usedRanges));
+		return new Result(searchDosages, searchAmounts, new DistinctMultiSubstringUsageStatement(query.getIdentifier(), usedRanges));
 	}
 
 	public static class Result implements PartialQueryRefiner.Result {

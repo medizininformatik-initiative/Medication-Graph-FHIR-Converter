@@ -1,5 +1,7 @@
 package de.medizininformatikinitiative.medgraph.searchengine.matcher.model;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.Objects;
 
 /**
@@ -9,20 +11,24 @@ import java.util.Objects;
  */
 public class EditDistance {
 
+	@NotNull
 	private final String value1;
+	@NotNull
 	private final String value2;
 	private final int editDistance;
 
-	public EditDistance(String value1, String value2, int editDistance) {
+	public EditDistance(@NotNull String value1, @NotNull String value2, int editDistance) {
 		this.value1 = value1;
 		this.value2 = value2;
 		this.editDistance = editDistance;
 	}
 
+	@NotNull
 	public String getValue1() {
 		return value1;
 	}
 
+	@NotNull
 	public String getValue2() {
 		return value2;
 	}

@@ -2,6 +2,8 @@ package de.medizininformatikinitiative.medgraph.searchengine.algorithm.querymana
 
 import de.medizininformatikinitiative.medgraph.searchengine.model.RawQuery;
 import de.medizininformatikinitiative.medgraph.searchengine.model.SearchQuery;
+import de.medizininformatikinitiative.medgraph.searchengine.model.identifier.Identifier;
+import de.medizininformatikinitiative.medgraph.searchengine.model.identifier.OriginalIdentifier;
 import de.medizininformatikinitiative.medgraph.searchengine.stringtransformer.*;
 import de.medizininformatikinitiative.medgraph.searchengine.tracing.SubstringUsageStatement;
 
@@ -52,14 +54,14 @@ public class QueryRefinerImpl implements QueryRefiner {
 
 		// Dosages
 		SubstringUsageStatement dosageUsageStatement =
-				applyPartialQueryRefiner(query.dosages, dosageQueryRefiner, searchQueryBuilder);
+				applyPartialQueryRefiner(wrap(query.dosages), dosageQueryRefiner, searchQueryBuilder);
 		SubstringUsageStatement dosageGeneralSearchTermUsageStatement =
 				applyPartialQueryRefinerUsingStepwiseQueryParser(generalQueryParser, dosageQueryRefiner,
 						searchQueryBuilder);
 
 		// Dose Forms
 		SubstringUsageStatement doseFormUsageStatement =
-				applyPartialQueryRefiner(query.doseForms, doseFormQueryRefiner, searchQueryBuilder);
+				applyPartialQueryRefiner(wrap(query.doseForms), doseFormQueryRefiner, searchQueryBuilder);
 		SubstringUsageStatement doseFormGeneralSearchTermUsageStatement =
 				applyPartialQueryRefinerUsingStepwiseQueryParser(generalQueryParser, doseFormQueryRefiner,
 						searchQueryBuilder);
@@ -71,8 +73,8 @@ public class QueryRefinerImpl implements QueryRefiner {
 		}
 
 		// Substances
-		applyPartialQueryRefiner(remainingGeneralQueryParts, substanceQueryRefiner, searchQueryBuilder);
-		applyPartialQueryRefiner(query.substance, substanceQueryRefiner, searchQueryBuilder);
+		applyPartialQueryRefiner(wrap(remainingGeneralQueryParts), substanceQueryRefiner, searchQueryBuilder);
+		applyPartialQueryRefiner(wrap(query.substance), substanceQueryRefiner, searchQueryBuilder);
 
 		// Product keywords
 		List<String> productKeywords = new ArrayList<>(extractKeywords(query.product));
@@ -89,7 +91,7 @@ public class QueryRefinerImpl implements QueryRefiner {
 	}
 
 	/**
-	 * Like {@link #applyPartialQueryRefiner(String, PartialQueryRefiner, SearchQuery.Builder)}, but takes the query to
+	 * Like {@link #applyPartialQueryRefiner(Identifier, PartialQueryRefiner, SearchQuery.Builder)}, but takes the query to
 	 * use from the generalQueryParser (via {@link StepwiseGeneralQueryParser#useRemainingQueryParts(Function)}).
 	 * <p>
 	 * If the generalQueryParser is null, nothing happens and null is returned.
@@ -100,7 +102,7 @@ public class QueryRefinerImpl implements QueryRefiner {
 	) {
 		if (generalQueryParser != null) {
 			return generalQueryParser.useRemainingQueryParts(
-					query -> applyPartialQueryRefiner(query, refiner, searchQueryBuilder));
+					query -> applyPartialQueryRefiner(wrap(query), refiner, searchQueryBuilder));
 		}
 		return null;
 	}
@@ -111,9 +113,9 @@ public class QueryRefinerImpl implements QueryRefiner {
 	 * <p>
 	 * If the given query is blank, nothing happens and null is returned.
 	 */
-	private SubstringUsageStatement applyPartialQueryRefiner(String query, PartialQueryRefiner<?> refiner,
+	private SubstringUsageStatement applyPartialQueryRefiner(Identifier<String> query, PartialQueryRefiner<?> refiner,
 	                                                         SearchQuery.Builder searchQueryBuilder) {
-		if (query != null && !query.isBlank()) {
+		if (query != null && !query.getIdentifier().isBlank()) {
 			PartialQueryRefiner.Result result = refiner.parse(query);
 			result.incrementallyApply(searchQueryBuilder);
 			return result.getUsageStatement();
@@ -123,6 +125,15 @@ public class QueryRefinerImpl implements QueryRefiner {
 
 	private List<String> extractKeywords(String query) {
 		return keywordExtractor.apply(query);
+	}
+
+	/**
+	 * Returns the given query wrapped into an {@link OriginalIdentifier} with the {@link OriginalIdentifier.Source#RAW_QUERY} source.
+	 * If the given query is null, returns null.
+	 */
+	private OriginalIdentifier<String> wrap(String query) {
+		if (query == null) return null;
+		return new OriginalIdentifier<>(query, OriginalIdentifier.Source.RAW_QUERY);
 	}
 
 }
