@@ -1,4 +1,4 @@
-package de.medizininformatikinitiative.medgraph.searchengine.tools;
+package de.medizininformatikinitiative.medgraph.common.db;
 
 import org.neo4j.driver.Query;
 import org.neo4j.driver.Result;

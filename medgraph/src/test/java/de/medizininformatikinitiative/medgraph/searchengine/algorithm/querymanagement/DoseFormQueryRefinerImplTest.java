@@ -9,7 +9,6 @@ import de.medizininformatikinitiative.medgraph.searchengine.provider.BaseProvide
 import de.medizininformatikinitiative.medgraph.searchengine.provider.MappedIdentifier;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.internal.matchers.Or;
 
 import java.util.Collections;
 import java.util.List;

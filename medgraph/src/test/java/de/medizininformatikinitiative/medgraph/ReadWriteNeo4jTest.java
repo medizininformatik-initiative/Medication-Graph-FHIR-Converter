@@ -1,6 +1,6 @@
 package de.medizininformatikinitiative.medgraph;
 
-import de.medizininformatikinitiative.medgraph.searchengine.tools.DatabaseTools;
+import de.medizininformatikinitiative.medgraph.common.db.DatabaseTools;
 import org.junit.jupiter.api.AfterAll;
 
 /**

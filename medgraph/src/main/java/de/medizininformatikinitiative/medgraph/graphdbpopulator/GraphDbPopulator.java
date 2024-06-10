@@ -1,7 +1,7 @@
 package de.medizininformatikinitiative.medgraph.graphdbpopulator;
 
 import de.medizininformatikinitiative.medgraph.graphdbpopulator.loaders.*;
-import de.medizininformatikinitiative.medgraph.searchengine.tools.DatabaseTools;
+import de.medizininformatikinitiative.medgraph.common.db.DatabaseTools;
 import org.neo4j.driver.Session;
 
 import java.io.*;
