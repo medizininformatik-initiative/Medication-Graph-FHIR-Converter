@@ -14,7 +14,7 @@ public class ScoreBasedMatch<S, T> extends Match<S, T> implements Comparable<Sco
 	private final double score;
 
 	/**
-	 * Creates a new distance based match.
+	 * Creates a new score based match.
 	 *
 	 * @param matchedIdentifier the matched identifier
 	 * @param score             the score assigned to the identifier according to the matcher's metric
@@ -25,7 +25,7 @@ public class ScoreBasedMatch<S, T> extends Match<S, T> implements Comparable<Sco
 	}
 
 	/**
-	 * Returns the distance between the identifier and the used search term.
+	 * Returns the score assigned to this match.
 	 */
 	public double getScore() {
 		return score;

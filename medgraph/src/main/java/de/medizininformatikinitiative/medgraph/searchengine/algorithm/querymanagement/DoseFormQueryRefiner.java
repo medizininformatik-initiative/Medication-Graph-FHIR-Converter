@@ -12,6 +12,8 @@ import de.medizininformatikinitiative.medgraph.searchengine.stringtransformer.Re
 import de.medizininformatikinitiative.medgraph.searchengine.stringtransformer.ToLowerCase;
 import de.medizininformatikinitiative.medgraph.searchengine.stringtransformer.TraceableTransformer;
 import de.medizininformatikinitiative.medgraph.searchengine.stringtransformer.WhitespaceTokenizer;
+import de.medizininformatikinitiative.medgraph.searchengine.tools.SearchEngineTools;
+import de.medizininformatikinitiative.medgraph.searchengine.tools.SearchEngineTools.OverlapResolutionStrategy;
 import de.medizininformatikinitiative.medgraph.searchengine.tracing.DistinctMultiSubstringUsageStatement;
 import de.medizininformatikinitiative.medgraph.searchengine.tracing.StringListUsageStatement;
 
@@ -19,6 +21,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * Extracts dose form data from a human-written query string.
@@ -26,10 +29,6 @@ import java.util.Set;
  * @author Markus Budeus
  */
 public class DoseFormQueryRefiner implements PartialQueryRefiner<DoseFormQueryRefiner.Result> {
-
-	private static final int EQUAL_PRIORITY = 0;
-	private static final int FIRST_HAS_PRIORITY = 1;
-	private static final int SECOND_HAS_PRIORITY = 2;
 
 	private final EditDistanceListMatcher editDistanceListMatcher = new EditDistanceListMatcher(
 			// Maximum allowed edit distance is
@@ -59,10 +58,9 @@ public class DoseFormQueryRefiner implements PartialQueryRefiner<DoseFormQueryRe
 	 * information on where in the query string they were found
 	 */
 	public Result parse(Identifier<String> query) {
-		List<EditDistanceListMatcher.Match> matches = new ArrayList<>();
 		Identifier<List<String>> transformedQuery = transformer.apply(query);
 
-		editDistanceListMatcher.match(transformedQuery, edqmConceptsProvider)
+		List<EditDistanceListMatcher.Match> matches = editDistanceListMatcher.match(transformedQuery, edqmConceptsProvider)
 		                       .filter(match -> {
 			                       if (match.getMatchedIdentifier().target instanceof EdqmConcept) {
 				                       return true;
@@ -70,13 +68,9 @@ public class DoseFormQueryRefiner implements PartialQueryRefiner<DoseFormQueryRe
 			                       System.err.println(
 					                       "Warning: The provider provided an Identifiable which is no EdqmConcept! (Got " + match.getMatchedIdentifier().target + ")");
 			                       return false;
-		                       }).forEach(m -> {
-			                       synchronized (this) {
-				                       matches.add(m);
-			                       }
-		                       });
+		                       }).collect(Collectors.toList());
 
-		removeProblematicOverlaps(matches);
+		SearchEngineTools.removeConflictingOverlaps(matches, this::overlap, this::checkPriorityOnOverlap);
 
 		List<EdqmPharmaceuticalDoseForm> doseForms = new ArrayList<>();
 		List<EdqmConcept> characteristics = new ArrayList<>();
@@ -103,41 +97,15 @@ public class DoseFormQueryRefiner implements PartialQueryRefiner<DoseFormQueryRe
 	}
 
 	/**
-	 * Removes matches from the given list if they overlap with each other and if one of the matches of each overlapping
-	 * pair is considered to be less relevant.
+	 * Returns how to handle conflicts between two matches.
 	 */
-	private void removeProblematicOverlaps(List<EditDistanceListMatcher.Match> matches) {
-		for (int i = matches.size() - 1; i > 0; i--) {
-			EditDistanceListMatcher.Match current = matches.get(i);
-			for (int j = i - 1; j >= 0; j--) {
-				EditDistanceListMatcher.Match opponent = matches.get(j);
-				if (overlap(current, opponent)) {
-					// Remove Overlap if required
-					int overlapPriority = checkPriorityOnOverlap(opponent, current);
-					if (overlapPriority == FIRST_HAS_PRIORITY) {
-						matches.remove(i);
-						break;
-					} else if (overlapPriority == SECOND_HAS_PRIORITY) {
-						matches.remove(j);
-						i--;
-					}
-				}
-			}
-		}
-	}
-
-	/**
-	 * Returns a code indicating which one of these matches is more relevant or if they are equally relevant, assuming
-	 * they overlap in the source. The return value is either {@link #FIRST_HAS_PRIORITY}, {@link #SECOND_HAS_PRIORITY}
-	 * or {@link #EQUAL_PRIORITY}
-	 */
-	private int checkPriorityOnOverlap(EditDistanceListMatcher.Match match1, EditDistanceListMatcher.Match match2) {
+	private OverlapResolutionStrategy checkPriorityOnOverlap(EditDistanceListMatcher.Match match1, EditDistanceListMatcher.Match match2) {
 		int editDistance1 = match1.getDistance().getEditDistance();
 		int editDistance2 = match2.getDistance().getEditDistance();
 
-		if (editDistance1 > editDistance2) return SECOND_HAS_PRIORITY;
-		else if (editDistance2 > editDistance1) return FIRST_HAS_PRIORITY;
-		return EQUAL_PRIORITY;
+		if (editDistance1 > editDistance2) return OverlapResolutionStrategy.KEEP_SECOND;
+		else if (editDistance2 > editDistance1) return OverlapResolutionStrategy.KEEP_FIRST;
+		return OverlapResolutionStrategy.KEEP_BOTH;
 	}
 
 	/**

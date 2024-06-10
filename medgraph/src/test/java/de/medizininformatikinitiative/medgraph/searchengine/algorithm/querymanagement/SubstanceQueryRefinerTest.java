@@ -2,17 +2,20 @@ package de.medizininformatikinitiative.medgraph.searchengine.algorithm.querymana
 
 import de.medizininformatikinitiative.medgraph.UnitTest;
 import de.medizininformatikinitiative.medgraph.searchengine.model.SearchQuery;
+import de.medizininformatikinitiative.medgraph.searchengine.model.identifiable.Substance;
 import de.medizininformatikinitiative.medgraph.searchengine.model.identifier.OriginalIdentifier;
+import de.medizininformatikinitiative.medgraph.searchengine.provider.BaseProvider;
+import de.medizininformatikinitiative.medgraph.searchengine.provider.MappedIdentifier;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.internal.matchers.Or;
 
 import java.util.List;
 
-import static de.medizininformatikinitiative.medgraph.TestFactory.*;
+import static de.medizininformatikinitiative.medgraph.TestFactory.SUBSTANCES_PROVIDER;
 import static de.medizininformatikinitiative.medgraph.TestFactory.Substances.*;
 import static de.medizininformatikinitiative.medgraph.searchengine.algorithm.querymanagement.SubstanceQueryRefiner.Result;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * @author Markus Budeus
@@ -50,6 +53,27 @@ public class SubstanceQueryRefinerTest extends UnitTest {
 	}
 
 	@Test
+	void multiMatchButNotEquallyGood() {
+		Substance cimetidin = new Substance(8, "Cimetidin acis");
+		sut = new SubstanceQueryRefiner(BaseProvider.ofIdentifiers(List.of(
+				new MappedIdentifier<>("Acetylsalicylic acid", ACETYLSALICYLIC_ACID),
+				new MappedIdentifier<>("Cimetidin acis", cimetidin)
+		)));
+		Result result = parse("Cimetidin acis");
+		assertEquals(List.of(cimetidin), result.getSubstances());
+		assertUsedParts(List.of("Cimetidin", "acis"), result.getUsageStatement());
+
+
+		result = parse("acis"); // While it matches "acid" closely enough, it matches "acis" better!
+		assertEquals(List.of(cimetidin), result.getSubstances());
+		assertUsedParts(List.of("acis"), result.getUsageStatement());
+
+		result = parse("acir");
+		assertEqualsIgnoreOrder(List.of(cimetidin, ACETYLSALICYLIC_ACID), result.getSubstances());
+		assertUsedParts(List.of("acir"), result.getUsageStatement());
+	}
+
+	@Test
 	void spellingError() {
 		Result result = parse("Midazloam");
 		assertEqualsIgnoreOrder(List.of(MIDAZOLAM, MIDAZOLAM_HYDROCHLORIDE), result.getSubstances());
@@ -59,7 +83,7 @@ public class SubstanceQueryRefinerTest extends UnitTest {
 	@Test
 	void overlappingMatch() {
 		Result result = parse("Midazolam hydrochlorid");
-		assertEqualsIgnoreOrder(List.of(MIDAZOLAM_HYDROCHLORIDE, MIDAZOLAM), result.getSubstances());
+		assertEqualsIgnoreOrder(List.of(MIDAZOLAM_HYDROCHLORIDE), result.getSubstances());
 		assertEquals("Midazolam hydrochlorid", result.getUsageStatement().getUsedParts());
 	}
 

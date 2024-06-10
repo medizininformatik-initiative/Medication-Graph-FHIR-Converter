@@ -8,6 +8,8 @@ import de.medizininformatikinitiative.medgraph.searchengine.model.identifiable.S
 import de.medizininformatikinitiative.medgraph.searchengine.model.identifier.Identifier;
 import de.medizininformatikinitiative.medgraph.searchengine.provider.IdentifierStream;
 import de.medizininformatikinitiative.medgraph.searchengine.stringtransformer.*;
+import de.medizininformatikinitiative.medgraph.searchengine.tools.SearchEngineTools;
+import de.medizininformatikinitiative.medgraph.searchengine.tools.SearchEngineTools.OverlapResolutionStrategy;
 import de.medizininformatikinitiative.medgraph.searchengine.tracing.DistinctMultiSubstringUsageStatement;
 import de.medizininformatikinitiative.medgraph.searchengine.tracing.StringSetUsageStatement;
 import de.medizininformatikinitiative.medgraph.searchengine.tracing.SubstringUsageStatement;
@@ -16,6 +18,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * Partial query refiner which resolves substances from the search term.
@@ -38,7 +41,7 @@ public class SubstanceQueryRefiner implements PartialQueryRefiner<SubstanceQuery
 			//   1 for 4-6 characters
 			//   2 for 7-9 characters
 			//   3 for 10 or more characters
-			new FlexibleLevenshteinDistanceService(l -> Math.min(3, (l-1) / 3))
+			new FlexibleLevenshteinDistanceService(l -> Math.min(3, (l - 1) / 3))
 	);
 
 	private final IdentifierStream<String> substanceProvider;
@@ -52,7 +55,7 @@ public class SubstanceQueryRefiner implements PartialQueryRefiner<SubstanceQuery
 		List<Substance> substances = new ArrayList<>();
 		Set<String> usedTokens = new HashSet<>();
 		Identifier<Set<String>> transformedQuery = TRANSFORMER.apply(query);
-		editDistanceSetMatcher
+		List<EditDistanceSetMatcher.Match> matches = editDistanceSetMatcher
 				.match(transformedQuery, substanceProvider.withTransformation(TRANSFORMER))
 				.filter(match -> {
 					Identifiable target = match.getMatchedIdentifier().target;
@@ -62,20 +65,44 @@ public class SubstanceQueryRefiner implements PartialQueryRefiner<SubstanceQuery
 					System.err.println("Warning: The provider passed to the SubstanceQueryRefiner provided an " +
 							"object which is not a substance: " + target);
 					return false;
-				})
-				.forEach(match -> {
-					synchronized (this) {
-						substances.add((Substance) match.getMatchedIdentifier().target);
-						usedTokens.addAll(match.getUsageStatement().getUsedTokens());
-					}
-				});
-		// TODO Filter out non-highest-scoring matches
+				}).collect(Collectors.toList());
+
+
+		SearchEngineTools.removeConflictingOverlaps(matches, this::overlap, this::checkPriorityOnOverlap);
+
+		matches.forEach(match -> {
+			substances.add((Substance) match.getMatchedIdentifier().target);
+			usedTokens.addAll(match.getUsageStatement().getUsedTokens());
+		});
 
 		DistinctMultiSubstringUsageStatement usageStatement =
 				TRANSFORMER.reverseTransformUsageStatement(query,
 						new StringSetUsageStatement(transformedQuery.getIdentifier(), usedTokens));
 
 		return new Result(substances, usageStatement);
+	}
+
+	/**
+	 * Returns how to handle conflicts between two matches.
+	 */
+	private OverlapResolutionStrategy checkPriorityOnOverlap(EditDistanceSetMatcher.Match match1, EditDistanceSetMatcher.Match match2) {
+		double score1 = match1.getScore();
+		double score2 = match2.getScore();
+
+		if (score1 > score2) return OverlapResolutionStrategy.KEEP_FIRST;
+		else if (score2 > score1) return OverlapResolutionStrategy.KEEP_SECOND;
+		return OverlapResolutionStrategy.KEEP_BOTH;
+	}
+
+	/**
+	 * Returns whether the source tokens from the two given matches overlap.
+	 */
+	private boolean overlap(EditDistanceSetMatcher.Match match1, EditDistanceSetMatcher.Match match2) {
+		Set<String> set1 = match1.getUsageStatement().getUsedParts();
+		Set<String> set2 = match2.getUsageStatement().getUsedParts();
+		HashSet<String> union = new HashSet<>(set1);
+		union.addAll(set2);
+		return union.size() < set1.size() + set2.size();
 	}
 
 	public static class Result implements PartialQueryRefiner.Result {
