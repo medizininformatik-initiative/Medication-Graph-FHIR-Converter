@@ -18,7 +18,7 @@ public class TransformerTest extends UnitTest {
 	public void transformIdentifier() {
 		Transformer<List<String>, List<String>> transformer = new TrimSpecialSuffixSymbols();
 		OriginalIdentifier<List<String>> original = new OriginalIdentifier<>(List.of("Hello."), OriginalIdentifier.Source.KNOWN_IDENTIFIER);
-		TransformedIdentifier<List<String>, List<String>> ti = transformer.apply(original);
+		TransformedIdentifier<?, List<String>> ti = transformer.apply(original);
 
 		assertNotNull(ti);
 		assertSame(transformer, ti.getTransformer());

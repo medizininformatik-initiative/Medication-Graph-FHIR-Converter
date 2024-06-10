@@ -1,5 +1,8 @@
 package de.medizininformatikinitiative.medgraph.searchengine.stringtransformer;
 
+import de.medizininformatikinitiative.medgraph.searchengine.model.identifier.Identifier;
+import de.medizininformatikinitiative.medgraph.searchengine.model.identifier.TransformedIdentifier;
+
 /**
  * Two {@link Transformer}s chained together.
  *
@@ -10,14 +13,17 @@ package de.medizininformatikinitiative.medgraph.searchengine.stringtransformer;
  */
 public class CompoundTransformer<S,V,T> implements Transformer<S,T> {
 
-	// TODO Also override Identifier creation mechanism
-
 	protected final Transformer<S,V> transformer1;
 	protected final Transformer<V,T> transformer2;
 
 	CompoundTransformer(Transformer<S, V> transformer1, Transformer<V, T> transformer2) {
 		this.transformer1 = transformer1;
 		this.transformer2 = transformer2;
+	}
+
+	@Override
+	public TransformedIdentifier<?, T> apply(Identifier<S> identifier) {
+		return transformer2.apply(transformer1.apply(identifier));
 	}
 
 	@Override
