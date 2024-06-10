@@ -69,6 +69,7 @@ public class SubstanceQueryRefiner implements PartialQueryRefiner<SubstanceQuery
 						usedTokens.addAll(match.getUsageStatement().getUsedTokens());
 					}
 				});
+		// TODO Filter out non-highest-scoring matches
 
 		DistinctMultiSubstringUsageStatement usageStatement =
 				TRANSFORMER.reverseTransformUsageStatement(query,

@@ -163,7 +163,22 @@ class StringRes {
         val pipeline_merge = "Merge"
 
         @JvmStatic
-        val pipeline_merge_desc = "{0} paths were merged. Only displaying previous pipeline steps of the first path."
+        val pipeline_merge_desc = "{0} paths were merged. Only displaying previous pipeline steps of the selected path."
+
+        @JvmStatic
+        val pipeline_merge_current_path = "Showing Path: {0}"
+
+        @JvmStatic
+        val pipeline_merge_first_path = "<<"
+
+        @JvmStatic
+        val pipeline_merge_previous_path = "<"
+
+        @JvmStatic
+        val pipeline_merge_next_path = ">"
+
+        @JvmStatic
+        val pipeline_merge_last_path = ">>"
 
         @JvmStatic
         val graph_db_populator_preparing = "Preparing data import"
