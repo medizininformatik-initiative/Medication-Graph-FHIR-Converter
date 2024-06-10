@@ -2,6 +2,7 @@ package de.medizininformatikinitiative.medgraph.searchengine.matcher;
 
 import de.medizininformatikinitiative.medgraph.TestFactory;
 import de.medizininformatikinitiative.medgraph.searchengine.matcher.model.DistanceBasedMatch;
+import de.medizininformatikinitiative.medgraph.searchengine.model.identifier.OriginalIdentifier;
 import de.medizininformatikinitiative.medgraph.searchengine.provider.MappedIdentifier;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -50,8 +51,11 @@ public class LevenshteinMatcherTest {
 
 	@Test
 	public void matchFunctions() {
-		assertNull(sut.match("Appfüll", new MappedIdentifier<>("Apfel", TestFactory.SAMPLE_SUBSTANCE_1)));
-		DistanceBasedMatch<String> match = sut.match("Abfel", new MappedIdentifier<>("Apfel", TestFactory.SAMPLE_SUBSTANCE_1));
+		assertNull(sut.match(new OriginalIdentifier<>("Appfüll", OriginalIdentifier.Source.RAW_QUERY),
+				new MappedIdentifier<>("Apfel", TestFactory.SAMPLE_SUBSTANCE_1)));
+		DistanceBasedMatch<String, String> match = sut.match(
+				new OriginalIdentifier<>("Abfel", OriginalIdentifier.Source.RAW_QUERY),
+				new MappedIdentifier<>("Apfel", TestFactory.SAMPLE_SUBSTANCE_1));
 		assertNotNull(match);
 		assertEquals(1, match.getDistance());
 	}

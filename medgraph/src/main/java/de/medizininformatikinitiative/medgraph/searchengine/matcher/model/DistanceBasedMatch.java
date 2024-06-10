@@ -1,5 +1,6 @@
 package de.medizininformatikinitiative.medgraph.searchengine.matcher.model;
 
+import de.medizininformatikinitiative.medgraph.searchengine.model.identifier.Identifier;
 import de.medizininformatikinitiative.medgraph.searchengine.provider.MappedIdentifier;
 
 /**
@@ -7,7 +8,7 @@ import de.medizininformatikinitiative.medgraph.searchengine.provider.MappedIdent
  *
  * @author Markus Budeus
  */
-public class DistanceBasedMatch<S> extends Match<S> {
+public class DistanceBasedMatch<S, T> extends Match<S, T> {
 	private final double distance;
 
 	/**
@@ -17,8 +18,8 @@ public class DistanceBasedMatch<S> extends Match<S> {
 	 * @param distance          the distance between the identifier and the search term according to the matcher's
 	 *                          metric
 	 */
-	public DistanceBasedMatch(MappedIdentifier<S> matchedIdentifier, double distance) {
-		super(matchedIdentifier);
+	public DistanceBasedMatch(Identifier<S> searchTerm, MappedIdentifier<T> matchedIdentifier, double distance) {
+		super(searchTerm, matchedIdentifier);
 		this.distance = distance;
 	}
 

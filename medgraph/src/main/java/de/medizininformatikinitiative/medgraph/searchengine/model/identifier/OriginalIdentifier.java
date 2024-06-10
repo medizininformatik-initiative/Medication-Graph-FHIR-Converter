@@ -34,9 +34,13 @@ public class OriginalIdentifier<T> extends Identifier<T> {
 		 */
 		KNOWN_IDENTIFIER,
 		/**
-		 * This identifier was taken from the search query provided by the user.
+		 * This identifier was taken from the raw search query provided by the user.
 		 */
-		USER_SEARCH
+		RAW_QUERY,
+		/**
+		 * This identifier was taken from the refined search query.
+		 */
+		SEARCH_QUERY
 	}
 
 	@Override

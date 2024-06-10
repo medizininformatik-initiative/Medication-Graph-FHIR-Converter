@@ -10,6 +10,8 @@ package de.medizininformatikinitiative.medgraph.searchengine.stringtransformer;
  */
 public class CompoundTransformer<S,V,T> implements Transformer<S,T> {
 
+	// TODO Also override Identifier creation mechanism
+
 	protected final Transformer<S,V> transformer1;
 	protected final Transformer<V,T> transformer2;
 

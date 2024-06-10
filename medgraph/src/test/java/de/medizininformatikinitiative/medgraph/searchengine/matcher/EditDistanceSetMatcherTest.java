@@ -3,11 +3,13 @@ package de.medizininformatikinitiative.medgraph.searchengine.matcher;
 import de.medizininformatikinitiative.medgraph.TestFactory;
 import de.medizininformatikinitiative.medgraph.searchengine.matcher.editdistance.LevenshteinDistanceService;
 import de.medizininformatikinitiative.medgraph.searchengine.matcher.model.EditDistance;
+import de.medizininformatikinitiative.medgraph.searchengine.model.identifier.OriginalIdentifier;
 import de.medizininformatikinitiative.medgraph.searchengine.provider.MappedIdentifier;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -127,11 +129,13 @@ public class EditDistanceSetMatcherTest {
 			Set<EditDistance> expectedEditDistances,
 			Set<String> expectedUsedStrings
 	) {
-		EditDistanceSetMatcher.Match match = sut.match(searchTerm, new MappedIdentifier<>(targetIdentifier, TestFactory.SAMPLE_SUBSTANCE_1));
+		OriginalIdentifier<Set<String>> stIdentifier = new OriginalIdentifier<>(searchTerm, OriginalIdentifier.Source.RAW_QUERY);
+		EditDistanceSetMatcher.Match match = sut.match(stIdentifier, new MappedIdentifier<>(targetIdentifier, TestFactory.SAMPLE_SUBSTANCE_1));
 		if (expectedScore == 0) {
 			assertNull(match);
 		} else {
 			assertNotNull(match);
+			assertSame(stIdentifier, match.getSearchTerm());
 			assertEquals(expectedScore, match.getScore(), 0.01);
 			if (expectedUsedStrings != null) {
 				assertEquals(expectedUsedStrings, match.getUsageStatement().getUsedParts());

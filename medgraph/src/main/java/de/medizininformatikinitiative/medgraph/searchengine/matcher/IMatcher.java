@@ -1,6 +1,7 @@
 package de.medizininformatikinitiative.medgraph.searchengine.matcher;
 
 import de.medizininformatikinitiative.medgraph.searchengine.matcher.model.Match;
+import de.medizininformatikinitiative.medgraph.searchengine.model.identifier.Identifier;
 import de.medizininformatikinitiative.medgraph.searchengine.provider.IdentifierProvider;
 
 import java.util.stream.Stream;
@@ -11,12 +12,12 @@ import java.util.stream.Stream;
  * but this is not strictly necessary. For example, you might have a string search term and match it against sets of
  * strings as identifiers, by simply matching all identifiers who contain the given search term.
  *
- * @param <S> the type of identifiers the matcher is capable of matching
- * @param <T> the type of search term the matcher matches against
+ * @param <S> the type of search term the matcher uses
+ * @param <T> the type of identifiers the matcher is capable of matching against
  * @param <R> the type of match results produced
  * @author Markus Budeus
  */
-public interface IMatcher<S, T, R extends Match<S>> {
+public interface IMatcher<S, T, R extends Match<S, T>> {
 
 	/**
 	 * Matches the identifiers from the given {@link IdentifierProvider} against the search term.
@@ -25,6 +26,6 @@ public interface IMatcher<S, T, R extends Match<S>> {
 	 * @param provider   the provider from which to take identifiers to match the search term against
 	 * @return a stream of matches found by the matcher
 	 */
-	Stream<R> match(T searchTerm, IdentifierProvider<S> provider);
+	Stream<R> match(Identifier<S> searchTerm, IdentifierProvider<T> provider);
 
 }

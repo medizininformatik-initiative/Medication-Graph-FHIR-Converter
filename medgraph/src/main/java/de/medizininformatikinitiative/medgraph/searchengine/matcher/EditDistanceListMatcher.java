@@ -2,6 +2,7 @@ package de.medizininformatikinitiative.medgraph.searchengine.matcher;
 
 import de.medizininformatikinitiative.medgraph.searchengine.matcher.editdistance.EditDistanceService;
 import de.medizininformatikinitiative.medgraph.searchengine.matcher.model.EditDistance;
+import de.medizininformatikinitiative.medgraph.searchengine.model.identifier.Identifier;
 import de.medizininformatikinitiative.medgraph.searchengine.provider.MappedIdentifier;
 import de.medizininformatikinitiative.medgraph.searchengine.tracing.InputUsageTraceable;
 import de.medizininformatikinitiative.medgraph.searchengine.tracing.IntRange;
@@ -44,18 +45,19 @@ public class EditDistanceListMatcher extends SimpleMatcher<List<String>, EditDis
 	}
 
 	@Override
-	protected Match match(List<String> searchTerm, MappedIdentifier<List<String>> mi) {
+	protected Match match(Identifier<List<String>> searchTerm, MappedIdentifier<List<String>> mi) {
 		String[] target = mi.identifier.getIdentifier().toArray(new String[0]);
 		int tokens = target.length;
+		List<String> searchTermKeywords = searchTerm.getIdentifier();
 
 		if (tokens == 0) return null; // No. I won't match against an empty identifier.
 
 		IntRange bestMatchRange = null;
 		EditDistance bestMatchEditDistance = null;
 		int bestDistance = Integer.MAX_VALUE;
-		for (int start = 0; start <= searchTerm.size() - tokens; start++) {
+		for (int start = 0; start <= searchTermKeywords.size() - tokens; start++) {
 			int end = start + tokens;
-			String[] searchTermTokens = searchTerm.subList(start, end).toArray(new String[0]);
+			String[] searchTermTokens = searchTermKeywords.subList(start, end).toArray(new String[0]);
 			EditDistance distance = getDistance(searchTermTokens, target);
 			if (distance != null && distance.getEditDistance() < bestDistance) {
 				bestDistance = distance.getEditDistance();
@@ -67,8 +69,7 @@ public class EditDistanceListMatcher extends SimpleMatcher<List<String>, EditDis
 
 		if (bestMatchRange == null) return null;
 
-		return new Match(mi, bestMatchEditDistance,
-				new StringListUsageStatement(searchTerm, listIntegers(bestMatchRange)));
+		return new Match(searchTerm, mi, bestMatchEditDistance, listIntegers(bestMatchRange));
 	}
 
 	/**
@@ -103,7 +104,7 @@ public class EditDistanceListMatcher extends SimpleMatcher<List<String>, EditDis
 		return true;
 	}
 
-	public static class Match extends de.medizininformatikinitiative.medgraph.searchengine.matcher.model.Match<List<String>>
+	public static class Match extends de.medizininformatikinitiative.medgraph.searchengine.matcher.model.Match<List<String>, List<String>>
 			implements InputUsageTraceable<StringListUsageStatement> {
 
 		/**
@@ -115,11 +116,11 @@ public class EditDistanceListMatcher extends SimpleMatcher<List<String>, EditDis
 		 */
 		private final StringListUsageStatement usageStatement;
 
-		protected Match(MappedIdentifier<List<String>> matchedIdentifier, EditDistance distance,
-		                StringListUsageStatement usageStatement) {
-			super(matchedIdentifier);
+		protected Match(Identifier<List<String>> searchTerm, MappedIdentifier<List<String>> matchedIdentifier, EditDistance distance,
+		                Set<Integer> usedSearchTermIndices) {
+			super(searchTerm, matchedIdentifier);
 			this.distance = distance;
-			this.usageStatement = usageStatement;
+			this.usageStatement = new StringListUsageStatement(searchTerm.getIdentifier(), usedSearchTermIndices);
 		}
 
 		public EditDistance getDistance() {
