@@ -13,9 +13,9 @@ import de.medizininformatikinitiative.medgraph.searchengine.provider.MappedIdent
 public abstract class DistanceBasedMatcher<S> extends SimpleMatcher<S, DistanceBasedMatch<S>> {
 
 	@Override
-	protected DistanceBasedMatch<S> match(S searchTerm, MappedIdentifier<S> identifier) {
-		Integer distance = calculateDistance(searchTerm, identifier.identifier);
-		if (distance != null) return new DistanceBasedMatch<>(identifier, distance);
+	protected DistanceBasedMatch<S> match(S searchTerm, MappedIdentifier<S> mi) {
+		Integer distance = calculateDistance(searchTerm, mi.identifier.getIdentifier());
+		if (distance != null) return new DistanceBasedMatch<>(mi, distance);
 		return null;
 	}
 

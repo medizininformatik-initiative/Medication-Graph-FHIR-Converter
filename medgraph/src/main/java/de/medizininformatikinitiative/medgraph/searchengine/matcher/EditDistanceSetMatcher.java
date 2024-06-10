@@ -44,8 +44,8 @@ public class EditDistanceSetMatcher extends SimpleMatcher<Set<String>, EditDista
 	 * returned, otherwise this function returns null.
 	 */
 	@Override
-	public Match match(Set<String> searchTerm, MappedIdentifier<Set<String>> identifier) {
-		Set<String> target = identifier.identifier;
+	public Match match(Set<String> searchTerm, MappedIdentifier<Set<String>> mi) {
+		Set<String> target = mi.identifier.getIdentifier();
 		List<EditDistance> resultDistances = new ArrayList<>();
 		for (String searchTermToken : searchTerm) {
 			int bestScore = Integer.MAX_VALUE;
@@ -70,7 +70,7 @@ public class EditDistanceSetMatcher extends SimpleMatcher<Set<String>, EditDista
 		if (score == 0) return null;
 
 		score = score / searchTerm.size();
-		return new Match(identifier, searchTerm, score, resultDistances);
+		return new Match(mi, searchTerm, score, resultDistances);
 
 	}
 

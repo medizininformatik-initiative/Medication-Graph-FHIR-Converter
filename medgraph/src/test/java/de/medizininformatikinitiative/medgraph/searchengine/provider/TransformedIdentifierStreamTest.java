@@ -19,8 +19,8 @@ public class TransformedIdentifierStreamTest {
 				.withTransformation(name -> name + "A113")
 				.getIdentifiers()
 				.toList();
-		for (MappedIdentifier<String> identifier: identifiers) {
-			assertTrue(identifier.identifier.endsWith("A113"));
+		for (MappedIdentifier<String> mi: identifiers) {
+			assertTrue(mi.identifier.getIdentifier().endsWith("A113"));
 		}
 	}
 

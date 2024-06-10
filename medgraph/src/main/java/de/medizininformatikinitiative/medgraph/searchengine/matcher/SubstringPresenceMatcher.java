@@ -13,9 +13,9 @@ import java.util.Set;
 public class SubstringPresenceMatcher extends Matcher<String, Set<String>, ScoreBasedMatch<String>> {
 
 	@Override
-	protected ScoreBasedMatch<String> match(Set<String> searchTerm, MappedIdentifier<String> identifier) {
-		double score = getScore(searchTerm, identifier.identifier);
-		if (score > 0) return new ScoreBasedMatch<>(identifier, score);
+	protected ScoreBasedMatch<String> match(Set<String> searchTerm, MappedIdentifier<String> mi) {
+		double score = getScore(searchTerm, mi.identifier.getIdentifier());
+		if (score > 0) return new ScoreBasedMatch<>(mi, score);
 		return null;
 	}
 
