@@ -17,7 +17,6 @@ import de.medizininformatikinitiative.medgraph.ui.resources.StringRes
 import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
 
-
 @Composable
 fun MergeDisplay(merge: Merge,
                  currentSelection: Int = 0,
@@ -28,7 +27,6 @@ fun MergeDisplay(merge: Merge,
     var scrollStateDirty by remember { mutableStateOf(false) }
     val selectSourcePath = { path: Int -> scrollStateDirty = true; onSelectSourcePath(path)}
     val coroutineScope = rememberCoroutineScope()
-    val max = pipelineScrollState.maxValue
     MatchingPipelineStepDisplay(
         StringRes.pipeline_merge,
         StringRes.get(StringRes.pipeline_merge_desc, merge.sourceObjects.size),
@@ -61,7 +59,7 @@ fun MergeDisplay(merge: Merge,
                 Text(StringRes.pipeline_merge_previous_path)
             }
 
-            Text(StringRes.get(StringRes.pipeline_merge_current_path, currentSelection))
+            Text(StringRes.get(StringRes.pipeline_merge_current_path, currentSelection + 1))
 
             Button({ selectSourcePath(currentSelection + 1) },
                 enabled = currentSelection < max) {

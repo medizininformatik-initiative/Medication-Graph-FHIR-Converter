@@ -6,6 +6,7 @@ import de.medizininformatikinitiative.medgraph.searchengine.model.SearchQuery;
 import de.medizininformatikinitiative.medgraph.searchengine.model.identifiable.Matchable;
 import de.medizininformatikinitiative.medgraph.searchengine.model.identifier.Identifier;
 import de.medizininformatikinitiative.medgraph.searchengine.model.identifier.OriginalIdentifier;
+import de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject.MatchSource;
 import de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject.OriginalMatch;
 import de.medizininformatikinitiative.medgraph.searchengine.provider.BaseProvider;
 import de.medizininformatikinitiative.medgraph.searchengine.provider.IdentifierStream;
@@ -33,14 +34,15 @@ public class LevenshteinSearchMatchFinder implements InitialMatchFinder {
 					.and(new TrimSpecialSuffixSymbols())
 					.and(TOKEN_TRANSFORMER);
 
-	private final EditDistanceSetMatcher levenshteinSetMatcher = new EditDistanceSetMatcher(new LevenshteinDistanceService(2));
+	private final EditDistanceSetMatcher levenshteinSetMatcher = new EditDistanceSetMatcher(
+			new LevenshteinDistanceService(2));
 
 	private final IdentifierStream<String> productsProvider;
 
 	/**
 	 * Creates a new {@link LevenshteinSearchMatchFinder}.
 	 *
-	 * @param productsProvider  the provider of product names and corresponding products in which to search
+	 * @param productsProvider the provider of product names and corresponding products in which to search
 	 */
 	public LevenshteinSearchMatchFinder(BaseProvider<String> productsProvider) {
 		this.productsProvider = productsProvider.parallel();
@@ -56,10 +58,12 @@ public class LevenshteinSearchMatchFinder implements InitialMatchFinder {
 					productsProvider.withTransformation(IDENTIFIER_TRANSFORMER));
 		}
 
-		// TODO This throws away all match info, which might be nice to have in the OriginalMatch instance for later reference
 		return allMatches
 				.sorted(Comparator.reverseOrder())
-				.map(match -> new OriginalMatch((Matchable) match.getMatchedIdentifier().target));
+				.map(match -> new OriginalMatch(
+						(Matchable) match.getMatchedIdentifier().target,
+						new MatchSource<>(match, levenshteinSetMatcher)
+				));
 	}
 
 }
