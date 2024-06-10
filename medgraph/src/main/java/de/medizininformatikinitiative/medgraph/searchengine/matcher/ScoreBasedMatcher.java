@@ -14,9 +14,9 @@ import de.medizininformatikinitiative.medgraph.searchengine.provider.MappedIdent
 public abstract class ScoreBasedMatcher<S> extends SimpleMatcher<S, ScoreBasedMatch<S>> {
 
 	@Override
-	protected ScoreBasedMatch<S> match(S searchTerm, MappedIdentifier<S> identifier) {
-		double score = calculateScore(searchTerm, identifier.identifier);
-		if (score > 0) return new ScoreBasedMatch<>(identifier, score);
+	protected ScoreBasedMatch<S> match(S searchTerm, MappedIdentifier<S> mi) {
+		double score = calculateScore(searchTerm, mi.identifier.getIdentifier());
+		if (score > 0) return new ScoreBasedMatch<>(mi, score);
 		return null;
 	}
 

@@ -28,14 +28,14 @@ public abstract class Matcher<S, T, R extends Match<S>> implements IMatcher<S, T
 	}
 
 	/**
-	 * Matches the given search term against the given identifier.
+	 * Matches the given search term against the given mi.
 	 *
 	 * @param searchTerm the search term
-	 * @param identifier the identifier to compare the search term against
+	 * @param mi the {@link MappedIdentifier} to compare the search term against
 	 * @return a {@link Match} instance if the matching is successful, otherwise null
 	 */
 	@Nullable
-	protected abstract R match(T searchTerm, MappedIdentifier<S> identifier);
+	protected abstract R match(T searchTerm, MappedIdentifier<S> mi);
 
 	/**
 	 * Reports whether this matcher supports parallel matching of target terms against the search term.

@@ -44,8 +44,8 @@ public class EditDistanceListMatcher extends SimpleMatcher<List<String>, EditDis
 	}
 
 	@Override
-	protected Match match(List<String> searchTerm, MappedIdentifier<List<String>> identifier) {
-		String[] target = identifier.identifier.toArray(new String[0]);
+	protected Match match(List<String> searchTerm, MappedIdentifier<List<String>> mi) {
+		String[] target = mi.identifier.getIdentifier().toArray(new String[0]);
 		int tokens = target.length;
 
 		if (tokens == 0) return null; // No. I won't match against an empty identifier.
@@ -67,7 +67,7 @@ public class EditDistanceListMatcher extends SimpleMatcher<List<String>, EditDis
 
 		if (bestMatchRange == null) return null;
 
-		return new Match(identifier, bestMatchEditDistance,
+		return new Match(mi, bestMatchEditDistance,
 				new StringListUsageStatement(searchTerm, listIntegers(bestMatchRange)));
 	}
 
