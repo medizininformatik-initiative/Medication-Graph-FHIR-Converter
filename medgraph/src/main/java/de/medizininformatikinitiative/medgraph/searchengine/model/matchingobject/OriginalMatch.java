@@ -11,10 +11,10 @@ import org.jetbrains.annotations.NotNull;
 public class OriginalMatch extends MatchingObject {
 
 	/**
-	 * The source where this match originated from.
+	 * The origin where this match originated from.
 	 */
 	@NotNull
-	private final Source source;
+	private final Origin origin;
 
 	/**
 	 * Creates a new {@link MatchingObject} which manages the given {@link Matchable}.
@@ -22,22 +22,22 @@ public class OriginalMatch extends MatchingObject {
 	 * @param object the object to be managed by this instance
 	 */
 	public OriginalMatch(Matchable object) {
-		this(object, Source.UNKNOWN);
+		this(object, Origin.UNKNOWN);
 	}
 
 	/**
 	 * Creates a new {@link MatchingObject} which manages the given {@link Matchable}.
 	 *
 	 * @param object the object to be managed by this instance
-	 * @param source the source this match originated from
+	 * @param origin the source this match originated from
 	 */
-	public OriginalMatch(@NotNull Matchable object, @NotNull Source source) {
+	public OriginalMatch(@NotNull Matchable object, @NotNull Origin origin) {
 		super(object);
-		this.source = source;
+		this.origin = origin;
 	}
 
 	@NotNull
-	public Source getSource() {
-		return source;
+	public Origin getOrigin() {
+		return origin;
 	}
 }

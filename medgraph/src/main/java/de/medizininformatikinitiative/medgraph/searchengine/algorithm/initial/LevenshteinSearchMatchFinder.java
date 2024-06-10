@@ -6,7 +6,7 @@ import de.medizininformatikinitiative.medgraph.searchengine.model.SearchQuery;
 import de.medizininformatikinitiative.medgraph.searchengine.model.identifiable.Matchable;
 import de.medizininformatikinitiative.medgraph.searchengine.model.identifier.Identifier;
 import de.medizininformatikinitiative.medgraph.searchengine.model.identifier.OriginalIdentifier;
-import de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject.MatchSource;
+import de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject.MatchOrigin;
 import de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject.OriginalMatch;
 import de.medizininformatikinitiative.medgraph.searchengine.provider.BaseProvider;
 import de.medizininformatikinitiative.medgraph.searchengine.provider.IdentifierStream;
@@ -30,7 +30,8 @@ public class LevenshteinSearchMatchFinder implements InitialMatchFinder {
 					.and(new RemoveBlankStrings())
 					.and(new ListToSet());
 	private final Transformer<String, Set<String>> IDENTIFIER_TRANSFORMER =
-			new WhitespaceTokenizer()
+			new RemoveDosageInformation()
+					.and(new WhitespaceTokenizer())
 					.and(new TrimSpecialSuffixSymbols())
 					.and(TOKEN_TRANSFORMER);
 
@@ -62,7 +63,7 @@ public class LevenshteinSearchMatchFinder implements InitialMatchFinder {
 				.sorted(Comparator.reverseOrder())
 				.map(match -> new OriginalMatch(
 						(Matchable) match.getMatchedIdentifier().target,
-						new MatchSource<>(match, levenshteinSetMatcher)
+						new MatchOrigin<>(match, levenshteinSetMatcher)
 				));
 	}
 
