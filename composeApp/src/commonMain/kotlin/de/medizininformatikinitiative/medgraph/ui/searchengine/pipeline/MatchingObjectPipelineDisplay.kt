@@ -83,7 +83,7 @@ fun MatchingObjectPipelineDisplay(obj: MatchingObject, modifier: Modifier = Modi
 @Composable
 private fun MatchingObjectDisplay(obj: MatchingObject, scrollState: ScrollState) {
     when (obj) {
-        is OriginalMatch -> OriginalMatchDisplay(obj, scrollState)
+        is OriginalMatch -> OriginalMatchDisplay(obj)
         is Merge -> MergedObjectsDisplay(obj, scrollState)
         is TransformedObject -> TransformedObjectDisplay(obj, scrollState)
         else -> Text("Unknown object type encountered!")
@@ -97,7 +97,8 @@ private fun MatchingObjectDisplay(obj: MatchingObject, scrollState: ScrollState)
 }
 
 @Composable
-private fun OriginalMatchDisplay(obj: OriginalMatch, scrollState: ScrollState) {
+private fun OriginalMatchDisplay(obj: OriginalMatch) {
+    OriginUI(obj.origin)
     DetailedMatchableObjectUI(obj.`object`, modifier = Modifier.fillMaxWidth())
 }
 

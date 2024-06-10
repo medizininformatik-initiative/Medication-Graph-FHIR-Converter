@@ -5,11 +5,11 @@ package de.medizininformatikinitiative.medgraph.searchengine.model.matchingobjec
  *
  * @author Markus Budeus
  */
-public interface Source {
+public interface Origin {
 
 	/**
 	 * Indicates the source of this match is unknown.
 	 */
-	Source UNKNOWN = new Source() {	};
+	Origin UNKNOWN = new Origin() {	};
 
 }

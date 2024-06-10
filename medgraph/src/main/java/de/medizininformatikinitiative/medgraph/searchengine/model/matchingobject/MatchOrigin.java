@@ -8,7 +8,7 @@ import de.medizininformatikinitiative.medgraph.searchengine.matcher.model.Match;
  *
  * @author Markus Budeus
  */
-public class MatchSource<T extends Match<?, ?>> implements Source {
+public class MatchOrigin<T extends Match<?, ?>> implements Origin {
 
 	/**
 	 * The match which is the match source represented by this instance.
@@ -19,7 +19,7 @@ public class MatchSource<T extends Match<?, ?>> implements Source {
 	 */
 	private final IMatcher<?, ?, T> matcher;
 
-	public MatchSource(T match, IMatcher<?, ?, T> matcher) {
+	public MatchOrigin(T match, IMatcher<?, ?, T> matcher) {
 		this.match = match;
 		this.matcher = matcher;
 	}

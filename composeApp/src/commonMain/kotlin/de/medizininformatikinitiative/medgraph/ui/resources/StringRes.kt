@@ -258,6 +258,10 @@ class StringRes {
         val licenses_about = "Below, open source libraries as well as open data sets used in this project are listed, " +
                 "as their producers/developers deserve recognition. Clicking onto a button displays the corresponding " +
                 "license."
+        val unknown_origin = "(Origin unknown)"
+
+        @JvmStatic
+        val pipeline_origin_edit_distance = "---[Edit Distance: {0}]-->"
 
         @JvmStatic
         fun get(template: String, vararg arguments: Any): String {
