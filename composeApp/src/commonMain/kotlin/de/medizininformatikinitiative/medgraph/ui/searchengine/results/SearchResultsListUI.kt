@@ -15,8 +15,8 @@ import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject.MatchingObject
 import de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject.OriginalMatch
-import de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject.Product
-import de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject.Substance
+import de.medizininformatikinitiative.medgraph.searchengine.model.identifiable.Product
+import de.medizininformatikinitiative.medgraph.searchengine.model.identifiable.Substance
 import de.medizininformatikinitiative.medgraph.ui.resources.StringRes
 import de.medizininformatikinitiative.medgraph.ui.searchengine.pipeline.MatchingObjectPipelineDisplay
 import de.medizininformatikinitiative.medgraph.ui.theme.ApplicationTheme
@@ -28,9 +28,24 @@ private fun SearchResultsListUI() {
     ApplicationTheme {
         SearchResultsListUI(
             listOf(
-                OriginalMatch(Product(1, "Aspirin Bayer")),
-                OriginalMatch(Product(2, "Aspirin HEXAL")),
-                OriginalMatch(Substance(3, "Acetylsalicylsäure"))
+                OriginalMatch(
+                    Product(
+                        1,
+                        "Aspirin Bayer"
+                    )
+                ),
+                OriginalMatch(
+                    Product(
+                        2,
+                        "Aspirin HEXAL"
+                    )
+                ),
+                OriginalMatch(
+                    Substance(
+                        3,
+                        "Acetylsalicylsäure"
+                    )
+                )
             ), modifier = Modifier.fillMaxWidth()
         )
     }

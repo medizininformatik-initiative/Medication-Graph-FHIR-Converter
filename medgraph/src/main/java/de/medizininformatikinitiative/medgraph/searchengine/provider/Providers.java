@@ -1,8 +1,10 @@
 package de.medizininformatikinitiative.medgraph.searchengine.provider;
 
+import de.medizininformatikinitiative.medgraph.searchengine.model.identifiable.EdqmConcept;
+import de.medizininformatikinitiative.medgraph.searchengine.model.identifiable.EdqmPharmaceuticalDoseForm;
+import de.medizininformatikinitiative.medgraph.searchengine.model.identifiable.Identifiable;
 import org.neo4j.driver.Session;
 
-import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
@@ -41,10 +43,10 @@ public class Providers {
 	/**
 	 * Returns a {@link BaseProvider} which contains all known EDQM Standard Term concepts with their known identifiers.
 	 * The provided
-	 * {@link de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject.Identifiable Identifiables} are
-	 * either {@link de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject.EdqmConcept EdqmConcepts}
+	 * {@link Identifiable Identifiables} are
+	 * either {@link EdqmConcept EdqmConcepts}
 	 * or
-	 * {@link de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject.EdqmPharmaceuticalDoseForm
+	 * {@link EdqmPharmaceuticalDoseForm
 	 * PharmaceuticalDoseForms}.
 	 */
 	public static BaseProvider<String> getEdqmConceptIdentifiers(Session session) {

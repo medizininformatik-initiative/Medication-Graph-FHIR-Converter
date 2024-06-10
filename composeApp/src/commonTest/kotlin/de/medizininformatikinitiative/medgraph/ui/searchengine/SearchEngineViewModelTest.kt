@@ -7,7 +7,7 @@ import de.medizininformatikinitiative.medgraph.searchengine.model.RawQuery
 import de.medizininformatikinitiative.medgraph.searchengine.model.SearchQuery
 import de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject.MatchingObject
 import de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject.OriginalMatch
-import de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject.Product
+import de.medizininformatikinitiative.medgraph.searchengine.model.identifiable.Product
 import de.medizininformatikinitiative.medgraph.ui.UnitTest
 import de.medizininformatikinitiative.medgraph.ui.searchengine.results.SearchResultsListViewModel
 import kotlinx.coroutines.runBlocking
@@ -33,7 +33,12 @@ class SearchEngineViewModelTest : UnitTest() {
     @Mock
     lateinit var sampleQuery: SearchQuery
 
-    val sampleSearchResult: List<MatchingObject> = listOf(OriginalMatch(Product(1, "Aspirin")))
+    val sampleSearchResult: List<MatchingObject> = listOf(OriginalMatch(
+        Product(
+            1,
+            "Aspirin"
+        )
+    ))
 
     private lateinit var sut: SearchEngineViewModel
 
@@ -104,7 +109,12 @@ class SearchEngineViewModelTest : UnitTest() {
     fun refineAndExecute() {
         val currentSearchQuery = mock(SearchQuery::class.java)
         val currentRefinedQuery = mock(RefinedQuery::class.java)
-        val currentResult = listOf(OriginalMatch(Product(2, "Novalgin")))
+        val currentResult = listOf(OriginalMatch(
+            Product(
+                2,
+                "Novalgin"
+            )
+        ))
 
         `when`(queryRefiner.refine(any())).thenReturn(currentRefinedQuery)
         `when`(currentRefinedQuery.searchQuery).thenReturn(currentSearchQuery)
@@ -124,7 +134,12 @@ class SearchEngineViewModelTest : UnitTest() {
     fun tooManyResults() {
         val resultList = ArrayList<MatchingObject>()
         repeat(SearchResultsListViewModel.MAX_RESULT_SIZE + 5) {
-            resultList.add(OriginalMatch(Product(17, "A")))
+            resultList.add(OriginalMatch(
+                Product(
+                    17,
+                    "A"
+                )
+            ))
         }
 
         `when`(queryExecutor.executeQuery(any())).thenReturn(resultList)
@@ -144,7 +159,12 @@ class SearchEngineViewModelTest : UnitTest() {
 
         assertNotNull(sut.resultsViewModel.actualLastQueryResultSize)
 
-        `when`(queryExecutor.executeQuery(any())).thenReturn(listOf(OriginalMatch(Product(2, "B"))))
+        `when`(queryExecutor.executeQuery(any())).thenReturn(listOf(OriginalMatch(
+            Product(
+                2,
+                "B"
+            )
+        )))
 
         runBlocking {
             sut.refineAndExecuteQuery()!!.join()

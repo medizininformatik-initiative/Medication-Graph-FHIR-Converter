@@ -2,7 +2,7 @@ package de.medizininformatikinitiative.medgraph.searchengine.pipeline.transforme
 
 import de.medizininformatikinitiative.medgraph.Neo4jTest;
 import de.medizininformatikinitiative.medgraph.TestFactory;
-import de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject.Matchable;
+import de.medizininformatikinitiative.medgraph.searchengine.model.identifiable.Matchable;
 import de.medizininformatikinitiative.medgraph.searchengine.model.pipelinestep.Transformation;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

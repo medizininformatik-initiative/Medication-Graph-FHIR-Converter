@@ -3,8 +3,8 @@ package de.medizininformatikinitiative.medgraph.searchengine.algorithm.querymana
 import de.medizininformatikinitiative.medgraph.searchengine.matcher.EditDistanceListMatcher;
 import de.medizininformatikinitiative.medgraph.searchengine.matcher.editdistance.FlexibleLevenshteinDistanceService;
 import de.medizininformatikinitiative.medgraph.searchengine.model.SearchQuery;
-import de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject.EdqmConcept;
-import de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject.EdqmPharmaceuticalDoseForm;
+import de.medizininformatikinitiative.medgraph.searchengine.model.identifiable.EdqmConcept;
+import de.medizininformatikinitiative.medgraph.searchengine.model.identifiable.EdqmPharmaceuticalDoseForm;
 import de.medizininformatikinitiative.medgraph.searchengine.provider.BaseProvider;
 import de.medizininformatikinitiative.medgraph.searchengine.provider.IdentifierProvider;
 import de.medizininformatikinitiative.medgraph.searchengine.stringtransformer.RemoveBlankStrings;

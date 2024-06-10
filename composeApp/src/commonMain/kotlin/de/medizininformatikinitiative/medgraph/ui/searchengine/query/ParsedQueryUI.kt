@@ -17,7 +17,7 @@ import androidx.compose.ui.unit.dp
 import de.medizininformatikinitiative.medgraph.searchengine.model.Amount
 import de.medizininformatikinitiative.medgraph.searchengine.model.Dosage
 import de.medizininformatikinitiative.medgraph.searchengine.model.SearchQuery
-import de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject.Substance
+import de.medizininformatikinitiative.medgraph.searchengine.model.identifiable.Substance
 import de.medizininformatikinitiative.medgraph.ui.resources.StringRes
 import de.medizininformatikinitiative.medgraph.ui.theme.ApplicationTheme
 import de.medizininformatikinitiative.medgraph.ui.theme.CorporateDesign
@@ -32,7 +32,16 @@ fun SearchQueryUI() {
         SearchQueryUI(
             SearchQuery.Builder()
                 .withProductNameKeywords(listOf("Aspirin", "HEXAL"))
-                .withSubstances(listOf(Substance(1, "Acetylsalicylsäure"), Substance(2, "Clopidogrel")))
+                .withSubstances(listOf(
+                    Substance(
+                        1,
+                        "Acetylsalicylsäure"
+                    ),
+                    Substance(
+                        2,
+                        "Clopidogrel"
+                    )
+                ))
                 .withActiveIngredientDosages(
                     listOf(
                         Dosage.of(500, "mg"),

@@ -1,6 +1,7 @@
 package de.medizininformatikinitiative.medgraph.searchengine.pipeline;
 
 import de.medizininformatikinitiative.medgraph.searchengine.model.SearchQuery;
+import de.medizininformatikinitiative.medgraph.searchengine.model.identifiable.Matchable;
 import de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject.*;
 import de.medizininformatikinitiative.medgraph.searchengine.model.pipelinestep.Filtering;
 import de.medizininformatikinitiative.medgraph.searchengine.model.pipelinestep.Judgement;

@@ -1,5 +1,7 @@
 package de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject;
 
+import de.medizininformatikinitiative.medgraph.searchengine.model.identifiable.Matchable;
+
 /**
  * Original match found in the first step of the matching algorithm.
  *

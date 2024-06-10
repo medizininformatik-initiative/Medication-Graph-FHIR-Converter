@@ -1,6 +1,6 @@
 package de.medizininformatikinitiative.medgraph.searchengine.model.pipelinestep;
 
-import de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject.Matchable;
+import de.medizininformatikinitiative.medgraph.searchengine.model.identifiable.Matchable;
 
 /**
  * A the result of a filtering step which filters out some {@link Matchable}s.

@@ -4,7 +4,7 @@ import de.medizininformatikinitiative.medgraph.searchengine.db.Database;
 import de.medizininformatikinitiative.medgraph.searchengine.model.SearchQuery;
 import de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject.MatchingObject;
 import de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject.OriginalMatch;
-import de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject.Product;
+import de.medizininformatikinitiative.medgraph.searchengine.model.identifiable.Product;
 import de.medizininformatikinitiative.medgraph.searchengine.pipeline.OngoingRefinement;
 import de.medizininformatikinitiative.medgraph.searchengine.pipeline.judge.ProductOnlyFilter;
 import de.medizininformatikinitiative.medgraph.searchengine.pipeline.judge.dosage.DosageAndAmountInfoMatchJudge;

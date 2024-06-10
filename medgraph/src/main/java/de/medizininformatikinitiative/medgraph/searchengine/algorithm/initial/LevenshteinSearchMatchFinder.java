@@ -3,7 +3,7 @@ package de.medizininformatikinitiative.medgraph.searchengine.algorithm.initial;
 import de.medizininformatikinitiative.medgraph.searchengine.matcher.EditDistanceSetMatcher;
 import de.medizininformatikinitiative.medgraph.searchengine.matcher.editdistance.LevenshteinDistanceService;
 import de.medizininformatikinitiative.medgraph.searchengine.model.SearchQuery;
-import de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject.Matchable;
+import de.medizininformatikinitiative.medgraph.searchengine.model.identifiable.Matchable;
 import de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject.OriginalMatch;
 import de.medizininformatikinitiative.medgraph.searchengine.provider.BaseProvider;
 import de.medizininformatikinitiative.medgraph.searchengine.provider.IdentifierStream;

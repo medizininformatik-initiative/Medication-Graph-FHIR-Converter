@@ -1,7 +1,7 @@
 package de.medizininformatikinitiative.medgraph.searchengine.algorithm.initial;
 
 import de.medizininformatikinitiative.medgraph.searchengine.model.SearchQuery;
-import de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject.Matchable;
+import de.medizininformatikinitiative.medgraph.searchengine.model.identifiable.Matchable;
 import de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject.OriginalMatch;
 
 import java.util.stream.Stream;

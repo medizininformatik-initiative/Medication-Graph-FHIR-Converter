@@ -11,6 +11,8 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import de.medizininformatikinitiative.medgraph.searchengine.model.identifiable.Product
+import de.medizininformatikinitiative.medgraph.searchengine.model.identifiable.Substance
 import de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject.*
 import de.medizininformatikinitiative.medgraph.searchengine.model.pipelinestep.ScoredJudgement
 import de.medizininformatikinitiative.medgraph.searchengine.model.pipelinestep.Transformation
@@ -21,16 +23,35 @@ import de.medizininformatikinitiative.medgraph.ui.theme.ApplicationTheme
 @Preview
 private fun MatchingObjectSourcePipelineDisplay() {
     ApplicationTheme {
-        var obj: MatchingObject = OriginalMatch(Substance(1, "THE ORIGIN"))
-        obj = Merge(listOf(OriginalMatch(Substance(1, "THE ORIGIN")), obj))
+        var obj: MatchingObject = OriginalMatch(
+            Substance(
+                1,
+                "THE ORIGIN"
+            )
+        )
+        obj = Merge(listOf(OriginalMatch(
+            Substance(
+                1,
+                "THE ORIGIN"
+            )
+        ), obj))
         obj.addJudgement(ScoredJudgement("Judgement 1", "Assigns a score of 0.5", 0.5, 1.0))
         obj.addJudgement(ScoredJudgement("Judgement 2", "Assigns a score of 1.5", 1.5, 1.0))
 
-        val product = Product(2, "THE ACTUAL PRODUCT")
+        val product =
+            Product(
+                2,
+                "THE ACTUAL PRODUCT"
+            )
         val transformation = Transformation(
             "Transformation X",
             "Here, the object was transformed",
-            listOf(product, Product(3, "Noone cares about this output"))
+            listOf(product,
+                Product(
+                    3,
+                    "Noone cares about this output"
+                )
+            )
         )
         obj = TransformedObject(product, obj, transformation)
 

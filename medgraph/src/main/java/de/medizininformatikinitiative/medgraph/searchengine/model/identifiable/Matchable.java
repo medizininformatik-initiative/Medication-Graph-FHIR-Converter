@@ -1,4 +1,4 @@
-package de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject;
+package de.medizininformatikinitiative.medgraph.searchengine.model.identifiable;
 
 /**
  * A Matchable object is any object which acts as final or intermediary result of the matching algorithm.

@@ -2,7 +2,7 @@ package de.medizininformatikinitiative.medgraph.searchengine.db;
 
 import de.medizininformatikinitiative.medgraph.Neo4jTest;
 import de.medizininformatikinitiative.medgraph.TestFactory;
-import de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject.DetailedProduct;
+import de.medizininformatikinitiative.medgraph.searchengine.model.identifiable.DetailedProduct;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;

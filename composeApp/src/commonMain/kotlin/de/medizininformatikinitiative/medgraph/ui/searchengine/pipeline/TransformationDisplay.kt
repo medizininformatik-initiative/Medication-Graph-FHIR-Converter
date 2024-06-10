@@ -12,9 +12,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject.Matchable
-import de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject.Product
-import de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject.Substance
+import de.medizininformatikinitiative.medgraph.searchengine.model.identifiable.Matchable
+import de.medizininformatikinitiative.medgraph.searchengine.model.identifiable.Product
+import de.medizininformatikinitiative.medgraph.searchengine.model.identifiable.Substance
 import de.medizininformatikinitiative.medgraph.searchengine.model.pipelinestep.Transformation
 import de.medizininformatikinitiative.medgraph.ui.resources.StringRes
 import de.medizininformatikinitiative.medgraph.ui.searchengine.results.MatchableObjectUI
@@ -34,9 +34,18 @@ private fun TransformationDisplay() {
             TransformationDisplay(
                 Transformation(
                     "Some output", "This transformation produced a few outputs.", listOf(
-                        Product(1, "Prednisolut Pulver"),
-                        Product(2, "Aspirin"),
-                        Substance(5, "Midazolam")
+                        Product(
+                            1,
+                            "Prednisolut Pulver"
+                        ),
+                        Product(
+                            2,
+                            "Aspirin"
+                        ),
+                        Substance(
+                            5,
+                            "Midazolam"
+                        )
                     )
                 ),
                 highlightedOutputIndex = 1,

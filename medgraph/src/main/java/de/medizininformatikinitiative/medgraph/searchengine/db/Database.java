@@ -1,6 +1,6 @@
 package de.medizininformatikinitiative.medgraph.searchengine.db;
 
-import de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject.DetailedProduct;
+import de.medizininformatikinitiative.medgraph.searchengine.model.identifiable.DetailedProduct;
 
 import java.util.Collection;
 import java.util.Set;
@@ -13,7 +13,7 @@ import java.util.Set;
  */
 public interface Database {
 
-	// TODO: A Cache Proxy implementation of this interface could be made, might reduce performance overhead from DB reads
+	// A Cache Proxy implementation of this interface could be made, might reduce performance overhead from DB reads
 
 	/**
 	 * Acquires detailed information about the products with the given product ids. Ids which cannot be resolved into a

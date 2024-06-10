@@ -1,14 +1,14 @@
 package de.medizininformatikinitiative.medgraph.searchengine.model.pipelinestep;
 
-import de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject.Matchable;
+import de.medizininformatikinitiative.medgraph.searchengine.model.identifiable.Matchable;
 
 import java.util.Collections;
 import java.util.List;
 
 /**
  * A transformation is a matching pipeline step which converts
- * {@link de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject.Matchable Matchables} into different
- * {@link de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject.Matchable Matchables}.
+ * {@link Matchable Matchables} into different
+ * {@link Matchable Matchables}.
  * For example, substances may be converted to products via searching for producs with a given active substance.
  *
  * @author Markus Budeus
