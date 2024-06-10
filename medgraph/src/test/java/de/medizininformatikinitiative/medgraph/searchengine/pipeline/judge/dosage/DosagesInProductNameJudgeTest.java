@@ -5,7 +5,7 @@ import de.medizininformatikinitiative.medgraph.UnitTest;
 import de.medizininformatikinitiative.medgraph.searchengine.model.Amount;
 import de.medizininformatikinitiative.medgraph.searchengine.model.Dosage;
 import de.medizininformatikinitiative.medgraph.searchengine.model.SearchQuery;
-import de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject.Product;
+import de.medizininformatikinitiative.medgraph.searchengine.model.identifiable.Product;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

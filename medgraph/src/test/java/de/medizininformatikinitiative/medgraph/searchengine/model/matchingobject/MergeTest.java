@@ -1,5 +1,7 @@
 package de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject;
 
+import de.medizininformatikinitiative.medgraph.searchengine.model.identifiable.Product;
+import de.medizininformatikinitiative.medgraph.searchengine.model.identifiable.Substance;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;

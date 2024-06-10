@@ -1,4 +1,4 @@
-package de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject;
+package de.medizininformatikinitiative.medgraph.searchengine.model.identifiable;
 
 import de.medizininformatikinitiative.medgraph.common.EDQM;
 import org.jetbrains.annotations.NotNull;

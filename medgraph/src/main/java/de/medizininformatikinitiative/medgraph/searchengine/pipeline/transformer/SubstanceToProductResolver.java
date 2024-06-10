@@ -1,9 +1,9 @@
 package de.medizininformatikinitiative.medgraph.searchengine.pipeline.transformer;
 
 import de.medizininformatikinitiative.medgraph.searchengine.model.SearchQuery;
-import de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject.Matchable;
-import de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject.Product;
-import de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject.Substance;
+import de.medizininformatikinitiative.medgraph.searchengine.model.identifiable.Matchable;
+import de.medizininformatikinitiative.medgraph.searchengine.model.identifiable.Product;
+import de.medizininformatikinitiative.medgraph.searchengine.model.identifiable.Substance;
 import org.neo4j.driver.Query;
 import org.neo4j.driver.Record;
 import org.neo4j.driver.Result;

@@ -1,13 +1,11 @@
 package de.medizininformatikinitiative.medgraph.searchengine.model;
 
-import de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject.EdqmConcept;
-import de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject.EdqmPharmaceuticalDoseForm;
-import de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject.Substance;
+import de.medizininformatikinitiative.medgraph.searchengine.model.identifiable.EdqmConcept;
+import de.medizininformatikinitiative.medgraph.searchengine.model.identifiable.EdqmPharmaceuticalDoseForm;
+import de.medizininformatikinitiative.medgraph.searchengine.model.identifiable.Substance;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
 

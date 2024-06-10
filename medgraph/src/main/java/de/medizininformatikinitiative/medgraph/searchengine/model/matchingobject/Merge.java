@@ -1,5 +1,6 @@
 package de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject;
 
+import de.medizininformatikinitiative.medgraph.searchengine.model.identifiable.Matchable;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;

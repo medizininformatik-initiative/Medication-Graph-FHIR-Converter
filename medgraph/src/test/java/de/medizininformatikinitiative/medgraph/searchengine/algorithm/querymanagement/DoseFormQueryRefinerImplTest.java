@@ -3,7 +3,7 @@ package de.medizininformatikinitiative.medgraph.searchengine.algorithm.querymana
 import de.medizininformatikinitiative.medgraph.TestFactory;
 import de.medizininformatikinitiative.medgraph.UnitTest;
 import de.medizininformatikinitiative.medgraph.searchengine.model.SearchQuery;
-import de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject.EdqmPharmaceuticalDoseForm;
+import de.medizininformatikinitiative.medgraph.searchengine.model.identifiable.EdqmPharmaceuticalDoseForm;
 import de.medizininformatikinitiative.medgraph.searchengine.provider.BaseProvider;
 import de.medizininformatikinitiative.medgraph.searchengine.provider.MappedIdentifier;
 import org.junit.jupiter.api.BeforeEach;

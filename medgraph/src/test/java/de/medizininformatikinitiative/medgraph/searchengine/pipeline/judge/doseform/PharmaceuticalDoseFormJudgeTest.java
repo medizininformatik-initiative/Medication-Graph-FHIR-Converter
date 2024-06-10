@@ -3,8 +3,8 @@ package de.medizininformatikinitiative.medgraph.searchengine.pipeline.judge.dose
 import de.medizininformatikinitiative.medgraph.UnitTest;
 import de.medizininformatikinitiative.medgraph.searchengine.model.Drug;
 import de.medizininformatikinitiative.medgraph.searchengine.model.SearchQuery;
-import de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject.DetailedProduct;
-import de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject.Matchable;
+import de.medizininformatikinitiative.medgraph.searchengine.model.identifiable.DetailedProduct;
+import de.medizininformatikinitiative.medgraph.searchengine.model.identifiable.Matchable;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;

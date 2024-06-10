@@ -1,7 +1,7 @@
 package de.medizininformatikinitiative.medgraph.searchengine.pipeline.transformer;
 
 import de.medizininformatikinitiative.medgraph.searchengine.model.SearchQuery;
-import de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject.Matchable;
+import de.medizininformatikinitiative.medgraph.searchengine.model.identifiable.Matchable;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -1,5 +1,6 @@
 package de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject;
 
+import de.medizininformatikinitiative.medgraph.searchengine.model.identifiable.Matchable;
 import de.medizininformatikinitiative.medgraph.searchengine.model.pipelinestep.Judgement;
 import org.jetbrains.annotations.NotNull;
 

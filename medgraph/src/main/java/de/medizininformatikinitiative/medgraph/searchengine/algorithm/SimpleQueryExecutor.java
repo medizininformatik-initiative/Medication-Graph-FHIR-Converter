@@ -4,7 +4,7 @@ import de.medizininformatikinitiative.medgraph.searchengine.QueryExecutor;
 import de.medizininformatikinitiative.medgraph.searchengine.algorithm.initial.InitialMatchFinder;
 import de.medizininformatikinitiative.medgraph.searchengine.algorithm.refining.MatchRefiner;
 import de.medizininformatikinitiative.medgraph.searchengine.model.SearchQuery;
-import de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject.Matchable;
+import de.medizininformatikinitiative.medgraph.searchengine.model.identifiable.Matchable;
 import de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject.MatchingObject;
 import de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject.Merge;
 

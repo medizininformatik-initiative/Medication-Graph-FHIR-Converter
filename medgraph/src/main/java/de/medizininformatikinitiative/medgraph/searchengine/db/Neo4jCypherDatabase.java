@@ -2,9 +2,9 @@ package de.medizininformatikinitiative.medgraph.searchengine.db;
 
 import de.medizininformatikinitiative.medgraph.common.EDQM;
 import de.medizininformatikinitiative.medgraph.searchengine.model.*;
-import de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject.DetailedProduct;
-import de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject.EdqmConcept;
-import de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject.EdqmPharmaceuticalDoseForm;
+import de.medizininformatikinitiative.medgraph.searchengine.model.identifiable.DetailedProduct;
+import de.medizininformatikinitiative.medgraph.searchengine.model.identifiable.EdqmConcept;
+import de.medizininformatikinitiative.medgraph.searchengine.model.identifiable.EdqmPharmaceuticalDoseForm;
 import org.neo4j.driver.Record;
 import org.neo4j.driver.*;
 

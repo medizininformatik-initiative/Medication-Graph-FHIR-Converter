@@ -1,4 +1,4 @@
-package de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject;
+package de.medizininformatikinitiative.medgraph.searchengine.model.identifiable;
 
 import java.util.Objects;
 

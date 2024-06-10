@@ -2,8 +2,8 @@ package de.medizininformatikinitiative.medgraph.searchengine.pipeline.judge.dosa
 
 import de.medizininformatikinitiative.medgraph.searchengine.model.Drug;
 import de.medizininformatikinitiative.medgraph.searchengine.model.SearchQuery;
-import de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject.DetailedProduct;
-import de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject.Matchable;
+import de.medizininformatikinitiative.medgraph.searchengine.model.identifiable.DetailedProduct;
+import de.medizininformatikinitiative.medgraph.searchengine.model.identifiable.Matchable;
 import de.medizininformatikinitiative.medgraph.searchengine.pipeline.judge.ScoreJudge;
 
 import java.util.*;

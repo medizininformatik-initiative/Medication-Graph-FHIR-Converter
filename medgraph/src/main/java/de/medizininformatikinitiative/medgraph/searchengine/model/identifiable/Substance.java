@@ -1,4 +1,4 @@
-package de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject;
+package de.medizininformatikinitiative.medgraph.searchengine.model.identifiable;
 
 /**
  * A substance which is an intermediate match of the search algorithm.

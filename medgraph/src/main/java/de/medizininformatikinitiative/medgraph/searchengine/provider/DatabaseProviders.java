@@ -1,7 +1,7 @@
 package de.medizininformatikinitiative.medgraph.searchengine.provider;
 
 import de.medizininformatikinitiative.medgraph.common.EDQM;
-import de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject.*;
+import de.medizininformatikinitiative.medgraph.searchengine.model.identifiable.*;
 import org.neo4j.driver.Record;
 import org.neo4j.driver.Session;
 import org.neo4j.driver.Value;

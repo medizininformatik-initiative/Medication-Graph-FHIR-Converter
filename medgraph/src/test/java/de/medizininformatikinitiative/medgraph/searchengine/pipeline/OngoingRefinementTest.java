@@ -1,6 +1,10 @@
 package de.medizininformatikinitiative.medgraph.searchengine.pipeline;
 
 import de.medizininformatikinitiative.medgraph.searchengine.model.SearchQuery;
+import de.medizininformatikinitiative.medgraph.searchengine.model.identifiable.IdMatchable;
+import de.medizininformatikinitiative.medgraph.searchengine.model.identifiable.Matchable;
+import de.medizininformatikinitiative.medgraph.searchengine.model.identifiable.Product;
+import de.medizininformatikinitiative.medgraph.searchengine.model.identifiable.Substance;
 import de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject.*;
 import de.medizininformatikinitiative.medgraph.searchengine.model.pipelinestep.Judgement;
 import de.medizininformatikinitiative.medgraph.searchengine.pipeline.judge.PredefinedScoreJudge;

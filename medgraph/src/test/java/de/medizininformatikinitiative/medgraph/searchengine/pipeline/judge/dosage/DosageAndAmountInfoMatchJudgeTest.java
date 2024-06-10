@@ -2,8 +2,8 @@ package de.medizininformatikinitiative.medgraph.searchengine.pipeline.judge.dosa
 
 import de.medizininformatikinitiative.medgraph.UnitTest;
 import de.medizininformatikinitiative.medgraph.searchengine.model.*;
-import de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject.DetailedProduct;
-import de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject.Product;
+import de.medizininformatikinitiative.medgraph.searchengine.model.identifiable.DetailedProduct;
+import de.medizininformatikinitiative.medgraph.searchengine.model.identifiable.Product;
 import de.medizininformatikinitiative.medgraph.searchengine.model.pipelinestep.ScoredJudgement;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

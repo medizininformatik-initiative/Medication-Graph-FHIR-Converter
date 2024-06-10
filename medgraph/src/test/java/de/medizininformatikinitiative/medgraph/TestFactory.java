@@ -1,7 +1,7 @@
 package de.medizininformatikinitiative.medgraph;
 
 import de.medizininformatikinitiative.medgraph.searchengine.model.*;
-import de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject.*;
+import de.medizininformatikinitiative.medgraph.searchengine.model.identifiable.*;
 import de.medizininformatikinitiative.medgraph.searchengine.provider.BaseProvider;
 import de.medizininformatikinitiative.medgraph.searchengine.provider.MappedIdentifier;
 

@@ -2,10 +2,9 @@ package de.medizininformatikinitiative.medgraph.searchengine.algorithm.querymana
 
 import de.medizininformatikinitiative.medgraph.searchengine.matcher.EditDistanceSetMatcher;
 import de.medizininformatikinitiative.medgraph.searchengine.matcher.editdistance.FlexibleLevenshteinDistanceService;
-import de.medizininformatikinitiative.medgraph.searchengine.matcher.editdistance.LevenshteinDistanceService;
 import de.medizininformatikinitiative.medgraph.searchengine.model.SearchQuery;
-import de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject.Identifiable;
-import de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject.Substance;
+import de.medizininformatikinitiative.medgraph.searchengine.model.identifiable.Identifiable;
+import de.medizininformatikinitiative.medgraph.searchengine.model.identifiable.Substance;
 import de.medizininformatikinitiative.medgraph.searchengine.provider.IdentifierStream;
 import de.medizininformatikinitiative.medgraph.searchengine.stringtransformer.*;
 import de.medizininformatikinitiative.medgraph.searchengine.tracing.DistinctMultiSubstringUsageStatement;

@@ -1,7 +1,6 @@
 package de.medizininformatikinitiative.medgraph.searchengine.provider;
 
-import de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject.Identifiable;
-import de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject.Matchable;
+import de.medizininformatikinitiative.medgraph.searchengine.model.identifiable.Identifiable;
 
 import java.util.Objects;
 

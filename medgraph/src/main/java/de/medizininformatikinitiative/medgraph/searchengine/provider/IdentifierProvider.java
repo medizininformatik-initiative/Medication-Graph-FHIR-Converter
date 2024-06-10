@@ -1,10 +1,12 @@
 package de.medizininformatikinitiative.medgraph.searchengine.provider;
 
+import de.medizininformatikinitiative.medgraph.searchengine.model.identifiable.Matchable;
+
 import java.util.stream.Stream;
 
 /**
  * Provides {@link MappedIdentifier}s, which are a term of any type mapped to a
- * {@link de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject.Matchable}.
+ * {@link Matchable}.
  *
  * @param <S> the type of identifier term
  * @author Markus Budeus
