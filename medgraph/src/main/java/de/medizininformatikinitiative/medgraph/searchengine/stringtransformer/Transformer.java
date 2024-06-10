@@ -20,7 +20,9 @@ public interface Transformer<S, T> extends Function<S, T> {
 	 * @return a new {@link TransformedIdentifier} holding information about the transformed identifier and the
 	 * transformation that took place
 	 */
-	default TransformedIdentifier<S, T> apply(Identifier<S> identifier) {
+	default TransformedIdentifier<?, T> apply(Identifier<S> identifier) {
+		// We don't want to specify input type of the transformed identifier to allow the
+		// CompoundTransformer to chain properly.
 		return new TransformedIdentifier<>(apply(identifier.getIdentifier()), identifier, this);
 	}
 
