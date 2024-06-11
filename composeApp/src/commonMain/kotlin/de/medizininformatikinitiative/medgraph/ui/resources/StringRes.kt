@@ -13,6 +13,9 @@ class StringRes {
         private val decimalFormat = DecimalFormat("0.0")
 
         @JvmStatic
+        val title = "MMI DIZ Medication Tool";
+
+        @JvmStatic
         val exit = "Exit"
 
         @JvmStatic

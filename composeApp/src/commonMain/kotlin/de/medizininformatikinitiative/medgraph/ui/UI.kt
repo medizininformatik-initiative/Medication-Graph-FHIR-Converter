@@ -8,6 +8,7 @@ import androidx.compose.ui.window.application
 import androidx.compose.ui.window.rememberWindowState
 import cafe.adriel.voyager.navigator.Navigator
 import de.medizininformatikinitiative.medgraph.ui.common.db.ConnectionDialog
+import de.medizininformatikinitiative.medgraph.ui.resources.StringRes
 import de.medizininformatikinitiative.medgraph.ui.theme.ApplicationTheme
 
 /**
@@ -27,7 +28,7 @@ class UI {
                     Window(
                         onCloseRequest = ::exitApplication,
                         state = windowState,
-                        title = "MedicationGraphFHIRConverter",
+                        title = StringRes.title,
                     ) {
                         if (goToConnectionDialog) {
                             Navigator(listOf(MainMenu(), ConnectionDialog()))

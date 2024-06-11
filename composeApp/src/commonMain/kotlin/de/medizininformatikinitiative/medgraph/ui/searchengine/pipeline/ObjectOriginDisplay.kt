@@ -11,7 +11,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
-import de.medizininformatikinitiative.medgraph.searchengine.algorithm.initial.LevenshteinSearchMatchFinder
 import de.medizininformatikinitiative.medgraph.searchengine.matcher.EditDistanceSetMatcher
 import de.medizininformatikinitiative.medgraph.searchengine.matcher.model.EditDistance
 import de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject.MatchOrigin
