@@ -45,4 +45,8 @@ public abstract class Matcher<S, T, R extends Match<S, T>> implements IMatcher<S
 	 */
 	protected abstract boolean supportsParallelism();
 
+	@Override
+	public String toString() {
+		return getClass().getSimpleName();
+	}
 }

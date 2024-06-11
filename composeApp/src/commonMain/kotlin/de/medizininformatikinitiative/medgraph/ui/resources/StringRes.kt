@@ -267,6 +267,9 @@ class StringRes {
         val pipeline_origin_edit_distance = "---[Edit Distance: {0}]-->"
 
         @JvmStatic
+        val edit_distance_set_matcher_description = "Matches sets of strings using an edit distance metric."
+
+        @JvmStatic
         fun get(template: String, vararg arguments: Any): String {
             var actual = template
             arguments.forEachIndexed { index, arg ->
