@@ -19,27 +19,27 @@ import de.medizininformatikinitiative.medgraph.searchengine.model.CorrespondingA
 import de.medizininformatikinitiative.medgraph.searchengine.model.Drug
 import de.medizininformatikinitiative.medgraph.searchengine.model.identifiable.*
 import de.medizininformatikinitiative.medgraph.ui.resources.StringRes
-import de.medizininformatikinitiative.medgraph.ui.searchengine.query.TextBox
 import de.medizininformatikinitiative.medgraph.ui.theme.ApplicationTheme
 import de.medizininformatikinitiative.medgraph.ui.theme.CorporateDesign
 import de.medizininformatikinitiative.medgraph.ui.theme.localColors
+import de.medizininformatikinitiative.medgraph.ui.theme.templates.TextBox
 import de.medizininformatikinitiative.medgraph.ui.theme.templates.clipToBox
 import java.math.BigDecimal
 
 
 @Composable
 @Preview
-private fun MatchableObjectUI() {
+private fun IdentifiableObjectUI() {
     ApplicationTheme {
         Column {
 
-            MatchableObjectUI(
+            IdentifiableObjectUI(
                 Product(
                     1,
                     "Furorese 100mg"
                 ), modifier = Modifier.fillMaxWidth().padding(4.dp))
             Divider(modifier = Modifier.fillMaxWidth().padding(horizontal = 4.dp), thickness = 1.dp)
-            DetailedMatchableObjectUI(
+            DetailedIdentifiableObjectUI(
                 DetailedProduct(
                     6,
                     "Prednisolut® 10 mg L, Pulver und Lösungsmittel zur Herstellung einer Injektionslösung",
@@ -99,36 +99,36 @@ fun ExpandableMatchableObjectUI(
         }
     ) {
         if (expanded) {
-            DetailedMatchableObjectUI(result, modifier = Modifier.fillMaxWidth(), bottomSlot = bottomSlot)
+            DetailedIdentifiableObjectUI(result, modifier = Modifier.fillMaxWidth(), bottomSlot = bottomSlot)
         } else {
-            MatchableObjectUI(result, modifier = Modifier.fillMaxWidth())
+            IdentifiableObjectUI(result, modifier = Modifier.fillMaxWidth())
         }
     }
 }
 
 /**
- * Displays a single matchable object.
+ * Displays a single identifiable object.
  */
 @Composable
-fun MatchableObjectUI(
-    matchable: Matchable,
+fun IdentifiableObjectUI(
+    identifiable: Identifiable,
     modifier: Modifier = Modifier,
     backgroundColor: Color = MaterialTheme.colors.surface,
 ) {
-    TextBox(matchable.name, backgroundColor = backgroundColor, modifier = modifier)
+    TextBox(identifiable.name, backgroundColor = backgroundColor, modifier = modifier)
 }
 
 @Composable
-fun DetailedMatchableObjectUI(
-    matchable: Matchable,
+fun DetailedIdentifiableObjectUI(
+    identifiable: Identifiable,
     modifier: Modifier = Modifier,
     backgroundColor: Color = MaterialTheme.colors.surface,
     bottomSlot: @Composable ColumnScope.() -> Unit = {},
 ) {
-    when (matchable) {
-        is DetailedProduct -> DetailedProductResultUI(matchable, modifier, backgroundColor, bottomSlot)
-        is IdMatchable -> GenericIdMatchableObjectUI(matchable, modifier, backgroundColor, bottomSlot)
-        else -> MatchableObjectUI(matchable, modifier, backgroundColor)
+    when (identifiable) {
+        is DetailedProduct -> DetailedProductResultUI(identifiable, modifier, backgroundColor, bottomSlot)
+        is IdMatchable -> GenericIdMatchableObjectUI(identifiable, modifier, backgroundColor, bottomSlot)
+        else -> IdentifiableObjectUI(identifiable, modifier, backgroundColor)
     }
 }
 
