@@ -17,7 +17,7 @@ import de.medizininformatikinitiative.medgraph.searchengine.model.identifiable.S
 import de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject.*
 import de.medizininformatikinitiative.medgraph.searchengine.model.pipelinestep.ScoredJudgement
 import de.medizininformatikinitiative.medgraph.searchengine.model.pipelinestep.Transformation
-import de.medizininformatikinitiative.medgraph.ui.searchengine.results.DetailedMatchableObjectUI
+import de.medizininformatikinitiative.medgraph.ui.searchengine.results.DetailedIdentifiableObjectUI
 import de.medizininformatikinitiative.medgraph.ui.theme.ApplicationTheme
 
 @Composable
@@ -99,7 +99,7 @@ private fun MatchingObjectDisplay(obj: MatchingObject, scrollState: ScrollState)
 @Composable
 private fun OriginalMatchDisplay(obj: OriginalMatch) {
     OriginUI(obj.origin)
-    DetailedMatchableObjectUI(obj.`object`, modifier = Modifier.fillMaxWidth())
+    DetailedIdentifiableObjectUI(obj.`object`, modifier = Modifier.fillMaxWidth())
 }
 
 @Composable

@@ -270,6 +270,49 @@ class StringRes {
         val edit_distance_set_matcher_description = "Matches sets of strings using an edit distance metric."
 
         @JvmStatic
+        val original_identifier = "Original Identifier"
+
+        @JvmStatic
+        val identifier_source_known_identifier = "Known identifier from the knowledge graph."
+
+        @JvmStatic
+        val identifier_source_raw_query = "Taken from raw search query."
+
+        @JvmStatic
+        val identifier_source_search_query = "Taken from refined search query."
+
+        @JvmStatic
+        val transformer_description_CollectionToLowerCase = "Make all characters lowercase:"
+
+        @JvmStatic
+        val transformer_description_IdentityTransformer = "This transformation does nothing. (Why was it used even??)"
+
+        @JvmStatic
+        val transformer_description_ListToSet = "Convert lists to sets, i.e. discard ordering:"
+
+        @JvmStatic
+        val transformer_description_MinimumTokenLength = "Remove tokens which are less than {0} characters long:"
+
+        @JvmStatic
+        val transformer_description_RemoveBlankStrings = "Remove string tokens:"
+
+        @JvmStatic
+        val transformer_description_RemoveDosageInformation = "Removes dosage information:"
+
+        @JvmStatic
+        val transformer_description_ToLowerCase = "Make all characters lowercase:"
+
+        @JvmStatic
+        val transformer_description_TrimSpecialSuffixSymbols = "Remove special character suffices:"
+
+        @JvmStatic
+        val transformer_description_WhitespaceTokenizer = "Split along whitespaces:"
+
+        @JvmStatic
+        val transformer_description_unknown = "[Unknown Transformation]:"
+
+
+        @JvmStatic
         fun get(template: String, vararg arguments: Any): String {
             var actual = template
             arguments.forEachIndexed { index, arg ->

@@ -4,6 +4,7 @@ import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.NonRestartableComposable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.VisualTransformation
 import java.awt.TextField
@@ -20,6 +21,7 @@ import java.awt.TextField
  * @param label the label to assign to the text field
  */
 @Composable
+@NonRestartableComposable
 fun TextField(
     state: MutableState<String>,
     modifier: Modifier = Modifier,
@@ -73,6 +75,7 @@ fun TextField(
  * @param label the label to assign to the text field
  */
 @Composable
+@NonRestartableComposable
 fun TextField(
     value: String,
     onValueChange: (String) -> Unit,

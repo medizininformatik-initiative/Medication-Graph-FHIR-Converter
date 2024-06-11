@@ -44,4 +44,8 @@ public class MinimumTokenLength implements TraceableTransformer<List<String>, Li
 		}
 		return new StringListUsageStatement(input, usedIndices);
 	}
+
+	public int getMinLength() {
+		return minLength;
+	}
 }
