@@ -36,7 +36,7 @@ public class DoseFormCharacteristicJudge extends ScoreJudge {
 		if (matchable instanceof DetailedProduct product) {
 			double score = 0;
 			for (Drug d: product.getDrugs()) {
-				score += scoreCharacteristicsOverlap(d.getEdqmDoseForm(), query);
+				score += scoreCharacteristicsOverlap(d.edqmDoseForm(), query);
 			}
 			return score;
 		}

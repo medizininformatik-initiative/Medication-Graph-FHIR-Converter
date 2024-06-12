@@ -66,7 +66,7 @@ fun TransformationDisplay(
 ) {
     MatchingPipelineStepDisplay(transformation, modifier = modifier) {
         Spacer(modifier.height(4.dp))
-        val results: List<Matchable> = transformation.result
+        val results: List<Matchable> = transformation.result()
         if (results.isEmpty()) {
             TextBox(
                 text = StringRes.transformation_no_output,

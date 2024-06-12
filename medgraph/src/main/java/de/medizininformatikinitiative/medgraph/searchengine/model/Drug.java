@@ -5,62 +5,48 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
-import java.util.Objects;
 
 /**
  * Represents a Drug, which is part of a pharmaceutical product.
  *
  * @author Markus Budeus
  */
-public class Drug {
-
-	@Nullable
-	private final String doseForm;
-	@Nullable
-	private final EdqmPharmaceuticalDoseForm edqmDoseForm;
-	@Nullable
-	private final Amount amount;
-
-	@NotNull
-	private final List<ActiveIngredient> activeIngredients;
-
-	public Drug(@Nullable String doseForm, @Nullable EdqmPharmaceuticalDoseForm edqmDoseForm, @Nullable Amount amount,
-	            @NotNull List<ActiveIngredient> activeIngredients) {
-		this.doseForm = doseForm;
-		this.edqmDoseForm = edqmDoseForm;
-		this.amount = amount;
-		this.activeIngredients = activeIngredients;
-	}
+public record Drug(@Nullable String doseForm, @Nullable EdqmPharmaceuticalDoseForm edqmDoseForm,
+                   @Nullable Amount amount, @NotNull List<ActiveIngredient> activeIngredients) {
 
 	/**
 	 * Returns the MMI dose form of thos drug.
 	 */
+	@Override
 	@Nullable
-	public String getDoseForm() {
+	public String doseForm() {
 		return doseForm;
 	}
 
 	/**
 	 * Returns the EDQM dose form of this drug or null if none exists or is known.
 	 */
+	@Override
 	@Nullable
-	public EdqmPharmaceuticalDoseForm getEdqmDoseForm() {
+	public EdqmPharmaceuticalDoseForm edqmDoseForm() {
 		return edqmDoseForm;
 	}
 
 	/**
 	 * Returns the amount of this drug. (I.e. 10ml if it's an ampoule.)
 	 */
+	@Override
 	@Nullable
-	public Amount getAmount() {
+	public Amount amount() {
 		return amount;
 	}
 
 	/**
 	 * Returns the active ingredients of this drug.
 	 */
+	@Override
 	@NotNull
-	public List<ActiveIngredient> getActiveIngredients() {
+	public List<ActiveIngredient> activeIngredients() {
 		return activeIngredients;
 	}
 
@@ -81,19 +67,4 @@ public class Drug {
 		return stringBuilder.toString();
 	}
 
-	@Override
-	public boolean equals(Object o) {
-		if (this == o) return true;
-		if (o == null || getClass() != o.getClass()) return false;
-		Drug drug = (Drug) o;
-		return Objects.equals(doseForm, drug.doseForm)
-				&& Objects.equals(edqmDoseForm, drug.edqmDoseForm)
-				&& Objects.equals(amount, drug.amount)
-				&& Objects.equals(activeIngredients, drug.activeIngredients);
-	}
-
-	@Override
-	public int hashCode() {
-		return Objects.hash(doseForm, edqmDoseForm, amount, activeIngredients);
-	}
 }

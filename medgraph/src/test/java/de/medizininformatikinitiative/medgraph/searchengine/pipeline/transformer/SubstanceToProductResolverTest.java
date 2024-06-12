@@ -34,14 +34,14 @@ public class SubstanceToProductResolverTest extends Neo4jTest {
 	@ValueSource(booleans = {false, true})
 	public void transformProduct(boolean batchMode) {
 		Transformation t = transform(SAMPLE_PRODUCT_1, batchMode);
-		assertEquals(List.of(SAMPLE_PRODUCT_1), t.getResult());
+		assertEquals(List.of(SAMPLE_PRODUCT_1), t.result());
 	}
 
 	@ParameterizedTest(name = "batchMode: {0}")
 	@ValueSource(booleans = {false, true})
 	public void resolveSingleProduct(boolean batchMode) {
 		Transformation t = transform(TestFactory.Substances.ACETYLSALICYLIC_ACID, batchMode);
-		assertEquals(List.of(TestFactory.Products.ASPIRIN), t.getResult());
+		assertEquals(List.of(TestFactory.Products.ASPIRIN), t.result());
 	}
 
 	@ParameterizedTest(name = "batchMode: {0}")
@@ -49,7 +49,7 @@ public class SubstanceToProductResolverTest extends Neo4jTest {
 	public void resolveMultipleProducts(boolean batchMode) {
 		Transformation t = transform(TestFactory.Substances.MIDAZOLAM_HYDROCHLORIDE, batchMode);
 		assertEquals(Set.of(TestFactory.Products.DORMICUM_5, TestFactory.Products.DORMICUM_15),
-				new HashSet<>(t.getResult()));
+				new HashSet<>(t.result()));
 	}
 
 	@ParameterizedTest(name = "batchMode: {0}")
@@ -57,7 +57,7 @@ public class SubstanceToProductResolverTest extends Neo4jTest {
 	public void resolveMultipleProductsFromCorrespondingIngredient(boolean batchMode) {
 		Transformation t = transform(TestFactory.Substances.MIDAZOLAM, batchMode);
 		assertEquals(Set.of(TestFactory.Products.DORMICUM_5, TestFactory.Products.DORMICUM_15),
-				new HashSet<>(t.getResult()));
+				new HashSet<>(t.result()));
 	}
 
 	@ParameterizedTest(name = "batchMode: {0}")
@@ -65,7 +65,7 @@ public class SubstanceToProductResolverTest extends Neo4jTest {
 	public void resolveNonActiveIngredient(boolean batchMode) {
 		// Water is a nonactive ingredient and therefore no results should occur
 		Transformation t = transform(TestFactory.Substances.WATER, batchMode);
-		assertEquals(Collections.emptyList(), t.getResult());
+		assertEquals(Collections.emptyList(), t.result());
 	}
 
 	@Test
@@ -76,9 +76,9 @@ public class SubstanceToProductResolverTest extends Neo4jTest {
 		);
 
 		assertEquals(Set.of(TestFactory.Products.DORMICUM_5, TestFactory.Products.DORMICUM_15),
-				new HashSet<>(transformations.get(0).getResult()));
+				new HashSet<>(transformations.get(0).result()));
 		assertEquals(Set.of(TestFactory.Products.ASPIRIN),
-				new HashSet<>(transformations.get(1).getResult()));
+				new HashSet<>(transformations.get(1).result()));
 	}
 
 	private Transformation transform(Matchable matchable, boolean batchMode) {

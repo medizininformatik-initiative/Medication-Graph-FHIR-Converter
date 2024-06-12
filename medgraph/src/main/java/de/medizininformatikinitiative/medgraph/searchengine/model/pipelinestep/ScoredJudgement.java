@@ -41,17 +41,17 @@ public class ScoredJudgement implements Judgement {
 	}
 
 	@Override
-	public boolean isPassed() {
+	public boolean passed() {
 		return passingScore == null || score >= passingScore;
 	}
 
 	@Override
-	public String getName() {
+	public String name() {
 		return name;
 	}
 
 	@Override
-	public String getDescription() {
+	public String description() {
 		return description;
 	}
 }

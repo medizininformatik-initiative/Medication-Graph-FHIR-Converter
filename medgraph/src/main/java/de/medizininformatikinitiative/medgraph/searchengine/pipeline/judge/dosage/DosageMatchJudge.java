@@ -104,7 +104,7 @@ public class DosageMatchJudge {
 	 * @see #judgeRelative(AmountOrRange, Amount, Dosage)
 	 */
 	private static double judgeRelative(Drug drug, Dosage targetDosage) {
-		Amount drugAmount = drug.getAmount();
+		Amount drugAmount = drug.amount();
 		if (drugAmount == null) return 0;
 		double bestScore = 0;
 		for (AmountOrRange activeIngredientAmount : getActiveIngredientDosages(drug)) {
@@ -193,7 +193,7 @@ public class DosageMatchJudge {
 	 */
 	private static List<AmountOrRange> getActiveIngredientDosages(Drug d) {
 		List<AmountOrRange> list = new ArrayList<>();
-		for (ActiveIngredient ingredient : d.getActiveIngredients()) {
+		for (ActiveIngredient ingredient : d.activeIngredients()) {
 			list.add(ingredient.getAmount());
 			if (ingredient instanceof CorrespondingActiveIngredient c) {
 				list.add(c.getCorrespondingSubstanceAmount());

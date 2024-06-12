@@ -100,8 +100,8 @@ public class DoseFormQueryRefiner implements PartialQueryRefiner<DoseFormQueryRe
 	 * Returns how to handle conflicts between two matches.
 	 */
 	private OverlapResolutionStrategy checkPriorityOnOverlap(EditDistanceListMatcher.Match match1, EditDistanceListMatcher.Match match2) {
-		int editDistance1 = match1.getDistance().getEditDistance();
-		int editDistance2 = match2.getDistance().getEditDistance();
+		int editDistance1 = match1.getDistance().editDistance();
+		int editDistance2 = match2.getDistance().editDistance();
 
 		if (editDistance1 > editDistance2) return OverlapResolutionStrategy.KEEP_SECOND;
 		else if (editDistance2 > editDistance1) return OverlapResolutionStrategy.KEEP_FIRST;

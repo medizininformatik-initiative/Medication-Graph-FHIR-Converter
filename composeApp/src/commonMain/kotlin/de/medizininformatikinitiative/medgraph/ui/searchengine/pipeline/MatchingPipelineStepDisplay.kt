@@ -19,7 +19,7 @@ fun MatchingPipelineStepDisplay(
     modifier: Modifier = Modifier,
     backgroundColor: Color = MaterialTheme.colors.surface,
     body: @Composable ColumnScope.() -> Unit
-) = MatchingPipelineStepDisplay(step.name, step.description, modifier, backgroundColor, body)
+) = MatchingPipelineStepDisplay(step.name(), step.description(), modifier, backgroundColor, body)
 
 @Composable
 fun MatchingPipelineStepDisplay(

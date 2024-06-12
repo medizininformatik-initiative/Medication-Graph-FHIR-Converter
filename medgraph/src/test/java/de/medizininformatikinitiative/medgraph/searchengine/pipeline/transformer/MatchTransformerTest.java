@@ -31,9 +31,9 @@ public class MatchTransformerTest {
 		TestMatchTransformer transformer = new TestMatchTransformer(tfMap);
 
 		Transformation tf = transformer.transform(SAMPLE_PRODUCT_1, null);
-		assertEquals(List.of(SAMPLE_SUBSTANCE_1), tf.getResult());
-		assertEquals(TRANSFORMER_NAME, tf.getName());
-		assertEquals(TRANSFORMER_DESC, tf.getDescription());
+		assertEquals(List.of(SAMPLE_SUBSTANCE_1), tf.result());
+		assertEquals(TRANSFORMER_NAME, tf.name());
+		assertEquals(TRANSFORMER_DESC, tf.description());
 	}
 
 	@Test
@@ -44,8 +44,8 @@ public class MatchTransformerTest {
 		TestMatchTransformer transformer = new TestMatchTransformer(tfMap);
 
 		assertEquals(List.of(SAMPLE_SUBSTANCE_1, SAMPLE_PRODUCT_2),
-				transformer.transform(SAMPLE_PRODUCT_1, null).getResult());
-		assertEquals(List.of(), transformer.transform(SAMPLE_PRODUCT_2, null).getResult());
+				transformer.transform(SAMPLE_PRODUCT_1, null).result());
+		assertEquals(List.of(), transformer.transform(SAMPLE_PRODUCT_2, null).result());
 	}
 
 	@Test
@@ -65,10 +65,10 @@ public class MatchTransformerTest {
 				"The MatchTransformer did not use the batchTransformInternal-function to execute a batch transformation!");
 
 		assertEquals(4, tfResults.size());
-		assertEquals(List.of(SAMPLE_SUBSTANCE_1, SAMPLE_PRODUCT_2), tfResults.get(0).getResult());
-		assertEquals(List.of(SAMPLE_SUBSTANCE_2), tfResults.get(1).getResult());
-		assertEquals(List.of(SAMPLE_SUBSTANCE_3), tfResults.get(2).getResult());
-		assertEquals(List.of(), tfResults.get(3).getResult());
+		assertEquals(List.of(SAMPLE_SUBSTANCE_1, SAMPLE_PRODUCT_2), tfResults.get(0).result());
+		assertEquals(List.of(SAMPLE_SUBSTANCE_2), tfResults.get(1).result());
+		assertEquals(List.of(SAMPLE_SUBSTANCE_3), tfResults.get(2).result());
+		assertEquals(List.of(), tfResults.get(3).result());
 	}
 
 	private static class TestMatchTransformer extends MatchTransformer {

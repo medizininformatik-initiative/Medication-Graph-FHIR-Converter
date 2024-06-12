@@ -109,15 +109,15 @@ public class StepwiseGeneralQueryParser {
 		List<IntRange> sortedPrimaryRanges = primaryUsage.getUsedRangesAsList();
 		Set<IntRange> mappedSecondaryRanges = new HashSet<>();
 		for (IntRange range : secondaryUsage.getUsedRanges()) {
-			int from = range.getFrom();
+			int from = range.from();
 			int offsetInPrimary = 0;
 			for (IntRange primaryRange : sortedPrimaryRanges) {
-				if (from + offsetInPrimary < primaryRange.getFrom()) {
+				if (from + offsetInPrimary < primaryRange.from()) {
 					break;
 				}
 				offsetInPrimary += primaryRange.getSize();
 			}
-			mappedSecondaryRanges.add(new IntRange(from + offsetInPrimary, range.getTo() + offsetInPrimary));
+			mappedSecondaryRanges.add(new IntRange(from + offsetInPrimary, range.to() + offsetInPrimary));
 		}
 
 		return new MultiSubstringUsageStatement(primaryUsage.getOriginal(), mappedSecondaryRanges);

@@ -66,7 +66,7 @@ public class EditDistanceSetMatcher extends SimpleMatcher<Set<String>, EditDista
 
 		double score = 0;
 		for (EditDistance d : resultDistances) {
-			score += 1.0 / (d.getEditDistance() + 1);
+			score += 1.0 / (d.editDistance() + 1);
 		}
 
 		if (score == 0) return null;
@@ -104,7 +104,7 @@ public class EditDistanceSetMatcher extends SimpleMatcher<Set<String>, EditDista
 			super(searchTerm, match, score);
 			this.usageStatement = new StringSetUsageStatement(
 					searchTerm.getIdentifier(),
-					editDistances.stream().map(EditDistance::getValue1).collect(Collectors.toSet()));
+					editDistances.stream().map(EditDistance::value1).collect(Collectors.toSet()));
 			this.editDistances = editDistances;
 		}
 

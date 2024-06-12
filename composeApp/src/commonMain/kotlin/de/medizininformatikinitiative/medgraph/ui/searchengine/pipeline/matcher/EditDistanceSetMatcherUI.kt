@@ -23,7 +23,6 @@ import de.medizininformatikinitiative.medgraph.ui.theme.localColors
 import de.medizininformatikinitiative.medgraph.ui.theme.templates.ContentCard
 import de.medizininformatikinitiative.medgraph.ui.theme.templates.TextBox
 import de.medizininformatikinitiative.medgraph.ui.theme.templates.clipToBox
-import kotlin.reflect.KClass
 
 @Composable
 @Preview
@@ -85,8 +84,8 @@ fun EditDistancesUI(
     val remainingTargetTokens = ArrayList(allTargetTerms)
     val editDistanceList = ArrayList(editDistances)
     for (editDistance in editDistances) {
-        remainingSearchTermTokens.remove(editDistance.value1)
-        remainingTargetTokens.remove(editDistance.value2)
+        remainingSearchTermTokens.remove(editDistance.value1())
+        remainingTargetTokens.remove(editDistance.value2())
     }
     EditDistancesUI(editDistanceList, remainingSearchTermTokens, remainingTargetTokens, modifier)
 }
@@ -131,9 +130,9 @@ fun EditDistanceDisplay(editDistance: EditDistance, modifier: Modifier) {
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        EditDistanceTextBox(editDistance.value1)
-        Text(StringRes.get(StringRes.pipeline_origin_edit_distance, editDistance.editDistance))
-        EditDistanceTextBox(editDistance.value2)
+        EditDistanceTextBox(editDistance.value1())
+        Text(StringRes.get(StringRes.pipeline_origin_edit_distance, editDistance.editDistance()))
+        EditDistanceTextBox(editDistance.value2())
     }
 }
 

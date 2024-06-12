@@ -25,8 +25,8 @@ public class Neo4jCypherDatabase implements Database {
 	private static final Comparator<Drug> drugComparator;
 
 	static {
-		Comparator<Drug> comparator = Comparator.comparing(d -> -d.getActiveIngredients().size());
-		drugComparator = comparator.thenComparing(drug -> drug.getDoseForm() != null ? drug.getDoseForm() : "");
+		Comparator<Drug> comparator = Comparator.comparing(d -> -d.activeIngredients().size());
+		drugComparator = comparator.thenComparing(drug -> drug.doseForm() != null ? drug.doseForm() : "");
 	}
 
 	private final Session session;

@@ -41,7 +41,7 @@ public class OngoingRefinementTest {
 		assertEquals(1, currentMatches.size());
 		MatchingObject<?> object = currentMatches.getFirst();
 		assertEquals(SAMPLE_PRODUCT_1, object.getObject());
-		assertTrue(object.getAppliedJudgements().getFirst().isPassed());
+		assertTrue(object.getAppliedJudgements().getFirst().passed());
 	}
 
 	@ParameterizedTest
@@ -60,7 +60,7 @@ public class OngoingRefinementTest {
 			assertEquals(2, currentMatches.size());
 			MatchingObject<?> object = currentMatches.getFirst();
 			assertEquals(SAMPLE_SUBSTANCE_1, object.getObject());
-			assertFalse(object.getAppliedJudgements().getFirst().isPassed());
+			assertFalse(object.getAppliedJudgements().getFirst().passed());
 		} else {
 			assertTrue(currentMatches.isEmpty());
 		}
@@ -84,7 +84,7 @@ public class OngoingRefinementTest {
 		assertEquals(3, currentMatches.size());
 		MatchingObject<?> object = currentMatches.getFirst();
 		assertEquals(new Product(102, "Dope"), object.getObject());
-		assertTrue(object.getAppliedJudgements().getFirst().isPassed());
+		assertTrue(object.getAppliedJudgements().getFirst().passed());
 		assertEquals(new Product(100, ""), currentMatches.get(1).getObject());
 		assertEquals(new Substance(100, ""), currentMatches.get(2).getObject());
 	}
@@ -110,7 +110,7 @@ public class OngoingRefinementTest {
 			MatchingObject<?> object = currentMatches.getFirst();
 			// Despite all failing, higher scores still win!
 			assertEquals(new Product(102, ""), object.getObject());
-			assertFalse(object.getAppliedJudgements().getFirst().isPassed());
+			assertFalse(object.getAppliedJudgements().getFirst().passed());
 		} else {
 			assertEquals(0, currentMatches.size());
 		}
@@ -240,14 +240,14 @@ public class OngoingRefinementTest {
 
 		List<Judgement> judgementList = currentMatches.getFirst().getAppliedJudgements();
 		assertEquals(1, judgementList.size());
-		assertTrue(judgementList.getFirst().isPassed());
+		assertTrue(judgementList.getFirst().passed());
 		List<Judgement> judgementList2 = ((TransformedObject<?, ?>) currentMatches.getFirst()).getSourceObject().getAppliedJudgements();
 		assertEquals(2, judgementList2.size());
-		assertFalse(judgementList2.get(0).isPassed());
-		assertTrue(judgementList2.get(1).isPassed());
-		assertEquals(IdSizeJudge.NAME, judgementList2.get(0).getName());
-		assertEquals(IdSizeJudge.NAME, judgementList2.get(1).getName());
-		assertEquals(ProductOnlyFilter.NAME, judgementList.getFirst().getName());
+		assertFalse(judgementList2.get(0).passed());
+		assertTrue(judgementList2.get(1).passed());
+		assertEquals(IdSizeJudge.NAME, judgementList2.get(0).name());
+		assertEquals(IdSizeJudge.NAME, judgementList2.get(1).name());
+		assertEquals(ProductOnlyFilter.NAME, judgementList.getFirst().name());
 	}
 
 	private OngoingRefinement createSut(List<Matchable> matchables) {

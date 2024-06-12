@@ -113,7 +113,7 @@ public class OngoingRefinement {
 		for (int i = 0; i < size; i++) {
 			MatchingObject<?> sourceObject = matchingObjects.get(i);
 			Transformation transformation = transformations.get(i);
-			for (Matchable output : transformation.getResult()) {
+			for (Matchable output : transformation.result()) {
 				TransformedObject<?, ?> transformedObject = new TransformedObject<>(output, sourceObject, transformation);
 				// Add to the list of TransformedObjects which represent this Matchable, creating the list if required
 				postTransformationMap.computeIfAbsent(output, m -> new LinkedList<>()).add(transformedObject);
@@ -167,7 +167,7 @@ public class OngoingRefinement {
 		for (int i = 0; i < objects.size(); i++) {
 			Judgement judgement = judgements.get(i);
 			objects.get(i).addJudgement(judgement);
-			atLeastOnePass = atLeastOnePass || judgement.isPassed();
+			atLeastOnePass = atLeastOnePass || judgement.passed();
 		}
 		return atLeastOnePass;
 	}
@@ -181,7 +181,7 @@ public class OngoingRefinement {
 	private void removeMatchesWhichFailedTheLastFiltering(String name) {
 		currentMatches.applySortingStep(
 				new BinarySortDirective<>(name,
-						matchingObject -> matchingObject.getAppliedJudgements().getLast().isPassed(),
+						matchingObject -> matchingObject.getAppliedJudgements().getLast().passed(),
 						true)
 		);
 	}

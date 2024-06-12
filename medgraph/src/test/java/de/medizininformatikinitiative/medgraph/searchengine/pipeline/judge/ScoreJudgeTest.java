@@ -23,16 +23,16 @@ public class ScoreJudgeTest {
 		ScoredJudgement judgement = new TestJudge(2, null).judge(null, null);
 		assertEquals(2, judgement.getScore());
 		assertEquals(PASSING_SCORE, judgement.getPassingScore().getAsDouble());
-		assertTrue(judgement.isPassed());
-		assertEquals("test", judgement.getName());
-		assertEquals("desc", judgement.getDescription());
+		assertTrue(judgement.passed());
+		assertEquals("test", judgement.name());
+		assertEquals("desc", judgement.description());
 	}
 
 	@Test
 	public void singleJudgement2() {
 		ScoredJudgement judgement = new TestJudge(0, null).judge(null, null);
 		assertEquals(0, judgement.getScore());
-		assertFalse(judgement.isPassed());
+		assertFalse(judgement.passed());
 	}
 
 	@Test
@@ -44,8 +44,8 @@ public class ScoreJudgeTest {
 		assertEquals(2, judgements.get(0).getScore());
 		assertEquals(0, judgements.get(1).getScore());
 		assertEquals(1, judgements.get(2).getScore());
-		assertTrue(judgements.get(0).isPassed());
-		assertFalse(judgements.get(1).isPassed());
+		assertTrue(judgements.get(0).passed());
+		assertFalse(judgements.get(1).passed());
 	}
 
 	private static class TestJudge extends ScoreJudge {
