@@ -1,7 +1,10 @@
 package de.medizininformatikinitiative.medgraph.searchengine.stringtransformer;
 
+import de.medizininformatikinitiative.medgraph.searchengine.model.identifiable.Matchable;
+import de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject.MatchingObject;
 import de.medizininformatikinitiative.medgraph.searchengine.tracing.InputUsageStatement;
 
+import java.util.List;
 import java.util.Objects;
 
 /**

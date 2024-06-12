@@ -20,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 /**
  * @author Markus Budeus
  */
-public class DoseFormQueryRefinerImplTest extends UnitTest {
+public class DoseFormQueryRefinerTest extends UnitTest {
 
 	private DoseFormQueryRefiner sut;
 
