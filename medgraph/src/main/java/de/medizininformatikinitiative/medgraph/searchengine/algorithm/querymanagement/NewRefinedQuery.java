@@ -11,6 +11,7 @@ import de.medizininformatikinitiative.medgraph.searchengine.model.identifier.Ide
 import de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject.MatchingObject;
 import de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject.Merge;
 import de.medizininformatikinitiative.medgraph.searchengine.tools.SearchEngineTools;
+import de.medizininformatikinitiative.medgraph.searchengine.tracing.SubstringUsageStatement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -39,19 +40,68 @@ public class NewRefinedQuery {
 	@NotNull
 	private final List<MatchingObject<EdqmConcept>> doseFormCharacteristics;
 
+	/**
+	 * Usage statement indicating which parts of the dosage search term from the raw query were successfully parsed. If
+	 * said search term was blank in the raw query, this is null.
+	 */
+	@Nullable
+	private final SubstringUsageStatement dosageUsageStatement;
+	/**
+	 * Usage statement indicating which parts of the general search term from the raw query were parsed into dosage
+	 * information. If the general search term in the raw query was blank, this is null.
+	 */
+	@Nullable
+	private final SubstringUsageStatement dosageGeneralSearchTermUsageStatement;
+	/**
+	 * Usage statement indicating which parts of the dose form search term from the raw query were successfully parsed.
+	 * If said search term was blank in the raw query, this is null.
+	 */
+	@Nullable
+	private final SubstringUsageStatement doseFormUsageStatement;
+	/**
+	 * Usage statement indicating which parts of the general search term from the raw query were parsed into dose form
+	 * information. If the general search term in the raw query was blank, this is null.
+	 */
+	@Nullable
+	private final SubstringUsageStatement doseFormGeneralSearchTermUsageStatement;
+	/**
+	 * Usage statement indicating which parts of the active substance search term from the raw query were successfully
+	 * parsed. If said search term was blank in the raw query, this is null.
+	 */
+	@Nullable
+	private final SubstringUsageStatement substanceUsageStatement;
+	/**
+	 * Usage statement indicating which parts of the general search term from the raw query were parsed into
+	 * pharmaceutical substances. If the general search term in the raw query was blank, this is null.
+	 */
+	@Nullable
+	private final SubstringUsageStatement substanceGeneralSearchTermUsageStatement;
+
 
 	public NewRefinedQuery(@NotNull Identifier<List<String>> productNameKeywords,
 	                       @NotNull List<MatchingObject<Substance>> substances,
 	                       @NotNull List<MatchingObject<Dosage>> dosages,
 	                       @NotNull List<MatchingObject<Amount>> drugAmounts,
 	                       @NotNull List<MatchingObject<EdqmPharmaceuticalDoseForm>> doseForms,
-	                       @NotNull List<MatchingObject<EdqmConcept>> doseFormCharacteristics) {
+	                       @NotNull List<MatchingObject<EdqmConcept>> doseFormCharacteristics,
+	                       @Nullable SubstringUsageStatement dosageUsageStatement,
+	                       @Nullable SubstringUsageStatement dosageGeneralSearchTermUsageStatement,
+	                       @Nullable SubstringUsageStatement doseFormUsageStatement,
+	                       @Nullable SubstringUsageStatement doseFormGeneralSearchTermUsageStatement,
+	                       @Nullable SubstringUsageStatement substanceUsageStatement,
+	                       @Nullable SubstringUsageStatement substanceGeneralSearchTermUsageStatement) {
 		this.productNameKeywords = productNameKeywords;
 		this.substances = substances;
 		this.dosages = dosages;
 		this.drugAmounts = drugAmounts;
 		this.doseForms = doseForms;
 		this.doseFormCharacteristics = doseFormCharacteristics;
+		this.dosageUsageStatement = dosageUsageStatement;
+		this.dosageGeneralSearchTermUsageStatement = dosageGeneralSearchTermUsageStatement;
+		this.doseFormUsageStatement = doseFormUsageStatement;
+		this.doseFormGeneralSearchTermUsageStatement = doseFormGeneralSearchTermUsageStatement;
+		this.substanceUsageStatement = substanceUsageStatement;
+		this.substanceGeneralSearchTermUsageStatement = substanceGeneralSearchTermUsageStatement;
 	}
 
 	public @NotNull Identifier<List<String>> getProductNameKeywords() {
@@ -76,6 +126,30 @@ public class NewRefinedQuery {
 
 	public @NotNull List<MatchingObject<EdqmConcept>> getDoseFormCharacteristics() {
 		return doseFormCharacteristics;
+	}
+
+	public @Nullable SubstringUsageStatement getDosageUsageStatement() {
+		return dosageUsageStatement;
+	}
+
+	public @Nullable SubstringUsageStatement getDosageGeneralSearchTermUsageStatement() {
+		return dosageGeneralSearchTermUsageStatement;
+	}
+
+	public @Nullable SubstringUsageStatement getDoseFormUsageStatement() {
+		return doseFormUsageStatement;
+	}
+
+	public @Nullable SubstringUsageStatement getDoseFormGeneralSearchTermUsageStatement() {
+		return doseFormGeneralSearchTermUsageStatement;
+	}
+
+	public @Nullable SubstringUsageStatement getSubstanceUsageStatement() {
+		return substanceUsageStatement;
+	}
+
+	public @Nullable SubstringUsageStatement getSubstanceGeneralSearchTermUsageStatement() {
+		return substanceGeneralSearchTermUsageStatement;
 	}
 
 	/**
@@ -111,6 +185,38 @@ public class NewRefinedQuery {
 
 		@NotNull
 		private final MatchingObjectStorage<EdqmConcept> doseFormCharacteristics = new MatchingObjectStorage<>();
+
+
+		/**
+		 * Indicates which part of the dosage query could be resolved to dosages.
+		 */
+		@Nullable
+		private SubstringUsageStatement dosageUsageStatement;
+		/**
+		 * Indicates which part of the general query text was resolved into dosages.
+		 */
+		@Nullable
+		private SubstringUsageStatement dosageGeneralSearchTermUsageStatement;
+		/**
+		 * Indicates which part of the dose form query could be resolved to dose forms and characteristics.
+		 */
+		@Nullable
+		private SubstringUsageStatement doseFormUsageStatement;
+		/**
+		 * Indicates which part of the general query text was resolved into dose forms and characteristics.
+		 */
+		@Nullable
+		private SubstringUsageStatement doseFormGeneralSearchTermUsageStatement;
+		/**
+		 * Indicates which part of the substance query could be resolved to pharmaceutical substances.
+		 */
+		@Nullable
+		private SubstringUsageStatement substanceUsageStatement;
+		/**
+		 * Indicates which part of the general query could be resolved to pharmaceutical substances.
+		 */
+		@Nullable
+		private SubstringUsageStatement substanceGeneralSearchTermUsageStatement;
 
 		/**
 		 * Creates a new builder.
@@ -180,6 +286,29 @@ public class NewRefinedQuery {
 		}
 
 		/**
+		 * Sets the usage statements which indicates which parts of the raw query were used for what.
+		 *
+		 * @return this instance
+		 */
+		public Builder withUsageStatements(
+				SubstringUsageStatement dosageUsageStatement,
+				SubstringUsageStatement dosageGeneralSearchTermUsageStatement,
+				SubstringUsageStatement doseFormUsageStatement,
+				SubstringUsageStatement doseFormGeneralSearchTermUsageStatement,
+				SubstringUsageStatement substanceUsageStatement,
+				SubstringUsageStatement substanceGeneralSearchTermUsageStatement
+
+		) {
+			this.dosageUsageStatement = dosageUsageStatement;
+			this.dosageGeneralSearchTermUsageStatement = dosageGeneralSearchTermUsageStatement;
+			this.doseFormUsageStatement = doseFormUsageStatement;
+			this.doseFormGeneralSearchTermUsageStatement = doseFormGeneralSearchTermUsageStatement;
+			this.substanceUsageStatement = substanceUsageStatement;
+			this.substanceGeneralSearchTermUsageStatement = substanceGeneralSearchTermUsageStatement;
+			return this;
+		}
+
+		/**
 		 * Builds the {@link NewRefinedQuery}. Note the product name keywords must be set before a refined query can be
 		 * built.
 		 *
@@ -195,7 +324,13 @@ public class NewRefinedQuery {
 					dosages.getWithDuplicatesMerged(),
 					drugAmounts.getWithDuplicatesMerged(),
 					doseForms.getWithDuplicatesMerged(),
-					doseFormCharacteristics.getWithDuplicatesMerged()
+					doseFormCharacteristics.getWithDuplicatesMerged(),
+					dosageUsageStatement,
+					dosageGeneralSearchTermUsageStatement,
+					doseFormUsageStatement,
+					doseFormGeneralSearchTermUsageStatement,
+					substanceUsageStatement,
+					substanceGeneralSearchTermUsageStatement
 			);
 		}
 

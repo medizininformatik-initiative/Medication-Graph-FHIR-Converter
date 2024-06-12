@@ -70,7 +70,6 @@ public class NewSubstanceQueryRefiner implements NewPartialQueryRefiner<NewSubst
 					return false;
 				}).collect(Collectors.toList());
 
-
 		SearchEngineTools.removeConflictingOverlaps(matches, this::overlap, this::checkPriorityOnOverlap);
 
 		matches.forEach(match -> {
