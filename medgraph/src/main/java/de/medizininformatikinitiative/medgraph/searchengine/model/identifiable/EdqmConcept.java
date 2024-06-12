@@ -10,7 +10,7 @@ import java.util.Objects;
  *
  * @author Markus Budeus
  */
-public class EdqmConcept implements Identifiable {
+public class EdqmConcept implements Matchable {
 
 	/**
 	 * The code (including a class-specific prefix, i.e. PDF-00000001) of this concept.

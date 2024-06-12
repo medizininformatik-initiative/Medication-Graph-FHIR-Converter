@@ -1,5 +1,6 @@
 package de.medizininformatikinitiative.medgraph.searchengine.model;
 
+import de.medizininformatikinitiative.medgraph.searchengine.model.identifiable.Matchable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -12,7 +13,7 @@ import java.util.Objects;
  *
  * @author Markus Budeus
  */
-public final class Amount implements AmountOrRange {
+public final class Amount implements AmountOrRange, Matchable {
 
 	/**
 	 * The amount number.
@@ -69,5 +70,10 @@ public final class Amount implements AmountOrRange {
 	@Override
 	public String toString() {
 		return number + (unit != null ? " " + unit : "");
+	}
+
+	@Override
+	public String getName() {
+		return toString();
 	}
 }
