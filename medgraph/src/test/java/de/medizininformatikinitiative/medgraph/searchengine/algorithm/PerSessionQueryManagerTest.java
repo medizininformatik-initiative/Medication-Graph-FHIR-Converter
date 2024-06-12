@@ -131,9 +131,9 @@ public class PerSessionQueryManagerTest extends UnitTest {
 
 	@Test
 	public void correctExecutionResultReturned() {
-		List<MatchingObject> resultList = List.of(
-				new OriginalMatch(SAMPLE_PRODUCT_1),
-				new Merge(List.of(new OriginalMatch(SAMPLE_PRODUCT_2), new OriginalMatch(SAMPLE_PRODUCT_2)))
+		List<MatchingObject<?>> resultList = List.of(
+				new OriginalMatch<>(SAMPLE_PRODUCT_1),
+				new Merge<>(List.of(new OriginalMatch<>(SAMPLE_PRODUCT_2), new OriginalMatch<>(SAMPLE_PRODUCT_2)))
 		);
 		when(queryExecutor.executeQuery(query)).thenReturn(resultList);
 

@@ -89,7 +89,7 @@ public class MatchTransformerTest {
 		}
 
 		@Override
-		protected List<List<Matchable>> batchTransformInternal(List<Matchable> matchables, SearchQuery query) {
+		protected List<List<Matchable>> batchTransformInternal(List<? extends Matchable> matchables, SearchQuery query) {
 			List<List<Matchable>> resultList = super.batchTransformInternal(matchables, query);
 			usedBatchTransform = true;
 			return resultList;

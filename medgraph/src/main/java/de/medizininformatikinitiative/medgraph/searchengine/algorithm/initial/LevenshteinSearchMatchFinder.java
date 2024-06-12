@@ -50,7 +50,7 @@ public class LevenshteinSearchMatchFinder implements InitialMatchFinder {
 	}
 
 	@Override
-	public Stream<OriginalMatch> findInitialMatches(SearchQuery query) {
+	public Stream<OriginalMatch<?>> findInitialMatches(SearchQuery query) {
 		Stream<EditDistanceSetMatcher.Match> allMatches = Stream.empty();
 		Identifier<List<String>> productKeywords = new OriginalIdentifier<>(query.getProductNameKeywords(),
 				OriginalIdentifier.Source.SEARCH_QUERY);
@@ -61,7 +61,7 @@ public class LevenshteinSearchMatchFinder implements InitialMatchFinder {
 
 		return allMatches
 				.sorted(Comparator.reverseOrder())
-				.map(match -> new OriginalMatch(
+				.map(match -> new OriginalMatch<>(
 						(Matchable) match.getMatchedIdentifier().target,
 						new MatchOrigin<>(match, levenshteinSetMatcher)
 				));

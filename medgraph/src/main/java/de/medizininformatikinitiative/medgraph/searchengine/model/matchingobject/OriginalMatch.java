@@ -8,7 +8,7 @@ import org.jetbrains.annotations.NotNull;
  *
  * @author Markus Budeus
  */
-public class OriginalMatch extends MatchingObject {
+public class OriginalMatch<T extends Matchable> extends MatchingObject<T> {
 
 	/**
 	 * The origin where this match originated from.
@@ -21,7 +21,7 @@ public class OriginalMatch extends MatchingObject {
 	 *
 	 * @param object the object to be managed by this instance
 	 */
-	public OriginalMatch(Matchable object) {
+	public OriginalMatch(T object) {
 		this(object, Origin.UNKNOWN);
 	}
 
@@ -31,7 +31,7 @@ public class OriginalMatch extends MatchingObject {
 	 * @param object the object to be managed by this instance
 	 * @param origin the source this match originated from
 	 */
-	public OriginalMatch(@NotNull Matchable object, @NotNull Origin origin) {
+	public OriginalMatch(@NotNull T object, @NotNull Origin origin) {
 		super(object);
 		this.origin = origin;
 	}

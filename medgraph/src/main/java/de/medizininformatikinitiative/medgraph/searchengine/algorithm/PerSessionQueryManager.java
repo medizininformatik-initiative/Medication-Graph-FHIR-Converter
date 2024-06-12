@@ -33,7 +33,7 @@ public class PerSessionQueryManager implements QueryExecutor, QueryRefiner {
 	}
 
 	@Override
-	public List<MatchingObject> executeQuery(SearchQuery query) {
+	public List<MatchingObject<?>> executeQuery(SearchQuery query) {
 		try (Session session = connection.createSession()) {
 			return queryExecutorFactory.apply(session).executeQuery(query);
 		}

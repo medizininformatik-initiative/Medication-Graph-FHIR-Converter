@@ -153,7 +153,7 @@ public class Neo4jMedicationExporter extends Neo4jExporter<Medication> {
 
 		if (exportProduct.drugs.size() == 1) {
 			// Simple case. Simply merge product and drug information into medication object
-			applyDrugInfoToMedication(exportProduct.drugs.get(0), medication);
+			applyDrugInfoToMedication(exportProduct.drugs.getFirst(), medication);
 			return Stream.of(medication);
 		} else {
 			// Tougher case. We need a medication object for each drug and a "parent" medication object.
@@ -534,9 +534,7 @@ public class Neo4jMedicationExporter extends Neo4jExporter<Medication> {
 			Type type = inferObjectType(medication);
 
 			switch (type) {
-				case COMPOSITION_PARENT -> {
-					compositeMedicationsTotal.incrementAndGet();
-				}
+				case COMPOSITION_PARENT -> compositeMedicationsTotal.incrementAndGet();
 				case COMPOSITION_CHILD -> {
 					compositeMedicationChildrenTotal.incrementAndGet();
 					addDoseForm(medication, compositeChildrenWithDoseForm, compositeChildrenWithEdqmDoseForm);

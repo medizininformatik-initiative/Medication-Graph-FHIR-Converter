@@ -37,9 +37,9 @@ public class OngoingRefinementTest {
 
 		assertTrue(sut.applyFilter(new ProductOnlyFilter(), ensureSurvival));
 
-		List<MatchingObject> currentMatches = sut.getCurrentMatches();
+		List<MatchingObject<?>> currentMatches = sut.getCurrentMatches();
 		assertEquals(1, currentMatches.size());
-		MatchingObject object = currentMatches.getFirst();
+		MatchingObject<?> object = currentMatches.getFirst();
 		assertEquals(SAMPLE_PRODUCT_1, object.getObject());
 		assertTrue(object.getAppliedJudgements().getFirst().isPassed());
 	}
@@ -54,11 +54,11 @@ public class OngoingRefinementTest {
 
 		assertFalse(sut.applyFilter(new ProductOnlyFilter(), ensureSurvival));
 
-		List<MatchingObject> currentMatches = sut.getCurrentMatches();
+		List<MatchingObject<?>> currentMatches = sut.getCurrentMatches();
 
 		if (ensureSurvival) {
 			assertEquals(2, currentMatches.size());
-			MatchingObject object = currentMatches.getFirst();
+			MatchingObject<?> object = currentMatches.getFirst();
 			assertEquals(SAMPLE_SUBSTANCE_1, object.getObject());
 			assertFalse(object.getAppliedJudgements().getFirst().isPassed());
 		} else {
@@ -80,9 +80,9 @@ public class OngoingRefinementTest {
 		sut.applyScoreJudge(new IdSizeJudge(100.0), ensureSurvival);
 
 
-		List<MatchingObject> currentMatches = sut.getCurrentMatches();
+		List<MatchingObject<?>> currentMatches = sut.getCurrentMatches();
 		assertEquals(3, currentMatches.size());
-		MatchingObject object = currentMatches.getFirst();
+		MatchingObject<?> object = currentMatches.getFirst();
 		assertEquals(new Product(102, "Dope"), object.getObject());
 		assertTrue(object.getAppliedJudgements().getFirst().isPassed());
 		assertEquals(new Product(100, ""), currentMatches.get(1).getObject());
@@ -103,11 +103,11 @@ public class OngoingRefinementTest {
 		sut.applyScoreJudge(new IdSizeJudge(105.0), ensureSurvival);
 
 
-		List<MatchingObject> currentMatches = sut.getCurrentMatches();
+		List<MatchingObject<?>> currentMatches = sut.getCurrentMatches();
 
 		if (ensureSurvival) {
 			assertEquals(5, currentMatches.size());
-			MatchingObject object = currentMatches.getFirst();
+			MatchingObject<?> object = currentMatches.getFirst();
 			// Despite all failing, higher scores still win!
 			assertEquals(new Product(102, ""), object.getObject());
 			assertFalse(object.getAppliedJudgements().getFirst().isPassed());
@@ -124,22 +124,22 @@ public class OngoingRefinementTest {
 				SAMPLE_PRODUCT_2
 		));
 
-		MatchingObject sourceObject1 = sut.getCurrentMatches().getFirst();
+		MatchingObject<?> sourceObject1 = sut.getCurrentMatches().getFirst();
 
 		sut.transformMatches(new PredefinedMatchTransformer(Map.of(
 				SAMPLE_SUBSTANCE_1, List.of(SAMPLE_SUBSTANCE_2, SAMPLE_SUBSTANCE_3)
 		)));
 
-		List<MatchingObject> objects = sut.getCurrentMatches();
+		List<MatchingObject<?>> objects = sut.getCurrentMatches();
 		assertEquals(2, objects.size());
 
 		assertEquals(SAMPLE_SUBSTANCE_2, objects.get(0).getObject());
 		assertEquals(SAMPLE_SUBSTANCE_3, objects.get(1).getObject());
 		assertInstanceOf(TransformedObject.class, objects.getFirst());
-		assertNotNull(((TransformedObject) objects.getFirst()).getTransformation());
+		assertNotNull(((TransformedObject<?, ?>) objects.getFirst()).getTransformation());
 		assertTrue(objects.getFirst().getAppliedJudgements().isEmpty());
-		assertEquals(sourceObject1, ((TransformedObject) objects.get(0)).getSourceObject());
-		assertEquals(sourceObject1, ((TransformedObject) objects.get(1)).getSourceObject());
+		assertEquals(sourceObject1, ((TransformedObject<?, ?>) objects.get(0)).getSourceObject());
+		assertEquals(sourceObject1, ((TransformedObject<?, ?>) objects.get(1)).getSourceObject());
 	}
 
 	@Test
@@ -150,7 +150,7 @@ public class OngoingRefinementTest {
 				SAMPLE_PRODUCT_2
 		));
 
-		List<MatchingObject> sourceObjects = sut.getCurrentMatches();
+		List<MatchingObject<?>> sourceObjects = sut.getCurrentMatches();
 
 		sut.transformMatches(new PredefinedMatchTransformer(Map.of(
 				SAMPLE_SUBSTANCE_1, List.of(SAMPLE_SUBSTANCE_2),
@@ -158,19 +158,19 @@ public class OngoingRefinementTest {
 				SAMPLE_PRODUCT_2, List.of(SAMPLE_SUBSTANCE_2)
 		)));
 
-		List<MatchingObject> resultObjects = sut.getCurrentMatches();
+		List<MatchingObject<?>> resultObjects = sut.getCurrentMatches();
 		assertEquals(1, resultObjects.size());
 
-		MatchingObject obj = resultObjects.getFirst();
+		MatchingObject<?> obj = resultObjects.getFirst();
 		assertInstanceOf(Merge.class, obj);
-		Merge merge = (Merge) obj;
+		Merge<?> merge = (Merge<?>) obj;
 
 		assertEquals(SAMPLE_SUBSTANCE_2, merge.getObject());
 		// Source objects of the merge are the TransformedObject-instances, so we need to get their source to get back
 		// to the original MatchingObject instances.
 		assertEquals(sourceObjects, merge.getSourceObjects()
 		                                 .stream()
-		                                 .map(m -> ((TransformedObject) m).getSourceObject())
+		                                 .map(m -> ((TransformedObject<?, ?>) m).getSourceObject())
 		                                 .toList());
 	}
 
@@ -197,7 +197,7 @@ public class OngoingRefinementTest {
 				SAMPLE_PRODUCT_1, List.of(SAMPLE_SUBSTANCE_3) // Should merge with 2nd-previous row
 		)));
 
-		List<MatchingObject> matchingObjects = sut.getCurrentMatches();
+		List<MatchingObject<?>> matchingObjects = sut.getCurrentMatches();
 		assertEquals(List.of(SAMPLE_SUBSTANCE_2, SAMPLE_SUBSTANCE_3, SAMPLE_PRODUCT_2, SAMPLE_PRODUCT_3),
 				matchingObjects.stream().map(MatchingObject::getObject).toList());
 
@@ -232,7 +232,7 @@ public class OngoingRefinementTest {
 
 		assertTrue(sut.applyFilter(new ProductOnlyFilter(), true));
 
-		List<MatchingObject> currentMatches = sut.getCurrentMatches();
+		List<MatchingObject<?>> currentMatches = sut.getCurrentMatches();
 		assertEquals(2, currentMatches.size());
 		assertEquals(SAMPLE_PRODUCT_2, currentMatches.getFirst().getObject());
 		assertEquals(SAMPLE_PRODUCT_3, currentMatches.getLast().getObject());
@@ -241,7 +241,7 @@ public class OngoingRefinementTest {
 		List<Judgement> judgementList = currentMatches.getFirst().getAppliedJudgements();
 		assertEquals(1, judgementList.size());
 		assertTrue(judgementList.getFirst().isPassed());
-		List<Judgement> judgementList2 = ((TransformedObject) currentMatches.getFirst()).getSourceObject().getAppliedJudgements();
+		List<Judgement> judgementList2 = ((TransformedObject<?, ?>) currentMatches.getFirst()).getSourceObject().getAppliedJudgements();
 		assertEquals(2, judgementList2.size());
 		assertFalse(judgementList2.get(0).isPassed());
 		assertTrue(judgementList2.get(1).isPassed());

@@ -2,6 +2,7 @@ package de.medizininformatikinitiative.medgraph.searchengine.algorithm.refining;
 
 import de.medizininformatikinitiative.medgraph.searchengine.db.Database;
 import de.medizininformatikinitiative.medgraph.searchengine.model.SearchQuery;
+import de.medizininformatikinitiative.medgraph.searchengine.model.identifiable.Substance;
 import de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject.MatchingObject;
 import de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject.OriginalMatch;
 import de.medizininformatikinitiative.medgraph.searchengine.model.identifiable.Product;
@@ -53,25 +54,26 @@ public class ExperimentalRefiner implements MatchRefiner {
 	 * This particular implementation guarantees the resulting tree only contains product matches.
 	 */
 	@Override
-	public SubSortingTree<MatchingObject> refineMatches(List<? extends MatchingObject> initialMatches,
+	public SubSortingTree<MatchingObject<?>> refineMatches(List<? extends MatchingObject<?>> initialMatches,
 	                                                    SearchQuery query) {
 
 		// Use the substances from the search query to resolve products
-		List<OriginalMatch> substanceObjects = query.getSubstances().stream()
-		                                            .map(OriginalMatch::new).toList();
+		List<OriginalMatch<Substance>> substanceObjects = query.getSubstances().stream()
+		                                                       .map(OriginalMatch::new)
+		                                                       .toList();
 		OngoingRefinement substanceBasedSearch = new OngoingRefinement(substanceObjects, query);
 		substanceBasedSearch.transformMatches(substanceToProductResolver);
 		// TODO Ordering, and therefore relevance of substance search terms is completely lost as of now
 
 		// Merge the products resolved from substances with the products from the initial search
-		SubSortingTree<MatchingObject> productMatches = new SubSortingTree<>(initialMatches);
-		SubSortingTree<MatchingObject> substanceMatches = substanceBasedSearch.getCurrentMatchesTree();
-		SubSortingTree<MatchingObject> combinedMatches = SubSortingTree.merge(productMatches, substanceMatches);
+		SubSortingTree<MatchingObject<?>> productMatches = new SubSortingTree<>(initialMatches);
+		SubSortingTree<MatchingObject<?>> substanceMatches = substanceBasedSearch.getCurrentMatchesTree();
+		SubSortingTree<MatchingObject<?>> combinedMatches = SubSortingTree.merge(productMatches, substanceMatches);
 		combinedMatches.clearDuplicates();
 
 		OngoingRefinement matching = new OngoingRefinement(combinedMatches, query);
 
-		List<MatchingObject> currentMatches = matching.getCurrentMatches();
+		List<MatchingObject<?>> currentMatches = matching.getCurrentMatches();
 		if (currentMatches.size() == 1 && currentMatches.getFirst().getObject() instanceof Product) {
 			return matching.getCurrentMatchesTree();
 		}

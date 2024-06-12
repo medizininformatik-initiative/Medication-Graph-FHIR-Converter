@@ -25,10 +25,10 @@ import java.util.*;
  */
 public class OngoingRefinement {
 
-	private final SubSortingTree<MatchingObject> currentMatches;
+	private final SubSortingTree<MatchingObject<?>> currentMatches;
 	private final SearchQuery query;
 
-	public OngoingRefinement(List<? extends MatchingObject> matchList, SearchQuery query) {
+	public OngoingRefinement(List<? extends MatchingObject<?>> matchList, SearchQuery query) {
 		this(new SubSortingTree<>(matchList), query);
 	}
 
@@ -37,7 +37,7 @@ public class OngoingRefinement {
 	 * @param matchList the {@link SubSortingTree} to manage
 	 * @param query the query to use for refinements
 	 */
-	public OngoingRefinement(SubSortingTree<MatchingObject> matchList, SearchQuery query) {
+	public OngoingRefinement(SubSortingTree<MatchingObject<?>> matchList, SearchQuery query) {
 		currentMatches = matchList;
 		this.query = query;
 	}
@@ -95,8 +95,8 @@ public class OngoingRefinement {
 		// highest-rated) with the Merge object and eliminate the others.
 
 		// Step 1: Run the transformer
-		List<MatchingObject> matchingObjects = getCurrentMatches();
-		List<Matchable> matchables = matchingObjects.stream().map(MatchingObject::getObject).toList();
+		List<MatchingObject<?>> matchingObjects = getCurrentMatches();
+		List<? extends Matchable> matchables = matchingObjects.stream().map(MatchingObject::getObject).toList();
 		List<Transformation> transformations = transformer.batchTransform(matchables, query);
 
 		// Verify we got the expected amount of transformations
@@ -109,12 +109,12 @@ public class OngoingRefinement {
 
 		// Step 2: create TransformedObject-instances and group by outcome Matchable
 		// Use LinkedHashMap to ensure order to objects in transformation output is preserved.
-		Map<Matchable, LinkedList<TransformedObject>> postTransformationMap = new LinkedHashMap<>();
+		Map<Matchable, LinkedList<TransformedObject<?, ?>>> postTransformationMap = new LinkedHashMap<>();
 		for (int i = 0; i < size; i++) {
-			MatchingObject sourceObject = matchingObjects.get(i);
+			MatchingObject<?> sourceObject = matchingObjects.get(i);
 			Transformation transformation = transformations.get(i);
 			for (Matchable output : transformation.getResult()) {
-				TransformedObject transformedObject = new TransformedObject(output, sourceObject, transformation);
+				TransformedObject<?, ?> transformedObject = new TransformedObject<>(output, sourceObject, transformation);
 				// Add to the list of TransformedObjects which represent this Matchable, creating the list if required
 				postTransformationMap.computeIfAbsent(output, m -> new LinkedList<>()).add(transformedObject);
 			}
@@ -122,17 +122,17 @@ public class OngoingRefinement {
 
 		// Step 3: Merge all TransformedObjects which reference the same Matchable.
 		// While doing that, prepare the replacement map for the SubSortingTree.
-		Map<MatchingObject, List<MatchingObject>> replacementMap = new HashMap<>();
-		for (MatchingObject sourceObject : matchingObjects) {
+		Map<MatchingObject<?>, List<MatchingObject<?>>> replacementMap = new HashMap<>();
+		for (MatchingObject<?> sourceObject : matchingObjects) {
 			replacementMap.put(sourceObject, new LinkedList<>());
 		}
-		for (LinkedList<TransformedObject> list : postTransformationMap.values()) {
-			MatchingObject result;
+		for (LinkedList<TransformedObject<?, ?>> list : postTransformationMap.values()) {
+			MatchingObject<?> result;
 			assert !list.isEmpty();
 			if (list.size() == 1) {
 				result = list.getFirst();
 			} else {
-				result = new Merge(list);
+				result = new Merge<>(list);
 			}
 			// The remappingKey is the object in the SubSortingTree which is to be replaced with the result.
 			// In case of a single-entry list, this is trivial. We simply replace the source object with the
@@ -142,7 +142,7 @@ public class OngoingRefinement {
 			// The object at this position is the source object of the first transformed object in the list, because
 			// the processing happened in this order. So elements further back in the original list are processed later
 			// and therefore end up at later positions in the list of transformed objects.
-			MatchingObject remappingKey = list.getFirst().getSourceObject();
+			MatchingObject<?> remappingKey = list.getFirst().getSourceObject();
 
 			replacementMap.get(remappingKey).add(result);
 		}
@@ -159,8 +159,8 @@ public class OngoingRefinement {
 	 * @return true, if at least one object has passed the judgement, false otherwise
 	 */
 	private boolean judgeMatches(Judge<?> judge) {
-		List<MatchingObject> objects = currentMatches.getContents();
-		List<Matchable> matchables = objects.stream().map(MatchingObject::getObject).toList();
+		List<MatchingObject<?>> objects = currentMatches.getContents();
+		List<? extends Matchable> matchables = objects.stream().map(MatchingObject::getObject).toList();
 		List<? extends Judgement> judgements = judge.batchJudge(matchables, query);
 		assert judgements.size() == objects.size();
 		boolean atLeastOnePass = false;
@@ -206,7 +206,7 @@ public class OngoingRefinement {
 	/**
 	 * Returns the current intermediate matches.
 	 */
-	public List<MatchingObject> getCurrentMatches() {
+	public List<MatchingObject<?>> getCurrentMatches() {
 		return currentMatches.getContents();
 	}
 
@@ -214,7 +214,7 @@ public class OngoingRefinement {
 	 * Returns the current matches as {@link SubSortingTree}. Note that modifications to this tree will
 	 * affect the matching, in possibly unpredicatable ways.
 	 */
-	public SubSortingTree<MatchingObject> getCurrentMatchesTree() {
+	public SubSortingTree<MatchingObject<?>> getCurrentMatchesTree() {
 		return currentMatches;
 	}
 

@@ -38,7 +38,7 @@ public interface IMatchTransformer extends MatchingPipelineComponent {
 	 * @return a list of {@link Transformation}s with the transformation results, each entry corresponds to the
 	 * {@link Matchable} in the input list at the same position
 	 */
-	default List<Transformation> batchTransform(List<Matchable> matchables, SearchQuery query) {
+	default List<Transformation> batchTransform(List<? extends Matchable> matchables, SearchQuery query) {
 		return matchables.stream().map(m -> transform(m, query)).toList();
 	}
 

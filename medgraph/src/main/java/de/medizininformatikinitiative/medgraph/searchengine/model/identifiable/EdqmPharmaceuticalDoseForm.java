@@ -21,7 +21,7 @@ public class EdqmPharmaceuticalDoseForm extends EdqmConcept {
 	public EdqmPharmaceuticalDoseForm(@NotNull String code, @NotNull String name,
 	                                  @NotNull Collection<EdqmConcept> characteristics) {
 		super(code, name, EDQM.PHARMACEUTICAL_DOSE_FORM);
-		this.characteristics = Collections.unmodifiableSet(new HashSet<>(characteristics));
+		this.characteristics = Set.copyOf(characteristics);
 	}
 
 	public @NotNull Set<EdqmConcept> getCharacteristics() {

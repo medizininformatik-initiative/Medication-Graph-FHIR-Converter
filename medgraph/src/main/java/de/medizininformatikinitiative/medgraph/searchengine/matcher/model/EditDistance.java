@@ -9,7 +9,7 @@ import java.util.Objects;
  *
  * @author Markus Budeus
  */
-public class EditDistance {
+public  class EditDistance {
 
 	@NotNull
 	private final String value1;

@@ -24,7 +24,7 @@ import de.medizininformatikinitiative.medgraph.ui.theme.ApplicationTheme
 @Preview
 private fun MatchingObjectSourcePipelineDisplay() {
     ApplicationTheme {
-        var obj: MatchingObject = OriginalMatch(
+        var obj: MatchingObject<*> = OriginalMatch(
             Substance(
                 1,
                 "THE ORIGIN"
@@ -68,7 +68,7 @@ private fun MatchingObjectSourcePipelineDisplay() {
 }
 
 @Composable
-fun MatchingObjectPipelineDisplay(obj: MatchingObject, modifier: Modifier = Modifier) {
+fun MatchingObjectPipelineDisplay(obj: MatchingObject<*>, modifier: Modifier = Modifier) {
     val scrollState = rememberScrollState()
     Column(
         verticalArrangement = Arrangement.spacedBy(4.dp),
@@ -81,11 +81,11 @@ fun MatchingObjectPipelineDisplay(obj: MatchingObject, modifier: Modifier = Modi
 }
 
 @Composable
-private fun MatchingObjectDisplay(obj: MatchingObject, scrollState: ScrollState) {
+private fun MatchingObjectDisplay(obj: MatchingObject<*>, scrollState: ScrollState) {
     when (obj) {
         is OriginalMatch -> OriginalMatchDisplay(obj)
         is Merge -> MergedObjectsDisplay(obj, scrollState)
-        is TransformedObject -> TransformedObjectDisplay(obj, scrollState)
+        is TransformedObject<*, *> -> TransformedObjectDisplay(obj, scrollState)
         else -> Text("Unknown object type encountered!")
     }
     obj.appliedJudgements.forEach {
@@ -97,13 +97,13 @@ private fun MatchingObjectDisplay(obj: MatchingObject, scrollState: ScrollState)
 }
 
 @Composable
-private fun OriginalMatchDisplay(obj: OriginalMatch) {
+private fun OriginalMatchDisplay(obj: OriginalMatch<*>) {
     OriginUI(obj.origin)
     DetailedIdentifiableObjectUI(obj.`object`, modifier = Modifier.fillMaxWidth())
 }
 
 @Composable
-private fun MergedObjectsDisplay(obj: Merge, scrollState: ScrollState) {
+private fun MergedObjectsDisplay(obj: Merge<*>, scrollState: ScrollState) {
     var currentSelectionIndex by remember { mutableStateOf(0) }
     currentSelectionIndex = Math.max(0, Math.min(obj.sourceObjects.size - 1, currentSelectionIndex))
     MatchingObjectDisplay(obj.sourceObjects[currentSelectionIndex], scrollState)
@@ -112,7 +112,7 @@ private fun MergedObjectsDisplay(obj: Merge, scrollState: ScrollState) {
 }
 
 @Composable
-private fun TransformedObjectDisplay(obj: TransformedObject, scrollState: ScrollState) {
+private fun TransformedObjectDisplay(obj: TransformedObject<*, *>, scrollState: ScrollState) {
     MatchingObjectDisplay(obj.sourceObject, scrollState)
     val targetObjectIndex = obj.transformation.result.indexOf(obj.`object`)
     TransformationDisplay(obj.transformation, highlightedOutputIndex = targetObjectIndex)

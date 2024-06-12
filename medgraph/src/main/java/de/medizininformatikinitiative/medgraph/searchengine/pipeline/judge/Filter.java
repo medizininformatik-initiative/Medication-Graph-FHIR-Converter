@@ -19,7 +19,7 @@ public interface Filter extends Judge<Filtering> {
 	}
 
 	@Override
-	default List<Filtering> batchJudge(List<Matchable> matchables, SearchQuery query) {
+	default List<Filtering> batchJudge(List<? extends Matchable> matchables, SearchQuery query) {
 		String name = toString();
 		String desc = getDescription();
 		return batchPassesFilter(matchables, query)
@@ -45,7 +45,7 @@ public interface Filter extends Judge<Filtering> {
 	 * @return A list containing true for each {@link Matchable} which passes the filter and false for each that does
 	 * not
 	 */
-	default List<Boolean> batchPassesFilter(List<Matchable> matchables, SearchQuery query) {
+	default List<Boolean> batchPassesFilter(List<? extends Matchable> matchables, SearchQuery query) {
 		return matchables.stream().map(matchable -> passesFilter(matchable, query)).toList();
 	}
 

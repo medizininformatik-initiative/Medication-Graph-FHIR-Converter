@@ -27,8 +27,8 @@ public class CodingSystemTest {
 				". Please correct the date specified by the CodingSystem.");
 	}
 
-	private LocalDate parseLocalDateFromCsvHeader(String resouceFile) throws IOException {
-		try (InputStream inputStream = CodingSystem.class.getClassLoader().getResourceAsStream("edqm_objects.csv")) {
+	private LocalDate parseLocalDateFromCsvHeader(String resourceFile) throws IOException {
+		try (InputStream inputStream = CodingSystem.class.getClassLoader().getResourceAsStream(resourceFile)) {
 			assertNotNull(inputStream);
 			try (BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream))) {
 				return LocalDate.parse(reader.readLine().substring(2));

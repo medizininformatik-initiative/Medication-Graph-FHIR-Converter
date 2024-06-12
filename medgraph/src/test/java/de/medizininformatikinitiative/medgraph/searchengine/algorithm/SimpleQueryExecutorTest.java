@@ -43,10 +43,10 @@ public class SimpleQueryExecutorTest extends UnitTest {
 
 	@Test
 	public void passesOnInitialMatches() {
-		List<OriginalMatch> list = List.of(
-				new OriginalMatch(SAMPLE_PRODUCT_1),
-				new OriginalMatch(SAMPLE_PRODUCT_2),
-				new OriginalMatch(SAMPLE_SUBSTANCE_3)
+		List<OriginalMatch<?>> list = List.of(
+				new OriginalMatch<>(SAMPLE_PRODUCT_1),
+				new OriginalMatch<>(SAMPLE_PRODUCT_2),
+				new OriginalMatch<>(SAMPLE_SUBSTANCE_3)
 		);
 		when(initialMatchFinder.findInitialMatches(query)).thenReturn(list.stream());
 
@@ -57,21 +57,21 @@ public class SimpleQueryExecutorTest extends UnitTest {
 
 	@Test
 	public void mergesDuplicateInitialMatches() {
-		List<OriginalMatch> list = List.of(
-				new OriginalMatch(SAMPLE_PRODUCT_1),
-				new OriginalMatch(SAMPLE_PRODUCT_2),
-				new OriginalMatch(SAMPLE_PRODUCT_1),
-				new OriginalMatch(SAMPLE_SUBSTANCE_3),
-				new OriginalMatch(SAMPLE_SUBSTANCE_3)
+		List<OriginalMatch<?>> list = List.of(
+				new OriginalMatch<>(SAMPLE_PRODUCT_1),
+				new OriginalMatch<>(SAMPLE_PRODUCT_2),
+				new OriginalMatch<>(SAMPLE_PRODUCT_1),
+				new OriginalMatch<>(SAMPLE_SUBSTANCE_3),
+				new OriginalMatch<>(SAMPLE_SUBSTANCE_3)
 		);
 		when(initialMatchFinder.findInitialMatches(query)).thenReturn(list.stream());
 
 
 
-		List<MatchingObject> expectedList = List.of(
-				new Merge(List.of(list.get(0), list.get(2))),
+		List<MatchingObject<?>> expectedList = List.of(
+				new Merge<>(List.of(list.get(0), list.get(2))),
 				list.get(1),
-				new Merge(List.of(list.get(3), list.get(4)))
+				new Merge<>(List.of(list.get(3), list.get(4)))
 		);
 
 		assertEquals(expectedList, sut.executeQuery(query));

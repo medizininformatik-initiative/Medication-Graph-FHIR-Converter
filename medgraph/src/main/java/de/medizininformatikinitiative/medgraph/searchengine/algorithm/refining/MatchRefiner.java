@@ -26,6 +26,6 @@ public interface MatchRefiner {
 	 * @param query          the query to consider for the refinement
 	 * @return a {@link SubSortingTree} containing the refined matches, sorted by relevance
 	 */
-	SubSortingTree<MatchingObject> refineMatches(List<? extends MatchingObject> initialMatches, SearchQuery query);
+	SubSortingTree<MatchingObject<?>> refineMatches(List<? extends MatchingObject<?>> initialMatches, SearchQuery query);
 
 }

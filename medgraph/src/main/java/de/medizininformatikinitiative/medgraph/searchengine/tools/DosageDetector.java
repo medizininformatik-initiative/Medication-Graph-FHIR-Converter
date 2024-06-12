@@ -224,7 +224,7 @@ public class DosageDetector {
 	private BigDecimal readNumberIntoBufferAndParse(int startIndex) {
 		int currentIndex = startIndex;
 		List<Character> separatorsRead = new ArrayList<>();
-		char currentChar = '0';
+		char currentChar;
 		while (currentIndex < length) {
 			currentChar = value.charAt(currentIndex);
 			if (Character.isDigit(currentChar)) {

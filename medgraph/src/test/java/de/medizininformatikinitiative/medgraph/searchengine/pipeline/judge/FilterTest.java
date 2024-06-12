@@ -62,7 +62,7 @@ public class FilterTest {
 		}
 
 		@Override
-		public List<Boolean> batchPassesFilter(List<Matchable> matchables, SearchQuery query) {
+		public List<Boolean> batchPassesFilter(List<? extends Matchable> matchables, SearchQuery query) {
 			List<Boolean> result = new ArrayList<>(matchables.size());
 			result.addAll(Arrays.asList(this.result).subList(0, matchables.size()));
 			return result;

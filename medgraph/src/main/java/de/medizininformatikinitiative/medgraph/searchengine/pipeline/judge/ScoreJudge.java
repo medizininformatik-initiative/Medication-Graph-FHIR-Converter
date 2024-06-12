@@ -27,7 +27,7 @@ public abstract class ScoreJudge implements Judge<ScoredJudgement> {
 	}
 
 	@Override
-	public List<ScoredJudgement> batchJudge(List<Matchable> matchables, SearchQuery query) {
+	public List<ScoredJudgement> batchJudge(List<? extends Matchable> matchables, SearchQuery query) {
 		String name = toString();
 		String desc = getDescription();
 		return batchJudgeInternal(matchables, query)
@@ -53,7 +53,7 @@ public abstract class ScoreJudge implements Judge<ScoredJudgement> {
 	 * @return the assigned score for each {@link Matchable}, with each entry in the list being the score of the
 	 * {@link Matchable} in the input list at the same position
 	 */
-	protected List<Double> batchJudgeInternal(List<Matchable> matchables, SearchQuery query) {
+	protected List<Double> batchJudgeInternal(List<? extends Matchable> matchables, SearchQuery query) {
 		return matchables.stream().map(m -> judgeInternal(m, query)).toList();
 	}
 

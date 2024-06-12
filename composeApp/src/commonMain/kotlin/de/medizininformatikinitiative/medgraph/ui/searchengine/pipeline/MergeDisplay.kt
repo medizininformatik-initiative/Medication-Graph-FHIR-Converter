@@ -18,7 +18,7 @@ import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
 
 @Composable
-fun MergeDisplay(merge: Merge,
+fun MergeDisplay(merge: Merge<*>,
                  currentSelection: Int = 0,
                  onSelectSourcePath: (Int) -> Unit,
                  pipelineScrollState: ScrollState,

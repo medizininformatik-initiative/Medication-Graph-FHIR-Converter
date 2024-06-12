@@ -31,7 +31,7 @@ public class SubstanceToProductResolver extends MatchTransformer {
 	}
 
 	@Override
-	public List<List<Matchable>> batchTransformInternal(List<Matchable> targets, SearchQuery query) {
+	public List<List<Matchable>> batchTransformInternal(List<? extends Matchable> targets, SearchQuery query) {
 		List<Long> substanceMmiIds = new ArrayList<>(targets.size());
 		for (Matchable t : targets) {
 			if (t instanceof Substance s)

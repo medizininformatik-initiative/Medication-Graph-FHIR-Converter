@@ -26,8 +26,8 @@ public class SimpleQueryExecutor implements QueryExecutor {
 		this.matchRefiner = matchRefiner;
 	}
 
-	public List<MatchingObject> executeQuery(SearchQuery query) {
-		List<MatchingObject> initialMatches = mergeDuplicates(initialMatchFinder.findInitialMatches(query));
+	public List<MatchingObject<?>> executeQuery(SearchQuery query) {
+		List<MatchingObject<?>> initialMatches = mergeDuplicates(initialMatchFinder.findInitialMatches(query));
 		return matchRefiner.refineMatches(initialMatches, query).getContents();
 	}
 
@@ -37,8 +37,8 @@ public class SimpleQueryExecutor implements QueryExecutor {
 	 * @param stream the stream from which to take the objects to merge
 	 * @return a list of remaining {@link MatchingObject}s
 	 */
-	private List<MatchingObject> mergeDuplicates(Stream<? extends MatchingObject> stream) {
-		Map<Matchable, LinkedList<MatchingObject>> matchesByMatchable = Collections.synchronizedMap(
+	private List<MatchingObject<?>> mergeDuplicates(Stream<? extends MatchingObject<?>> stream) {
+		Map<Matchable, LinkedList<MatchingObject<?>>> matchesByMatchable = Collections.synchronizedMap(
 				new LinkedHashMap<>());
 		stream.forEach(
 				match -> matchesByMatchable.compute(match.getObject(), (key, value) -> {
@@ -48,11 +48,11 @@ public class SimpleQueryExecutor implements QueryExecutor {
 				})
 		);
 
-		List<MatchingObject> mergedInitialMatches = new ArrayList<>();
+		List<MatchingObject<?>> mergedInitialMatches = new ArrayList<>();
 		matchesByMatchable.values().forEach(list -> {
 			assert !list.isEmpty();
 			if (list.size() == 1) mergedInitialMatches.add(list.getFirst());
-			else mergedInitialMatches.add(new Merge(list));
+			else mergedInitialMatches.add(new Merge<>(list));
 		});
 
 		return mergedInitialMatches;

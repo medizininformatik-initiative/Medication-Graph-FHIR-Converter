@@ -53,7 +53,7 @@ private fun SearchResultsListUI() {
 
 @Composable
 fun SearchResultsListUI(viewModel: SearchResultsListViewModel, modifier: Modifier = Modifier) {
-    var currentPipelineInfo by remember { mutableStateOf<MatchingObject?>(null) }
+    var currentPipelineInfo by remember { mutableStateOf<MatchingObject<*>?>(null) }
 
     Column(modifier = modifier) {
         val actualLastSize = viewModel.actualLastQueryResultSize
@@ -83,7 +83,7 @@ fun SearchResultsListUI(viewModel: SearchResultsListViewModel, modifier: Modifie
 }
 
 @Composable
-fun MatchingObjectPipelineInfoDialog(target: MatchingObject, onDismissRequest: () -> Unit) {
+fun MatchingObjectPipelineInfoDialog(target: MatchingObject<*>, onDismissRequest: () -> Unit) {
     Dialog(onDismissRequest, DialogProperties(
         dismissOnBackPress = true,
         dismissOnClickOutside = true,
@@ -107,9 +107,9 @@ fun MatchingObjectPipelineInfoDialog(target: MatchingObject, onDismissRequest: (
 
 @Composable
 fun SearchResultsListUI(
-    results: List<MatchingObject>,
+    results: List<MatchingObject<*>>,
     modifier: Modifier = Modifier,
-    onPipelineInfoRequested: (MatchingObject) -> Unit = {},
+    onPipelineInfoRequested: (MatchingObject<*>) -> Unit = {},
 ) {
     var expandedResultIndex by remember { mutableStateOf<Int?>(null) }
 

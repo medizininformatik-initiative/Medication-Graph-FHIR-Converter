@@ -29,7 +29,7 @@ public class ProductDetailsResolver extends MatchTransformer {
 	}
 
 	@Override
-	protected List<List<Matchable>> batchTransformInternal(List<Matchable> matchables, SearchQuery query) {
+	protected List<List<Matchable>> batchTransformInternal(List<? extends Matchable> matchables, SearchQuery query) {
 		Set<Long> productIds = new HashSet<>();
 		matchables.forEach(m -> {
 			if (isApplicable(m)) productIds.add(((Product) m).getId());

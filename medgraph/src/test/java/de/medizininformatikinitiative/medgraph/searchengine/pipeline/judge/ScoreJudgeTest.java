@@ -65,7 +65,7 @@ public class ScoreJudgeTest {
 		}
 
 		@Override
-		protected List<Double> batchJudgeInternal(List<Matchable> matchables, SearchQuery query) {
+		protected List<Double> batchJudgeInternal(List<? extends Matchable> matchables, SearchQuery query) {
 			return batchJudgement;
 		}
 

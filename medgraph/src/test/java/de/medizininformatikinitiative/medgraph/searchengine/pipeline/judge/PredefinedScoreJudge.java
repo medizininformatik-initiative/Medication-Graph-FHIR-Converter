@@ -12,7 +12,6 @@ import java.util.Map;
  */
 public class PredefinedScoreJudge extends ScoreJudge {
 
-	public static final String NAME = "PredefinedScoreJudge";
 	public static final String DESC = "Assigns a pre-defined score";
 
 	private final Map<Matchable, Double> scoreMap;
