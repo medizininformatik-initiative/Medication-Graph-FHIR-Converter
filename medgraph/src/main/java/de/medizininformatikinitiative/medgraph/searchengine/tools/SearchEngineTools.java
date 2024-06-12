@@ -1,5 +1,8 @@
 package de.medizininformatikinitiative.medgraph.searchengine.tools;
 
+import de.medizininformatikinitiative.medgraph.searchengine.model.identifiable.Matchable;
+import de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject.MatchingObject;
+
 import java.util.List;
 import java.util.function.BiFunction;
 
@@ -50,5 +53,12 @@ public class SearchEngineTools {
 				}
 			}
 		}
+	}
+
+	/**
+	 * Returns a new (immutable) list containing the unwrapped objects within the given souce list.
+	 */
+	public static <T extends Matchable> List<T> unwrap(List<? extends MatchingObject<T>> list) {
+		return list.stream().map(MatchingObject::getObject).toList();
 	}
 }

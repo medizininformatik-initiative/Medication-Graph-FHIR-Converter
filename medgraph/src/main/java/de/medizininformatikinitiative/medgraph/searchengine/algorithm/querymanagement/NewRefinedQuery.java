@@ -10,6 +10,7 @@ import de.medizininformatikinitiative.medgraph.searchengine.model.identifiable.S
 import de.medizininformatikinitiative.medgraph.searchengine.model.identifier.Identifier;
 import de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject.MatchingObject;
 import de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject.Merge;
+import de.medizininformatikinitiative.medgraph.searchengine.tools.SearchEngineTools;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -83,16 +84,12 @@ public class NewRefinedQuery {
 	public SearchQuery toSearchQuery() {
 		return new SearchQuery(
 				productNameKeywords.getIdentifier(),
-				unwrapMatchingObject(substances),
-				unwrapMatchingObject(dosages),
-				unwrapMatchingObject(drugAmounts),
-				unwrapMatchingObject(doseForms),
-				unwrapMatchingObject(doseFormCharacteristics)
+				SearchEngineTools.unwrap(substances),
+				SearchEngineTools.unwrap(dosages),
+				SearchEngineTools.unwrap(drugAmounts),
+				SearchEngineTools.unwrap(doseForms),
+				SearchEngineTools.unwrap(doseFormCharacteristics)
 		);
-	}
-
-	private <T extends Matchable> List<T> unwrapMatchingObject(List<MatchingObject<T>> list) {
-		return list.stream().map(MatchingObject::getObject).toList();
 	}
 
 	public static class Builder {
