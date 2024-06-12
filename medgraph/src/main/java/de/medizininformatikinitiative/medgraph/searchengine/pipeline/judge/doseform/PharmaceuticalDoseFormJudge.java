@@ -34,7 +34,7 @@ public class PharmaceuticalDoseFormJudge extends ScoreJudge {
 		if (matchable instanceof DetailedProduct product) {
 			double score = 0;
 			for (Drug d: product.getDrugs()) {
-				EdqmPharmaceuticalDoseForm doseForm = d.getEdqmDoseForm();
+				EdqmPharmaceuticalDoseForm doseForm = d.edqmDoseForm();
 				if (doseForm != null) {
 					if (query.getDoseForms().contains(doseForm)) {
 						score += SCORE_PER_OVERLAP;

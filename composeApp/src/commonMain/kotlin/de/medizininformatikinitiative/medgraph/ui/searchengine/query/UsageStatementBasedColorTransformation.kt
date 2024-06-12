@@ -45,7 +45,7 @@ class UsageStatementBasedColorTransformation(vararg transformations: Any?) : Vis
      */
     private fun apply(usageStatement: SubstringUsageStatement, color: Color, to: AnnotatedString.Builder) {
         usageStatement.usedRanges.forEach {
-            to.addStyle(SpanStyle(color), it.from, it.to)
+            to.addStyle(SpanStyle(color), it.from(), it.to())
         }
     }
 

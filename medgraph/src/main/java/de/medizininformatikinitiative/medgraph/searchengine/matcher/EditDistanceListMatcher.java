@@ -59,8 +59,8 @@ public class EditDistanceListMatcher extends SimpleMatcher<List<String>, EditDis
 			int end = start + tokens;
 			String[] searchTermTokens = searchTermKeywords.subList(start, end).toArray(new String[0]);
 			EditDistance distance = getDistance(searchTermTokens, target);
-			if (distance != null && distance.getEditDistance() < bestDistance) {
-				bestDistance = distance.getEditDistance();
+			if (distance != null && distance.editDistance() < bestDistance) {
+				bestDistance = distance.editDistance();
 				bestMatchRange = new IntRange(start, end);
 				bestMatchEditDistance = distance;
 				if (bestDistance == 0) break; // No better result is possible, so we can abort
@@ -93,7 +93,7 @@ public class EditDistanceListMatcher extends SimpleMatcher<List<String>, EditDis
 	 */
 	private Set<Integer> listIntegers(IntRange range) {
 		Set<Integer> result = new HashSet<>();
-		for (int i = range.getFrom(); i < range.getTo(); i++) {
+		for (int i = range.from(); i < range.to(); i++) {
 			result.add(i);
 		}
 		return result;

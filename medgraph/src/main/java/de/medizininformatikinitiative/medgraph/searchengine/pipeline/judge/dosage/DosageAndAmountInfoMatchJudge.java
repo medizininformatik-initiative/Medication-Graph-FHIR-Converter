@@ -63,7 +63,7 @@ public class DosageAndAmountInfoMatchJudge extends ScoreJudge {
 
 	private double judge(List<Drug> drugInfo, SearchQuery query) {
 		double dosageMatchScore = dosageMatchJudge.judge(drugInfo, query.getActiveIngredientDosages());
-		dosageMatchScore += drugAmountMatchJudge.judge(drugInfo.stream().map(Drug::getAmount).toList(),
+		dosageMatchScore += drugAmountMatchJudge.judge(drugInfo.stream().map(Drug::amount).toList(),
 				query.getDrugAmounts());
 		return dosageMatchScore;
 	}

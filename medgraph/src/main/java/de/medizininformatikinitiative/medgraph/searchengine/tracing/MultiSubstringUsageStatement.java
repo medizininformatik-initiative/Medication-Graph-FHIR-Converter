@@ -30,11 +30,11 @@ public class MultiSubstringUsageStatement extends SubstringUsageStatement {
 		super(original);
 
 		this.usedRanges = new ArrayList<>(usedRanges);
-		this.usedRanges.sort(Comparator.comparing(IntRange::getFrom));
+		this.usedRanges.sort(Comparator.comparing(IntRange::from));
 
 		int length = original.length();
 		for (IntRange range : this.usedRanges) {
-			if (range.getFrom() < 0 || range.getTo() > length) {
+			if (range.from() < 0 || range.to() > length) {
 				throw new IllegalArgumentException("Got the range " + range + " as used range, " +
 						"but it's out of bounds for the input string of length " + length);
 			}
@@ -102,7 +102,7 @@ public class MultiSubstringUsageStatement extends SubstringUsageStatement {
 	private boolean[] buildUsageArray() {
 		boolean[] usageArray = new boolean[getOriginal().length()];
 		for (IntRange range : usedRanges) {
-			for (int i = range.getFrom(); i < range.getTo(); i++) {
+			for (int i = range.from(); i < range.to(); i++) {
 				usageArray[i] = true;
 			}
 		}

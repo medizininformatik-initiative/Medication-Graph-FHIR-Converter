@@ -102,20 +102,20 @@ public class ProductDetailsResolverTest extends UnitTest {
 				ASEPTODERM
 		), SAMPLE_SEARCH_QUERY);
 
-		assertEquals(List.of(Detailed.ASPIRIN), transformations.get(0).getResult());
-		assertEquals(List.of(Detailed.DORMICUM_5), transformations.get(1).getResult());
-		assertEquals(List.of(SAMPLE_SUBSTANCE_3), transformations.get(2).getResult());
-		assertEquals(List.of(Detailed.PREDNISOLUT), transformations.get(3).getResult());
-		assertEquals(List.of(Detailed.ASEPTODERM), transformations.get(4).getResult());
+		assertEquals(List.of(Detailed.ASPIRIN), transformations.get(0).result());
+		assertEquals(List.of(Detailed.DORMICUM_5), transformations.get(1).result());
+		assertEquals(List.of(SAMPLE_SUBSTANCE_3), transformations.get(2).result());
+		assertEquals(List.of(Detailed.PREDNISOLUT), transformations.get(3).result());
+		assertEquals(List.of(Detailed.ASEPTODERM), transformations.get(4).result());
 	}
 
 	private List<Matchable> transform(Matchable matchable, boolean batchMode) {
 		if (batchMode) {
 			List<Transformation> transformations = sut.batchTransform(List.of(matchable), SAMPLE_SEARCH_QUERY);
 			assertEquals(1, transformations.size(), "Exactly one transformation was requested, but "+transformations.size()+" were returned!");
-			return transformations.getFirst().getResult();
+			return transformations.getFirst().result();
 		} else {
-			return sut.transform(matchable, SAMPLE_SEARCH_QUERY).getResult();
+			return sut.transform(matchable, SAMPLE_SEARCH_QUERY).result();
 		}
 	}
 }

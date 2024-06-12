@@ -9,12 +9,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import de.medizininformatikinitiative.medgraph.searchengine.model.pipelinestep.Judgement
-import de.medizininformatikinitiative.medgraph.searchengine.model.pipelinestep.MatchingPipelineStep
 import de.medizininformatikinitiative.medgraph.searchengine.model.pipelinestep.ScoredJudgement
 import de.medizininformatikinitiative.medgraph.ui.resources.StringRes
 import de.medizininformatikinitiative.medgraph.ui.theme.ApplicationTheme
 import de.medizininformatikinitiative.medgraph.ui.theme.localColors
-import de.medizininformatikinitiative.medgraph.ui.theme.templates.clipToBox
 
 
 @Composable
@@ -50,7 +48,7 @@ private fun JudgementDisplay() {
 fun JudgementDisplay(judgement: Judgement, modifier: Modifier = Modifier) {
 
     val backgroundColor =
-        if (judgement.isPassed) MaterialTheme.localColors.weakSuccess else MaterialTheme.localColors.weakFailure
+        if (judgement.passed()) MaterialTheme.localColors.weakSuccess else MaterialTheme.localColors.weakFailure
 
     MatchingPipelineStepDisplay(
         judgement,
@@ -78,7 +76,7 @@ fun JudgementDisplay(judgement: Judgement, modifier: Modifier = Modifier) {
 
             Row {
                 Text(StringRes.judgement_result, style = MaterialTheme.typography.h6)
-                if (judgement.isPassed) {
+                if (judgement.passed()) {
                     Text(
                         StringRes.judgement_passed,
                         color = MaterialTheme.localColors.strongSuccess,

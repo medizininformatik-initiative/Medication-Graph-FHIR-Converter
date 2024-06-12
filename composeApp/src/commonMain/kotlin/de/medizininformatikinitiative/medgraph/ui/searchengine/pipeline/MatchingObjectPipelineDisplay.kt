@@ -114,6 +114,6 @@ private fun MergedObjectsDisplay(obj: Merge<*>, scrollState: ScrollState) {
 @Composable
 private fun TransformedObjectDisplay(obj: TransformedObject<*, *>, scrollState: ScrollState) {
     MatchingObjectDisplay(obj.sourceObject, scrollState)
-    val targetObjectIndex = obj.transformation.result.indexOf(obj.`object`)
+    val targetObjectIndex = obj.transformation.result().indexOf(obj.`object`)
     TransformationDisplay(obj.transformation, highlightedOutputIndex = targetObjectIndex)
 }

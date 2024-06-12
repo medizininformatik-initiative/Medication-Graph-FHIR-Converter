@@ -79,7 +79,7 @@ public class UnitTest {
 	                               boolean trim) {
 		List<String> actualUsedParts = new ArrayList<>();
 		for (IntRange range : usageStatement.getUsedRanges()) {
-			actualUsedParts.add(usageStatement.getOriginal().substring(range.getFrom(), range.getTo()));
+			actualUsedParts.add(usageStatement.getOriginal().substring(range.from(), range.to()));
 		}
 
 		if (trim) {

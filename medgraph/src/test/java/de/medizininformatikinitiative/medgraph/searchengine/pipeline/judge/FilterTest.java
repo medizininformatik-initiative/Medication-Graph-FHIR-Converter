@@ -21,15 +21,15 @@ public class FilterTest {
 	@Test
 	public void singleTest() {
 		Filtering filtering = new TestFilter(true).judge(null, null);
-		assertTrue(filtering.isPassed());
-		assertEquals("filter", filtering.getName());
-		assertEquals("does things", filtering.getDescription());
+		assertTrue(filtering.passed());
+		assertEquals("filter", filtering.name());
+		assertEquals("does things", filtering.description());
 	}
 
 	@Test
 	public void singleTest2() {
 		Filtering filtering = new TestFilter(false).judge(null, null);
-		assertFalse(filtering.isPassed());
+		assertFalse(filtering.passed());
 	}
 
 	@Test
@@ -42,10 +42,10 @@ public class FilterTest {
 						new Substance(5, "A")
 				), null);
 
-		assertFalse(list.get(0).isPassed());
-		assertFalse(list.get(1).isPassed());
-		assertTrue(list.get(2).isPassed());
-		assertFalse(list.get(3).isPassed());
+		assertFalse(list.get(0).passed());
+		assertFalse(list.get(1).passed());
+		assertTrue(list.get(2).passed());
+		assertFalse(list.get(3).passed());
 	}
 
 	private static class TestFilter implements Filter {

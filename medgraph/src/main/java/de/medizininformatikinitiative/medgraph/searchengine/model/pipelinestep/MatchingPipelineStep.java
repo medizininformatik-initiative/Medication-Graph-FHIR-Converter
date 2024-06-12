@@ -12,11 +12,11 @@ public interface MatchingPipelineStep {
 	/**
 	 * Returns a human-readable name of this matching step.
 	 */
-	String getName();
+	String name();
 
 	/**
 	 * Returns a human-readable short description of this step.
 	 */
-	String getDescription();
+	String description();
 
 }

@@ -6,19 +6,13 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * A transformation is a matching pipeline step which converts
- * {@link Matchable Matchables} into different
- * {@link Matchable Matchables}.
- * For example, substances may be converted to products via searching for producs with a given active substance.
+ * A transformation is a matching pipeline step which converts {@link Matchable Matchables} into different
+ * {@link Matchable Matchables}. For example, substances may be converted to products via searching for producs with a
+ * given active substance.
  *
  * @author Markus Budeus
  */
-public class Transformation implements MatchingPipelineStep {
-
-	private final String name;
-	private final String description;
-
-	private final List<Matchable> result;
+public record Transformation(String name, String description, List<Matchable> result) implements MatchingPipelineStep {
 
 	public Transformation(String name, String description, List<Matchable> result) {
 		this.name = name;
@@ -26,20 +20,11 @@ public class Transformation implements MatchingPipelineStep {
 		this.result = Collections.unmodifiableList(result);
 	}
 
-	@Override
-	public String getName() {
-		return name;
-	}
-
-	@Override
-	public String getDescription() {
-		return description;
-	}
-
 	/**
 	 * Returns a list of {@link Matchable}s which were generated as a result of the transformation.
 	 */
-	public List<Matchable> getResult() {
+	@Override
+	public List<Matchable> result() {
 		return result;
 	}
 }

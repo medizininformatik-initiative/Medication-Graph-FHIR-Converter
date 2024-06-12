@@ -32,19 +32,19 @@ public class DistinctMultiSubstringUsageStatement extends SubstringUsageStatemen
 		super(original);
 
 		this.usedRanges = new ArrayList<>(usedRanges);
-		this.usedRanges.sort(Comparator.comparing(IntRange::getFrom));
+		this.usedRanges.sort(Comparator.comparing(IntRange::from));
 
 		int lastTo = 0;
 		int length = original.length();
 		for (IntRange range : this.usedRanges) {
-			if (range.getFrom() < 0 || range.getTo() > length) {
+			if (range.from() < 0 || range.to() > length) {
 				throw new IllegalArgumentException("Got the range " + range + " as used range, " +
 						"but it's out of bounds for the input string of length " + length);
 			}
-			if (range.getFrom() < lastTo) {
+			if (range.from() < lastTo) {
 				throw new IllegalArgumentException("The given used ranges overlap!");
 			}
-			lastTo = range.getTo();
+			lastTo = range.to();
 		}
 	}
 
@@ -53,7 +53,7 @@ public class DistinctMultiSubstringUsageStatement extends SubstringUsageStatemen
 	public String getUnusedParts() {
 		StringBuilder builder = new StringBuilder(getOriginal());
 		for (IntRange range : usedRanges.reversed()) {
-			builder.delete(range.getFrom(), range.getTo());
+			builder.delete(range.from(), range.to());
 		}
 		return builder.toString();
 	}
@@ -63,7 +63,7 @@ public class DistinctMultiSubstringUsageStatement extends SubstringUsageStatemen
 	public String getUsedParts() {
 		StringBuilder builder = new StringBuilder();
 		for (IntRange range : usedRanges) {
-			builder.append(getOriginal(), range.getFrom(), range.getTo());
+			builder.append(getOriginal(), range.from(), range.to());
 		}
 		return builder.toString();
 	}

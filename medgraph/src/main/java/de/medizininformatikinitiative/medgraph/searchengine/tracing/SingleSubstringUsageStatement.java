@@ -27,9 +27,9 @@ public class SingleSubstringUsageStatement extends SubstringUsageStatement {
 		super(original);
 		this.usedRange = usedRange;
 
-		if (usedRange.getFrom() < 0)
+		if (usedRange.from() < 0)
 			throw new IllegalArgumentException("The given range cannot include negative values!");
-		if (usedRange.getTo() > original.length()) throw new IllegalArgumentException(
+		if (usedRange.to() > original.length()) throw new IllegalArgumentException(
 				"The given range is out of bounds for the string! " +
 						"(Range " + usedRange + ", String length: " + original.length() + ")");
 	}
@@ -38,14 +38,14 @@ public class SingleSubstringUsageStatement extends SubstringUsageStatement {
 	@NotNull
 	public String getUnusedParts() {
 		StringBuilder builder = new StringBuilder(getOriginal());
-		builder.delete(usedRange.getFrom(), usedRange.getTo());
+		builder.delete(usedRange.from(), usedRange.to());
 		return builder.toString();
 	}
 
 	@Override
 	@NotNull
 	public String getUsedParts() {
-		return getOriginal().substring(usedRange.getFrom(), usedRange.getTo());
+		return getOriginal().substring(usedRange.from(), usedRange.to());
 	}
 
 	@Override
