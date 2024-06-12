@@ -3,6 +3,8 @@ package de.medizininformatikinitiative.medgraph.searchengine.model.matchingobjec
 import de.medizininformatikinitiative.medgraph.searchengine.model.identifiable.Matchable;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Objects;
+
 /**
  * Original match found in the first step of the matching algorithm.
  *
@@ -39,5 +41,19 @@ public class OriginalMatch<T extends Matchable> extends MatchingObject<T> {
 	@NotNull
 	public Origin getOrigin() {
 		return origin;
+	}
+
+	@Override
+	public boolean equals(Object object) {
+		if (this == object) return true;
+		if (object == null || getClass() != object.getClass()) return false;
+		if (!super.equals(object)) return false;
+		OriginalMatch<?> that = (OriginalMatch<?>) object;
+		return Objects.equals(origin, that.origin);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(super.hashCode(), origin);
 	}
 }

@@ -1,5 +1,6 @@
 package de.medizininformatikinitiative.medgraph.searchengine.model;
 
+import de.medizininformatikinitiative.medgraph.searchengine.model.identifiable.Matchable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -12,7 +13,7 @@ import java.util.Objects;
  *
  * @author Markus Budeus
  */
-public class Dosage {
+public class Dosage implements Matchable {
 
 	/**
 	 * Construcs a dosage using an amount given as string (with '.' as decimal separator) and a unit.
@@ -111,5 +112,10 @@ public class Dosage {
 				                  .equals(BigDecimal.ONE) ? amountDenominator.getUnit() : amountDenominator.toString())
 				: null;
 		return denominator != null ? nominator + "/" + denominator : nominator;
+	}
+
+	@Override
+	public String getName() {
+		return toString();
 	}
 }

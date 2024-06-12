@@ -4,6 +4,7 @@ import de.medizininformatikinitiative.medgraph.searchengine.model.*;
 import de.medizininformatikinitiative.medgraph.searchengine.model.identifiable.*;
 import de.medizininformatikinitiative.medgraph.searchengine.provider.BaseProvider;
 import de.medizininformatikinitiative.medgraph.searchengine.provider.MappedIdentifier;
+import org.checkerframework.checker.units.qual.A;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -251,6 +252,10 @@ public class TestFactory {
 			.withActiveIngredientDosages(List.of(Dosage.of(10, "mg")))
 			.withDrugAmounts(List.of(new Amount(BigDecimal.ONE, "ml")))
 			.build();
+
+
+	public static final Dosage SAMPLE_DOSAGE_1 = Dosage.of(10, "mg", 1, "ml");
+	public static final Dosage SAMPLE_DOSAGE_2 = Dosage.of(250, "mg");
 
 	public static final Amount SAMPLE_AMOUNT_1 = new Amount(new BigDecimal(5), "ml");
 	public static final Amount SAMPLE_AMOUNT_2 = new Amount(new BigDecimal("7.5"), "g");
