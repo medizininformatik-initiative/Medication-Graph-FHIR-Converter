@@ -15,20 +15,20 @@ public class MergeTest {
 
 	@Test
 	public void createSuccessfully() {
-		new Merge(List.of(
-				new OriginalMatch(new Substance(107, "A")),
-				new OriginalMatch(new Substance(107, "A")),
-				new OriginalMatch(new Substance(107, "A"))
+		new Merge<>(List.of(
+				new OriginalMatch<>(new Substance(107, "A")),
+				new OriginalMatch<>(new Substance(107, "A")),
+				new OriginalMatch<>(new Substance(107, "A"))
 		));
 	}
 
 	@Test
 	public void differentMatchables() {
 		assertThrows(IllegalArgumentException.class, () -> {
-			new Merge(List.of(
-					new OriginalMatch(new Substance(107, "A")),
-					new OriginalMatch(new Product(107, "A")),
-					new OriginalMatch(new Substance(107, "A"))
+			new Merge<>(List.of(
+					new OriginalMatch<>(new Substance(107, "A")),
+					new OriginalMatch<>(new Product(107, "A")),
+					new OriginalMatch<>(new Substance(107, "A"))
 			));
 		});
 	}
@@ -36,9 +36,9 @@ public class MergeTest {
 	@Test
 	public void differentMatchables2() {
 		assertThrows(IllegalArgumentException.class, () -> {
-			new Merge(List.of(
-					new OriginalMatch(new Substance(107, "A")),
-					new OriginalMatch(new Substance(108, "A"))
+			new Merge<>(List.of(
+					new OriginalMatch<>(new Substance(107, "A")),
+					new OriginalMatch<>(new Substance(108, "A"))
 			));
 		});
 	}
@@ -46,14 +46,14 @@ public class MergeTest {
 	@Test
 	public void emptyList() {
 		assertThrows(IllegalArgumentException.class, () -> {
-			new Merge(List.of());
+			new Merge<>(List.of());
 		});
 	}
 
 	@Test
 	public void nullList() {
 		assertThrows(NullPointerException.class, () -> {
-			new Merge(null);
+			new Merge<>(null);
 		});
 	}
 

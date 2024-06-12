@@ -10,5 +10,5 @@ import de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject
  * @author Markus Budeus
  */
 class StubQueryExecutor : QueryExecutor {
-    override fun executeQuery(query: SearchQuery): List<MatchingObject> = emptyList()
+    override fun executeQuery(query: SearchQuery): List<MatchingObject<*>> = emptyList()
 }

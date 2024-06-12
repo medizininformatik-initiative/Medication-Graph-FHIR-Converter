@@ -33,7 +33,7 @@ class SearchEngineViewModelTest : UnitTest() {
     @Mock
     lateinit var sampleQuery: SearchQuery
 
-    val sampleSearchResult: List<MatchingObject> = listOf(OriginalMatch(
+    val sampleSearchResult: List<MatchingObject<*>> = listOf(OriginalMatch(
         Product(
             1,
             "Aspirin"
@@ -102,7 +102,7 @@ class SearchEngineViewModelTest : UnitTest() {
 
         assertFalse(sut.busy)
         assertFalse(sut.queryExecutionUnderway)
-        assertEquals(emptyList<MatchingObject>(), sut.resultsViewModel.queryResults)
+        assertEquals(emptyList<MatchingObject<*>>(), sut.resultsViewModel.queryResults)
     }
 
     @Test
@@ -132,7 +132,7 @@ class SearchEngineViewModelTest : UnitTest() {
 
     @Test
     fun tooManyResults() {
-        val resultList = ArrayList<MatchingObject>()
+        val resultList = ArrayList<MatchingObject<*>>()
         repeat(SearchResultsListViewModel.MAX_RESULT_SIZE + 5) {
             resultList.add(OriginalMatch(
                 Product(

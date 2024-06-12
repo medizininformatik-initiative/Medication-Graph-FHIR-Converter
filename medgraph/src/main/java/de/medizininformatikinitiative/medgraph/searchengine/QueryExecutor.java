@@ -19,6 +19,6 @@ public interface QueryExecutor {
 	 * @param query the query to use for the search
 	 * @return the refined results in descending order of relevance
 	 */
-	List<MatchingObject> executeQuery(SearchQuery query);
+	List<MatchingObject<?>> executeQuery(SearchQuery query);
 
 }

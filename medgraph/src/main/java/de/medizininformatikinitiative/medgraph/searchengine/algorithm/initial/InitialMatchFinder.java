@@ -21,6 +21,6 @@ public interface InitialMatchFinder {
 	 * @param query the query to use for searching initial matches
 	 * @return a stream providing initial matches which can subsequently be filtered and/or refined
 	 */
-	Stream<OriginalMatch> findInitialMatches(SearchQuery query);
+	Stream<OriginalMatch<?>> findInitialMatches(SearchQuery query);
 
 }

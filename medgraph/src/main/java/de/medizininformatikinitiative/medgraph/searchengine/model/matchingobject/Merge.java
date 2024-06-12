@@ -14,10 +14,7 @@ import java.util.Objects;
  *
  * @author Markus Budeus
  */
-public class Merge extends MatchingObject {
-
-	@NotNull
-	private final List<MatchingObject> sourceObjects;
+public class Merge<T extends Matchable> extends MatchingObject<T> {
 
 	/**
 	 * Verifies all entries in {@link #sourceObjects} reference the same {@link Matchable} and then returns the
@@ -29,26 +26,30 @@ public class Merge extends MatchingObject {
 	 * @throws IllegalArgumentException         if {@link #sourceObjects} is empty or if the objects inside
 	 *                                          {@link #sourceObjects} reference different {@link Matchable}s
 	 */
-	private static Matchable checkAndResolveMatchable(List<? extends MatchingObject> sourceObjects) {
+	private static <T extends Matchable> T checkAndResolveMatchable(List<? extends MatchingObject<? extends T>> sourceObjects) {
 		if (sourceObjects == null) throw new NullPointerException("The list of source objects may not be null!");
 		if (sourceObjects.isEmpty()) throw new IllegalArgumentException("The list of source objects may not be empty!");
-		Matchable matchable = sourceObjects.getFirst().getObject();
-		for (MatchingObject object : sourceObjects) {
+		T matchable = sourceObjects.getFirst().getObject();
+		for (MatchingObject<? extends T> object : sourceObjects) {
 			if (!object.getObject().equals(matchable)) throw new IllegalArgumentException("The given source objects do not all reference the same Matchable!");
 		}
 		return matchable;
 	}
 
-	public Merge(List<? extends MatchingObject> sourceObjects) {
+	@NotNull
+	private final List<MatchingObject<? extends T>> sourceObjects;
+
+	public Merge(List<? extends MatchingObject<? extends T>> sourceObjects) {
 		super(checkAndResolveMatchable(sourceObjects));
 		this.sourceObjects = new ArrayList<>(sourceObjects);
 	}
+
 
 	/**
 	 * Returns the objects which were merged into this instance.
 	 */
 	@NotNull
-	public List<MatchingObject> getSourceObjects() {
+	public List<MatchingObject<? extends T>> getSourceObjects() {
 		return sourceObjects;
 	}
 
@@ -57,7 +58,7 @@ public class Merge extends MatchingObject {
 		if (this == o) return true;
 		if (o == null || getClass() != o.getClass()) return false;
 		if (!super.equals(o)) return false;
-		Merge merge = (Merge) o;
+		Merge<?> merge = (Merge<?>) o;
 		return Objects.equals(sourceObjects, merge.sourceObjects);
 	}
 

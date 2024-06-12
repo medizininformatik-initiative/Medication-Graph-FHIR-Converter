@@ -110,7 +110,6 @@ public abstract class Loader {
 	 * Executes the given query and returns its result.
 	 *
 	 * @param statement the query to execute
-	 * @return the query's result
 	 */
 	public void executeQuery(String statement, Object... params) {
 		if (DRY_RUN) {

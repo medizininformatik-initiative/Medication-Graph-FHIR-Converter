@@ -27,8 +27,8 @@ class SearchResultsListViewModel {
      */
     var actualLastQueryResultSize by actualLastQueryResultSizeState
         private set
-    private var actualQueryResult: List<MatchingObject> = emptyList()
-    private val queryResultsState = mutableStateOf<List<MatchingObject>>(emptyList())
+    private var actualQueryResult: List<MatchingObject<*>> = emptyList()
+    private val queryResultsState = mutableStateOf<List<MatchingObject<*>>>(emptyList())
 
     /**
      * The currently displayed query results.
@@ -39,7 +39,7 @@ class SearchResultsListViewModel {
     /**
      * Assigns the given result list to this ui.
      */
-    fun assignResults(results: List<MatchingObject>) {
+    fun assignResults(results: List<MatchingObject<*>>) {
         if (results.size <= MAX_RESULT_SIZE) queryResults = results
         else {
             queryResultsState.value = results.subList(0, MAX_RESULT_SIZE)

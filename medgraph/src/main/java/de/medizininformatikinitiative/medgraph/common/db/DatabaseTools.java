@@ -30,8 +30,6 @@ public class DatabaseTools {
 		List<String> constraintNames = new ArrayList<>();
 		constraints.forEachRemaining(record -> constraintNames.add(record.get("name", (String) null)));
 		// Drop constraints
-		constraintNames.forEach(name -> {
-			session.run(new Query("DROP CONSTRAINT $constraint", parameters("constraint", name)));
-		});
+		constraintNames.forEach(name -> session.run(new Query("DROP CONSTRAINT $constraint", parameters("constraint", name))));
 	}
 }

@@ -77,32 +77,22 @@ public class Quantity implements RatioOrQuantity {
 				case GREATER -> Comparator.GREATER;
 			};
 			case LESS -> switch (c2) {
-				case EXACT -> Comparator.LESS;
-				case LESS -> Comparator.LESS;
-				case LESS_OR_EQUAL -> Comparator.LESS;
-				case GREATER_OR_EQUAL -> null;
-				case GREATER -> null;
+				case EXACT, LESS, LESS_OR_EQUAL -> Comparator.LESS;
+				case GREATER_OR_EQUAL, GREATER -> null;
 			};
 			case LESS_OR_EQUAL -> switch (c2) {
-				case EXACT -> Comparator.LESS_OR_EQUAL;
+				case EXACT, LESS_OR_EQUAL -> Comparator.LESS_OR_EQUAL;
 				case LESS -> Comparator.LESS;
-				case LESS_OR_EQUAL -> Comparator.LESS_OR_EQUAL;
-				case GREATER_OR_EQUAL -> null;
-				case GREATER -> null;
+				case GREATER_OR_EQUAL, GREATER -> null;
 			};
 			case GREATER_OR_EQUAL -> switch (c2) {
-				case EXACT -> Comparator.GREATER_OR_EQUAL;
-				case LESS -> null;
-				case LESS_OR_EQUAL -> null;
-				case GREATER_OR_EQUAL -> Comparator.GREATER_OR_EQUAL;
+				case EXACT, GREATER_OR_EQUAL -> Comparator.GREATER_OR_EQUAL;
+				case LESS, LESS_OR_EQUAL -> null;
 				case GREATER -> Comparator.GREATER;
 			};
 			case GREATER -> switch (c2) {
-				case EXACT -> Comparator.GREATER;
-				case LESS -> null;
-				case LESS_OR_EQUAL -> null;
-				case GREATER_OR_EQUAL -> Comparator.GREATER;
-				case GREATER -> Comparator.GREATER;
+				case EXACT, GREATER_OR_EQUAL, GREATER -> Comparator.GREATER;
+				case LESS, LESS_OR_EQUAL -> null;
 			};
 		};
 	}

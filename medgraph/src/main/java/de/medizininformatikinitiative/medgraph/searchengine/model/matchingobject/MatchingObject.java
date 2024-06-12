@@ -13,12 +13,13 @@ import java.util.Objects;
  * Carrier object for {@link Matchable} during the matching process. Stores information about
  * judgements and transformations applied to the object during the matching.
  *
+ * @param <T> the type of object carried
  * @author Markus Budeus
  */
-public abstract class MatchingObject {
+public abstract class MatchingObject<T extends Matchable> {
 
 	@NotNull
-	private final Matchable object;
+	private final T object;
 	@NotNull
 	private final LinkedList<Judgement> appliedJudgements = new LinkedList<>();
 
@@ -26,7 +27,7 @@ public abstract class MatchingObject {
 	 * Creates a new {@link MatchingObject} which manages the given {@link Matchable}.
 	 * @param object the object to be managed by this instance
 	 */
-	protected MatchingObject(@NotNull Matchable object) {
+	protected MatchingObject(@NotNull T object) {
 		this.object = object;
 	}
 
@@ -34,7 +35,7 @@ public abstract class MatchingObject {
 	 * Returns the {@link Matchable} managed by this instance.
 	 */
 	@NotNull
-	public Matchable getObject() {
+	public T getObject() {
 		return object;
 	}
 
@@ -56,10 +57,10 @@ public abstract class MatchingObject {
 	}
 
 	@Override
-	public boolean equals(Object o) {
-		if (this == o) return true;
-		if (o == null || getClass() != o.getClass()) return false;
-		MatchingObject object1 = (MatchingObject) o;
+	public boolean equals(Object other) {
+		if (this == other) return true;
+		if (other == null || getClass() != other.getClass()) return false;
+		MatchingObject<?> object1 = (MatchingObject<?>) other;
 		return Objects.equals(object, object1.object) && Objects.equals(appliedJudgements,
 				object1.appliedJudgements);
 	}

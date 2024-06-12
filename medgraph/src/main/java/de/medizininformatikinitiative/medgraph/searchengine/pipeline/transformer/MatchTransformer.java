@@ -19,7 +19,7 @@ public abstract class MatchTransformer implements IMatchTransformer {
 	}
 
 	@Override
-	public List<Transformation> batchTransform(List<Matchable> matchables, SearchQuery query) {
+	public List<Transformation> batchTransform(List<? extends Matchable> matchables, SearchQuery query) {
 		String name = toString();
 		String desc = getDescription();
 		return batchTransformInternal(matchables, query).stream()
@@ -44,7 +44,7 @@ public abstract class MatchTransformer implements IMatchTransformer {
 	 * @param query      the search query to consider for the transformation
 	 * @return a list of {@link Matchable}s into which the input has been transformed
 	 */
-	protected List<List<Matchable>> batchTransformInternal(List<Matchable> matchables, SearchQuery query) {
+	protected List<List<Matchable>> batchTransformInternal(List<? extends Matchable> matchables, SearchQuery query) {
 		return matchables.stream().map(m -> transformInternal(m, query)).toList();
 	}
 

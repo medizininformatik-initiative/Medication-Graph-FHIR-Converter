@@ -28,8 +28,8 @@ public class DetailedProduct extends Product {
 
 	public DetailedProduct(long mmiId, String name, @NotNull List<String> pzn, @NotNull List<Drug> drugs) {
 		super(mmiId, name);
-		this.pzn = Collections.unmodifiableList(new ArrayList<>(pzn));
-		this.drugs = Collections.unmodifiableList(new ArrayList<>(drugs));
+		this.pzn = List.copyOf(pzn);
+		this.drugs = List.copyOf(drugs);
 	}
 
 	/**

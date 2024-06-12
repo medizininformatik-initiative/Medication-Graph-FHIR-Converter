@@ -36,7 +36,7 @@ public interface Judge<T extends Judgement> extends MatchingPipelineComponent {
 	 * @return a list of {@link Judgement}s, each one corresponding to the {@link Matchable} in the input list at the
 	 * same position
 	 */
-	default List<T> batchJudge(List<Matchable> matchables, SearchQuery query) {
+	default List<T> batchJudge(List<? extends Matchable> matchables, SearchQuery query) {
 		return matchables.stream().map(m -> judge(m, query)).toList();
 	}
 

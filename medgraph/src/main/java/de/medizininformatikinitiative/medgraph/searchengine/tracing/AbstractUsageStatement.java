@@ -1,6 +1,5 @@
 package de.medizininformatikinitiative.medgraph.searchengine.tracing;
 
-import org.jetbrains.annotations.MustBeInvokedByOverriders;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
