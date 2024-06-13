@@ -29,10 +29,10 @@ class SearchEngineScreen : Screen {
         queryManager =
             PerSessionQueryManager(
                 { session ->
-                    QueryRefinerImpl(
-                        DosageQueryRefiner(),
-                        DoseFormQueryRefiner(Providers.getEdqmConceptIdentifiers(session)),
-                        SubstanceQueryRefiner(Providers.getSubstanceSynonymes(session))
+                    NewQueryRefinerImpl(
+                        NewDosageQueryRefiner(),
+                        NewDoseFormQueryRefiner(Providers.getEdqmConceptIdentifiers(session)),
+                        NewSubstanceQueryRefiner(Providers.getSubstanceSynonymes(session))
                     )
                 },
                 { session ->

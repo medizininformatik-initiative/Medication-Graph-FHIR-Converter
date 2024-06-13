@@ -206,7 +206,7 @@ class StringRes {
 
         @JvmStatic
         val graph_db_populator_neo4j_import_dir_description =
-            "On most systems, the default Neo4j import directory is at <NEO4J_HOME>/import, with <NEO4J_HOME> being the installation directory of Neo4.\n" +
+            "On most systems, the default Neo4j import directory is at <NEO4J_HOME>/import, with <NEO4J_HOME> being the installation directory of Neo4j.\n" +
                     "On Debian- and RPM-based systems, the default path is /var/lib/neo4j/import"
 
         @JvmStatic
@@ -294,10 +294,10 @@ class StringRes {
         val transformer_description_MinimumTokenLength = "Remove tokens which are less than {0} characters long:"
 
         @JvmStatic
-        val transformer_description_RemoveBlankStrings = "Remove string tokens:"
+        val transformer_description_RemoveBlankStrings = "Remove blank tokens:"
 
         @JvmStatic
-        val transformer_description_RemoveDosageInformation = "Removes dosage information:"
+        val transformer_description_RemoveDosageInformation = "Remove dosage information:"
 
         @JvmStatic
         val transformer_description_ToLowerCase = "Make all characters lowercase:"

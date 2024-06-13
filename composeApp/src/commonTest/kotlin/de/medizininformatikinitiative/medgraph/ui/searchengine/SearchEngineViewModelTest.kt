@@ -1,22 +1,30 @@
 package de.medizininformatikinitiative.medgraph.ui.searchengine
 
 import de.medizininformatikinitiative.medgraph.searchengine.QueryExecutor
-import de.medizininformatikinitiative.medgraph.searchengine.algorithm.querymanagement.QueryRefiner
+import de.medizininformatikinitiative.medgraph.searchengine.algorithm.querymanagement.NewQueryRefiner
+import de.medizininformatikinitiative.medgraph.searchengine.algorithm.querymanagement.NewRefinedQuery
 import de.medizininformatikinitiative.medgraph.searchengine.algorithm.querymanagement.RefinedQuery
 import de.medizininformatikinitiative.medgraph.searchengine.model.RawQuery
 import de.medizininformatikinitiative.medgraph.searchengine.model.SearchQuery
+import de.medizininformatikinitiative.medgraph.searchengine.model.identifiable.Product
 import de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject.MatchingObject
 import de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject.OriginalMatch
-import de.medizininformatikinitiative.medgraph.searchengine.model.identifiable.Product
 import de.medizininformatikinitiative.medgraph.ui.UnitTest
 import de.medizininformatikinitiative.medgraph.ui.searchengine.results.SearchResultsListViewModel
 import kotlinx.coroutines.runBlocking
-import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertFalse
+import org.junit.jupiter.api.Assertions.assertNotNull
+import org.junit.jupiter.api.Assertions.assertNull
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.mockito.ArgumentMatchers
 import org.mockito.Mock
-import org.mockito.Mockito.*
+import org.mockito.Mockito.any
+import org.mockito.Mockito.mock
+import org.mockito.Mockito.verify
+import org.mockito.Mockito.`when`
 import java.util.concurrent.atomic.AtomicBoolean
 
 /**
@@ -25,11 +33,11 @@ import java.util.concurrent.atomic.AtomicBoolean
 class SearchEngineViewModelTest : UnitTest() {
 
     @Mock
-    lateinit var queryRefiner: QueryRefiner
+    lateinit var queryRefiner: NewQueryRefiner
     @Mock
     lateinit var queryExecutor: QueryExecutor
     @Mock
-    lateinit var refinedQuery: RefinedQuery
+    lateinit var refinedQuery: NewRefinedQuery
     @Mock
     lateinit var sampleQuery: SearchQuery
 
@@ -44,7 +52,7 @@ class SearchEngineViewModelTest : UnitTest() {
 
     @BeforeEach
     fun setUp() {
-        `when`(refinedQuery.searchQuery).thenReturn(sampleQuery)
+        `when`(refinedQuery.toSearchQuery()).thenReturn(sampleQuery)
         `when`(queryRefiner.refine(any())).thenReturn(refinedQuery)
         `when`(queryExecutor.executeQuery(any())).thenReturn(sampleSearchResult)
         sut = SearchEngineViewModel(queryRefiner, queryExecutor)
@@ -108,7 +116,7 @@ class SearchEngineViewModelTest : UnitTest() {
     @Test
     fun refineAndExecute() {
         val currentSearchQuery = mock(SearchQuery::class.java)
-        val currentRefinedQuery = mock(RefinedQuery::class.java)
+        val currentRefinedQuery = mock(NewRefinedQuery::class.java)
         val currentResult = listOf(OriginalMatch(
             Product(
                 2,
@@ -117,7 +125,7 @@ class SearchEngineViewModelTest : UnitTest() {
         ))
 
         `when`(queryRefiner.refine(any())).thenReturn(currentRefinedQuery)
-        `when`(currentRefinedQuery.searchQuery).thenReturn(currentSearchQuery)
+        `when`(currentRefinedQuery.toSearchQuery()).thenReturn(currentSearchQuery)
         `when`(queryExecutor.executeQuery(currentSearchQuery)).thenReturn(currentResult)
 
         runBlocking {
