@@ -73,9 +73,9 @@ public class NewQueryRefinerImpl implements NewQueryRefiner {
 
 		// Substances
 		SubstringUsageStatement substanceUsageStatement =
-				applyPartialQueryRefiner(wrap(remainingGeneralQueryParts), substanceQueryRefiner, queryBuilder);
-		SubstringUsageStatement substanceGeneralSearchTermUsageStatement =
 				applyPartialQueryRefiner(wrap(query.substance), substanceQueryRefiner, queryBuilder);
+		SubstringUsageStatement substanceGeneralSearchTermUsageStatement =
+				applyPartialQueryRefiner(wrap(remainingGeneralQueryParts), substanceQueryRefiner, queryBuilder);
 
 		// Product keywords
 		List<String> productKeywords = new ArrayList<>(extractKeywords(query.product));
