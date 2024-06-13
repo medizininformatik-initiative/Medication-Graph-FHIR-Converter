@@ -1,4 +1,4 @@
-package de.medizininformatikinitiative.medgraph.ui.searchengine.pipeline
+package de.medizininformatikinitiative.medgraph.ui.searchengine.pipeline.matchingobject
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope

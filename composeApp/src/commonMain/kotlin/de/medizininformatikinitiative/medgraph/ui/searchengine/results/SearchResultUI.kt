@@ -26,7 +26,6 @@ import de.medizininformatikinitiative.medgraph.ui.theme.templates.TextBox
 import de.medizininformatikinitiative.medgraph.ui.theme.templates.clipToBox
 import java.math.BigDecimal
 
-
 @Composable
 @Preview
 private fun IdentifiableObjectUI() {

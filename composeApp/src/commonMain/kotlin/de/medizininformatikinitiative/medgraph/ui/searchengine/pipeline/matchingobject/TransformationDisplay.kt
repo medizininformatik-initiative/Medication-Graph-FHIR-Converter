@@ -1,4 +1,4 @@
-package de.medizininformatikinitiative.medgraph.ui.searchengine.pipeline
+package de.medizininformatikinitiative.medgraph.ui.searchengine.pipeline.matchingobject
 
 import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.border
