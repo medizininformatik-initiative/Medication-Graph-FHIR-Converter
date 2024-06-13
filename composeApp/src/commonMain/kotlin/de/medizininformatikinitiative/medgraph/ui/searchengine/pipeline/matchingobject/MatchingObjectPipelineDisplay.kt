@@ -17,7 +17,7 @@ import de.medizininformatikinitiative.medgraph.searchengine.model.identifiable.S
 import de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject.*
 import de.medizininformatikinitiative.medgraph.searchengine.model.pipelinestep.ScoredJudgement
 import de.medizininformatikinitiative.medgraph.searchengine.model.pipelinestep.Transformation
-import de.medizininformatikinitiative.medgraph.ui.searchengine.pipeline.identifier.OriginUI
+import de.medizininformatikinitiative.medgraph.ui.searchengine.pipeline.origin.OriginUI
 import de.medizininformatikinitiative.medgraph.ui.searchengine.results.DetailedIdentifiableObjectUI
 import de.medizininformatikinitiative.medgraph.ui.theme.ApplicationTheme
 

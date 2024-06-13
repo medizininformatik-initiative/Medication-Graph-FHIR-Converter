@@ -207,7 +207,7 @@ class StringRes {
         @JvmStatic
         val graph_db_populator_neo4j_import_dir_description =
             "On most systems, the default Neo4j import directory is at <NEO4J_HOME>/import, with <NEO4J_HOME> being the installation directory of Neo4j.\n" +
-                    "On Debian- and RPM-based systems, the default path is /var/lib/neo4j/import"
+                "On Debian- and RPM-based systems, the default path is /var/lib/neo4j/import"
 
         @JvmStatic
         val graph_db_populator_amice_stoffbez_path = "Path to AMIce \"Stoffbezeichnungen Rohdaten\" file. (optional)"
@@ -248,8 +248,8 @@ class StringRes {
 
         @JvmStatic
         val fhir_exporter_description = "Use this tool to export MII KDS-compliant FHIR Medication, Substance and " +
-                "Organization instances from the Graph Database. Specify a directory into which to export and then run " +
-                "the export."
+            "Organization instances from the Graph Database. Specify a directory into which to export and then run " +
+            "the export."
 
         @JvmStatic
         val fhir_exporter_do_export = "Export"
@@ -265,6 +265,13 @@ class StringRes {
 
         @JvmStatic
         val pipeline_origin_edit_distance = "---[Edit Distance: {0}]-->"
+
+        @JvmStatic
+        val unknown_matcher_description = "Matches search terms to identifiers using an unknown technique."
+
+        @JvmStatic
+        val levenshtein_matcher_description =
+            "Calculates the levenshtein distance between two terms up to a given upper bound."
 
         @JvmStatic
         val edit_distance_set_matcher_description = "Matches sets of strings using an edit distance metric."
@@ -310,6 +317,9 @@ class StringRes {
 
         @JvmStatic
         val transformer_description_unknown = "[Unknown Transformation]:"
+
+        @JvmStatic
+        val edit_distance = "Edit Distance: {0}"
 
 
         @JvmStatic

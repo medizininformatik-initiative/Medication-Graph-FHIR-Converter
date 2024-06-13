@@ -1,4 +1,4 @@
-package de.medizininformatikinitiative.medgraph.ui.searchengine.pipeline.identifier
+package de.medizininformatikinitiative.medgraph.ui.searchengine.pipeline.origin
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.MaterialTheme
@@ -15,7 +15,7 @@ import de.medizininformatikinitiative.medgraph.searchengine.model.identifier.Ide
 import de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject.MatchOrigin
 import de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject.Origin
 import de.medizininformatikinitiative.medgraph.ui.resources.StringRes
-import de.medizininformatikinitiative.medgraph.ui.searchengine.pipeline.matcher.EditDistanceSetMatcherUI
+import de.medizininformatikinitiative.medgraph.ui.searchengine.pipeline.identifier.IdentifierUI
 import de.medizininformatikinitiative.medgraph.ui.theme.templates.clipToBox
 
 
@@ -24,43 +24,6 @@ fun OriginUI(origin: Origin, modifier: Modifier = Modifier) {
     when (origin) {
         is MatchOrigin<*> -> MatchOriginUI(origin, modifier)
         else -> UnknownOriginUI(modifier)
-    }
-}
-
-@Suppress("UNCHECKED_CAST")
-@Composable
-fun MatchOriginUI(origin: MatchOrigin<*>, modifier: Modifier = Modifier) {
-
-    TwoIdentifierSources(
-        origin.match.searchTerm,
-        origin.match.matchedIdentifier.identifier,
-        target2 = origin.match.matchedIdentifier.target
-    )
-    when (origin.match) {
-        is EditDistanceSetMatcher.Match -> EditDistanceSetMatcherUI(
-            origin as MatchOrigin<EditDistanceSetMatcher.Match>,
-            modifier
-        )
-
-        else -> UnknownOriginUI(modifier) // TODO Add generic matcher info
-    }
-}
-
-@Composable
-fun TwoIdentifierSources(
-    identifier1: Identifier<out Any>,
-    identifier2: Identifier<out Any>,
-    modifier: Modifier = Modifier,
-    target1: Identifiable? = null,
-    target2: Identifiable? = null
-) {
-    Row(
-        modifier,
-        verticalAlignment = Alignment.Bottom
-    ) {
-        IdentifierUI(identifier1, modifier = Modifier.weight(1f), target1)
-        Spacer(modifier = modifier.width(8.dp))
-        IdentifierUI(identifier2, modifier = Modifier.weight(1f), target2)
     }
 }
 
