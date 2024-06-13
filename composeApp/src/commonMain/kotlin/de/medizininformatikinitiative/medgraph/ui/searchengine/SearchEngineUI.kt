@@ -16,7 +16,7 @@ import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import de.medizininformatikinitiative.medgraph.ui.resources.StringRes
 import de.medizininformatikinitiative.medgraph.ui.searchengine.query.QueryUI
-import de.medizininformatikinitiative.medgraph.ui.searchengine.query.SearchQueryUI
+import de.medizininformatikinitiative.medgraph.ui.searchengine.query.RefinedQueryUI
 import de.medizininformatikinitiative.medgraph.ui.searchengine.results.SearchResultsListUI
 import de.medizininformatikinitiative.medgraph.ui.theme.ApplicationTheme
 import de.medizininformatikinitiative.medgraph.ui.theme.CorporateDesign
@@ -83,7 +83,7 @@ fun RawAndParsedQueryUI(viewModel: SearchEngineViewModel, modifier: Modifier = M
                 .width(1.dp)
         )
 
-        val parsedQuery = viewModel.refinedQuery?.toSearchQuery() // TODO toSearchQuery is too expensive to call in every recomposition!
+        val parsedQuery = viewModel.refinedQuery
         Box(modifier = Modifier.weight(1f).fillMaxHeight()) {
             if (viewModel.queryRefiningUnderway) {
                 CircularProgressIndicator(
@@ -93,7 +93,7 @@ fun RawAndParsedQueryUI(viewModel: SearchEngineViewModel, modifier: Modifier = M
                     backgroundColor = CorporateDesign.Secondary.LighterBlue
                 )
             } else if (parsedQuery != null) {
-                SearchQueryUI(parsedQuery, modifier = Modifier.fillMaxWidth())
+                RefinedQueryUI(parsedQuery, modifier = Modifier.fillMaxWidth())
             }
         }
     }

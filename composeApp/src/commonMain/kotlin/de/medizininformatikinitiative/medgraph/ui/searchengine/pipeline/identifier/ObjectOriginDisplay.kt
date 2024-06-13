@@ -1,4 +1,4 @@
-package de.medizininformatikinitiative.medgraph.ui.searchengine.pipeline
+package de.medizininformatikinitiative.medgraph.ui.searchengine.pipeline.identifier
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.MaterialTheme
@@ -15,7 +15,6 @@ import de.medizininformatikinitiative.medgraph.searchengine.model.identifier.Ide
 import de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject.MatchOrigin
 import de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject.Origin
 import de.medizininformatikinitiative.medgraph.ui.resources.StringRes
-import de.medizininformatikinitiative.medgraph.ui.searchengine.pipeline.identifier.IdentifierUI
 import de.medizininformatikinitiative.medgraph.ui.searchengine.pipeline.matcher.EditDistanceSetMatcherUI
 import de.medizininformatikinitiative.medgraph.ui.theme.templates.clipToBox
 

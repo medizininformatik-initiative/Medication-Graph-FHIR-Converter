@@ -18,7 +18,8 @@ import de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject
 import de.medizininformatikinitiative.medgraph.searchengine.model.identifiable.Product
 import de.medizininformatikinitiative.medgraph.searchengine.model.identifiable.Substance
 import de.medizininformatikinitiative.medgraph.ui.resources.StringRes
-import de.medizininformatikinitiative.medgraph.ui.searchengine.pipeline.MatchingObjectPipelineDisplay
+import de.medizininformatikinitiative.medgraph.ui.searchengine.pipeline.PipelineInfoDialog
+import de.medizininformatikinitiative.medgraph.ui.searchengine.pipeline.matchingobject.MatchingObjectPipelineDisplay
 import de.medizininformatikinitiative.medgraph.ui.theme.ApplicationTheme
 import de.medizininformatikinitiative.medgraph.ui.theme.templates.Button
 
@@ -78,30 +79,7 @@ fun SearchResultsListUI(viewModel: SearchResultsListViewModel, modifier: Modifie
 
     val cpiState = currentPipelineInfo
     if (cpiState != null) {
-        MatchingObjectPipelineInfoDialog(cpiState, { currentPipelineInfo = null })
-    }
-}
-
-@Composable
-fun MatchingObjectPipelineInfoDialog(target: MatchingObject<*>, onDismissRequest: () -> Unit) {
-    Dialog(onDismissRequest, DialogProperties(
-        dismissOnBackPress = true,
-        dismissOnClickOutside = true,
-        usePlatformDefaultWidth = true
-    )) {
-        Column(
-            modifier = Modifier
-                .width(800.dp)
-                .background(MaterialTheme.colors.background, shape = RoundedCornerShape(8.dp))
-                .padding(8.dp)
-        ) {
-            Text(StringRes.pipeline_info_title, textAlign = TextAlign.Center, style = MaterialTheme.typography.h4)
-            Text(StringRes.pipeline_info_subtitle, style = MaterialTheme.typography.subtitle1)
-            Divider(modifier = Modifier.fillMaxWidth(), thickness = 2.dp)
-            Spacer(modifier = Modifier.height(4.dp))
-            MatchingObjectPipelineDisplay(target, modifier = Modifier.fillMaxWidth())
-        }
-
+        PipelineInfoDialog(cpiState, { currentPipelineInfo = null })
     }
 }
 
