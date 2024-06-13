@@ -1,4 +1,4 @@
-package de.medizininformatikinitiative.medgraph.ui.searchengine.pipeline.matcher
+package de.medizininformatikinitiative.medgraph.ui.searchengine.pipeline.origin
 
 import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.layout.*
@@ -9,7 +9,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import de.medizininformatikinitiative.medgraph.searchengine.matcher.EditDistanceSetMatcher
-import de.medizininformatikinitiative.medgraph.searchengine.matcher.IMatcher
 import de.medizininformatikinitiative.medgraph.searchengine.matcher.editdistance.LevenshteinDistanceService
 import de.medizininformatikinitiative.medgraph.searchengine.matcher.model.EditDistance
 import de.medizininformatikinitiative.medgraph.searchengine.model.identifiable.Product
@@ -20,9 +19,7 @@ import de.medizininformatikinitiative.medgraph.searchengine.provider.MappedIdent
 import de.medizininformatikinitiative.medgraph.ui.resources.StringRes
 import de.medizininformatikinitiative.medgraph.ui.theme.ApplicationTheme
 import de.medizininformatikinitiative.medgraph.ui.theme.localColors
-import de.medizininformatikinitiative.medgraph.ui.theme.templates.ContentCard
 import de.medizininformatikinitiative.medgraph.ui.theme.templates.TextBox
-import de.medizininformatikinitiative.medgraph.ui.theme.templates.clipToBox
 
 @Composable
 @Preview
@@ -43,34 +40,24 @@ internal fun EditDistanceSetMatcherUI() {
     val match = matcher.match(searchTerm, identifiers).findFirst().get()
 
     ApplicationTheme {
-        EditDistanceSetMatcherUI(MatchOrigin(match, matcher), modifier = Modifier
-            .padding(8.dp)
-            .fillMaxWidth())
+        EditDistanceSetMatcherUI(
+            MatchOrigin(match, matcher), modifier = Modifier
+                .padding(8.dp)
+                .fillMaxWidth()
+        )
     }
 }
 
 @Composable
 fun EditDistanceSetMatcherUI(origin: MatchOrigin<out EditDistanceSetMatcher.Match>, modifier: Modifier = Modifier) {
-    // TODO Information about the matcher in general
-
-    ContentCard(
-        title = origin.matcher.toString(),
-        description = getDescription(origin.matcher.javaClass),
-        modifier = modifier
-    ) {
+    GenericMatchOriginUI(origin, modifier) {
         val match = origin.match
-        Box(
-            modifier = Modifier
-                .clipToBox(color = MaterialTheme.colors.background)
-        ) {
-            EditDistancesUI(
-                match.editDistances,
-                match.searchTerm.identifier,
-                match.matchedIdentifier.identifier.identifier,
-            )
-        }
+        EditDistancesUI(
+            match.editDistances,
+            match.searchTerm.identifier,
+            match.matchedIdentifier.identifier.identifier,
+        )
     }
-
 }
 
 @Composable
@@ -101,25 +88,34 @@ fun EditDistancesUI(
         for (editDistance in editDistances) {
             EditDistanceDisplay(editDistance, Modifier.fillMaxWidth())
         }
+        SideBySideEditDistanceTextBoxes(remainingSearchTerms, remainingTargetTerms, Modifier.fillMaxWidth(), Alignment.Top)
+    }
+}
 
-        Row(
-            modifier = modifier,
-        ) {
-            Column(modifier = Modifier.weight(1f)) {
-                for (searchTermToken in remainingSearchTerms)
-                    EditDistanceTextBox(
-                        searchTermToken,
-                        modifier = Modifier.align(Alignment.Start)
-                    )
-            }
-            Column(modifier = Modifier.weight(1f)) {
-                for (targetToken in remainingTargetTerms)
-                    EditDistanceTextBox(
-                        targetToken,
-                        modifier = Modifier.align(Alignment.End)
-                    )
-            }
-        }
+@Composable
+fun SideBySideEditDistanceTextBoxes(
+    left: List<String>,
+    right: List<String>,
+    modifier: Modifier = Modifier,
+    verticalAlignment: Alignment.Vertical = Alignment.Top
+) {
+    Row(
+        modifier,
+        verticalAlignment = verticalAlignment
+    ) {
+        EditDistanceTextBoxColumn(left, modifier = Modifier.weight(1f), Alignment.Start)
+        EditDistanceTextBoxColumn(right, modifier = Modifier.weight(1f), Alignment.End)
+    }
+}
+
+@Composable
+fun EditDistanceTextBoxColumn(tokens: List<String>, modifier: Modifier = Modifier, textBoxAlignment: Alignment.Horizontal = Alignment.Start) {
+    Column(modifier = modifier) {
+        for (targetToken in tokens)
+            EditDistanceTextBox(
+                targetToken,
+                modifier = Modifier.align(textBoxAlignment)
+            )
     }
 }
 
@@ -139,11 +135,4 @@ fun EditDistanceDisplay(editDistance: EditDistance, modifier: Modifier) {
 @Composable
 fun EditDistanceTextBox(text: String, modifier: Modifier = Modifier) {
     TextBox(text, backgroundColor = MaterialTheme.localColors.surface2, modifier = modifier.padding(2.dp))
-}
-
-fun getDescription(matcher: Class<out IMatcher<*, *, *>>): String {
-    return when(matcher) {
-        EditDistanceSetMatcher::class.java -> StringRes.edit_distance_set_matcher_description
-        else -> ""
-    }
 }

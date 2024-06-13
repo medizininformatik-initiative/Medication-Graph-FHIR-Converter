@@ -16,10 +16,13 @@ import java.util.OptionalInt;
 import java.util.Set;
 
 /**
- * This matcher matches search terms (as string lists) against identifiers in the following way: For the identifier, the
+ * This matches searches the target identifiers for those who are a sublist (with some edit distance tolerance) of the
+ * search term.
+ * <p>
+ * More precisely, it matches search terms (as string lists) against identifiers in the following way: For the identifier, the
  * amount of tokens is counted (which we refer to as <b>n</b>). If the search term has fewer tokens, the match is
  * considered unsuccessful. Otherwise, each combination of <b>n</b> consecutive terms from the search term is taken and
- * joined usings spaces. Using the a given {@link EditDistanceService}, the resulting string is compared against the
+ * joined usings spaces. Using the given {@link EditDistanceService}, the resulting string is compared against the
  * identifier, whose terms are also joined together using spaces. If the edit distance provides a result, these terms
  * are considered a match.
  * <p>
