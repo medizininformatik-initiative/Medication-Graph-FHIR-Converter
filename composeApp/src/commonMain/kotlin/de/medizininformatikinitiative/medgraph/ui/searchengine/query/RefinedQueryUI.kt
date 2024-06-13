@@ -9,6 +9,10 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.NonRestartableComposable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -23,6 +27,7 @@ import de.medizininformatikinitiative.medgraph.searchengine.model.identifier.Ori
 import de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject.MatchingObject
 import de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject.OriginalMatch
 import de.medizininformatikinitiative.medgraph.ui.resources.StringRes
+import de.medizininformatikinitiative.medgraph.ui.searchengine.pipeline.PipelineInfoDialog
 import de.medizininformatikinitiative.medgraph.ui.theme.ApplicationTheme
 import de.medizininformatikinitiative.medgraph.ui.theme.localColors
 import de.medizininformatikinitiative.medgraph.ui.theme.templates.TextBoxes
@@ -59,19 +64,35 @@ fun RefinedQueryUI(query: RefinedQuery, modifier: Modifier = Modifier) {
             .heightIn(Dp.Unspecified, 300.dp)
             .verticalScroll(rememberScrollState())
     ) {
+        var productKeywordsDetailsState by remember { mutableStateOf(false) }
+        val moDetailsState = remember { mutableStateOf<MatchingObject<*>?>(null) }
+
+        val moDetails = moDetailsState.value
+        if (moDetails != null) {
+            PipelineInfoDialog(moDetails, onDismissRequest = { moDetailsState.value = null })
+        }
+        if (productKeywordsDetailsState) {
+            PipelineInfoDialog(query.productNameKeywords, onDismissRequest = { productKeywordsDetailsState = false })
+        }
 
         Separator(StringRes.parsed_query_dialog_product_keywords)
-        TextBoxes(query.productNameKeywords.identifier, textColor = MaterialTheme.localColors.highlightProduct)
+        TextBoxes(query.productNameKeywords.identifier, textColor = MaterialTheme.localColors.highlightProduct,
+            onClick = { productKeywordsDetailsState = true })
         Separator(StringRes.parsed_query_dialog_dosages)
-        MoTextBoxes(query.dosages, textColor = MaterialTheme.localColors.highlightDosage)
+        MoTextBoxes(query.dosages, textColor = MaterialTheme.localColors.highlightDosage,
+            onClick = { obj -> moDetailsState.value = obj })
         Separator(StringRes.parsed_query_dialog_amounts)
-        MoTextBoxes(query.drugAmounts, textColor = MaterialTheme.localColors.highlightDosage)
+        MoTextBoxes(query.drugAmounts, textColor = MaterialTheme.localColors.highlightDosage,
+            onClick = { obj -> moDetailsState.value = obj })
         Separator(StringRes.parsed_query_dialog_dose_forms)
-        MoTextBoxes(query.doseForms, textColor = MaterialTheme.localColors.highlightDoseForm)
+        MoTextBoxes(query.doseForms, textColor = MaterialTheme.localColors.highlightDoseForm,
+            onClick = { obj -> moDetailsState.value = obj })
         Separator(StringRes.parsed_query_dialog_dose_form_characteristics)
-        MoTextBoxes(query.doseFormCharacteristics, textColor = MaterialTheme.localColors.highlightDoseForm)
+        MoTextBoxes(query.doseFormCharacteristics, textColor = MaterialTheme.localColors.highlightDoseForm,
+            onClick = { obj -> moDetailsState.value = obj })
         Separator(StringRes.parsed_query_dialog_substance)
-        MoTextBoxes(query.substances, textColor = MaterialTheme.localColors.highlightSubstance)
+        MoTextBoxes(query.substances, textColor = MaterialTheme.localColors.highlightSubstance,
+            onClick = { obj -> moDetailsState.value = obj })
 
     }
 }
