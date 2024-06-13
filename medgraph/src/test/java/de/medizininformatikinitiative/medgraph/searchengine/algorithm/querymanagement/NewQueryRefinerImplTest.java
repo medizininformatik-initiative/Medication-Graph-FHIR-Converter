@@ -21,8 +21,6 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 public class NewQueryRefinerImplTest extends UnitTest {
 
-	// TODO Adapt
-
 	private NewQueryRefinerImpl sut;
 
 	@BeforeEach
@@ -57,8 +55,9 @@ public class NewQueryRefinerImplTest extends UnitTest {
 		assertNull(refinedQuery.getDosageUsageStatement());
 		assertNull(refinedQuery.getDoseFormUsageStatement());
 		assertNull(refinedQuery.getSubstanceUsageStatement());
-		assertEquals("solution for injection",
-				refinedQuery.getDoseFormGeneralSearchTermUsageStatement().getUsedParts().trim());
+		assertUsedParts(List.of("Midazolam"), refinedQuery.getSubstanceGeneralSearchTermUsageStatement());
+		assertEquals("solution for injection", refinedQuery.getDoseFormGeneralSearchTermUsageStatement()
+				.getUsedParts().trim());
 		assertUsedParts(List.of("1mg/ml", "5ml"), refinedQuery.getDosageGeneralSearchTermUsageStatement());
 	}
 
@@ -105,16 +104,14 @@ public class NewQueryRefinerImplTest extends UnitTest {
 		assertNull(refinedQuery.getDoseFormUsageStatement());
 	}
 
-	// TODO Check tests above
-
 	@Test
 	void querySubstanceOnly() {
-		RawQuery rawQuery = new RawQuery("", "", "", "Epinephrin X", "");
+		RawQuery rawQuery = new RawQuery("", "", "Epinephrin X", "", "");
 		NewRefinedQuery refinedQuery = sut.refine(rawQuery);
 		SearchQuery searchQuery = refinedQuery.toSearchQuery();
 
 		assertTrue(searchQuery.getProductNameKeywords().isEmpty());
-		assertTrue(searchQuery.getSubstances().isEmpty()); // TODO This is incorrect
+		assertEquals(List.of(TestFactory.Substances.EPINEPHRINE), searchQuery.getSubstances());
 		assertTrue(searchQuery.getActiveIngredientDosages().isEmpty());
 		assertTrue(searchQuery.getDrugAmounts().isEmpty());
 		assertTrue(searchQuery.getDoseForms().isEmpty());
@@ -188,7 +185,9 @@ public class NewQueryRefinerImplTest extends UnitTest {
 
 
 		assertEqualsIgnoreOrder(List.of("Dormicum", "Bayer"), searchQuery.getProductNameKeywords());
-		assertEqualsIgnoreOrder(List.of(TestFactory.Substances.MIDAZOLAM_HYDROCHLORIDE, TestFactory.Substances.MIDAZOLAM), searchQuery.getSubstances());
+		assertEqualsIgnoreOrder(
+				List.of(TestFactory.Substances.MIDAZOLAM_HYDROCHLORIDE, TestFactory.Substances.MIDAZOLAM),
+				searchQuery.getSubstances());
 		assertEqualsIgnoreOrder(List.of(
 				Dosage.of(5, "mg", 1, "ml"),
 				Dosage.of(3, "ml")
@@ -199,7 +198,7 @@ public class NewQueryRefinerImplTest extends UnitTest {
 
 		assertUsedParts(List.of("5mg/ml"), refinedQuery.getDosageGeneralSearchTermUsageStatement());
 		assertUsedParts(List.of("solution"), refinedQuery.getDoseFormGeneralSearchTermUsageStatement());
-		assertUsedParts(List.of(""), refinedQuery.getSubstanceGeneralSearchTermUsageStatement());
+		assertUsedParts(List.of(), refinedQuery.getSubstanceGeneralSearchTermUsageStatement());
 		assertUsedParts(List.of("Midazolam"), refinedQuery.getSubstanceUsageStatement());
 		assertUsedParts(List.of("3 ml"), refinedQuery.getDosageUsageStatement());
 		assertNull(refinedQuery.getDoseFormUsageStatement());
@@ -219,7 +218,9 @@ public class NewQueryRefinerImplTest extends UnitTest {
 		SearchQuery searchQuery = refinedQuery.toSearchQuery();
 
 		assertEqualsIgnoreOrder(List.of("Prednisolon", "Prednisolut"), searchQuery.getProductNameKeywords());
-		assertEqualsIgnoreOrder(List.of(TestFactory.Substances.PREDNISOLONE, TestFactory.Substances.PREDNISOLONE_HYDROGENSUCCINATE), searchQuery.getSubstances());
+		assertEqualsIgnoreOrder(
+				List.of(TestFactory.Substances.PREDNISOLONE, TestFactory.Substances.PREDNISOLONE_HYDROGENSUCCINATE),
+				searchQuery.getSubstances());
 		assertEquals(List.of(), searchQuery.getActiveIngredientDosages());
 		assertEquals(List.of(), searchQuery.getDrugAmounts());
 		assertEquals(List.of(TestFactory.DoseForms.GRANULES), searchQuery.getDoseForms());
