@@ -21,7 +21,7 @@ import java.util.Set;
  *
  * @author Markus Budeus
  */
-public class NewDosageQueryRefiner implements NewPartialQueryRefiner<NewDosageQueryRefiner.Result> {
+public class DosageQueryRefiner implements PartialQueryRefiner<DosageQueryRefiner.Result> {
 
 	/**
 	 * Extracts dosage information from the given query string.
@@ -50,7 +50,7 @@ public class NewDosageQueryRefiner implements NewPartialQueryRefiner<NewDosageQu
 				new DistinctMultiSubstringUsageStatement(query.getIdentifier(), usedRanges));
 	}
 
-	public static class Result implements NewPartialQueryRefiner.Result {
+	public static class Result implements PartialQueryRefiner.Result {
 		@NotNull
 		private final List<OriginalMatch<Dosage>> dosages;
 		@NotNull
@@ -83,7 +83,7 @@ public class NewDosageQueryRefiner implements NewPartialQueryRefiner<NewDosageQu
 		}
 
 		@Override
-		public void incrementallyApply(NewRefinedQuery.Builder refinedQueryBuilder) {
+		public void incrementallyApply(RefinedQuery.Builder refinedQueryBuilder) {
 			dosages.forEach(refinedQueryBuilder::withDosage);
 			amounts.forEach(refinedQueryBuilder::withDrugAmount);
 		}

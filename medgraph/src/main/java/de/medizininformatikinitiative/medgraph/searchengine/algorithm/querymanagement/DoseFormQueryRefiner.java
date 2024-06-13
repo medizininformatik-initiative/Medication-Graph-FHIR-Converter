@@ -32,7 +32,7 @@ import java.util.stream.Collectors;
  *
  * @author Markus Budeus
  */
-public class NewDoseFormQueryRefiner implements NewPartialQueryRefiner<NewDoseFormQueryRefiner.Result> {
+public class DoseFormQueryRefiner implements PartialQueryRefiner<DoseFormQueryRefiner.Result> {
 
 	private final EditDistanceListMatcher editDistanceListMatcher = new EditDistanceListMatcher(
 			// Maximum allowed edit distance is
@@ -48,7 +48,7 @@ public class NewDoseFormQueryRefiner implements NewPartialQueryRefiner<NewDoseFo
 					.andTraceable(new RemoveBlankStrings());
 	private final IdentifierProvider<List<String>> edqmConceptsProvider;
 
-	public NewDoseFormQueryRefiner(BaseProvider<String> edqmConceptsProvider) {
+	public DoseFormQueryRefiner(BaseProvider<String> edqmConceptsProvider) {
 		this.edqmConceptsProvider = edqmConceptsProvider
 				.parallel()
 				.withTransformation(transformer);
@@ -126,7 +126,7 @@ public class NewDoseFormQueryRefiner implements NewPartialQueryRefiner<NewDoseFo
 		return union.size() < set1.size() + set2.size();
 	}
 
-	public static class Result implements NewPartialQueryRefiner.Result {
+	public static class Result implements PartialQueryRefiner.Result {
 		@NotNull
 		private final List<MatchingObject<EdqmPharmaceuticalDoseForm>> doseForms;
 		@NotNull
@@ -156,7 +156,7 @@ public class NewDoseFormQueryRefiner implements NewPartialQueryRefiner<NewDoseFo
 		}
 
 		@Override
-		public void incrementallyApply(NewRefinedQuery.Builder refinedQueryBuilder) {
+		public void incrementallyApply(RefinedQuery.Builder refinedQueryBuilder) {
 			doseForms.forEach(refinedQueryBuilder::withDoseForm);
 			characteristics.forEach(refinedQueryBuilder::withDoseFormCharacteristic);
 		}

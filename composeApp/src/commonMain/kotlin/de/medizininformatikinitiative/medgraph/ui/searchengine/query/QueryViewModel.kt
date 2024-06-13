@@ -3,7 +3,7 @@ package de.medizininformatikinitiative.medgraph.ui.searchengine.query
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import de.medizininformatikinitiative.medgraph.searchengine.algorithm.querymanagement.NewRefinedQuery
+import de.medizininformatikinitiative.medgraph.searchengine.algorithm.querymanagement.RefinedQuery
 import de.medizininformatikinitiative.medgraph.searchengine.model.RawQuery
 import de.medizininformatikinitiative.medgraph.searchengine.tracing.SubstringUsageStatement
 
@@ -42,7 +42,7 @@ class QueryViewModel {
      * Applies the given refining result to this view model, allowing it to color the query texts according to how
      * they were used in the given refined query.
      */
-    fun applyRefiningResult(refinedQuery: NewRefinedQuery) {
+    fun applyRefiningResult(refinedQuery: RefinedQuery) {
         dosageGeneralSearchTermUsageStatement = refinedQuery.dosageGeneralSearchTermUsageStatement
         doseFormGeneralSearchTermUsageStatement = refinedQuery.doseFormGeneralSearchTermUsageStatement
         dosageUsageStatement = refinedQuery.dosageUsageStatement

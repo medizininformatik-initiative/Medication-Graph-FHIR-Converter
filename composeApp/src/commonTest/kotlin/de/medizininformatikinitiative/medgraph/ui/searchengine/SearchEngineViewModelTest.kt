@@ -1,8 +1,8 @@
 package de.medizininformatikinitiative.medgraph.ui.searchengine
 
 import de.medizininformatikinitiative.medgraph.searchengine.QueryExecutor
-import de.medizininformatikinitiative.medgraph.searchengine.algorithm.querymanagement.NewQueryRefiner
-import de.medizininformatikinitiative.medgraph.searchengine.algorithm.querymanagement.NewRefinedQuery
+import de.medizininformatikinitiative.medgraph.searchengine.algorithm.querymanagement.QueryRefiner
+import de.medizininformatikinitiative.medgraph.searchengine.algorithm.querymanagement.RefinedQuery
 import de.medizininformatikinitiative.medgraph.searchengine.model.RawQuery
 import de.medizininformatikinitiative.medgraph.searchengine.model.SearchQuery
 import de.medizininformatikinitiative.medgraph.searchengine.model.identifiable.Product
@@ -32,11 +32,11 @@ import java.util.concurrent.atomic.AtomicBoolean
 class SearchEngineViewModelTest : UnitTest() {
 
     @Mock
-    lateinit var queryRefiner: NewQueryRefiner
+    lateinit var queryRefiner: QueryRefiner
     @Mock
     lateinit var queryExecutor: QueryExecutor
     @Mock
-    lateinit var refinedQuery: NewRefinedQuery
+    lateinit var refinedQuery: RefinedQuery
     @Mock
     lateinit var sampleQuery: SearchQuery
 
@@ -115,7 +115,7 @@ class SearchEngineViewModelTest : UnitTest() {
     @Test
     fun refineAndExecute() {
         val currentSearchQuery = mock(SearchQuery::class.java)
-        val currentRefinedQuery = mock(NewRefinedQuery::class.java)
+        val currentRefinedQuery = mock(RefinedQuery::class.java)
         val currentResult = listOf(OriginalMatch(
             Product(
                 2,

@@ -13,7 +13,7 @@ import de.medizininformatikinitiative.medgraph.searchengine.tracing.SubstringUsa
  * @param <T> the type of result produced by this partial refiner
  * @author Markus Budeus
  */
-public interface NewPartialQueryRefiner<T extends NewPartialQueryRefiner.Result> {
+public interface PartialQueryRefiner<T extends PartialQueryRefiner.Result> {
 
 	/**
 	 * Parses the given string identifier query and returns a corresponding result.
@@ -35,7 +35,7 @@ public interface NewPartialQueryRefiner<T extends NewPartialQueryRefiner.Result>
 		 *
 		 * @param refinedQueryBuilder the search query builder to which to apply this result
 		 */
-		void incrementallyApply(NewRefinedQuery.Builder refinedQueryBuilder);
+		void incrementallyApply(RefinedQuery.Builder refinedQueryBuilder);
 
 	}
 

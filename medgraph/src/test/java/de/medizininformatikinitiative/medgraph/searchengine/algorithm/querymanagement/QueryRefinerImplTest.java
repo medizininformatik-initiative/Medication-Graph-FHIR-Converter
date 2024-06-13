@@ -19,23 +19,23 @@ import static org.junit.jupiter.api.Assertions.*;
 /**
  * @author Markus Budeus
  */
-public class NewQueryRefinerImplTest extends UnitTest {
+public class QueryRefinerImplTest extends UnitTest {
 
-	private NewQueryRefinerImpl sut;
+	private QueryRefinerImpl sut;
 
 	@BeforeEach
 	void setUp() {
-		sut = new NewQueryRefinerImpl(
-				new NewDosageQueryRefiner(),
-				new NewDoseFormQueryRefiner(EDQM_PROVIDER),
-				new NewSubstanceQueryRefiner(SUBSTANCES_PROVIDER)
+		sut = new QueryRefinerImpl(
+				new DosageQueryRefiner(),
+				new DoseFormQueryRefiner(EDQM_PROVIDER),
+				new SubstanceQueryRefiner(SUBSTANCES_PROVIDER)
 		);
 	}
 
 	@Test
 	void simpleExample() {
 		RawQuery rawQuery = new RawQuery("Midazolam solution for injection 1mg/ml 5ml");
-		NewRefinedQuery refinedQuery = sut.refine(rawQuery);
+		RefinedQuery refinedQuery = sut.refine(rawQuery);
 		SearchQuery searchQuery = refinedQuery.toSearchQuery();
 
 		assertEquals(List.of("Midazolam"), searchQuery.getProductNameKeywords());
@@ -64,7 +64,7 @@ public class NewQueryRefinerImplTest extends UnitTest {
 	@Test
 	void queryDoseFormOnly() {
 		RawQuery rawQuery = new RawQuery("", "", "", "", "Granules");
-		NewRefinedQuery refinedQuery = sut.refine(rawQuery);
+		RefinedQuery refinedQuery = sut.refine(rawQuery);
 		SearchQuery searchQuery = refinedQuery.toSearchQuery();
 
 		assertTrue(searchQuery.getProductNameKeywords().isEmpty());
@@ -85,7 +85,7 @@ public class NewQueryRefinerImplTest extends UnitTest {
 	@Test
 	void queryDosageOnly() {
 		RawQuery rawQuery = new RawQuery("", "", "", "100 ml", "");
-		NewRefinedQuery refinedQuery = sut.refine(rawQuery);
+		RefinedQuery refinedQuery = sut.refine(rawQuery);
 		SearchQuery searchQuery = refinedQuery.toSearchQuery();
 
 		assertTrue(searchQuery.getProductNameKeywords().isEmpty());
@@ -107,7 +107,7 @@ public class NewQueryRefinerImplTest extends UnitTest {
 	@Test
 	void querySubstanceOnly() {
 		RawQuery rawQuery = new RawQuery("", "", "Epinephrin X", "", "");
-		NewRefinedQuery refinedQuery = sut.refine(rawQuery);
+		RefinedQuery refinedQuery = sut.refine(rawQuery);
 		SearchQuery searchQuery = refinedQuery.toSearchQuery();
 
 		assertTrue(searchQuery.getProductNameKeywords().isEmpty());
@@ -129,7 +129,7 @@ public class NewQueryRefinerImplTest extends UnitTest {
 	@Test
 	void misplacedDoseForm() {
 		RawQuery rawQuery = new RawQuery("", "", "", "solution for injection", "");
-		NewRefinedQuery refinedQuery = sut.refine(rawQuery);
+		RefinedQuery refinedQuery = sut.refine(rawQuery);
 		SearchQuery searchQuery = refinedQuery.toSearchQuery();
 
 		assertTrue(searchQuery.getProductNameKeywords().isEmpty());
@@ -151,7 +151,7 @@ public class NewQueryRefinerImplTest extends UnitTest {
 	@Test
 	void misplacedDosage() {
 		RawQuery rawQuery = new RawQuery("", "", "", "", "100 mg");
-		NewRefinedQuery refinedQuery = sut.refine(rawQuery);
+		RefinedQuery refinedQuery = sut.refine(rawQuery);
 		SearchQuery searchQuery = refinedQuery.toSearchQuery();
 
 		assertTrue(searchQuery.getProductNameKeywords().isEmpty());
@@ -180,7 +180,7 @@ public class NewQueryRefinerImplTest extends UnitTest {
 				""
 		);
 
-		NewRefinedQuery refinedQuery = sut.refine(rawQuery);
+		RefinedQuery refinedQuery = sut.refine(rawQuery);
 		SearchQuery searchQuery = refinedQuery.toSearchQuery();
 
 
@@ -214,7 +214,7 @@ public class NewQueryRefinerImplTest extends UnitTest {
 				""
 		);
 
-		NewRefinedQuery refinedQuery = sut.refine(rawQuery);
+		RefinedQuery refinedQuery = sut.refine(rawQuery);
 		SearchQuery searchQuery = refinedQuery.toSearchQuery();
 
 		assertEqualsIgnoreOrder(List.of("Prednisolon", "Prednisolut"), searchQuery.getProductNameKeywords());

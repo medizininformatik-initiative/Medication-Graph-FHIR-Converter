@@ -20,7 +20,7 @@ import java.util.*;
 /**
  * @author Markus Budeus
  */
-public class NewRefinedQuery {
+public class RefinedQuery {
 
 	@NotNull
 	private final Identifier<List<String>> productNameKeywords;
@@ -78,18 +78,18 @@ public class NewRefinedQuery {
 	private final SubstringUsageStatement substanceGeneralSearchTermUsageStatement;
 
 
-	public NewRefinedQuery(@NotNull Identifier<List<String>> productNameKeywords,
-	                       @NotNull List<MatchingObject<Substance>> substances,
-	                       @NotNull List<MatchingObject<Dosage>> dosages,
-	                       @NotNull List<MatchingObject<Amount>> drugAmounts,
-	                       @NotNull List<MatchingObject<EdqmPharmaceuticalDoseForm>> doseForms,
-	                       @NotNull List<MatchingObject<EdqmConcept>> doseFormCharacteristics,
-	                       @Nullable SubstringUsageStatement dosageUsageStatement,
-	                       @Nullable SubstringUsageStatement dosageGeneralSearchTermUsageStatement,
-	                       @Nullable SubstringUsageStatement doseFormUsageStatement,
-	                       @Nullable SubstringUsageStatement doseFormGeneralSearchTermUsageStatement,
-	                       @Nullable SubstringUsageStatement substanceUsageStatement,
-	                       @Nullable SubstringUsageStatement substanceGeneralSearchTermUsageStatement) {
+	public RefinedQuery(@NotNull Identifier<List<String>> productNameKeywords,
+	                    @NotNull List<MatchingObject<Substance>> substances,
+	                    @NotNull List<MatchingObject<Dosage>> dosages,
+	                    @NotNull List<MatchingObject<Amount>> drugAmounts,
+	                    @NotNull List<MatchingObject<EdqmPharmaceuticalDoseForm>> doseForms,
+	                    @NotNull List<MatchingObject<EdqmConcept>> doseFormCharacteristics,
+	                    @Nullable SubstringUsageStatement dosageUsageStatement,
+	                    @Nullable SubstringUsageStatement dosageGeneralSearchTermUsageStatement,
+	                    @Nullable SubstringUsageStatement doseFormUsageStatement,
+	                    @Nullable SubstringUsageStatement doseFormGeneralSearchTermUsageStatement,
+	                    @Nullable SubstringUsageStatement substanceUsageStatement,
+	                    @Nullable SubstringUsageStatement substanceGeneralSearchTermUsageStatement) {
 		this.productNameKeywords = productNameKeywords;
 		this.substances = substances;
 		this.dosages = dosages;
@@ -153,7 +153,7 @@ public class NewRefinedQuery {
 	}
 
 	/**
-	 * Converts this {@link NewRefinedQuery} into a {@link SearchQuery}.
+	 * Converts this {@link RefinedQuery} into a {@link SearchQuery}.
 	 */
 	public SearchQuery toSearchQuery() {
 		return new SearchQuery(
@@ -309,16 +309,16 @@ public class NewRefinedQuery {
 		}
 
 		/**
-		 * Builds the {@link NewRefinedQuery}. Note the product name keywords must be set before a refined query can be
+		 * Builds the {@link RefinedQuery}. Note the product name keywords must be set before a refined query can be
 		 * built.
 		 *
 		 * @throws IllegalStateException if the product name keywords have not been set (or set to null) using
 		 *                               {@link #withProductNameKeywords(Identifier)}
 		 */
-		public NewRefinedQuery build() {
+		public RefinedQuery build() {
 			if (productNameKeywords == null) throw new IllegalStateException("No product name keywords are set!");
 
-			return new NewRefinedQuery(
+			return new RefinedQuery(
 					productNameKeywords,
 					substances.getWithDuplicatesMerged(),
 					dosages.getWithDuplicatesMerged(),

@@ -3,8 +3,8 @@ package de.medizininformatikinitiative.medgraph.searchengine.algorithm;
 import de.medizininformatikinitiative.medgraph.UnitTest;
 import de.medizininformatikinitiative.medgraph.common.db.DatabaseConnection;
 import de.medizininformatikinitiative.medgraph.searchengine.QueryExecutor;
-import de.medizininformatikinitiative.medgraph.searchengine.algorithm.querymanagement.NewQueryRefiner;
-import de.medizininformatikinitiative.medgraph.searchengine.algorithm.querymanagement.NewRefinedQuery;
+import de.medizininformatikinitiative.medgraph.searchengine.algorithm.querymanagement.QueryRefiner;
+import de.medizininformatikinitiative.medgraph.searchengine.algorithm.querymanagement.RefinedQuery;
 import de.medizininformatikinitiative.medgraph.searchengine.model.RawQuery;
 import de.medizininformatikinitiative.medgraph.searchengine.model.SearchQuery;
 import de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject.MatchingObject;
@@ -35,7 +35,7 @@ import static org.mockito.Mockito.when;
 public class PerSessionQueryManagerTest extends UnitTest {
 
 	@Mock
-	private NewQueryRefiner queryRefiner;
+	private QueryRefiner queryRefiner;
 	@Mock
 	private QueryExecutor queryExecutor;
 	@Mock
@@ -123,7 +123,7 @@ public class PerSessionQueryManagerTest extends UnitTest {
 
 	@Test
 	public void correctRefinementResultReturned() {
-		NewRefinedQuery refinedQuery = mock();
+		RefinedQuery refinedQuery = mock();
 		when(queryRefiner.refine(rawQuery)).thenReturn(refinedQuery);
 
 		assertEquals(refinedQuery, sut.refine(rawQuery));

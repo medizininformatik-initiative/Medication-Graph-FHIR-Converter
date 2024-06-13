@@ -6,9 +6,9 @@ import androidx.compose.runtime.setValue
 import cafe.adriel.voyager.core.model.ScreenModel
 import cafe.adriel.voyager.core.model.screenModelScope
 import de.medizininformatikinitiative.medgraph.searchengine.QueryExecutor
-import de.medizininformatikinitiative.medgraph.searchengine.algorithm.querymanagement.NewQueryRefiner
-import de.medizininformatikinitiative.medgraph.searchengine.algorithm.querymanagement.NewRefinedQuery
-import de.medizininformatikinitiative.medgraph.ui.searchengine.query.NewStubQueryRefiner
+import de.medizininformatikinitiative.medgraph.searchengine.algorithm.querymanagement.QueryRefiner
+import de.medizininformatikinitiative.medgraph.searchengine.algorithm.querymanagement.RefinedQuery
+import de.medizininformatikinitiative.medgraph.ui.searchengine.query.StubQueryRefiner
 import de.medizininformatikinitiative.medgraph.ui.searchengine.query.QueryViewModel
 import de.medizininformatikinitiative.medgraph.ui.searchengine.query.StubQueryExecutor
 import de.medizininformatikinitiative.medgraph.ui.searchengine.results.SearchResultsListViewModel
@@ -22,7 +22,7 @@ import kotlinx.coroutines.launch
  * @author Markus Budeus
  */
 open class SearchEngineViewModel(
-    private val queryRefiner: NewQueryRefiner = NewStubQueryRefiner(),
+    private val queryRefiner: QueryRefiner = StubQueryRefiner(),
     private val queryExecutor: QueryExecutor = StubQueryExecutor()
 ) : ScreenModel {
 
@@ -31,7 +31,7 @@ open class SearchEngineViewModel(
     /**
      * The current refined query.
      */
-    var refinedQuery by mutableStateOf<NewRefinedQuery?>(null)
+    var refinedQuery by mutableStateOf<RefinedQuery?>(null)
         private set
 
     /**

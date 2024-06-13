@@ -11,24 +11,24 @@ import java.util.List;
 import java.util.function.Function;
 
 /**
- * Query refiner capable of turning a {@link RawQuery} into a {@link NewRefinedQuery}.
+ * Query refiner capable of turning a {@link RawQuery} into a {@link RefinedQuery}.
  *
  * @author Markus Budeus
  */
-public class NewQueryRefinerImpl implements NewQueryRefiner {
+public class QueryRefinerImpl implements QueryRefiner {
 
 	/**
 	 * The partial refiner which extracts and refines dosage information.
 	 */
-	private final NewDosageQueryRefiner dosageQueryRefiner;
+	private final DosageQueryRefiner dosageQueryRefiner;
 	/**
 	 * The partial refiner which extracts and refines dose form information.
 	 */
-	private final NewDoseFormQueryRefiner doseFormQueryRefiner;
+	private final DoseFormQueryRefiner doseFormQueryRefiner;
 	/**
 	 * The partial refiner which resolves substances based on the query.
 	 */
-	private final NewSubstanceQueryRefiner substanceQueryRefiner;
+	private final SubstanceQueryRefiner substanceQueryRefiner;
 
 	private final Transformer<String, List<String>> keywordExtractor =
 			new WhitespaceTokenizer(true)
@@ -36,20 +36,20 @@ public class NewQueryRefinerImpl implements NewQueryRefiner {
 					.and(new RemoveBlankStrings())
 					.and(new MinimumTokenLength(2));
 
-	public NewQueryRefinerImpl(NewDosageQueryRefiner dosageQueryRefiner, NewDoseFormQueryRefiner doseFormQueryRefiner,
-	                           NewSubstanceQueryRefiner substanceQueryRefiner) {
+	public QueryRefinerImpl(DosageQueryRefiner dosageQueryRefiner, DoseFormQueryRefiner doseFormQueryRefiner,
+	                        SubstanceQueryRefiner substanceQueryRefiner) {
 		this.dosageQueryRefiner = dosageQueryRefiner;
 		this.doseFormQueryRefiner = doseFormQueryRefiner;
 		this.substanceQueryRefiner = substanceQueryRefiner;
 	}
 
-	public NewRefinedQuery refine(RawQuery query) {
+	public RefinedQuery refine(RawQuery query) {
 		StepwiseGeneralQueryParser generalQueryParser = null;
 		if (!query.query.isBlank()) {
 			generalQueryParser = new StepwiseGeneralQueryParser(query.query);
 		}
 
-		NewRefinedQuery.Builder queryBuilder = new NewRefinedQuery.Builder();
+		RefinedQuery.Builder queryBuilder = new RefinedQuery.Builder();
 
 		// Dosages
 		SubstringUsageStatement dosageUsageStatement =
@@ -97,15 +97,15 @@ public class NewQueryRefinerImpl implements NewQueryRefiner {
 	}
 
 	/**
-	 * Like {@link #applyPartialQueryRefiner(Identifier, NewPartialQueryRefiner, NewRefinedQuery.Builder)}, but takes
+	 * Like {@link #applyPartialQueryRefiner(Identifier, PartialQueryRefiner, RefinedQuery.Builder)}, but takes
 	 * the query to use from the generalQueryParser (via
 	 * {@link StepwiseGeneralQueryParser#useRemainingQueryParts(Function)}).
 	 * <p>
 	 * If the generalQueryParser is null, nothing happens and null is returned.
 	 */
 	private SubstringUsageStatement applyPartialQueryRefinerUsingStepwiseQueryParser(
-			StepwiseGeneralQueryParser generalQueryParser, NewPartialQueryRefiner<?> refiner,
-			NewRefinedQuery.Builder queryBuilder
+			StepwiseGeneralQueryParser generalQueryParser, PartialQueryRefiner<?> refiner,
+			RefinedQuery.Builder queryBuilder
 	) {
 		if (generalQueryParser != null) {
 			return generalQueryParser.useRemainingQueryParts(
@@ -121,10 +121,10 @@ public class NewQueryRefinerImpl implements NewQueryRefiner {
 	 * If the given query is blank, nothing happens and null is returned.
 	 */
 	private SubstringUsageStatement applyPartialQueryRefiner(Identifier<String> query,
-	                                                         NewPartialQueryRefiner<?> refiner,
-	                                                         NewRefinedQuery.Builder queryBuilder) {
+	                                                         PartialQueryRefiner<?> refiner,
+	                                                         RefinedQuery.Builder queryBuilder) {
 		if (query != null && !query.getIdentifier().isBlank()) {
-			NewPartialQueryRefiner.Result result = refiner.parse(query);
+			PartialQueryRefiner.Result result = refiner.parse(query);
 			result.incrementallyApply(queryBuilder);
 			return result.getUsageStatement();
 		}

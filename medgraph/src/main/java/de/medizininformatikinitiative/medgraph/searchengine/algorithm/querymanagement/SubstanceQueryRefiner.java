@@ -28,7 +28,7 @@ import java.util.stream.Collectors;
  *
  * @author Markus Budeus
  */
-public class NewSubstanceQueryRefiner implements NewPartialQueryRefiner<NewSubstanceQueryRefiner.Result> {
+public class SubstanceQueryRefiner implements PartialQueryRefiner<SubstanceQueryRefiner.Result> {
 
 	private final TraceableTransformer<String, Set<String>, DistinctMultiSubstringUsageStatement, StringSetUsageStatement> TRANSFORMER =
 			new ToLowerCase().
@@ -49,7 +49,7 @@ public class NewSubstanceQueryRefiner implements NewPartialQueryRefiner<NewSubst
 
 	private final IdentifierStream<String> substanceProvider;
 
-	public NewSubstanceQueryRefiner(IdentifierStream<String> substanceProvider) {
+	public SubstanceQueryRefiner(IdentifierStream<String> substanceProvider) {
 		this.substanceProvider = substanceProvider.parallel();
 	}
 
@@ -109,7 +109,7 @@ public class NewSubstanceQueryRefiner implements NewPartialQueryRefiner<NewSubst
 		return union.size() < set1.size() + set2.size();
 	}
 
-	public static class Result implements NewPartialQueryRefiner.Result {
+	public static class Result implements PartialQueryRefiner.Result {
 
 		private final List<MatchingObject<Substance>> substances;
 		private final DistinctMultiSubstringUsageStatement usageStatement;
@@ -129,7 +129,7 @@ public class NewSubstanceQueryRefiner implements NewPartialQueryRefiner<NewSubst
 		}
 
 		@Override
-		public void incrementallyApply(NewRefinedQuery.Builder refinedQueryBuilder) {
+		public void incrementallyApply(RefinedQuery.Builder refinedQueryBuilder) {
 			substances.forEach(refinedQueryBuilder::withSubstance);
 		}
 	}
