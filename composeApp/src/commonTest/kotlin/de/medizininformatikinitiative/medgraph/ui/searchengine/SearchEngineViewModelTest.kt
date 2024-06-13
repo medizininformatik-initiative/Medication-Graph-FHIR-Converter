@@ -3,7 +3,6 @@ package de.medizininformatikinitiative.medgraph.ui.searchengine
 import de.medizininformatikinitiative.medgraph.searchengine.QueryExecutor
 import de.medizininformatikinitiative.medgraph.searchengine.algorithm.querymanagement.NewQueryRefiner
 import de.medizininformatikinitiative.medgraph.searchengine.algorithm.querymanagement.NewRefinedQuery
-import de.medizininformatikinitiative.medgraph.searchengine.algorithm.querymanagement.RefinedQuery
 import de.medizininformatikinitiative.medgraph.searchengine.model.RawQuery
 import de.medizininformatikinitiative.medgraph.searchengine.model.SearchQuery
 import de.medizininformatikinitiative.medgraph.searchengine.model.identifiable.Product

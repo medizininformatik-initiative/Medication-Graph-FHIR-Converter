@@ -153,7 +153,7 @@ public class NewRefinedQuery {
 	}
 
 	/**
-	 * Converts this {@link RefinedQuery} into a {@link SearchQuery}.
+	 * Converts this {@link NewRefinedQuery} into a {@link SearchQuery}.
 	 */
 	public SearchQuery toSearchQuery() {
 		return new SearchQuery(
