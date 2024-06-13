@@ -2,8 +2,8 @@ package de.medizininformatikinitiative.medgraph.searchengine.algorithm;
 
 import de.medizininformatikinitiative.medgraph.common.db.DatabaseConnection;
 import de.medizininformatikinitiative.medgraph.searchengine.QueryExecutor;
-import de.medizininformatikinitiative.medgraph.searchengine.algorithm.querymanagement.NewQueryRefiner;
-import de.medizininformatikinitiative.medgraph.searchengine.algorithm.querymanagement.NewRefinedQuery;
+import de.medizininformatikinitiative.medgraph.searchengine.algorithm.querymanagement.QueryRefiner;
+import de.medizininformatikinitiative.medgraph.searchengine.algorithm.querymanagement.RefinedQuery;
 import de.medizininformatikinitiative.medgraph.searchengine.model.RawQuery;
 import de.medizininformatikinitiative.medgraph.searchengine.model.SearchQuery;
 import de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject.MatchingObject;
@@ -18,13 +18,13 @@ import java.util.function.Function;
  *
  * @author Markus Budeus
  */
-public class PerSessionQueryManager implements QueryExecutor, NewQueryRefiner {
+public class PerSessionQueryManager implements QueryExecutor, QueryRefiner {
 
-	private final Function<Session, NewQueryRefiner> queryRefinerFactory;
+	private final Function<Session, QueryRefiner> queryRefinerFactory;
 	private final Function<Session, QueryExecutor> queryExecutorFactory;
 	private final DatabaseConnection connection;
 
-	public PerSessionQueryManager(Function<Session, NewQueryRefiner> queryRefinerFactory,
+	public PerSessionQueryManager(Function<Session, QueryRefiner> queryRefinerFactory,
 	                              Function<Session, QueryExecutor> queryExecutorFactory,
 	                              DatabaseConnection connection) {
 		this.queryExecutorFactory = queryExecutorFactory;
@@ -40,7 +40,7 @@ public class PerSessionQueryManager implements QueryExecutor, NewQueryRefiner {
 	}
 
 	@Override
-	public NewRefinedQuery refine(RawQuery query) {
+	public RefinedQuery refine(RawQuery query) {
 		try (Session session = connection.createSession()) {
 			return queryRefinerFactory.apply(session).refine(query);
 		}

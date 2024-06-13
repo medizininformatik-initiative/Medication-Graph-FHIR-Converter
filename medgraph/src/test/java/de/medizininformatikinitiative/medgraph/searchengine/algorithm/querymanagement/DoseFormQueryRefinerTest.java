@@ -29,17 +29,17 @@ import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 /**
  * @author Markus Budeus
  */
-public class NewDoseFormQueryRefinerTest extends UnitTest {
-	private NewDoseFormQueryRefiner sut;
+public class DoseFormQueryRefinerTest extends UnitTest {
+	private DoseFormQueryRefiner sut;
 
 	@BeforeEach
 	void setUp() {
-		sut = new NewDoseFormQueryRefiner(TestFactory.EDQM_PROVIDER);
+		sut = new DoseFormQueryRefiner(TestFactory.EDQM_PROVIDER);
 	}
 
 	@Test
 	void noMatch() {
-		NewDoseFormQueryRefiner.Result result = parse("Aspirin 100mg");
+		DoseFormQueryRefiner.Result result = parse("Aspirin 100mg");
 		assertEquals(Collections.emptyList(), result.getDoseForms());
 		assertEquals(Collections.emptyList(), result.getCharacteristics());
 		assertEquals(Collections.emptySet(), result.getUsageStatement().getUsedRanges());
@@ -47,7 +47,7 @@ public class NewDoseFormQueryRefinerTest extends UnitTest {
 
 	@Test
 	void simpleMatch() {
-		NewDoseFormQueryRefiner.Result result = parse("Tranexamic acid granules");
+		DoseFormQueryRefiner.Result result = parse("Tranexamic acid granules");
 		assertEquals(List.of(GRANULES), SearchEngineTools.unwrap(result.getDoseForms()));
 		assertEquals(List.of(TestFactory.DoseForms.Characteristics.GRANULES),
 				SearchEngineTools.unwrap(result.getCharacteristics()));
@@ -58,7 +58,7 @@ public class NewDoseFormQueryRefinerTest extends UnitTest {
 
 	@Test
 	void multiMatch() {
-		NewDoseFormQueryRefiner.Result result = parse("Prednisolon oral granules");
+		DoseFormQueryRefiner.Result result = parse("Prednisolon oral granules");
 		assertEquals(List.of(GRANULES), SearchEngineTools.unwrap(result.getDoseForms()));
 		assertEqualsIgnoreOrder(List.of(Characteristics.ORAL, Characteristics.GRANULES),
 				SearchEngineTools.unwrap(result.getCharacteristics()));
@@ -71,7 +71,7 @@ public class NewDoseFormQueryRefinerTest extends UnitTest {
 
 	@Test
 	void overlappingMatch() {
-		NewDoseFormQueryRefiner.Result result = parse("Prednisolon powder for solution for injection");
+		DoseFormQueryRefiner.Result result = parse("Prednisolon powder for solution for injection");
 		assertEqualsIgnoreOrder(List.of(POWDER_FOR_SOLUTION_FOR_INJECTION, SOLUTION_FOR_INJECTION),
 				SearchEngineTools.unwrap(result.getDoseForms()));
 		assertEqualsIgnoreOrder(List.of(Characteristics.POWDER, Characteristics.SOLUTION),
@@ -87,7 +87,7 @@ public class NewDoseFormQueryRefinerTest extends UnitTest {
 
 	@Test
 	void multiMatchWithOverlap() {
-		NewDoseFormQueryRefiner.Result result = parse(
+		DoseFormQueryRefiner.Result result = parse(
 				"Prednisolon oral powder for solution for injection"); // Yeah I know this one makes no sense...
 		assertEqualsIgnoreOrder(List.of(POWDER_FOR_SOLUTION_FOR_INJECTION, SOLUTION_FOR_INJECTION),
 				SearchEngineTools.unwrap(result.getDoseForms()));
@@ -98,15 +98,15 @@ public class NewDoseFormQueryRefinerTest extends UnitTest {
 
 	@Test
 	void incrementallyApply() {
-		NewDoseFormQueryRefiner.Result r1 = parse("Prednisolon parenteral solution for injection");
-		NewDoseFormQueryRefiner.Result r2 = parse("Tranexamsäure oral granules parenteral");
+		DoseFormQueryRefiner.Result r1 = parse("Prednisolon parenteral solution for injection");
+		DoseFormQueryRefiner.Result r2 = parse("Tranexamsäure oral granules parenteral");
 
-		NewRefinedQuery.Builder builder = new NewRefinedQuery.Builder()
+		RefinedQuery.Builder builder = new RefinedQuery.Builder()
 				.withProductNameKeywords(
 						new OriginalIdentifier<>(Collections.emptyList(), OriginalIdentifier.Source.RAW_QUERY));
 		r1.incrementallyApply(builder);
 		r2.incrementallyApply(builder);
-		NewRefinedQuery query = builder.build();
+		RefinedQuery query = builder.build();
 
 		assertEquals(List.of(SOLUTION_FOR_INJECTION, GRANULES), SearchEngineTools.unwrap(query.getDoseForms()));
 		assertEqualsIgnoreOrder(List.of(Characteristics.ORAL, Characteristics.PARENTERAL, Characteristics.GRANULES,
@@ -119,22 +119,22 @@ public class NewDoseFormQueryRefinerTest extends UnitTest {
 				List.of());
 		EdqmPharmaceuticalDoseForm gum = new EdqmPharmaceuticalDoseForm("PDF-11111112", "gum", List.of());
 
-		sut = new NewDoseFormQueryRefiner(BaseProvider.ofIdentifiers(List.of(
+		sut = new DoseFormQueryRefiner(BaseProvider.ofIdentifiers(List.of(
 				new MappedIdentifier<>("Susp. zum Einnehmen", suspension),
 				new MappedIdentifier<>("Gum", gum)
 		)));
 
 		// Problem is: "Gum" only has an edit distance of "1" to "zum". But we still don't want it as a result.
-		NewDoseFormQueryRefiner.Result r1 = parse("Sulfamethoxzaol 400mg Susp. zum Einnehmen");
+		DoseFormQueryRefiner.Result r1 = parse("Sulfamethoxzaol 400mg Susp. zum Einnehmen");
 		assertEquals(List.of(suspension), SearchEngineTools.unwrap(r1.getDoseForms()));
 
 		// Here however, Gum is the only one written correctly, so it should win - altough this is probably not
 		// what the user meant...
-		NewDoseFormQueryRefiner.Result r2 = parse("Sulfamethoxzaol 400mg Susp. gum Einnehmen");
+		DoseFormQueryRefiner.Result r2 = parse("Sulfamethoxzaol 400mg Susp. gum Einnehmen");
 		assertEquals(List.of(gum), SearchEngineTools.unwrap(r2.getDoseForms()));
 	}
 
-	private NewDoseFormQueryRefiner.Result parse(String query) {
+	private DoseFormQueryRefiner.Result parse(String query) {
 		return sut.parse(new OriginalIdentifier<>(query, OriginalIdentifier.Source.RAW_QUERY));
 	}
 

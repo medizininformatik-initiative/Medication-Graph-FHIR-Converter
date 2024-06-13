@@ -28,18 +28,18 @@ import static org.junit.jupiter.api.Assertions.*;
 /**
  * @author Markus Budeus
  */
-public class NewSubstanceQueryRefinerTest extends UnitTest {
+public class SubstanceQueryRefinerTest extends UnitTest {
 
-	private NewSubstanceQueryRefiner sut;
+	private SubstanceQueryRefiner sut;
 
 	@BeforeEach
 	void setUp() {
-		sut = new NewSubstanceQueryRefiner(SUBSTANCES_PROVIDER);
+		sut = new SubstanceQueryRefiner(SUBSTANCES_PROVIDER);
 	}
 
 	@Test
 	void noMatch() {
-		NewSubstanceQueryRefiner.Result result = parse("Vino di Italia");
+		SubstanceQueryRefiner.Result result = parse("Vino di Italia");
 
 		assertTrue(result.getSubstances().isEmpty());
 		assertEquals("", result.getUsageStatement().getUsedParts());
@@ -47,7 +47,7 @@ public class NewSubstanceQueryRefinerTest extends UnitTest {
 
 	@Test
 	void simpleMatch() {
-		NewSubstanceQueryRefiner.Result result = parse("Acetylsalicylsäure");
+		SubstanceQueryRefiner.Result result = parse("Acetylsalicylsäure");
 
 		assertEquals(List.of(ACETYLSALICYLIC_ACID), SearchEngineTools.unwrap(result.getSubstances()));
 		assertEquals("Acetylsalicylsäure", result.getUsageStatement().getUsedParts());
@@ -56,7 +56,7 @@ public class NewSubstanceQueryRefinerTest extends UnitTest {
 
 	@Test
 	void multiMatch() {
-		NewSubstanceQueryRefiner.Result result = parse("Acetylsalicylsäure Prednisolon Bayer");
+		SubstanceQueryRefiner.Result result = parse("Acetylsalicylsäure Prednisolon Bayer");
 		assertEqualsIgnoreOrder(List.of(ACETYLSALICYLIC_ACID, PREDNISOLONE, PREDNISOLONE_HYDROGENSUCCINATE),
 				SearchEngineTools.unwrap(result.getSubstances()));
 		assertUsedParts(List.of("Acetylsalicylsäure", "Prednisolon"), result.getUsageStatement());
@@ -69,11 +69,11 @@ public class NewSubstanceQueryRefinerTest extends UnitTest {
 	@Test
 	void multiMatchButNotEquallyGood() {
 		Substance cimetidin = new Substance(8, "Cimetidin acis");
-		sut = new NewSubstanceQueryRefiner(BaseProvider.ofIdentifiers(List.of(
+		sut = new SubstanceQueryRefiner(BaseProvider.ofIdentifiers(List.of(
 				new MappedIdentifier<>("Acetylsalicylic acid", ACETYLSALICYLIC_ACID),
 				new MappedIdentifier<>("Cimetidin acis", cimetidin)
 		)));
-		NewSubstanceQueryRefiner.Result result = parse("Cimetidin acis");
+		SubstanceQueryRefiner.Result result = parse("Cimetidin acis");
 		assertEquals(List.of(cimetidin), SearchEngineTools.unwrap(result.getSubstances()));
 		assertUsedParts(List.of("Cimetidin", "acis"), result.getUsageStatement());
 
@@ -92,36 +92,36 @@ public class NewSubstanceQueryRefinerTest extends UnitTest {
 
 	@Test
 	void spellingError() {
-		NewSubstanceQueryRefiner.Result result = parse("Midazloam");
+		SubstanceQueryRefiner.Result result = parse("Midazloam");
 		assertEqualsIgnoreOrder(List.of(MIDAZOLAM, MIDAZOLAM_HYDROCHLORIDE), SearchEngineTools.unwrap(result.getSubstances()));
 		assertUsedParts(List.of("Midazloam"), result.getUsageStatement());
 	}
 
 	@Test
 	void overlappingMatch() {
-		NewSubstanceQueryRefiner.Result result = parse("Midazolam hydrochlorid");
+		SubstanceQueryRefiner.Result result = parse("Midazolam hydrochlorid");
 		assertEqualsIgnoreOrder(List.of(MIDAZOLAM_HYDROCHLORIDE), SearchEngineTools.unwrap(result.getSubstances()));
 		assertEquals("Midazolam hydrochlorid", result.getUsageStatement().getUsedParts());
 	}
 
 	@Test
 	void incrementallyApply() {
-		NewSubstanceQueryRefiner.Result r1 = parse("Acetylsalicylsäure");
-		NewSubstanceQueryRefiner.Result r2 = parse("Prednisolon Bayer");
-		NewRefinedQuery.Builder builder = new NewRefinedQuery.Builder()
+		SubstanceQueryRefiner.Result r1 = parse("Acetylsalicylsäure");
+		SubstanceQueryRefiner.Result r2 = parse("Prednisolon Bayer");
+		RefinedQuery.Builder builder = new RefinedQuery.Builder()
 				.withProductNameKeywords(
 						new OriginalIdentifier<>(Collections.emptyList(), OriginalIdentifier.Source.RAW_QUERY));
 
 		r1.incrementallyApply(builder);
 		r2.incrementallyApply(builder);
 
-		NewRefinedQuery query = builder.build();
+		RefinedQuery query = builder.build();
 
 		assertEqualsIgnoreOrder(List.of(PREDNISOLONE, PREDNISOLONE_HYDROGENSUCCINATE, ACETYLSALICYLIC_ACID),
 				SearchEngineTools.unwrap(query.getSubstances()));
 	}
 
-	private NewSubstanceQueryRefiner.Result parse(String query) {
+	private SubstanceQueryRefiner.Result parse(String query) {
 		return sut.parse(new OriginalIdentifier<>(query, OriginalIdentifier.Source.RAW_QUERY));
 	}
 

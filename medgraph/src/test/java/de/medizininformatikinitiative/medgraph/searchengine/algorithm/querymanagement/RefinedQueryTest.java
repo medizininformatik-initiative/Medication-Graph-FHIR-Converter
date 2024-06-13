@@ -21,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.*;
 /**
  * @author Markus Budeus
  */
-public class NewRefinedQueryTest extends UnitTest {
+public class RefinedQueryTest extends UnitTest {
 
 	private final Identifier<List<String>> SAMPLE_PRODUCT_KEYWORDS = new OriginalIdentifier<>(
 			List.of("Sodium", "chloride"), OriginalIdentifier.Source.RAW_QUERY);
@@ -29,7 +29,7 @@ public class NewRefinedQueryTest extends UnitTest {
 	@Test
 	void productIdentifierRequired() {
 		assertThrows(IllegalStateException.class, () -> {
-			new NewRefinedQuery.Builder()
+			new RefinedQuery.Builder()
 					.withDosage(new OriginalMatch<>(TestFactory.SAMPLE_DOSAGE_1))
 					.withDoseForm(new OriginalMatch<>(TestFactory.DoseForms.SOLUTION_FOR_INJECTION))
 					.withDoseFormCharacteristic(new OriginalMatch<>(TestFactory.DoseForms.Characteristics.CONVENTIONAL))
@@ -52,7 +52,7 @@ public class NewRefinedQueryTest extends UnitTest {
 		OriginalMatch<EdqmConcept> doseFormCharacteristic1 = new OriginalMatch<>(
 				TestFactory.DoseForms.Characteristics.CONVENTIONAL);
 
-		NewRefinedQuery refinedQuery = new NewRefinedQuery.Builder()
+		RefinedQuery refinedQuery = new RefinedQuery.Builder()
 				.withProductNameKeywords(SAMPLE_PRODUCT_KEYWORDS)
 				.withDosage(dosage)
 				.withDoseForm(doseForm)
@@ -90,7 +90,7 @@ public class NewRefinedQueryTest extends UnitTest {
 		OriginalMatch<Substance> substance3 = new OriginalMatch<>(TestFactory.SAMPLE_SUBSTANCE_1);
 		OriginalMatch<Substance> substance4 = new OriginalMatch<>(TestFactory.SAMPLE_SUBSTANCE_3);
 
-		NewRefinedQuery refinedQuery = new NewRefinedQuery.Builder()
+		RefinedQuery refinedQuery = new RefinedQuery.Builder()
 				.withProductNameKeywords(SAMPLE_PRODUCT_KEYWORDS)
 				.withSubstance(substance1)
 				.withSubstance(substance2)
@@ -114,7 +114,7 @@ public class NewRefinedQueryTest extends UnitTest {
 		OriginalMatch<Dosage> dosage2 = new OriginalMatch<>(TestFactory.SAMPLE_DOSAGE_2);
 		OriginalMatch<Dosage> dosage3 = new OriginalMatch<>(TestFactory.SAMPLE_DOSAGE_2);
 
-		NewRefinedQuery refinedQuery = new NewRefinedQuery.Builder()
+		RefinedQuery refinedQuery = new RefinedQuery.Builder()
 				.withProductNameKeywords(SAMPLE_PRODUCT_KEYWORDS)
 				.withDosage(dosage1)
 				.withDosage(dosage2)
@@ -136,7 +136,7 @@ public class NewRefinedQueryTest extends UnitTest {
 		OriginalMatch<Dosage> dosage2 = new OriginalMatch<>(TestFactory.SAMPLE_DOSAGE_2);
 		OriginalMatch<Dosage> dosage3 = new OriginalMatch<>(TestFactory.SAMPLE_DOSAGE_2);
 
-		NewRefinedQuery refinedQuery = new NewRefinedQuery.Builder()
+		RefinedQuery refinedQuery = new RefinedQuery.Builder()
 				.withProductNameKeywords(SAMPLE_PRODUCT_KEYWORDS)
 				.withDosage(dosage1)
 				.withDosage(dosage2)
@@ -167,7 +167,7 @@ public class NewRefinedQueryTest extends UnitTest {
 		OriginalMatch<EdqmPharmaceuticalDoseForm> doseForm7 = new OriginalMatch<>(
 				TestFactory.DoseForms.SOLUTION_FOR_INJECTION_OR_INFUSION);
 
-		NewRefinedQuery refinedQuery = new NewRefinedQuery.Builder()
+		RefinedQuery refinedQuery = new RefinedQuery.Builder()
 				.withProductNameKeywords(SAMPLE_PRODUCT_KEYWORDS)
 				.withDoseForm(doseForm1)
 				.withDoseForm(doseForm2)
@@ -199,7 +199,7 @@ public class NewRefinedQueryTest extends UnitTest {
 		OriginalMatch<EdqmConcept> doseForm6 = new OriginalMatch<>(TestFactory.DoseForms.Characteristics.POWDER);
 		OriginalMatch<EdqmConcept> doseForm7 = new OriginalMatch<>(TestFactory.DoseForms.Characteristics.SOLUTION);
 
-		NewRefinedQuery refinedQuery = new NewRefinedQuery.Builder()
+		RefinedQuery refinedQuery = new RefinedQuery.Builder()
 				.withProductNameKeywords(SAMPLE_PRODUCT_KEYWORDS)
 				.withDoseFormCharacteristic(doseForm1)
 				.withDoseFormCharacteristic(doseForm2)
