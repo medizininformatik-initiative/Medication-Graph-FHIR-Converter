@@ -83,7 +83,7 @@ fun RawAndParsedQueryUI(viewModel: SearchEngineViewModel, modifier: Modifier = M
                 .width(1.dp)
         )
 
-        val parsedQuery = viewModel.refinedQuery?.searchQuery
+        val parsedQuery = viewModel.refinedQuery?.toSearchQuery() // TODO toSearchQuery is too expensive to call in every recomposition!
         Box(modifier = Modifier.weight(1f).fillMaxHeight()) {
             if (viewModel.queryRefiningUnderway) {
                 CircularProgressIndicator(
