@@ -4,7 +4,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import de.medizininformatikinitiative.medgraph.searchengine.algorithm.querymanagement.NewRefinedQuery
-import de.medizininformatikinitiative.medgraph.searchengine.algorithm.querymanagement.RefinedQuery
 import de.medizininformatikinitiative.medgraph.searchengine.model.RawQuery
 import de.medizininformatikinitiative.medgraph.searchengine.tracing.SubstringUsageStatement
 

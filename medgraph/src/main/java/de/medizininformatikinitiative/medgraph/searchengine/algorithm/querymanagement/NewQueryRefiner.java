@@ -4,7 +4,7 @@ import de.medizininformatikinitiative.medgraph.searchengine.model.RawQuery;
 import de.medizininformatikinitiative.medgraph.searchengine.model.SearchQuery;
 
 /**
- * Query refiner capable of turning a {@link RawQuery} into a {@link RefinedQuery}.
+ * Query refiner capable of turning a {@link RawQuery} into a {@link NewRefinedQuery}.
  *
  * @author Markus Budeus
  */
