@@ -1,3 +1,12 @@
+### Regarding the license:
+I know that people are waiting for me to set up a license for this project so other people can
+use it without running into legal issues. I am on it, but unfortunately, I need to make sure the license
+is in line with MII/DIFUTURE and TUM/MRI regulations, which might take a while... :(
+
+As of: June 14th, 2024
+
+---
+
 This is a Java tool meant for supporting the transformation of clinical medication-related documentation
 into a structured FHIR format. Using it requires a Neo4j database to be available.
 
