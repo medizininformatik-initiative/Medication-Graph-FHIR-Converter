@@ -24,9 +24,11 @@ public class EdqmStandardTermsTranslationsLoader extends CsvLoader {
 	@Override
 	protected void executeLoad() {
 		executeQuery(withLoadStatement(
-				"MATCH (e:" + EDQM_LABEL + " {code: "+ row(TARGET_CLASS) + " + '-' + " + row(TARGET_CODE)+ "}) " +
-						"MERGE (s:"+SYNONYME_LABEL+"{name: "+row(SYNONYME) + "}) " +
-						"MERGE (s)-[:"+SYNONYME_REFERENCES_NODE_LABEL+"]->(e)"
+				"MATCH (e:" + EDQM_LABEL + " {code: " + row(TARGET_CLASS) + " + '-' + " + row(TARGET_CODE) + "})" +
+						" SET e.german = " + row(SYNONYME) +
+						" WITH e, " + ROW_IDENTIFIER +
+						" MERGE (s:" + SYNONYME_LABEL + "{name: " + row(SYNONYME) + "})" +
+						" MERGE (s)-[:" + SYNONYME_REFERENCES_NODE_LABEL + "]->(e)"
 		));
 
 	}

@@ -298,15 +298,33 @@ public class GraphDbPopulator {
 		try (BufferedReader reader = new BufferedReader(new InputStreamReader(from));
 		     BufferedWriter writer = new BufferedWriter(new FileWriter(to.toFile()))) {
 			String line;
+			List<Integer> updatedLines = new ArrayList<>();
+			int l = 0;
 			while ((line = reader.readLine()) != null) {
-				String[] parts = line.split(";");
-				String lastPart = parts[parts.length - 1];
-				if (lastPart.startsWith("\"") && lastPart.endsWith("\"")) {
-					lastPart = "\"" + lastPart.substring(1, lastPart.length() - 1).replaceAll("\"", "''") +"\"";
+				l++;
+				int lastSplitterIndex = -1;
+				for (int i = line.length() - 2; i >= 0;i--) {
+					if (line.charAt(i) == ';' && line.charAt(i-1) == '"' && line.charAt(i+1) == '"') {
+						lastSplitterIndex = i;
+						break;
+					}
 				}
-				parts[parts.length - 1] = lastPart;
-				if (!line.startsWith(CSV_COMMENT_INDICATOR)) writer.write(String.join(";", parts) + '\n');
+				if (lastSplitterIndex != -1) {
+					String lastPart = line.substring(lastSplitterIndex + 1);
+					if (lastPart.startsWith("\"") && lastPart.endsWith("\"")) {
+						String newPart = "\"" + lastPart.substring(1, lastPart.length() - 1).replaceAll("\"", "''") +"\"";
+						if (!newPart.equals(lastPart))
+							updatedLines.add(l);
+						lastPart = newPart;
+					}
+					writer.write(line.substring(0, lastSplitterIndex + 1));
+					writer.write(lastPart);
+				} else {
+					writer.write(line);
+				}
+				writer.write("\n");
 			}
+			System.out.println("Updated lines "+updatedLines);
 		}
 	}
 
