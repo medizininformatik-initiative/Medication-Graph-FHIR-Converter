@@ -41,7 +41,7 @@ class GraphDbPopulatorScreenModelTest : UnitTest() {
         sut.mmiPharmindexDirectory = System.getProperty("user.home")
         sut.neo4jImportDirectory = System.getProperty("user.home")
 
-        `when`(graphDbPopulator.prepareLoaders(any())).thenReturn(listOf(loader1, loader2, loader3))
+        `when`(graphDbPopulator.prepareLoaders(any(), anyBoolean())).thenReturn(listOf(loader1, loader2, loader3))
     }
 
     @Test
@@ -70,11 +70,6 @@ class GraphDbPopulatorScreenModelTest : UnitTest() {
     fun cleanupHappensDuringExecution() {
         runSut()
         verify(graphDbPopulator).removeFilesFromNeo4jImportDir(Path.of(sut.neo4jImportDirectory))
-    }
-
-    @Test
-    fun intermediateStates() {
-
     }
 
     @Test
@@ -111,6 +106,7 @@ class GraphDbPopulatorScreenModelTest : UnitTest() {
         doThrow(IllegalArgumentException("No way!")).`when`(graphDbPopulator)
             .copyKnowledgeGraphSourceDataToNeo4jImportDirectory(
                 Path.of(sut.mmiPharmindexDirectory),
+                null,
                 Path.of(sut.neo4jImportDirectory)
             )
 
@@ -120,6 +116,33 @@ class GraphDbPopulatorScreenModelTest : UnitTest() {
         assertEquals("No way!", sut.errorMessage)
         verify(loader1, never()).execute()
     }
+
+    @Test
+    fun withAmicePath() {
+        sut.amiceStoffBezFile = "/boot/efi"
+        runSut()
+
+        verify(graphDbPopulator).copyKnowledgeGraphSourceDataToNeo4jImportDirectory(
+            Path.of(sut.mmiPharmindexDirectory),
+            Path.of("/boot/efi"),
+            Path.of(sut.neo4jImportDirectory)
+        )
+        verify(graphDbPopulator).prepareLoaders(any(), eq(true))
+    }
+
+    @Test
+    fun withoutAmicePath() {
+        sut.amiceStoffBezFile = ""
+        runSut()
+
+        verify(graphDbPopulator).copyKnowledgeGraphSourceDataToNeo4jImportDirectory(
+            Path.of(sut.mmiPharmindexDirectory),
+            null,
+            Path.of(sut.neo4jImportDirectory)
+        )
+        verify(graphDbPopulator).prepareLoaders(any(), eq(false))
+    }
+
 
     @Test
     fun minorStep() {

@@ -24,7 +24,7 @@ class GraphDbPopulatorScreenModel(
 ) : ScreenModel {
 
     /**
-     * The user-designated MMI Pharmindex data directory
+     * The user-designated MMI Pharmindex data directory.
      */
     var mmiPharmindexDirectory by mutableStateOf("")
 
@@ -32,6 +32,11 @@ class GraphDbPopulatorScreenModel(
      * The user-designated Neo4j import directory.
      */
     var neo4jImportDirectory by mutableStateOf("")
+
+    /**
+     * The user-designated path to the "AMIce Stoffbezeichnungen Rohdaten" file. Empty means it is not to be used.
+     */
+    var amiceStoffBezFile by mutableStateOf("")
 
     /**
      * The current error message to display.
@@ -85,7 +90,7 @@ class GraphDbPopulatorScreenModel(
     /**
      * Synchronously the graph db population if not already underway.
      */
-    private suspend fun populateSync() {
+    private fun populateSync() {
         synchronized(this) {
             if (executionUnderway) return
             executionUnderway = true
@@ -112,13 +117,18 @@ class GraphDbPopulatorScreenModel(
         }
     }
 
-    private suspend fun runPopulationTaskChain() {
+    private fun runPopulationTaskChain() {
         executionMajorStep = StringRes.graph_db_populator_preparing
         val mmiPharmindexPath: Path = Path.of(mmiPharmindexDirectory)
         val neo4jImportPath: Path = Path.of(neo4jImportDirectory)
+        val amiceFilePath: Path? = if (amiceStoffBezFile.isEmpty()) null else Path.of(amiceStoffBezFile)
 
         try {
-            graphDbPopulator.copyKnowledgeGraphSourceDataToNeo4jImportDirectory(mmiPharmindexPath, neo4jImportPath)
+            graphDbPopulator.copyKnowledgeGraphSourceDataToNeo4jImportDirectory(
+                mmiPharmindexPath,
+                amiceFilePath,
+                neo4jImportPath
+            )
         } catch (e: IllegalArgumentException) {
             errorMessage = e.message
             return
@@ -126,7 +136,7 @@ class GraphDbPopulatorScreenModel(
 
         DatabaseConnection.createDefault().use {
             it.createSession().use { session ->
-                val loaders = graphDbPopulator.prepareLoaders(session)
+                val loaders = graphDbPopulator.prepareLoaders(session, amiceFilePath != null)
                 executionTotalMajorStepsNumber = loaders.size + 2
 
                 executionMajorStepIndex = 1
@@ -137,7 +147,6 @@ class GraphDbPopulatorScreenModel(
                 loaders.forEach(this::runLoader)
             }
         }
-
         executionMajorStep = StringRes.graph_db_populator_cleaning_up
         graphDbPopulator.removeFilesFromNeo4jImportDir(neo4jImportPath)
 
