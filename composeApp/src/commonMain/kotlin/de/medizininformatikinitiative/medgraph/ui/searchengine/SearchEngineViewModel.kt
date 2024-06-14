@@ -86,7 +86,7 @@ open class SearchEngineViewModel(
         queryExecutionUnderway = true
         try {
             resultsViewModel.clearResults()
-            val query = refinedQuery?.toSearchQuery()
+            val query = refinedQuery
             if (query == null) return
             resultsViewModel.assignResults(queryExecutor.executeQuery(query))
         } finally {

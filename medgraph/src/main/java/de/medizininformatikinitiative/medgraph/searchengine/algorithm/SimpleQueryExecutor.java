@@ -2,6 +2,7 @@ package de.medizininformatikinitiative.medgraph.searchengine.algorithm;
 
 import de.medizininformatikinitiative.medgraph.searchengine.QueryExecutor;
 import de.medizininformatikinitiative.medgraph.searchengine.algorithm.initial.InitialMatchFinder;
+import de.medizininformatikinitiative.medgraph.searchengine.algorithm.querymanagement.RefinedQuery;
 import de.medizininformatikinitiative.medgraph.searchengine.algorithm.refining.MatchRefiner;
 import de.medizininformatikinitiative.medgraph.searchengine.model.SearchQuery;
 import de.medizininformatikinitiative.medgraph.searchengine.model.identifiable.Matchable;
@@ -26,8 +27,8 @@ public class SimpleQueryExecutor implements QueryExecutor {
 		this.matchRefiner = matchRefiner;
 	}
 
-	public List<MatchingObject<?>> executeQuery(SearchQuery query) {
-		List<MatchingObject<?>> initialMatches = mergeDuplicates(initialMatchFinder.findInitialMatches(query));
+	public List<MatchingObject<?>> executeQuery(RefinedQuery query) {
+		List<MatchingObject<?>> initialMatches = mergeDuplicates(initialMatchFinder.findInitialMatches(query.toSearchQuery()));
 		return matchRefiner.refineMatches(initialMatches, query).getContents();
 	}
 

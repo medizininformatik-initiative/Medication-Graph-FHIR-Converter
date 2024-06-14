@@ -1,10 +1,6 @@
 package de.medizininformatikinitiative.medgraph.ui.searchengine.pipeline.origin
 
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.BoxScope
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.*
 import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -25,27 +21,37 @@ import de.medizininformatikinitiative.medgraph.ui.theme.templates.clipToBox
 @Suppress("UNCHECKED_CAST")
 @Composable
 fun MatchOriginUI(origin: MatchOrigin<*>, modifier: Modifier = Modifier) {
+    Column(
+        verticalArrangement = Arrangement.spacedBy(4.dp),
+        modifier = modifier
+    ) {
+        TwoIdentifierSources(
+            origin.match.searchTerm,
+            origin.match.matchedIdentifier.identifier,
+            target2 = origin.match.matchedIdentifier.target
+        )
+        when (origin.matcher) {
+            is EditDistanceSetMatcher -> EditDistanceSetMatcherUI(
+                origin as MatchOrigin<EditDistanceSetMatcher.Match>,
+                Modifier.fillMaxWidth()
+            )
 
-    TwoIdentifierSources(
-        origin.match.searchTerm,
-        origin.match.matchedIdentifier.identifier,
-        target2 = origin.match.matchedIdentifier.target
-    )
-    when (origin.matcher) {
-        is EditDistanceSetMatcher -> EditDistanceSetMatcherUI(
-            origin as MatchOrigin<EditDistanceSetMatcher.Match>,
-            modifier
-        )
-        is EditDistanceListMatcher -> EditDistanceListMatcherUI(
-            origin as MatchOrigin<out EditDistanceListMatcher.Match>,
-            modifier
-        )
-        else -> GenericMatchOriginUI(origin, modifier, null)
+            is EditDistanceListMatcher -> EditDistanceListMatcherUI(
+                origin as MatchOrigin<out EditDistanceListMatcher.Match>,
+                Modifier.fillMaxWidth()
+            )
+
+            else -> GenericMatchOriginUI(origin, Modifier.fillMaxWidth(), null)
+        }
     }
 }
 
 @Composable
-fun GenericMatchOriginUI(origin: MatchOrigin<*>, modifier: Modifier = Modifier, content: (@Composable BoxScope.() -> Unit)?) {
+fun GenericMatchOriginUI(
+    origin: MatchOrigin<*>,
+    modifier: Modifier = Modifier,
+    content: (@Composable BoxScope.() -> Unit)?
+) {
     ContentCard(
         title = origin.matcher.toString(),
         description = getDescription(origin.matcher.javaClass),
@@ -82,7 +88,7 @@ fun TwoIdentifierSources(
 }
 
 fun getDescription(matcher: Class<out IMatcher<*, *, *>>): String {
-    return when(matcher) {
+    return when (matcher) {
         EditDistanceSetMatcher::class.java -> StringRes.edit_distance_set_matcher_description
         LevenshteinMatcher::class.java -> StringRes.levenshtein_matcher_description
         else -> StringRes.unknown_matcher_description

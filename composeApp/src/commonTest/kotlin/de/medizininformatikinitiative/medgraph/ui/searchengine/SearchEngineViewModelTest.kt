@@ -114,7 +114,6 @@ class SearchEngineViewModelTest : UnitTest() {
 
     @Test
     fun refineAndExecute() {
-        val currentSearchQuery = mock(SearchQuery::class.java)
         val currentRefinedQuery = mock(RefinedQuery::class.java)
         val currentResult = listOf(OriginalMatch(
             Product(
@@ -124,8 +123,7 @@ class SearchEngineViewModelTest : UnitTest() {
         ))
 
         `when`(queryRefiner.refine(any())).thenReturn(currentRefinedQuery)
-        `when`(currentRefinedQuery.toSearchQuery()).thenReturn(currentSearchQuery)
-        `when`(queryExecutor.executeQuery(currentSearchQuery)).thenReturn(currentResult)
+        `when`(queryExecutor.executeQuery(currentRefinedQuery)).thenReturn(currentResult)
 
         runBlocking {
             sut.refineAndExecuteQuery()!!.join()

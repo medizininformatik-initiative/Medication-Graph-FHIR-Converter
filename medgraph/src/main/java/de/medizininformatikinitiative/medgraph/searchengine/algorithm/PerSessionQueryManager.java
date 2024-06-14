@@ -5,7 +5,6 @@ import de.medizininformatikinitiative.medgraph.searchengine.QueryExecutor;
 import de.medizininformatikinitiative.medgraph.searchengine.algorithm.querymanagement.QueryRefiner;
 import de.medizininformatikinitiative.medgraph.searchengine.algorithm.querymanagement.RefinedQuery;
 import de.medizininformatikinitiative.medgraph.searchengine.model.RawQuery;
-import de.medizininformatikinitiative.medgraph.searchengine.model.SearchQuery;
 import de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject.MatchingObject;
 import org.neo4j.driver.Session;
 
@@ -33,7 +32,7 @@ public class PerSessionQueryManager implements QueryExecutor, QueryRefiner {
 	}
 
 	@Override
-	public List<MatchingObject<?>> executeQuery(SearchQuery query) {
+	public List<MatchingObject<?>> executeQuery(RefinedQuery query) {
 		try (Session session = connection.createSession()) {
 			return queryExecutorFactory.apply(session).executeQuery(query);
 		}

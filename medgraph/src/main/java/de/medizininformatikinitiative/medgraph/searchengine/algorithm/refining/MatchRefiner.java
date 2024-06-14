@@ -1,5 +1,6 @@
 package de.medizininformatikinitiative.medgraph.searchengine.algorithm.refining;
 
+import de.medizininformatikinitiative.medgraph.searchengine.algorithm.querymanagement.RefinedQuery;
 import de.medizininformatikinitiative.medgraph.searchengine.model.SearchQuery;
 import de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject.MatchingObject;
 import de.medizininformatikinitiative.medgraph.searchengine.pipeline.tree.SubSortingTree;
@@ -26,6 +27,6 @@ public interface MatchRefiner {
 	 * @param query          the query to consider for the refinement
 	 * @return a {@link SubSortingTree} containing the refined matches, sorted by relevance
 	 */
-	SubSortingTree<MatchingObject<?>> refineMatches(List<? extends MatchingObject<?>> initialMatches, SearchQuery query);
+	SubSortingTree<MatchingObject<?>> refineMatches(List<? extends MatchingObject<?>> initialMatches, RefinedQuery query);
 
 }

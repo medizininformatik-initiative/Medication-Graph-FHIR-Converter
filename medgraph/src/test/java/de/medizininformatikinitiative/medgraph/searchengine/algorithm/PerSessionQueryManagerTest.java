@@ -18,6 +18,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.neo4j.driver.Session;
 
+import java.sql.Ref;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
@@ -43,7 +44,7 @@ public class PerSessionQueryManagerTest extends UnitTest {
 	@Mock
 	private Session session1;
 	@Mock
-	private SearchQuery query;
+	private RefinedQuery query;
 	@Mock
 	private RawQuery rawQuery;
 
