@@ -1,10 +1,12 @@
 package de.medizininformatikinitiative.medgraph.ui
 
 import androidx.compose.foundation.layout.*
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
@@ -34,34 +36,35 @@ class MainMenu : Screen {
 
             val navigator = LocalNavigator.currentOrThrow
             val buttonModifier = Modifier.fillMaxWidth().height(80.dp)
+            val buttonTextStyle = MaterialTheme.typography.h5
 
-            MainMenuExtensions(navigator, buttonModifier)
+            MainMenuExtensions(navigator, buttonModifier, buttonTextStyle)
 
             Button(
                 { navigator.push(SearchEngineScreen()) },
                 modifier = buttonModifier
             ) {
-                Text(StringRes.main_menu_search_algorithm)
+                Text(StringRes.main_menu_search_algorithm, style = buttonTextStyle)
             }
 
             Button(
                 { navigator.push(ConnectionDialog()) },
                 modifier = buttonModifier
             ) {
-                Text(StringRes.main_menu_configure_db)
+                Text(StringRes.main_menu_configure_db, style = buttonTextStyle)
             }
             Button(
                 { navigator.push(LicenseScreen()) },
                 modifier = buttonModifier
             ) {
-                Text(StringRes.main_menu_show_licenses)
+                Text(StringRes.main_menu_show_licenses, style = buttonTextStyle)
             }
 
             Button(
                 { System.exit(0) },
                 modifier = buttonModifier
             ) {
-                Text(StringRes.exit)
+                Text(StringRes.exit, style = buttonTextStyle)
             }
 
         }
@@ -70,4 +73,4 @@ class MainMenu : Screen {
 }
 
 @Composable
-expect fun ColumnScope.MainMenuExtensions(navigator: Navigator, navigationButtonDesign: Modifier)
+expect fun ColumnScope.MainMenuExtensions(navigator: Navigator, navigationButtonDesign: Modifier, buttonTextStyle: TextStyle)
