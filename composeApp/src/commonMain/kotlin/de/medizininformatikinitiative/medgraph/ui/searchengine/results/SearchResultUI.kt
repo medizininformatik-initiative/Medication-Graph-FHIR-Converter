@@ -16,6 +16,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import de.medizininformatikinitiative.medgraph.searchengine.model.Amount
 import de.medizininformatikinitiative.medgraph.searchengine.model.CorrespondingActiveIngredient
+import de.medizininformatikinitiative.medgraph.searchengine.model.Dosage
 import de.medizininformatikinitiative.medgraph.searchengine.model.Drug
 import de.medizininformatikinitiative.medgraph.searchengine.model.identifiable.*
 import de.medizininformatikinitiative.medgraph.ui.resources.StringRes
@@ -113,8 +114,9 @@ fun IdentifiableObjectUI(
     identifiable: Identifiable,
     modifier: Modifier = Modifier,
     backgroundColor: Color = MaterialTheme.colors.surface,
+    foregroundColor: Color = MaterialTheme.colors.onSurface,
 ) {
-    TextBox(identifiable.name, backgroundColor = backgroundColor, modifier = modifier)
+    TextBox(identifiable.name, backgroundColor = backgroundColor, textColor = foregroundColor, modifier = modifier)
 }
 
 @Composable
@@ -127,6 +129,8 @@ fun DetailedIdentifiableObjectUI(
     when (identifiable) {
         is DetailedProduct -> DetailedProductResultUI(identifiable, modifier, backgroundColor, bottomSlot)
         is IdMatchable -> GenericIdMatchableObjectUI(identifiable, modifier, backgroundColor, bottomSlot)
+        is EdqmConcept -> IdentifiableObjectUI(identifiable, modifier, backgroundColor, MaterialTheme.localColors.highlightDoseForm)
+        is Dosage, is Amount -> IdentifiableObjectUI(identifiable, modifier, backgroundColor, MaterialTheme.localColors.highlightDosage)
         else -> IdentifiableObjectUI(identifiable, modifier, backgroundColor)
     }
 }

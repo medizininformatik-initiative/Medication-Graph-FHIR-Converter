@@ -1,5 +1,6 @@
 package de.medizininformatikinitiative.medgraph.searchengine;
 
+import de.medizininformatikinitiative.medgraph.searchengine.algorithm.querymanagement.RefinedQuery;
 import de.medizininformatikinitiative.medgraph.searchengine.model.SearchQuery;
 import de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject.MatchingObject;
 
@@ -19,6 +20,6 @@ public interface QueryExecutor {
 	 * @param query the query to use for the search
 	 * @return the refined results in descending order of relevance
 	 */
-	List<MatchingObject<?>> executeQuery(SearchQuery query);
+	List<MatchingObject<?>> executeQuery(RefinedQuery query);
 
 }

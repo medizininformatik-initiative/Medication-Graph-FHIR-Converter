@@ -321,6 +321,12 @@ class StringRes {
         @JvmStatic
         val edit_distance = "Edit Distance: {0}"
 
+        @JvmStatic
+        val dosage_detector_title = "Dosage Detector"
+
+        @JvmStatic
+        val dosage_detector_desc = "Detects dosages in strings."
+
 
         @JvmStatic
         fun get(template: String, vararg arguments: Any): String {

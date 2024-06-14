@@ -2,6 +2,7 @@ package de.medizininformatikinitiative.medgraph.searchengine.algorithm;
 
 import de.medizininformatikinitiative.medgraph.UnitTest;
 import de.medizininformatikinitiative.medgraph.searchengine.algorithm.initial.InitialMatchFinder;
+import de.medizininformatikinitiative.medgraph.searchengine.algorithm.querymanagement.RefinedQuery;
 import de.medizininformatikinitiative.medgraph.searchengine.algorithm.refining.MatchRefiner;
 import de.medizininformatikinitiative.medgraph.searchengine.model.SearchQuery;
 import de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject.MatchingObject;
@@ -30,7 +31,9 @@ public class SimpleQueryExecutorTest extends UnitTest {
 	@Mock
 	private MatchRefiner matchRefiner;
 	@Mock
-	private SearchQuery query;
+	private RefinedQuery query;
+	@Mock
+	private SearchQuery searchQuery;
 
 	private SimpleQueryExecutor sut;
 
@@ -38,6 +41,7 @@ public class SimpleQueryExecutorTest extends UnitTest {
 	@BeforeEach
 	void setUp() {
 		sut = new SimpleQueryExecutor(initialMatchFinder, matchRefiner);
+		when(query.toSearchQuery()).thenReturn(searchQuery);
 		when(matchRefiner.refineMatches(any(), any())).thenAnswer(req -> new SubSortingTree<>(req.getArgument(0)));
 	}
 
@@ -48,7 +52,7 @@ public class SimpleQueryExecutorTest extends UnitTest {
 				new OriginalMatch<>(SAMPLE_PRODUCT_2),
 				new OriginalMatch<>(SAMPLE_SUBSTANCE_3)
 		);
-		when(initialMatchFinder.findInitialMatches(query)).thenReturn(list.stream());
+		when(initialMatchFinder.findInitialMatches(searchQuery)).thenReturn(list.stream());
 
 		assertEquals(list, sut.executeQuery(query));
 
@@ -64,8 +68,7 @@ public class SimpleQueryExecutorTest extends UnitTest {
 				new OriginalMatch<>(SAMPLE_SUBSTANCE_3),
 				new OriginalMatch<>(SAMPLE_SUBSTANCE_3)
 		);
-		when(initialMatchFinder.findInitialMatches(query)).thenReturn(list.stream());
-
+		when(initialMatchFinder.findInitialMatches(searchQuery)).thenReturn(list.stream());
 
 
 		List<MatchingObject<?>> expectedList = List.of(

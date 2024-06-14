@@ -1,11 +1,11 @@
 package de.medizininformatikinitiative.medgraph.searchengine.algorithm.refining;
 
+import de.medizininformatikinitiative.medgraph.searchengine.algorithm.querymanagement.RefinedQuery;
 import de.medizininformatikinitiative.medgraph.searchengine.db.Database;
 import de.medizininformatikinitiative.medgraph.searchengine.model.SearchQuery;
+import de.medizininformatikinitiative.medgraph.searchengine.model.identifiable.Product;
 import de.medizininformatikinitiative.medgraph.searchengine.model.identifiable.Substance;
 import de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject.MatchingObject;
-import de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject.OriginalMatch;
-import de.medizininformatikinitiative.medgraph.searchengine.model.identifiable.Product;
 import de.medizininformatikinitiative.medgraph.searchengine.pipeline.OngoingRefinement;
 import de.medizininformatikinitiative.medgraph.searchengine.pipeline.judge.ProductOnlyFilter;
 import de.medizininformatikinitiative.medgraph.searchengine.pipeline.judge.dosage.DosageAndAmountInfoMatchJudge;
@@ -55,15 +55,13 @@ public class ExperimentalRefiner implements MatchRefiner {
 	 */
 	@Override
 	public SubSortingTree<MatchingObject<?>> refineMatches(List<? extends MatchingObject<?>> initialMatches,
-	                                                    SearchQuery query) {
+	                                                    RefinedQuery query) {
+		SearchQuery searchQuery = query.toSearchQuery();
 
 		// Use the substances from the search query to resolve products
-		List<OriginalMatch<Substance>> substanceObjects = query.getSubstances().stream()
-		                                                       .map(OriginalMatch::new)
-		                                                       .toList();
-		OngoingRefinement substanceBasedSearch = new OngoingRefinement(substanceObjects, query);
+		List<MatchingObject<Substance>> substanceObjects = query.getSubstances();
+		OngoingRefinement substanceBasedSearch = new OngoingRefinement(substanceObjects, searchQuery);
 		substanceBasedSearch.transformMatches(substanceToProductResolver);
-		// TODO Ordering, and therefore relevance of substance search terms is completely lost as of now
 
 		// Merge the products resolved from substances with the products from the initial search
 		SubSortingTree<MatchingObject<?>> productMatches = new SubSortingTree<>(initialMatches);
@@ -71,7 +69,7 @@ public class ExperimentalRefiner implements MatchRefiner {
 		SubSortingTree<MatchingObject<?>> combinedMatches = SubSortingTree.merge(productMatches, substanceMatches);
 		combinedMatches.clearDuplicates();
 
-		OngoingRefinement matching = new OngoingRefinement(combinedMatches, query);
+		OngoingRefinement matching = new OngoingRefinement(combinedMatches, searchQuery);
 
 		List<MatchingObject<?>> currentMatches = matching.getCurrentMatches();
 		if (currentMatches.size() == 1 && currentMatches.getFirst().getObject() instanceof Product) {
