@@ -6,6 +6,7 @@ import org.neo4j.driver.Session;
 
 import java.io.*;
 import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
@@ -22,7 +23,7 @@ public class GraphDbPopulator {
 	 */
 	public static final String CSV_COMMENT_INDICATOR = "#";
 
-	private static final String[] REQUIRED_FILES = new String[]{
+	private static final String[] REQUIRED_MMI_FILES = new String[]{
 			"CATALOGENTRY.CSV",
 			"COMPANY.CSV",
 			"COMPANYADDRESS.CSV",
@@ -38,7 +39,6 @@ public class GraphDbPopulator {
 			"PRODUCT_FLAG.CSV"
 	};
 	private static final String[] REQUIRED_RESOURCE_FILES = new String[]{
-			"amice_stoffbezeichnungen_utf8.csv",
 			"custom_synonymes.csv",
 			"dose_form_mapping.csv",
 			"gsrs_matches.csv",
@@ -47,6 +47,9 @@ public class GraphDbPopulator {
 			"edqm_translations.csv",
 			"dose_form_synonymes.csv",
 			"NOTICE.txt",
+	};
+	private static final Path[] OPTIONAL_FILES = new Path[]{
+			AmiceStoffBezLoader.RAW_DATA_FILE_PATH,
 	};
 
 	private static final String MMI_PHARMINDEX_FILES_SUBPATH = "mmi_pharmindex";
@@ -64,10 +67,12 @@ public class GraphDbPopulator {
 	 * loaders must be executed in the order given by the list, otherwise dependencies between the loaders may not be
 	 * honored, which might cause failures or missing data in the resulting knowledge graph.
 	 *
-	 * @param session the session to connect the loaders to
+	 * @param session            the session to connect the loaders to
+	 * @param includeAmiceLoader if true, includes the {@link AmiceStoffBezLoader} which requires the corresponding file
+	 *                           be present
 	 * @return a list of loaders, ready for execution
 	 */
-	public List<Loader> prepareLoaders(Session session) {
+	public List<Loader> prepareLoaders(Session session, boolean includeAmiceLoader) {
 		List<Loader> loaders = new ArrayList<>();
 
 		// Unit nodes
@@ -91,7 +96,7 @@ public class GraphDbPopulator {
 		// Package nodes and their relations with Product nodes
 		loaders.add(new PackageLoader(session));
 		// INN and CAS nodes
-		loaders.add(new AmiceStoffBezLoader(session));
+		if (includeAmiceLoader) loaders.add(new AmiceStoffBezLoader(session));
 		// Manufacturer nodes
 		loaders.add(new CompanyLoader(session));
 		// Manufacturer Address nodes
@@ -131,6 +136,7 @@ public class GraphDbPopulator {
 	 * with this application to the Neo4j import directory, as specified by the second argument.
 	 *
 	 * @param mmiPharmindexDirectoryPath the path where the MMI Pharmindex data is stored
+	 * @param amiceDataFilePath          the path where the AMIce Stoffbezeichnungen Rohdaten file is at, may be null
 	 * @param neo4jImportDirectoryPath   the Neo4j import directory path
 	 * @throws IOException              if a file operation failed
 	 * @throws IllegalArgumentException if no directory exists at the mmiPharmindexDirectoryPath, it points to something
@@ -138,11 +144,15 @@ public class GraphDbPopulator {
 	 *                                  the mmiPharmindexDirectoryPath, also if the neo4jImportDirectoryPath does not
 	 *                                  point to a directory
 	 */
-	public void copyKnowledgeGraphSourceDataToNeo4jImportDirectory(Path mmiPharmindexDirectoryPath,
-	                                                                      Path neo4jImportDirectoryPath)
+	public void copyKnowledgeGraphSourceDataToNeo4jImportDirectory(
+			Path mmiPharmindexDirectoryPath,
+			Path amiceDataFilePath,
+			Path neo4jImportDirectoryPath)
 	throws IOException {
-		File mmiPharmindexDir = checkAndGetMmiPharmindexDir(mmiPharmindexDirectoryPath);
-		copyRequiredFilesToImportDir(mmiPharmindexDir, neo4jImportDirectoryPath);
+		copyRequiredFilesToImportDir(
+				checkAndGetMmiPharmindexDir(mmiPharmindexDirectoryPath),
+				checkAmiceFilePath(amiceDataFilePath),
+				neo4jImportDirectoryPath);
 	}
 
 	/**
@@ -164,7 +174,7 @@ public class GraphDbPopulator {
 					"The path given as MMI Pharmindex data directory does not point to a directory!");
 		}
 
-		for (String requiredFile : REQUIRED_FILES) {
+		for (String requiredFile : REQUIRED_MMI_FILES) {
 			File target = new File(dir.getAbsolutePath() + File.separator + requiredFile);
 			if (!target.exists()) {
 				throw new IllegalArgumentException(
@@ -174,16 +184,27 @@ public class GraphDbPopulator {
 		return dir;
 	}
 
+	private File checkAmiceFilePath(Path path) {
+		if (path == null) return null;
+		File f = path.toFile();
+		if (!f.isFile()) {
+			throw new IllegalArgumentException("The given path for the AMIce data file does not point to a file!");
+		}
+		return f;
+	}
+
 	/**
 	 * Attempts to copy the required MMI Pharmindex files from the given directory as well as the resource files
 	 * packaged with this application to the Neo4j import directory, as specified by the second argument.
 	 *
-	 * @param sourceDir       the path where the MMI Pharmindex data is stored
+	 * @param mmiSourceDir    the path where the MMI Pharmindex data is stored
+	 * @param amiceSourceFile the amice data source file or null if it is not to be used
 	 * @param neo4jImportPath the Neo4j import directory path
 	 * @throws IOException              if a file operation failed
 	 * @throws IllegalArgumentException if the neo4jImportPath does not point to a directory
 	 */
-	private void copyRequiredFilesToImportDir(File sourceDir, Path neo4jImportPath) throws IOException {
+	private void copyRequiredFilesToImportDir(File mmiSourceDir, File amiceSourceFile, Path neo4jImportPath)
+	throws IOException {
 		File targetDir = neo4jImportPath.toFile();
 		if (!targetDir.exists()) {
 			throw new IllegalArgumentException("The given Neo4j import directory does not exist!");
@@ -199,19 +220,28 @@ public class GraphDbPopulator {
 
 		// Copy MMI Pharmindex files
 		Path target = mmiTargetDir.toPath();
-		Path source = sourceDir.toPath();
-		for (String file : REQUIRED_FILES) {
+		Path source = mmiSourceDir.toPath();
+		for (String file : REQUIRED_MMI_FILES) {
 			Path original = source.resolve(file);
 			Path targetFile = target.resolve(file);
 			Files.copy(original, targetFile, StandardCopyOption.REPLACE_EXISTING);
 		}
 
+		// Copy AMIce file
+		if (amiceSourceFile != null) {
+			Path targetAmicePath = neo4jImportPath.resolve(AmiceStoffBezLoader.RAW_DATA_FILE_PATH);
+			try (InputStream stream = new FileInputStream(amiceSourceFile)) {
+				copyAmiceFileAndFixBrokenSynonyms(stream, targetAmicePath);
+			}
+		}
+
 		// Copy other files
 		target = targetDir.toPath();
 		for (String resource : REQUIRED_RESOURCE_FILES) {
-			InputStream stream = Objects.requireNonNull(GraphDbPopulator.class.getResourceAsStream("/" + resource));
-			Path targetPath = target.resolve(resource);
-			copyCsvAndStripComments(stream, targetPath);
+			try(InputStream stream = Objects.requireNonNull(GraphDbPopulator.class.getResourceAsStream("/" + resource))) {
+				Path targetPath = target.resolve(resource);
+				copyCsvAndStripComments(stream, targetPath);
+			}
 		}
 	}
 
@@ -224,7 +254,7 @@ public class GraphDbPopulator {
 	public void removeFilesFromNeo4jImportDir(Path neo4jImportPath) throws IOException {
 		Path mmiTargetDir = neo4jImportPath.resolve(MMI_PHARMINDEX_FILES_SUBPATH);
 
-		for (String filename : REQUIRED_FILES) {
+		for (String filename : REQUIRED_MMI_FILES) {
 			Files.delete(mmiTargetDir.resolve(filename));
 		}
 
@@ -232,23 +262,50 @@ public class GraphDbPopulator {
 			Files.delete(neo4jImportPath.resolve(filename));
 		}
 
+		for (Path path : OPTIONAL_FILES) {
+			try {
+				Files.delete(neo4jImportPath.resolve(path));
+			} catch (NoSuchFileException ignored) {
+			}
+		}
+
 		Files.delete(mmiTargetDir);
 	}
 
 	/**
-	 * Copies CSV data from the given input stream to the target path, overwriting any file which may reside there.
-	 * CSV Comments (lines starting with {@link #CSV_COMMENT_INDICATOR} are stripped.
+	 * Copies CSV data from the given input stream to the target path, overwriting any file which may reside there. CSV
+	 * Comments (lines starting with {@link #CSV_COMMENT_INDICATOR} are stripped.
 	 *
 	 * @param from the input stream to copy from
-	 * @param to the path to copy the CSV to
+	 * @param to   the path to copy the CSV to
 	 * @throws IOException if an I/O operation failed
 	 */
 	private static void copyCsvAndStripComments(InputStream from, Path to) throws IOException {
 		try (BufferedReader reader = new BufferedReader(new InputStreamReader(from));
-		BufferedWriter writer = new BufferedWriter(new FileWriter(to.toFile()))) {
+		     BufferedWriter writer = new BufferedWriter(new FileWriter(to.toFile()))) {
 			String line;
 			while ((line = reader.readLine()) != null) {
 				if (!line.startsWith(CSV_COMMENT_INDICATOR)) writer.write(line + '\n');
+			}
+		}
+	}
+
+	/**
+	 * Copies the CSV data from the given input stream to the given target path. Assumes the semicolon is the separator
+	 * sign and checks the last entry in each row for misplaced double quotes.
+	 */
+	private static void copyAmiceFileAndFixBrokenSynonyms(InputStream from, Path to) throws IOException {
+		try (BufferedReader reader = new BufferedReader(new InputStreamReader(from));
+		     BufferedWriter writer = new BufferedWriter(new FileWriter(to.toFile()))) {
+			String line;
+			while ((line = reader.readLine()) != null) {
+				String[] parts = line.split(";");
+				String lastPart = parts[parts.length - 1];
+				if (lastPart.startsWith("\"") && lastPart.endsWith("\"")) {
+					lastPart = "\"" + lastPart.substring(1, lastPart.length() - 1).replaceAll("\"", "''") +"\"";
+				}
+				parts[parts.length - 1] = lastPart;
+				if (!line.startsWith(CSV_COMMENT_INDICATOR)) writer.write(String.join(";", parts) + '\n');
 			}
 		}
 	}

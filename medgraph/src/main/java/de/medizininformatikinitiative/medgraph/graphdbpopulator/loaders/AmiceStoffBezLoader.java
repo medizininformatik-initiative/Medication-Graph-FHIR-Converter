@@ -2,7 +2,6 @@ package de.medizininformatikinitiative.medgraph.graphdbpopulator.loaders;
 
 import org.neo4j.driver.Session;
 
-import java.io.IOException;
 import java.nio.file.Path;
 
 import static de.medizininformatikinitiative.medgraph.common.db.DatabaseDefinitions.*;
@@ -13,6 +12,11 @@ import static de.medizininformatikinitiative.medgraph.common.db.DatabaseDefiniti
  * @author Markus Budeus
  */
 public class AmiceStoffBezLoader extends CsvLoader {
+
+	/**
+	 * The path within the Neo4j import directory where the file for this loader needs to be.
+	 */
+	public static final Path RAW_DATA_FILE_PATH = Path.of("amice_stoffbezeichnungen_utf8.csv");
 
 	private static final String ASK = "ASK";
 	private static final String PRIMARY_CAS = "CAS";
@@ -26,17 +30,11 @@ public class AmiceStoffBezLoader extends CsvLoader {
 	private static final String SYNONYMES = "SYN";
 
 	public AmiceStoffBezLoader(Session session) {
-		super(Path.of("amice_stoffbezeichnungen_utf8.csv"), session);
+		super(RAW_DATA_FILE_PATH, session);
 	}
 
 	@Override
 	protected void executeLoad() {
-		executeQuery(
-				"CREATE CONSTRAINT casCodeConstraint IF NOT EXISTS FOR (c:" + CAS_LABEL + ") REQUIRE c.code IS UNIQUE");
-		executeQuery(
-				"CREATE CONSTRAINT innCodeConstraint IF NOT EXISTS FOR (i:" + INN_LABEL + ") REQUIRE i.code IS UNIQUE");
-		executeQuery(
-				"CREATE CONSTRAINT synonymeConstraint IF NOT EXISTS FOR (s:" + SYNONYME_LABEL + ") REQUIRE s.name IS UNIQUE");
 
 		// Load primary CAS
 		executeQuery(withLoadStatement(

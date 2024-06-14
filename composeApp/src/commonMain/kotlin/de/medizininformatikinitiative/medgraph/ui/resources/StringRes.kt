@@ -189,6 +189,22 @@ class StringRes {
                     "On Debian- and RPM-based systems, the default path is /var/lib/neo4j/import"
 
         @JvmStatic
+        val graph_db_populator_amice_stoffbez_path = "Path to AMIce \"Stoffbezeichnungen Rohdaten\" file. (optional)"
+
+        @JvmStatic
+        val graph_db_populator_amice_stoffbez_description_p1 = "If included, the knowledge graph will include INNs, synonyms for substances and additional CAS numbers from this file. " +
+                "It can be downloaded "
+
+        @JvmStatic
+        val graph_db_populator_amice_stoffbez_description_link_text = "here"
+
+        @JvmStatic
+        val graph_db_populator_amice_stoffbez_description_link = "https://www.bfarm.de/DE/Arzneimittel/Arzneimittelinformationen/Arzneimittel-recherchieren/Stoffbezeichnungen/_node.html"
+
+        @JvmStatic
+        val graph_db_populator_amice_stoffbez_description_p2 = ". Please note you must only provide the .csv file here, NOT the .zip file which contains it."
+
+        @JvmStatic
         val graph_db_populator_run = "Run import"
 
         @JvmStatic

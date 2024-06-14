@@ -34,8 +34,9 @@ public class DatabaseConnection implements AutoCloseable {
 
 	/**
 	 * Creates a new database connection.
-	 * @param uri the URI to connect to
-	 * @param user the username to authenticate with
+	 *
+	 * @param uri      the URI to connect to
+	 * @param user     the username to authenticate with
 	 * @param password the password to authenticate with
 	 */
 	public DatabaseConnection(String uri, String user, char[] password) {
@@ -49,7 +50,10 @@ public class DatabaseConnection implements AutoCloseable {
 
 	@Override
 	public void close() {
-		driver.close();
+		driver.closeAsync().exceptionally(t -> {
+			t.printStackTrace();
+			return null;
+		});
 	}
 
 }

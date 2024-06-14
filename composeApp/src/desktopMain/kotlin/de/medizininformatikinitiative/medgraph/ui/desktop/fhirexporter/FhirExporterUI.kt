@@ -9,10 +9,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.navigator.LocalNavigator
-import de.medizininformatikinitiative.medgraph.ui.desktop.templates.DirectoryPathTextField
+import de.medizininformatikinitiative.medgraph.ui.desktop.templates.PathTextField
 import de.medizininformatikinitiative.medgraph.ui.resources.StringRes
 import de.medizininformatikinitiative.medgraph.ui.theme.ApplicationTheme
 import de.medizininformatikinitiative.medgraph.ui.theme.templates.Button
+import javax.swing.JFileChooser
 
 
 @Composable
@@ -31,11 +32,12 @@ private fun FhirExporterUI() {
 fun FhirExporterUI(viewModel: FhirExporterScreenModel, modifier: Modifier = Modifier) {
     Column(modifier = modifier) {
         Text(StringRes.fhir_exporter_description)
-        DirectoryPathTextField(
+        PathTextField(
             viewModel.exportPath,
             { v -> viewModel.exportPath = v },
             enabled = !viewModel.exportUnderway,
-            label = StringRes.fhir_exporter_export_path
+            label = StringRes.fhir_exporter_export_path,
+            fileSelectionMode = JFileChooser.DIRECTORIES_ONLY
         )
 
         Spacer(modifier = Modifier.height(4.dp))
