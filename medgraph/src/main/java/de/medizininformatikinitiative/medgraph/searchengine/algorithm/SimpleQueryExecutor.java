@@ -41,7 +41,7 @@ public class SimpleQueryExecutor implements QueryExecutor {
 	private List<MatchingObject<?>> mergeDuplicates(Stream<? extends MatchingObject<?>> stream) {
 		Map<Matchable, LinkedList<MatchingObject<?>>> matchesByMatchable = Collections.synchronizedMap(
 				new LinkedHashMap<>());
-		stream.forEach(
+		stream.forEachOrdered(
 				match -> matchesByMatchable.compute(match.getObject(), (key, value) -> {
 					if (value == null) value = new LinkedList<>();
 					value.add(match);
