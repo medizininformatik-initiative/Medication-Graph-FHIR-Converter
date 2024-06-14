@@ -11,6 +11,8 @@ import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.Navigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import de.medizininformatikinitiative.medgraph.ui.common.db.ConnectionDialog
+import de.medizininformatikinitiative.medgraph.ui.licenses.LicenseDialog
+import de.medizininformatikinitiative.medgraph.ui.licenses.LicenseScreen
 import de.medizininformatikinitiative.medgraph.ui.resources.StringRes
 import de.medizininformatikinitiative.medgraph.ui.searchengine.SearchEngineScreen
 import de.medizininformatikinitiative.medgraph.ui.theme.templates.Button
@@ -47,6 +49,12 @@ class MainMenu : Screen {
                 modifier = buttonModifier
             ) {
                 Text(StringRes.main_menu_configure_db)
+            }
+            Button(
+                { navigator.push(LicenseScreen()) },
+                modifier = buttonModifier
+            ) {
+                Text(StringRes.main_menu_show_licenses)
             }
 
             Button(
