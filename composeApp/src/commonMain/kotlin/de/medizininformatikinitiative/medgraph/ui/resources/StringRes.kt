@@ -40,6 +40,9 @@ class StringRes {
         val main_menu_configure_db = "Configure Database Connection"
 
         @JvmStatic
+        val main_menu_show_licenses = "Open-Source Licenses"
+
+        @JvmStatic
         val db_connection_dialog_uri = "Connection URI"
 
         @JvmStatic
@@ -235,6 +238,11 @@ class StringRes {
 
         @JvmStatic
         val fhir_exporter_done = "Export complete."
+
+        @JvmStatic
+        val licenses_about = "Below, open source libraries as well as open data sets used in this project are listed, " +
+                "as their producers/developers deserve recognition. Clicking onto a button displays the corresponding " +
+                "license."
 
         @JvmStatic
         fun get(template: String, vararg arguments: Any): String {

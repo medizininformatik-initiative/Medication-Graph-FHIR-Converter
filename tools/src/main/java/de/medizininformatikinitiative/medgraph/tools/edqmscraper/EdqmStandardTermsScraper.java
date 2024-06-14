@@ -2,10 +2,11 @@ package de.medizininformatikinitiative.medgraph.tools.edqmscraper;
 
 import de.medizininformatikinitiative.medgraph.tools.CSVWriter;
 
-import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
@@ -19,8 +20,10 @@ import static de.medizininformatikinitiative.medgraph.tools.edqmscraper.EdqmConc
  */
 public class EdqmStandardTermsScraper {
 
+	// TODO Include german name into EDQM Concept directly
+
 	public static void main(String[] args) throws IOException, URISyntaxException, InterruptedException {
-		downloadData(new File("."), "markus.budeus@tum.de", "REDACTED".toCharArray());
+		downloadData(Path.of("tools", "output"), "markus.budeus@tum.de", "REDACTED".toCharArray());
 	}
 
 	/**
@@ -34,20 +37,20 @@ public class EdqmStandardTermsScraper {
 	 * @param apiEmail     the email address to access the API
 	 * @param apiSecretKey the secret key to access the API
 	 */
-	public static void downloadData(File targetDir, String apiEmail, char[] apiSecretKey)
+	public static void downloadData(Path targetDir, String apiEmail, char[] apiSecretKey)
 	throws IOException, URISyntaxException, InterruptedException {
-		File objectsOutFile = new File(targetDir + File.separator + "edqm_objects.csv");
-		objectsOutFile.createNewFile();
-		File relationsOutFile = new File(targetDir + File.separator + "pdf_relations.csv");
-		relationsOutFile.createNewFile();
-		File translationsOutFile = new File(targetDir + File.separator + "edqm_translations.csv");
-		relationsOutFile.createNewFile();
+		Path objectsOutPath = targetDir.resolve("edqm_objects.csv");
+		Files.createFile(objectsOutPath);
+		Path relationsOutPath = targetDir.resolve("pdf_relations.csv");
+		Files.createFile(relationsOutPath);
+		Path translationsOutPath = targetDir.resolve("edqm_translations.csv");
+		Files.createFile(translationsOutPath);
 
 		EdqmConceptLoader objectsLoader = new EdqmConceptLoader();
 		try (EdqmStandardTermsApiClient apiClient = new EdqmStandardTermsApiClient(apiEmail, apiSecretKey);
-		     FileWriter objectsOutFileWriter = new FileWriter(objectsOutFile);
-		     FileWriter relationsOutFileWriter = new FileWriter(relationsOutFile);
-		     FileWriter translationsOutFileWriter = new FileWriter(translationsOutFile);
+		     FileWriter objectsOutFileWriter = new FileWriter(objectsOutPath.toFile());
+		     FileWriter relationsOutFileWriter = new FileWriter(relationsOutPath.toFile());
+		     FileWriter translationsOutFileWriter = new FileWriter(translationsOutPath.toFile());
 		     CSVWriter objectsWriter = CSVWriter.open(objectsOutFileWriter);
 		     CSVWriter relationsWriter = CSVWriter.open(relationsOutFileWriter);
 		     CSVWriter translationsWriter = CSVWriter.open(translationsOutFileWriter)
