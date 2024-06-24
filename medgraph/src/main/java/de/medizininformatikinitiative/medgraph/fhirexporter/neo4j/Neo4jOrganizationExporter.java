@@ -1,6 +1,7 @@
 package de.medizininformatikinitiative.medgraph.fhirexporter.neo4j;
 
 import de.medizininformatikinitiative.medgraph.fhirexporter.resource.Identifier;
+import de.medizininformatikinitiative.medgraph.fhirexporter.resource.medication.Meta;
 import de.medizininformatikinitiative.medgraph.fhirexporter.resource.organization.Address;
 import de.medizininformatikinitiative.medgraph.fhirexporter.resource.organization.Organization;
 import org.neo4j.driver.Query;
@@ -49,6 +50,9 @@ public class Neo4jOrganizationExporter extends Neo4jExporter<Organization> {
 		Neo4jExportOrganisation exportOrganisation = new Neo4jExportOrganisation(record);
 
 		Organization organization = new Organization();
+		organization.meta = new Meta();
+		organization.meta.profile = new String[] { "http://hl7.org/fhir/StructureDefinition/Organization" };
+		organization.meta.source = META_SOURCE;
 		organization.active = true;
 		organization.name = exportOrganisation.name;
 		organization.identifier = Identifier.fromOrganizationMmiId(exportOrganisation.mmiId);

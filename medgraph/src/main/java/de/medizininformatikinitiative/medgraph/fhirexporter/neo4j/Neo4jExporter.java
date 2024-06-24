@@ -6,10 +6,13 @@ import java.util.stream.Stream;
 
 /**
  * Class which exports data from the Neo4j Graph database.
+ *
  * @param <T> the type of exported objects
  * @author Markus Budeus
  */
 public abstract class Neo4jExporter<T> {
+
+	public static final String META_SOURCE = "https://www.mmi.de/mmi-pharmindex/mmi-pharmindex-daten";
 
 	protected final Session session;
 

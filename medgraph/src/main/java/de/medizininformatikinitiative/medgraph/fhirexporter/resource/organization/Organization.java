@@ -1,6 +1,7 @@
 package de.medizininformatikinitiative.medgraph.fhirexporter.resource.organization;
 
 import de.medizininformatikinitiative.medgraph.fhirexporter.resource.Identifier;
+import de.medizininformatikinitiative.medgraph.fhirexporter.resource.medication.Meta;
 
 /**
  * This class is an implementation of the FHIR R4 Organization object.
@@ -9,6 +10,7 @@ import de.medizininformatikinitiative.medgraph.fhirexporter.resource.Identifier;
  */
 public class Organization {
 
+	public Meta meta;
 	public final String resourceType = "Organization";
 	public Identifier identifier;
 	public boolean active = true;

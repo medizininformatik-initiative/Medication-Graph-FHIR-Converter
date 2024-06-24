@@ -3,6 +3,7 @@ package de.medizininformatikinitiative.medgraph.fhirexporter.neo4j;
 import de.medizininformatikinitiative.medgraph.fhirexporter.resource.CodeableConcept;
 import de.medizininformatikinitiative.medgraph.fhirexporter.resource.Coding;
 import de.medizininformatikinitiative.medgraph.fhirexporter.resource.Identifier;
+import de.medizininformatikinitiative.medgraph.fhirexporter.resource.medication.Meta;
 import de.medizininformatikinitiative.medgraph.fhirexporter.resource.substance.Substance;
 import de.medizininformatikinitiative.medgraph.graphdbpopulator.CodingSystem;
 import org.neo4j.driver.Query;
@@ -31,10 +32,9 @@ public class Neo4jSubstanceExporter extends Neo4jExporter<Substance> {
 	/**
 	 * Instantiates a new exporter.
 	 *
-	 * @param session                            the database session to use for querying the knowledge graph
-	 * @param collectStatistics                  if true, statistics are collected during the export, which can be
-	 *                                           printed after {@link #exportObjects()} has been called via
-	 *                                           {@link #printStatistics()}.
+	 * @param session           the database session to use for querying the knowledge graph
+	 * @param collectStatistics if true, statistics are collected during the export, which can be printed after
+	 *                          {@link #exportObjects()} has been called via {@link #printStatistics()}.
 	 */
 	public Neo4jSubstanceExporter(Session session, boolean collectStatistics) {
 		super(session);
@@ -56,7 +56,7 @@ public class Neo4jSubstanceExporter extends Neo4jExporter<Substance> {
 		Result result = session.run(new Query(
 				"MATCH (s:" + SUBSTANCE_LABEL + ") " +
 						"OPTIONAL MATCH (cs:" + CODING_SYSTEM_LABEL + ")<-[:" + BELONGS_TO_CODING_SYSTEM_LABEL + "]-(c:" + CODE_LABEL + ")-->(s) " +
-						"WITH s, collect("+Neo4jMedicationExporter.groupCodingSystem("c", "cs")+") AS codes " +
+						"WITH s, collect(" + Neo4jMedicationExporter.groupCodingSystem("c", "cs") + ") AS codes " +
 						"RETURN s.name, s.mmiId, codes"
 		));
 
@@ -76,7 +76,10 @@ public class Neo4jSubstanceExporter extends Neo4jExporter<Substance> {
 		Substance substance = new Substance();
 		String substanceName = record.get(0).asString();
 
-		substance.identifier = new Identifier[] { Identifier.fromSubstanceMmiId(record.get(1).asLong()) };
+		substance.meta = new Meta();
+		substance.meta.profile = new String[]{"http://hl7.org/fhir/StructureDefinition/Organization"};
+		substance.meta.source = META_SOURCE;
+		substance.identifier = new Identifier[]{Identifier.fromSubstanceMmiId(record.get(1).asLong())};
 		substance.description = substanceName;
 
 		CodeableConcept codeableConcept = new CodeableConcept();
@@ -137,9 +140,10 @@ public class Neo4jSubstanceExporter extends Neo4jExporter<Substance> {
 			}
 		}
 
-		private boolean addCodes(Substance substance, String codeSystem, AtomicInteger occurrences, AtomicInteger objects) {
+		private boolean addCodes(Substance substance, String codeSystem, AtomicInteger occurrences,
+		                         AtomicInteger objects) {
 			boolean anyMatch = false;
-			for (Coding c: substance.code.coding) {
+			for (Coding c : substance.code.coding) {
 				if (codeSystem.equals(c.system)) {
 					occurrences.getAndIncrement();
 					if (!anyMatch) {
