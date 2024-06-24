@@ -39,9 +39,13 @@ public class CodingProvider {
 	}
 
 	public static Coding createCoding(String value, String systemUri, String systemVersion, LocalDate systemDate) {
+		return createCoding(value, null, systemUri, systemVersion, systemDate);
+	}
+
+	public static Coding createCoding(String value, String display, String systemUri, String systemVersion, LocalDate systemDate) {
 		Coding coding = createCodingTemplate(systemUri, systemVersion, systemDate);
 		coding.code = value;
-		coding.display = value;
+		coding.display = display;
 		return coding;
 	}
 

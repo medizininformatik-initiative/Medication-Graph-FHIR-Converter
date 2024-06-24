@@ -77,7 +77,7 @@ public class Neo4jSubstanceExporter extends Neo4jExporter<Substance> {
 		String substanceName = record.get(0).asString();
 
 		substance.meta = new Meta();
-		substance.meta.profile = new String[]{"http://hl7.org/fhir/StructureDefinition/Organization"};
+		substance.meta.profile = new String[]{"http://hl7.org/fhir/StructureDefinition/Substance"};
 		substance.meta.source = META_SOURCE;
 		substance.identifier = new Identifier[]{Identifier.fromSubstanceMmiId(record.get(1).asLong())};
 		substance.description = substanceName;

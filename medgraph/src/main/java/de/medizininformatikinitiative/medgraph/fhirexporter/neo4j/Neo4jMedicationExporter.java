@@ -390,8 +390,13 @@ public class Neo4jMedicationExporter extends Neo4jExporter<Medication> {
 		}
 
 		public Coding toCoding() {
+			return toCoding(null);
+		}
+
+		protected Coding toCoding(String display) {
 			return CodingProvider.createCoding(
 					code,
+					display,
 					codingSystemUri,
 					codingSystemVersion,
 					codingSystemDate
@@ -406,6 +411,11 @@ public class Neo4jMedicationExporter extends Neo4jExporter<Medication> {
 		protected Neo4jExportEdqm(MapAccessorWithDefaultValue value) {
 			super(value);
 			this.name = value.get("name", (String) null);
+		}
+
+		@Override
+		public Coding toCoding() {
+			return toCoding(name);
 		}
 	}
 
