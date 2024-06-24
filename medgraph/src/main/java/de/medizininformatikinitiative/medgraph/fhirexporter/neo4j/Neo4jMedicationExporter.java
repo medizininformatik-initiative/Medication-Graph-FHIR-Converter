@@ -205,7 +205,7 @@ public class Neo4jMedicationExporter extends Neo4jExporter<Medication> {
 		Meta meta = new Meta();
 		// TODO Somehow reference my Graph DB in meta.source?
 		meta.profile = new String[]{"https://www.medizininformatik-initiative.de/fhir/core/modul-medikation/StructureDefinition/Medication"};
-		meta.source = "https://www.mmi.de/mmi-pharmindex/mmi-pharmindex-daten";
+		meta.source = META_SOURCE;
 		medication.meta = meta;
 		return medication;
 	}

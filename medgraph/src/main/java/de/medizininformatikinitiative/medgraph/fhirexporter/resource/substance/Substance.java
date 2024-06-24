@@ -3,6 +3,7 @@ package de.medizininformatikinitiative.medgraph.fhirexporter.resource.substance;
 import de.medizininformatikinitiative.medgraph.fhirexporter.resource.CodeableConcept;
 import de.medizininformatikinitiative.medgraph.fhirexporter.resource.Identifier;
 import de.medizininformatikinitiative.medgraph.fhirexporter.resource.Status;
+import de.medizininformatikinitiative.medgraph.fhirexporter.resource.medication.Meta;
 
 /**
  * This class is an implementation of the FHIR R4 Substance object.
@@ -11,6 +12,7 @@ import de.medizininformatikinitiative.medgraph.fhirexporter.resource.Status;
  */
 public class Substance {
 
+	public Meta meta;
 	public final String resourceType = "Substance";
 	public Identifier[] identifier;
 	private String  status = Status.ACTIVE.value;
