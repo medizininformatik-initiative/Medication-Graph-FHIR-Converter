@@ -3,7 +3,7 @@ plugins {
 }
 
 group = "de.medizininformatikinitiative"
-version = "1.0-alpha01"
+version = "1.0"
 
 repositories {
     mavenCentral()

@@ -1,5 +1,8 @@
 package de.medizininformatikinitiative.medgraph.ui.licenses
 
+import de.medizininformatikinitiative.medgraph.graphdbpopulator.CodingSystem
+import java.time.format.DateTimeFormatter
+
 class LicenseProvider {
 
     val licenses: List<License>
@@ -12,8 +15,10 @@ class LicenseProvider {
                 """
                 The EDQM Standard Terms data (in the knowledge graph, all nodes with the EDQM label) is from the  EDQM Standard Terms database (http://standardterms.edqm.eu) and is reproduced with the permission of the European Directorate for the Quality of Medicines & HealthCare, Council of Europe (EDQM).
                 
-                The date on which the data was retrieved can be seen in the EDQM's CodingSystem node. Please be aware the EDQM Standard Terms database is not a static list and content can change over time.
-                """.trimIndent()
+                The EDQM Standard Terms data was retrieved on """
+                    .trimIndent()
+                        + DateTimeFormatter.ISO_LOCAL_DATE.format(CodingSystem.EDQM.dateOfRetrieval)
+                        + ". Please be aware the EDQM Standard Terms database is not a static list and content can change over time."
             ),
             License(
                 "Compose Multiplatform",
