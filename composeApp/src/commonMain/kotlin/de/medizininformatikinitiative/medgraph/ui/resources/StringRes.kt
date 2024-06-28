@@ -34,7 +34,7 @@ class StringRes {
         val main_menu_populate_database = "Populate Database"
 
         @JvmStatic
-        val main_menu_fhir_exporter = "Export to MMI KDS FHIR Instances"
+        val main_menu_fhir_exporter = "Export to MMI CDS FHIR Instances"
 
         @JvmStatic
         val main_menu_search_algorithm = "Search for Medications"
