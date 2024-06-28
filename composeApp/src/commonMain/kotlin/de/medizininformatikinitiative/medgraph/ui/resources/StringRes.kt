@@ -261,6 +261,12 @@ class StringRes {
         val licenses_about = "Below, open source libraries as well as open data sets used in this project are listed, " +
                 "as their producers/developers deserve recognition. Clicking onto a button displays the corresponding " +
                 "license."
+
+        @JvmStatic
+        val licenses_license_text = "License"
+        @JvmStatic
+        val licenses_notice_text = "NOTICE.txt"
+
         val unknown_origin = "(Origin unknown)"
 
         @JvmStatic
