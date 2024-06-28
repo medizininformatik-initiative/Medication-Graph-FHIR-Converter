@@ -1,0 +1,3 @@
+This product includes dependencies, most of which are licensed under the Apache 2.0 license, altough not all of them are.
+Look in the "Open-Source Licenses" view in the application's main menu for details about included open-source software,
+their respective licenses and notice files.

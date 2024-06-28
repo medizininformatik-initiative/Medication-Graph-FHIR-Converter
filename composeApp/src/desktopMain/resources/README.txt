@@ -1,0 +1,1 @@
+The application is provided as a runnable .jar file and requires a Java Runtime Environment version 21 or later to run.

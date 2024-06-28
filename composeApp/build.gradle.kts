@@ -54,6 +54,8 @@ kotlin {
     }
 }
 
+val desktopVersion = "1.0.0"
+
 
 compose.desktop {
     application {
@@ -62,7 +64,7 @@ compose.desktop {
         nativeDistributions {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
             packageName = "de.medizininformatikinitiative.medgraph"
-            packageVersion = "1.0.0"
+            packageVersion = desktopVersion
         }
     }
 }
@@ -78,7 +80,7 @@ fun KotlinJvmTarget.registerShadowJar() {
     compilations.named("main") {
         tasks {
             val shadowJar = register<ShadowJar>("${targetName}ShadowJar") {
-                group = "build"
+//                group = "build"
                 from(output)
                 configurations = listOf(runtimeDependencyFiles)
                 archiveAppendix.set(targetName)
@@ -93,4 +95,17 @@ fun KotlinJvmTarget.registerShadowJar() {
             }
         }
     }
+}
+
+val zipTarget = "desktop"
+task<Zip>("${zipTarget}ReleaseZip") {
+    dependsOn("${zipTarget}ShadowJar")
+    from("build/libs") {
+        include("*-${zipTarget}-all.jar")
+        include("README.txt")
+    }
+    from("..").include("LICENSE.txt")
+    from("src/${zipTarget}Main/resources").include("NOTICE.txt")
+    archiveBaseName.set("MII DIZ FHIR Medication Tool")
+    archiveVersion.set(desktopVersion)
 }
