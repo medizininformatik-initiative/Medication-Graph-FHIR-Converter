@@ -25,7 +25,11 @@ class License(
     /**
      * The years in the copyright statement, may be null.
      */
-    val year: String? = null
+    val year: String? = null,
+    /**
+     * A NOTICE.txt file which may be part of the library.
+     */
+    val notice: String? = null,
 ) {
 
     constructor(
@@ -33,13 +37,15 @@ class License(
         url: String,
         license: DefaultLicense,
         copyright: String? = null,
-        years: String? = null
+        years: String? = null,
+        notice: String? = null,
     ) : this(
         libraryName,
         url,
         license.licenseText,
         copyright,
         years,
+        notice
     )
 
     override fun toString(): String {

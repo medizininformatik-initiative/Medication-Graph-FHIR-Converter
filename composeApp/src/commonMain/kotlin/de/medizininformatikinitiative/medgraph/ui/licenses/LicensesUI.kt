@@ -11,6 +11,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.text.SpanStyle
@@ -19,6 +20,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
 import de.medizininformatikinitiative.medgraph.ui.resources.StringRes
 import de.medizininformatikinitiative.medgraph.ui.theme.ApplicationTheme
 import de.medizininformatikinitiative.medgraph.ui.theme.templates.Button
@@ -44,9 +46,11 @@ fun LicensesUI(modifier: Modifier = Modifier, onReturn: () -> Unit) {
             Modifier.verticalScroll(rememberScrollState())
         ) {
             for (s in LicenseProvider().licenses) {
-                LicenseButton(s, modifier = Modifier.fillMaxWidth()
-                    .padding(vertical = 8.dp, horizontal = 16.dp)
-                    .height(60.dp))
+                LicenseButton(
+                    s, modifier = Modifier.fillMaxWidth()
+                        .padding(vertical = 8.dp, horizontal = 16.dp)
+                        .height(60.dp)
+                )
             }
         }
     }
@@ -72,14 +76,16 @@ fun LicenseButton(license: License, modifier: Modifier) {
 
 @Composable
 fun LicenseDialog(license: License, onDismiss: () -> Unit) {
-    Dialog(onDismissRequest = onDismiss) {
+    Dialog(onDismissRequest = onDismiss,
+        DialogProperties(usePlatformDefaultWidth = false)
+    ) {
         val shape = RoundedCornerShape(8.dp)
         Box(
-            Modifier.fillMaxWidth()
+            Modifier.width(800.dp)
                 .border(2.dp, color = MaterialTheme.colors.onSurface, shape)
                 .background(MaterialTheme.colors.surface, shape)
         ) {
-            Column(modifier = Modifier.padding(16.dp)) {
+            Column(modifier = Modifier.fillMaxWidth().padding(16.dp)) {
                 Text(license.libraryName, style = MaterialTheme.typography.h4)
                 val uriHandler = LocalUriHandler.current
                 ClickableText(
@@ -88,19 +94,43 @@ fun LicenseDialog(license: License, onDismiss: () -> Unit) {
                             append(license.url)
                         }
                     },
-                    style = MaterialTheme.typography.subtitle1) {
+                    style = MaterialTheme.typography.subtitle1
+                ) {
                     uriHandler.openUri(license.url)
                 }
 
 
                 Spacer(modifier = Modifier.height(16.dp))
 
+                var content by remember { mutableStateOf(license.toString()) }
+
+                if (license.notice != null) {
+                    NoticeOrLicenseTextSelectionButtons(
+                        onSelectLicense = { content = license.toString() },
+                        onSelectNotice = { content = license.notice },
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                }
+
                 Column(
                     modifier = Modifier.verticalScroll(rememberScrollState())
+                        .align(Alignment.CenterHorizontally)
                 ) {
-                    Text(license.toString())
+                    Text(content)
                 }
             }
         }
+    }
+}
+
+@Composable
+fun NoticeOrLicenseTextSelectionButtons(
+    onSelectLicense: () -> Unit,
+    onSelectNotice: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Row(modifier, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+        Button(onSelectLicense, modifier = Modifier.weight(1f)) { Text(StringRes.licenses_license_text) }
+        Button(onSelectNotice, modifier = Modifier.weight(1f)) { Text(StringRes.licenses_notice_text) }
     }
 }

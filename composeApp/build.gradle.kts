@@ -1,12 +1,20 @@
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
+import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+import org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmTarget
 
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.jetbrainsCompose)
+    id("com.github.johnrengelman.shadow") version "8.1.1"
 }
 
 kotlin {
-    jvm("desktop")
+    jvm("desktop") {
+        compilations.all {
+            kotlinOptions.jvmTarget = "21"
+        }
+        registerShadowJar()
+    }
     
     sourceSets {
         val desktopMain by getting
@@ -61,4 +69,28 @@ compose.desktop {
 
 tasks.named<Test>("desktopTest") {
     useJUnitPlatform()
+}
+
+// Runnable JAR creation ----------------------------------------------------------------------------------------------
+// Not my code (altough adapated by me)! Taken from https://stackoverflow.com/a/72519054
+fun KotlinJvmTarget.registerShadowJar() {
+    val targetName = name
+    compilations.named("main") {
+        tasks {
+            val shadowJar = register<ShadowJar>("${targetName}ShadowJar") {
+                group = "build"
+                from(output)
+                configurations = listOf(runtimeDependencyFiles)
+                archiveAppendix.set(targetName)
+                archiveClassifier.set("all")
+                manifest {
+                    attributes["Main-Class"] = "de.medizininformatikinitiative.medgraph.ui.desktop.MainKt"
+                }
+                mergeServiceFiles()
+            }
+            getByName("${targetName}Jar") {
+                finalizedBy(shadowJar)
+            }
+        }
+    }
 }
