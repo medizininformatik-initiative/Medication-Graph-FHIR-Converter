@@ -184,6 +184,9 @@ class StringRes {
         val pipeline_merge_last_path = ">>"
 
         @JvmStatic
+        val graph_db_populator_wipe_warning = "Warning: Running the import completely overwrites the database you are currently connected to!"
+
+        @JvmStatic
         val graph_db_populator_preparing = "Preparing data import"
 
         @JvmStatic
