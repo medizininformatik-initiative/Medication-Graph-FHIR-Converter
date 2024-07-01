@@ -17,6 +17,7 @@ import cafe.adriel.voyager.navigator.LocalNavigator
 import de.medizininformatikinitiative.medgraph.ui.desktop.templates.PathTextField
 import de.medizininformatikinitiative.medgraph.ui.resources.StringRes
 import de.medizininformatikinitiative.medgraph.ui.theme.ApplicationTheme
+import de.medizininformatikinitiative.medgraph.ui.theme.localColors
 import de.medizininformatikinitiative.medgraph.ui.theme.templates.Button
 import javax.swing.JFileChooser
 import javax.swing.filechooser.FileNameExtensionFilter
@@ -91,6 +92,8 @@ fun GraphDbPopulatorUI(viewModel: GraphDbPopulatorScreenModel, modifier: Modifie
                     uriHandler.openUri(stringAnnotation.item)
                 }
         }
+
+        Text(StringRes.graph_db_populator_wipe_warning, color = MaterialTheme.localColors.strongFailure)
 
         GraphDbPopulatorControls(viewModel, modifier.fillMaxWidth())
 
