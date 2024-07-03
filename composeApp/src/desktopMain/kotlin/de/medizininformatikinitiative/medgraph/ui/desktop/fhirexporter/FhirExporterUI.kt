@@ -4,6 +4,7 @@ import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Divider
 import androidx.compose.material.LinearProgressIndicator
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -12,6 +13,7 @@ import cafe.adriel.voyager.navigator.LocalNavigator
 import de.medizininformatikinitiative.medgraph.ui.desktop.templates.PathTextField
 import de.medizininformatikinitiative.medgraph.ui.resources.StringRes
 import de.medizininformatikinitiative.medgraph.ui.theme.ApplicationTheme
+import de.medizininformatikinitiative.medgraph.ui.theme.localColors
 import de.medizininformatikinitiative.medgraph.ui.theme.templates.Button
 import javax.swing.JFileChooser
 
@@ -63,8 +65,12 @@ fun FhirExporterUI(viewModel: FhirExporterScreenModel, modifier: Modifier = Modi
 
         Divider(modifier = Modifier.padding(vertical = 4.dp), thickness = 2.dp)
 
-        if (!viewModel.exportCurrentTask.isBlank()) {
+        if (viewModel.exportUnderway) {
             ExportProgressIndicator(viewModel.exportProgress * 1.0f / viewModel.exportMaxProgress, viewModel.exportCurrentTask)
+        } else {
+            val error = viewModel.errorText
+            if (error != null)
+                Text(error, color = MaterialTheme.localColors.error)
         }
     }
 }
