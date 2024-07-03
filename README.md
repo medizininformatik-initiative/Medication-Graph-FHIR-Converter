@@ -1,9 +1,12 @@
 ### Regarding the license:
 I know that people are waiting for me to set up a license for this project so other people can
 use it without running into legal issues. I am on it, but unfortunately, I need to make sure the license
-is in line with MII/DIFUTURE and TUM/MRI regulations, which might take a while... :(
+is in line with MII/DIFUTURE and TUM/MRI regulations.
 
-As of: June 14th, 2024
+It is planned to provide the source code under the MIT license, whereas the binaries will likely be restricted to the Apache 2.0 license requirements, as this is required by included dependencies.
+I am currently waiting for confirmation from the TUM and hope I can provide a license and a binary by the end of July.
+
+As of: July 3rd, 2024
 
 ---
 
