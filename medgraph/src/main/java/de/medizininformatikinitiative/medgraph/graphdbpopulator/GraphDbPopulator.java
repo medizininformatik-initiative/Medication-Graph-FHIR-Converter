@@ -216,7 +216,7 @@ public class GraphDbPopulator {
 		File mmiTargetDir = new File(targetDir + File.separator + MMI_PHARMINDEX_FILES_SUBPATH);
 		if (!mmiTargetDir.exists())
 			if (!mmiTargetDir.mkdir())
-				throw new IOException("Failed to create subdirectory in Neo4j import directory");
+				throw new IOException("Failed to create subdirectory in Neo4j import directory.");
 
 		// Copy MMI Pharmindex files
 		Path target = mmiTargetDir.toPath();
@@ -303,7 +303,7 @@ public class GraphDbPopulator {
 			while ((line = reader.readLine()) != null) {
 				l++;
 				int lastSplitterIndex = -1;
-				for (int i = line.length() - 2; i >= 0;i--) {
+				for (int i = line.length() - 2; i >= 2;i--) {
 					if (line.charAt(i) == ';' && line.charAt(i-1) == '"' && line.charAt(i+1) == '"') {
 						lastSplitterIndex = i;
 						break;

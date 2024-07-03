@@ -74,7 +74,7 @@ public enum CodingSystem {
 			PZN_LABEL
 	),
 	RXCUI(
-			"https://www.nlm.nih.gov/research/umls/rxnorm/overview.html",
+			"https://www.nlm.nih.gov/research/umls/rxnorm",
 			"RxNorm concept unique identifier",
 			LocalDate.of(2023, 11, 30),
 			"v3.0.3",
@@ -83,7 +83,7 @@ public enum CodingSystem {
 			RXCUI_LABEL
 	),
 	UNII(
-			"https://www.fda.gov/industry/fda-data-standards-advisory-board/fdas-global-substance-registration-system",
+			"http://fdasis.nlm.nih.gov",
 			"Unique Ingredient Identifier",
 			LocalDate.of(2023, 11, 30),
 			"v3.0.3",

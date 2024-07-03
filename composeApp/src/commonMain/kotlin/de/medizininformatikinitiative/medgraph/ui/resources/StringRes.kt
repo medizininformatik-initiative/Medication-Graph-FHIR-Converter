@@ -261,6 +261,9 @@ class StringRes {
         val fhir_exporter_done = "Export complete."
 
         @JvmStatic
+        val fhir_exporter_missing_permissions = "Failed to write output files. Ensure you have write permissions for the provided output path."
+
+        @JvmStatic
         val licenses_about = "Below, open source libraries as well as open data sets used in this project are listed, " +
                 "as their producers/developers deserve recognition. Clicking onto a button displays the corresponding " +
                 "license."

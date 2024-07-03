@@ -11,6 +11,7 @@ import de.medizininformatikinitiative.medgraph.ui.resources.StringRes
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
+import java.nio.file.AccessDeniedException
 import java.nio.file.Files
 import java.nio.file.Path
 
@@ -74,6 +75,8 @@ class FhirExporterScreenModel(
         exportCurrentTask = ""
         try {
             doExportTaskChain()
+        } catch (e: AccessDeniedException) {
+            errorText = StringRes.fhir_exporter_missing_permissions
         } catch (e: Exception) {
             errorText = e.message
         } finally {
