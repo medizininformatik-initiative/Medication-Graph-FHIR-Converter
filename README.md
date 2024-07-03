@@ -18,7 +18,7 @@ It currently comprises three core features:
 - Using the knowledge graph to create FHIR **Medication**, **Substance**, and **Organization** instances
 - Searching pharmaceutical products in the knowledge graph
 
-For documentation on how to use, head over to the [wiki](/medizininformatik-initiative/Medication-Graph-FHIR-Converter/wiki).
+For documentation on how to use, head over to the [wiki](https://github.com/medizininformatik-initiative/Medication-Graph-FHIR-Converter/wiki).
 
 
 As of: July 3rd, 2024
