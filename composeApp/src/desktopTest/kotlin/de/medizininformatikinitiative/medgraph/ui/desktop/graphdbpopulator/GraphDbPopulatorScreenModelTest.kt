@@ -1,5 +1,6 @@
 package de.medizininformatikinitiative.medgraph.ui.desktop.graphdbpopulator
 
+import de.medizininformatikinitiative.medgraph.graphdbpopulator.GraphDbPopulation
 import de.medizininformatikinitiative.medgraph.graphdbpopulator.GraphDbPopulator
 import de.medizininformatikinitiative.medgraph.graphdbpopulator.loaders.Loader
 import de.medizininformatikinitiative.medgraph.ui.UnitTest
@@ -24,24 +25,17 @@ class GraphDbPopulatorScreenModelTest : UnitTest() {
     private lateinit var graphDbPopulator: GraphDbPopulator
 
     @Mock
-    private lateinit var loader1: Loader
-
-    @Mock
-    private lateinit var loader2: Loader
-
-    @Mock
-    private lateinit var loader3: Loader
+    private lateinit var graphDbPopulation: GraphDbPopulation
 
     private lateinit var sut: GraphDbPopulatorScreenModel
 
     @BeforeEach
     fun setUp() {
+        `when`(graphDbPopulator.prepareDatabasePopulation(any(), any(), any())).thenReturn(graphDbPopulation)
         sut = GraphDbPopulatorScreenModel(graphDbPopulator)
 
         sut.mmiPharmindexDirectory = System.getProperty("user.home")
         sut.neo4jImportDirectory = System.getProperty("user.home")
-
-        `when`(graphDbPopulator.prepareLoaders(any(), anyBoolean())).thenReturn(listOf(loader1, loader2, loader3))
     }
 
     @Test
@@ -49,7 +43,7 @@ class GraphDbPopulatorScreenModelTest : UnitTest() {
         assertNull(sut.errorMessage)
         assertFalse(sut.executionComplete)
         assertFalse(sut.executionUnderway)
-        assertNull(sut.executionMinorStep)
+        assertNull(sut.executionTask)
     }
 
     @Test
@@ -58,42 +52,33 @@ class GraphDbPopulatorScreenModelTest : UnitTest() {
         assertFalse(sut.executionUnderway)
         assertTrue(sut.executionComplete)
         assertNull(sut.errorMessage)
-    }
-
-    @Test
-    fun databaseIsClearedUponExecution() {
-        runSut()
-        verify(graphDbPopulator).clearDatabase(any())
-    }
-
-    @Test
-    fun cleanupHappensDuringExecution() {
-        runSut()
-        verify(graphDbPopulator).removeFilesFromNeo4jImportDir(Path.of(sut.neo4jImportDirectory))
+        assertEquals(graphDbPopulation, sut.executionTask)
     }
 
     @Test
     fun restartingExecution() {
         runSut()
 
+        val otherTask: GraphDbPopulation = mock()
+        `when`(graphDbPopulator.prepareDatabasePopulation(any(), any(), any())).thenReturn(otherTask)
         val completedStateGoneAgain = AtomicBoolean(false)
-        val intermediateProgressAgain = AtomicBoolean(false)
+        val newTaskAssigned = AtomicBoolean(false)
 
         doAnswer({ req ->
             completedStateGoneAgain.set(!sut.executionComplete)
-            intermediateProgressAgain.set(sut.executionMajorStepIndex < sut.executionTotalMajorStepsNumber)
+            newTaskAssigned.set(sut.executionTask == otherTask)
             return@doAnswer null
-        }).`when`(loader2).execute()
+        }).`when`(otherTask).executeDatabasePopulation(any())
 
         runSut()
 
         assertTrue(completedStateGoneAgain.get())
-        assertTrue(intermediateProgressAgain.get())
+        assertTrue(newTaskAssigned.get())
     }
 
     @Test
-    fun loaderFails() {
-        doThrow(RuntimeException("This went terribly wrong!")).`when`(loader3).execute()
+    fun executionFails() {
+        doThrow(RuntimeException("This went terribly wrong!")).`when`(graphDbPopulation).executeDatabasePopulation(any())
 
         runSut()
 
@@ -104,17 +89,12 @@ class GraphDbPopulatorScreenModelTest : UnitTest() {
     @Test
     fun preparationFails() {
         doThrow(IllegalArgumentException("No way!")).`when`(graphDbPopulator)
-            .copyKnowledgeGraphSourceDataToNeo4jImportDirectory(
-                Path.of(sut.mmiPharmindexDirectory),
-                null,
-                Path.of(sut.neo4jImportDirectory)
-            )
+            .prepareDatabasePopulation(any(), any(), any())
 
         runSut()
 
         assertFalse(sut.executionComplete)
         assertEquals("No way!", sut.errorMessage)
-        verify(loader1, never()).execute()
     }
 
     @Test
@@ -122,12 +102,11 @@ class GraphDbPopulatorScreenModelTest : UnitTest() {
         sut.amiceStoffBezFile = "/boot/efi"
         runSut()
 
-        verify(graphDbPopulator).copyKnowledgeGraphSourceDataToNeo4jImportDirectory(
+        verify(graphDbPopulator).prepareDatabasePopulation(
             Path.of(sut.mmiPharmindexDirectory),
+            Path.of(sut.neo4jImportDirectory),
             Path.of("/boot/efi"),
-            Path.of(sut.neo4jImportDirectory)
         )
-        verify(graphDbPopulator).prepareLoaders(any(), eq(true))
     }
 
     @Test
@@ -135,41 +114,11 @@ class GraphDbPopulatorScreenModelTest : UnitTest() {
         sut.amiceStoffBezFile = ""
         runSut()
 
-        verify(graphDbPopulator).copyKnowledgeGraphSourceDataToNeo4jImportDirectory(
+        verify(graphDbPopulator).prepareDatabasePopulation(
             Path.of(sut.mmiPharmindexDirectory),
+            Path.of(sut.neo4jImportDirectory),
             null,
-            Path.of(sut.neo4jImportDirectory)
         )
-        verify(graphDbPopulator).prepareLoaders(any(), eq(false))
-    }
-
-
-    @Test
-    fun minorStep() {
-        val subtaskStartListener = AtomicReference<Consumer<String>>()
-        val subtaskEndListener = AtomicReference<Runnable>()
-
-        doAnswer {
-            subtaskStartListener.set(it.getArgument(0))
-        }.`when`(loader3).setOnSubtaskStartedListener(any())
-        doAnswer {
-            subtaskEndListener.set(it.getArgument(0))
-        }.`when`(loader3).setOnSubtaskCompletedListener(any())
-
-        val subtaskNameSet = AtomicBoolean(false)
-        val subtaskNameCleared = AtomicBoolean(false)
-
-        doAnswer {
-            subtaskStartListener.get().accept("Subtask A113")
-            subtaskNameSet.set(sut.executionMinorStep == "Subtask A113")
-            subtaskEndListener.get().run()
-            subtaskNameCleared.set(sut.executionMinorStep == null)
-        }.`when`(loader3).execute()
-
-        runSut()
-
-        assertTrue(subtaskNameSet.get())
-        assertTrue(subtaskNameCleared.get())
     }
 
     private fun runSut() {

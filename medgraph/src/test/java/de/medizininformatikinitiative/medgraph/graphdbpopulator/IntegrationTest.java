@@ -1,7 +1,6 @@
 package de.medizininformatikinitiative.medgraph.graphdbpopulator;
 
 import de.medizininformatikinitiative.medgraph.common.db.DatabaseConnection;
-import de.medizininformatikinitiative.medgraph.graphdbpopulator.loaders.Loader;
 import org.junit.jupiter.api.*;
 import org.neo4j.driver.Record;
 import org.neo4j.driver.Result;
@@ -25,10 +24,10 @@ import static org.junit.jupiter.api.Assertions.*;
  * Runs the whole migration on a set of sample files.
  */
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-@Disabled("This test wipes the target database. Also it needs to copy files to the Neo4j import directory " +
-		"which is likely different if you have a different OS than mine and also write privileges are required. " +
-		"Sadly, a platform-independent solution is tricky. I have not yet seen a way to inject the test files " +
-		"into the Neo4j harness in a different way.")
+//@Disabled("This test wipes the target database. Also it needs to copy files to the Neo4j import directory " +
+//		"which is likely different if you have a different OS than mine and also write privileges are required. " +
+//		"Sadly, a platform-independent solution is tricky. I have not yet seen a way to inject the test files " +
+//		"into the Neo4j harness in a different way.")
 public class IntegrationTest {
 
 	private DatabaseConnection connection;
@@ -38,18 +37,20 @@ public class IntegrationTest {
 	public void integrationTestSetup() throws IOException {
 		connection = DatabaseConnection.createDefault();
 		session = connection.createSession();
-		copyTestFilesToNeo4jImportDir();
 
 		GraphDbPopulator graphDbPopulator = new GraphDbPopulator();
-		graphDbPopulator.clearDatabase(session); // Delete everything
-		graphDbPopulator.prepareLoaders(session, true).forEach(Loader::execute);
+		graphDbPopulator.prepareDatabasePopulation(
+				                Path.of("src", "test", "resources", "sample"),
+				                Path.of("/var", "lib", "neo4j", "import"),
+				                Path.of("src", "test", "resources", "sample", "amice_stoffbez_synthetic.csv")
+		                )
+		                .executeDatabasePopulation(connection);
 	}
 
 	@AfterAll
 	public void cleanup() throws IOException {
 		session.close();
 		connection.close();
-		deleteTestFilesFromNeo4jImportDir();
 	}
 
 	@Test
@@ -295,7 +296,7 @@ public class IntegrationTest {
 		Result result = session.run("MATCH (e:" + EDQM_LABEL + ") RETURN COUNT(e)");
 
 		Record record = result.next();
-		assertEquals(getCsvEntries("/edqm_objects.csv", true), record.get(0).asInt(),
+		assertEquals(getCsvEntries("/edqm_objects.csv"), record.get(0).asInt(),
 				"The number of EDQM nodes does not match the number of entries in its CSV source!");
 		assertFalse(result.hasNext());
 	}
@@ -306,7 +307,7 @@ public class IntegrationTest {
 				"(:" + EDQM_LABEL + ") RETURN COUNT(r)");
 
 		Record record = result.next();
-		assertEquals(getCsvEntries("/pdf_relations.csv", true), record.get(0).asInt(),
+		assertEquals(getCsvEntries("/pdf_relations.csv"), record.get(0).asInt(),
 				"The number of EDQM node internal relations does not match the number of entries in its CSV source!");
 		assertFalse(result.hasNext());
 	}
@@ -335,8 +336,8 @@ public class IntegrationTest {
 
 	@Test
 	public void substanceNameSynonymesExist() {
-		Result result = session.run("MATCH (s:"+SYNONYME_LABEL+" {name: 'Midazolamhydrochlorid'})" +
-				"-[:"+SYNONYME_REFERENCES_NODE_LABEL+"]->(t:"+SUBSTANCE_LABEL+"{mmiId: 1}) RETURN t.name");
+		Result result = session.run("MATCH (s:" + SYNONYME_LABEL + " {name: 'Midazolamhydrochlorid'})" +
+				"-[:" + SYNONYME_REFERENCES_NODE_LABEL + "]->(t:" + SUBSTANCE_LABEL + "{mmiId: 1}) RETURN t.name");
 
 		Record record = result.next();
 		assertEquals("Midazolamhydrochlorid", record.get(0).asString());
@@ -345,8 +346,8 @@ public class IntegrationTest {
 
 	@Test
 	public void productNameSynonymesExist() {
-		Result result = session.run("MATCH (s:"+SYNONYME_LABEL+" {name: 'Dormicum 15 mg/3 ml'})" +
-				"-[:"+SYNONYME_REFERENCES_NODE_LABEL+"]->(t:"+PRODUCT_LABEL+" {mmiId: 0}) RETURN t.name");
+		Result result = session.run("MATCH (s:" + SYNONYME_LABEL + " {name: 'Dormicum 15 mg/3 ml'})" +
+				"-[:" + SYNONYME_REFERENCES_NODE_LABEL + "]->(t:" + PRODUCT_LABEL + " {mmiId: 0}) RETURN t.name");
 
 		Record record = result.next();
 		assertEquals("Dormicum 15 mg/3 ml", record.get(0).asString());
@@ -355,8 +356,8 @@ public class IntegrationTest {
 
 	@Test
 	public void edqmConceptNameSynonymesExist() {
-		Result result = session.run("MATCH (s:"+SYNONYME_LABEL+" {name: 'Oral drops, solution'})" +
-				"-[:"+SYNONYME_REFERENCES_NODE_LABEL+"]->(t:"+EDQM_LABEL+" {code: 'PDF-10101000'}) RETURN t.name");
+		Result result = session.run("MATCH (s:" + SYNONYME_LABEL + " {name: 'Oral drops, solution'})" +
+				"-[:" + SYNONYME_REFERENCES_NODE_LABEL + "]->(t:" + EDQM_LABEL + " {code: 'PDF-10101000'}) RETURN t.name");
 
 		Record record = result.next();
 		assertEquals("Oral drops, solution", record.get(0).asString());
@@ -376,9 +377,8 @@ public class IntegrationTest {
 	 * Counts the non-blank lines in the given resource file which do not start with a "#".
 	 *
 	 * @param resourceName the resource file to read
-	 * @param hasHeader    if true, additionally deducts 1 from the result to account for a header line
 	 */
-	private int getCsvEntries(String resourceName, boolean hasHeader) throws IOException {
+	private int getCsvEntries(String resourceName) throws IOException {
 		int lines = 0;
 		try (InputStream inputStream = GraphDbPopulator.class.getResourceAsStream(resourceName)) {
 			assertNotNull(inputStream);
@@ -389,22 +389,8 @@ public class IntegrationTest {
 				}
 			}
 		}
-		if (hasHeader) lines--;
+		lines--; // Remove header line
 		return Math.max(0, lines);
-	}
-
-	private void copyTestFilesToNeo4jImportDir() throws IOException {
-		new GraphDbPopulator().copyKnowledgeGraphSourceDataToNeo4jImportDirectory(
-				Path.of("src", "test", "resources", "sample"),
-				Path.of("src", "test", "resources", "sample", "amice_stoffbez_synthetic.csv"),
-				Path.of("/var", "lib", "neo4j", "import")
-		);
-	}
-
-	private void deleteTestFilesFromNeo4jImportDir() throws IOException {
-		new GraphDbPopulator().removeFilesFromNeo4jImportDir(
-				Path.of("/var", "lib", "neo4j", "import")
-		);
 	}
 
 }

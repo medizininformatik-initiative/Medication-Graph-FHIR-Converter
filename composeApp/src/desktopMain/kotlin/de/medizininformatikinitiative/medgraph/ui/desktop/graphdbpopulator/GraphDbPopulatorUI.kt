@@ -14,11 +14,14 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.navigator.LocalNavigator
+import de.medizininformatikinitiative.medgraph.common.mvc.Progressable
 import de.medizininformatikinitiative.medgraph.ui.desktop.templates.PathTextField
 import de.medizininformatikinitiative.medgraph.ui.resources.StringRes
 import de.medizininformatikinitiative.medgraph.ui.theme.ApplicationTheme
 import de.medizininformatikinitiative.medgraph.ui.theme.localColors
 import de.medizininformatikinitiative.medgraph.ui.theme.templates.Button
+import de.medizininformatikinitiative.medgraph.ui.theme.templates.ProgressIndication
+import de.medizininformatikinitiative.medgraph.ui.tools.preview.TestOnlyProgressable
 import javax.swing.JFileChooser
 import javax.swing.filechooser.FileNameExtensionFilter
 
@@ -32,10 +35,7 @@ fun GraphDbPopulatorUI() {
         viewModel.errorMessage = "Something went wrong, but this is only a test."
 
         viewModel.executionUnderway = true
-        viewModel.executionMajorStep = "Running ProductsLoader"
-        viewModel.executionMinorStep = "Importing products from CSV"
-        viewModel.executionMajorStepIndex = 3
-        viewModel.executionTotalMajorStepsNumber = 8
+        viewModel.executionTask = TestOnlyProgressable()
 
         GraphDbPopulatorUI(
             viewModel, modifier = Modifier
@@ -99,6 +99,12 @@ fun GraphDbPopulatorUI(viewModel: GraphDbPopulatorScreenModel, modifier: Modifie
 
         Divider(thickness = 2.dp)
 
+        ImportProgressUI(
+            viewModel, modifier = Modifier
+                .padding(horizontal = 8.dp, vertical = 4.dp)
+                .fillMaxWidth()
+        )
+
         val errorMessage = viewModel.errorMessage
         if (errorMessage != null) {
             Text(
@@ -116,13 +122,6 @@ fun GraphDbPopulatorUI(viewModel: GraphDbPopulatorScreenModel, modifier: Modifie
                 modifier = Modifier.fillMaxWidth()
             )
         }
-
-        ImportProgressUI(
-            viewModel, modifier = Modifier
-                .padding(horizontal = 8.dp, vertical = 4.dp)
-                .fillMaxWidth()
-        )
-
     }
 }
 
@@ -147,27 +146,9 @@ private fun GraphDbPopulatorControls(viewModel: GraphDbPopulatorScreenModel, mod
 
 @Composable
 private fun ImportProgressUI(viewModel: GraphDbPopulatorScreenModel, modifier: Modifier = Modifier) {
-    if (viewModel.executionUnderway) {
-        Column(
-            modifier = modifier
-        ) {
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Text(viewModel.executionMajorStep)
-                Spacer(modifier = Modifier.width(8.dp))
-                CircularProgressIndicator(modifier = Modifier.size(16.dp))
-            }
-            LinearProgressIndicator(
-                progress =
-                viewModel.executionMajorStepIndex * 1f / viewModel.executionTotalMajorStepsNumber,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 4.dp)
-                    .height(12.dp)
-            )
-            val minorStep = viewModel.executionMinorStep
-            if (minorStep != null)
-                Text(minorStep, modifier = Modifier.padding(horizontal = 8.dp))
-        }
+    val task = viewModel.executionTask
+    if (task != null) {
+        ProgressIndication(task, modifier, viewModel.executionUnderway)
     }
 }
 
