@@ -49,7 +49,6 @@ public class NamedProgressableImplTest extends DispatcherTest<NamedProgressableI
 	@Test
 	public void setMaxProgress() {
 		sut.setProgress(1);
-
 		NamedProgressable.Listener listener = mock();
 		Progressable.Listener listener1 = mock();
 		sut.registerListener(listener);
@@ -60,6 +59,37 @@ public class NamedProgressableImplTest extends DispatcherTest<NamedProgressableI
 		verify(listener).onProgressChanged(1, 2);
 		verify(listener1).onProgressChanged(1, 2);
 		assertEquals(2, sut.getMaxProgress());
+	}
+
+	@Test
+	public void setProgressAndMaxProgress() {
+		NamedProgressable.Listener listener = mock();
+		Progressable.Listener listener1 = mock();
+		sut.registerListener(listener);
+		sut.registerListener(listener1);
+
+		sut.setProgress(2, 8);
+
+		verify(listener).onProgressChanged(2, 8);
+		verify(listener1).onProgressChanged(2, 8);
+		assertEquals(2, sut.getProgress());
+		assertEquals(8, sut.getMaxProgress());
+	}
+
+	@Test
+	public void incrementProgress() {
+		sut.setProgress(0);
+		sut.setMaxProgress(3);
+
+		NamedProgressable.Listener listener = mock();
+		sut.registerListener(listener);
+
+		sut.incrementProgress();
+		verify(listener).onProgressChanged(1, 3);
+		sut.incrementProgress();
+		verify(listener).onProgressChanged(2, 3);
+		sut.incrementProgress();
+		verify(listener).onProgressChanged(3, 3);
 	}
 
 	@Override

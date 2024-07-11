@@ -31,12 +31,22 @@ public class NamedProgressableImpl extends Dispatcher<Progressable.Listener> imp
 
 	protected void setProgress(int progress) {
 		this.progress = progress;
-		dispatchEvent(listener -> listener.onProgressChanged(progress, maxProgress));
+		dispatchProgressChanged();
 	}
 
 	protected void setMaxProgress(int maxProgress) {
 		this.maxProgress = maxProgress;
-		dispatchEvent(listener -> listener.onProgressChanged(progress, maxProgress));
+		dispatchProgressChanged();
+	}
+
+	protected void setProgress(int progress, int maxProgress) {
+		this.progress = progress;
+		this.maxProgress = maxProgress;
+		dispatchProgressChanged();
+	}
+
+	protected void incrementProgress() {
+		this.setProgress(progress + 1);
 	}
 
 	@Override
@@ -62,6 +72,10 @@ public class NamedProgressableImpl extends Dispatcher<Progressable.Listener> imp
 	@Override
 	public @NotNull String[] getCurrentTaskStack() {
 		return taskStack;
+	}
+
+	private void dispatchProgressChanged() {
+		dispatchEvent(listener -> listener.onProgressChanged(progress, maxProgress));
 	}
 
 }

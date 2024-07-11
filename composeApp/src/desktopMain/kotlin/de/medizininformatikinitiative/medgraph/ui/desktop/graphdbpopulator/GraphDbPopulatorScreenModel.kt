@@ -6,6 +6,8 @@ import androidx.compose.runtime.setValue
 import cafe.adriel.voyager.core.model.ScreenModel
 import cafe.adriel.voyager.core.model.screenModelScope
 import de.medizininformatikinitiative.medgraph.common.db.DatabaseConnection
+import de.medizininformatikinitiative.medgraph.common.mvc.NamedProgressable
+import de.medizininformatikinitiative.medgraph.graphdbpopulator.GraphDbPopulation
 import de.medizininformatikinitiative.medgraph.graphdbpopulator.GraphDbPopulator
 import de.medizininformatikinitiative.medgraph.graphdbpopulator.loaders.Loader
 import de.medizininformatikinitiative.medgraph.ui.resources.StringRes
@@ -49,25 +51,9 @@ class GraphDbPopulatorScreenModel(
     var executionUnderway by mutableStateOf(false)
 
     /**
-     * The current major task running as part of the population task chain.
+     * The currently ongoing population task or null if no population is ongoing.
      */
-    var executionMajorStep by mutableStateOf("")
-
-    /**
-     * The current number of the major execution steps. (0-indexed)
-     */
-    var executionMajorStepIndex by mutableStateOf(0)
-
-    /**
-     * The number of major steps currently planned.
-     */
-    var executionTotalMajorStepsNumber by mutableStateOf(1)
-
-    /**
-     * The current minor task running as part of the population task chain or null if there currently is no minor task
-     * running.
-     */
-    var executionMinorStep by mutableStateOf<String?>(null)
+    var executionTask by mutableStateOf<NamedProgressable?>(null)
 
     /**
      * Whether this view is in "completed" state.
@@ -97,10 +83,6 @@ class GraphDbPopulatorScreenModel(
         }
         executionComplete = false
         errorMessage = null
-        executionMajorStep = ""
-        executionMinorStep = null
-        executionMajorStepIndex = 0
-        executionTotalMajorStepsNumber = 1
 
         try {
 
@@ -111,59 +93,24 @@ class GraphDbPopulatorScreenModel(
             e.printStackTrace()
         } finally {
             executionUnderway = false
-            executionMajorStep = ""
-            executionMinorStep = null
-            executionTotalMajorStepsNumber = 1
         }
     }
 
     private fun runPopulationTaskChain() {
-        executionMajorStep = StringRes.graph_db_populator_preparing
         val mmiPharmindexPath: Path = Path.of(mmiPharmindexDirectory)
         val neo4jImportPath: Path = Path.of(neo4jImportDirectory)
         val amiceFilePath: Path? = if (amiceStoffBezFile.isEmpty()) null else Path.of(amiceStoffBezFile)
 
+        val population = graphDbPopulator.prepareDatabasePopulation(mmiPharmindexPath, neo4jImportPath, amiceFilePath)
+        this.executionTask = population
+
         try {
-            graphDbPopulator.copyKnowledgeGraphSourceDataToNeo4jImportDirectory(
-                mmiPharmindexPath,
-                amiceFilePath,
-                neo4jImportPath
-            )
+            population.executeDatabasePopulation(DatabaseConnection.createDefault());
         } catch (e: IllegalArgumentException) {
             errorMessage = e.message
             return
         }
-
-        DatabaseConnection.createDefault().use {
-            it.createSession().use { session ->
-                val loaders = graphDbPopulator.prepareLoaders(session, amiceFilePath != null)
-                executionTotalMajorStepsNumber = loaders.size + 2
-
-                executionMajorStepIndex = 1
-                executionMajorStep = StringRes.graph_db_populator_clearing_db
-                graphDbPopulator.clearDatabase(session)
-
-                executionMajorStepIndex++
-                loaders.forEach(this::runLoader)
-            }
-        }
-        executionMajorStep = StringRes.graph_db_populator_cleaning_up
-        graphDbPopulator.removeFilesFromNeo4jImportDir(neo4jImportPath)
-
-        executionMajorStepIndex++
         executionComplete = true
-    }
-
-    private fun runLoader(loader: Loader) {
-        executionMajorStep = StringRes.get(StringRes.graph_db_populator_running_loader, loader.javaClass.simpleName)
-        loader.setOnSubtaskStartedListener {
-            executionMinorStep = it
-        }
-        loader.setOnSubtaskCompletedListener {
-            executionMinorStep = null
-        }
-        loader.execute()
-        executionMajorStepIndex++
     }
 
 }

@@ -1,8 +1,6 @@
 package de.medizininformatikinitiative.medgraph.graphdbpopulator;
 
-import de.medizininformatikinitiative.medgraph.graphdbpopulator.loaders.*;
-import de.medizininformatikinitiative.medgraph.common.db.DatabaseTools;
-import org.neo4j.driver.Session;
+import de.medizininformatikinitiative.medgraph.graphdbpopulator.loaders.AmiceStoffBezLoader;
 
 import java.io.*;
 import java.nio.file.Files;
@@ -55,80 +53,18 @@ public class GraphDbPopulator {
 	private static final String MMI_PHARMINDEX_FILES_SUBPATH = "mmi_pharmindex";
 
 	/**
-	 * Uses the given session to run statements against the database which remove all nodes, relationships and
-	 * constraints.
-	 */
-	public void clearDatabase(Session session) {
-		DatabaseTools.clearDatabase(session);
-	}
-
-	/**
-	 * Creates the loaders which take part in setting up the graph database and returns them as a list. Note that the
-	 * loaders must be executed in the order given by the list, otherwise dependencies between the loaders may not be
-	 * honored, which might cause failures or missing data in the resulting knowledge graph.
+	 * Creates a {@link GraphDbPopulation}-instance which can be used to run the graph database population chain.
 	 *
-	 * @param session            the session to connect the loaders to
-	 * @param includeAmiceLoader if true, includes the {@link AmiceStoffBezLoader} which requires the corresponding file
-	 *                           be present
-	 * @return a list of loaders, ready for execution
+	 * @param mmiPharmindexDirectoryPath the path where the MMI Pharmindex files can be found
+	 * @param neo4jImportDirectoryPath   the Neo4j import directory to copy the required files to
+	 * @param amiceDataFilePath          optionally, a path to the AMIce Stoffbezeichnungen Rohdaten file, may be null
+	 * @return a ready-for-use {@link GraphDbPopulation}-instance
 	 */
-	public List<Loader> prepareLoaders(Session session, boolean includeAmiceLoader) {
-		List<Loader> loaders = new ArrayList<>();
-
-		// Unit nodes
-		loaders.add(new UnitLoader(session));
-		// EDQM Standard Term nodes
-		loaders.add(new EdqmStandardTermsLoader(session));
-		// EDQM Standard Term Relations
-		loaders.add(new EdqmStandardTermsRelationsLoader(session));
-		// MMI Dose forms
-		loaders.add(new DoseFormLoader(session));
-		// Relations between MMI dose forms and EDQM dose forms
-		loaders.add(new MmiEdqmDoseFormConnectionsLoader(session));
-		// ATC Hierarchy
-		loaders.add(new AtcLoader(session));
-		// Substance nodes, ASK nodes and CAS nodes and their relations
-		loaders.add(new SubstanceLoader(session));
-		// Product nodes
-		loaders.add(new ProductLoader(session));
-		// Delete all products which are not pharmaceuticals
-		loaders.add(new ProductFilter(session));
-		// Package nodes and their relations with Product nodes
-		loaders.add(new PackageLoader(session));
-		// INN and CAS nodes
-		if (includeAmiceLoader) loaders.add(new AmiceStoffBezLoader(session));
-		// Manufacturer nodes
-		loaders.add(new CompanyLoader(session));
-		// Manufacturer Address nodes
-		loaders.add(new CompanyAddressLoader(session));
-		// Relation between Manufacturer nodes and their product nodes
-		loaders.add(new CompanyProductReferenceLoader(session));
-		// Drug nodes and relations to Product nodes
-		loaders.add(new DrugLoader(session));
-		// Ingredient nodes and relations to Substance nodes
-		loaders.add(new IngredientLoader(session));
-		// Relations between Ingredient nodes and Drug nodes
-		loaders.add(new DrugIngredientConnectionLoader(session));
-		// Relations between Drug nodes and ATC nodes
-		loaders.add(new DrugAtcConnectionLoader(session));
-		// Unit UCUM definitions
-		loaders.add(new UcumLoader(session));
-		// GSRS UNIIs, RXCUIs, etc.
-		loaders.add(new UniiLoader(session));
-		// Corresponding ingredients and their amounts
-		loaders.add(new IngredientCorrespondenceLoader(session));
-		// Custom synonymes
-		loaders.add(new CustomSynonymeLoader(session));
-		// Dose form translations
-		loaders.add(new EdqmStandardTermsTranslationsLoader(session));
-		// Custom dose form synonymes
-		loaders.add(new EdqmStandardTermsCustomSynonymesLoader(session));
-		// Coding System Nodes and connections to it
-		loaders.add(new CodingSystemNodeCreator(session));
-		// Synonymes from other nodes
-		loaders.add(new DatabaseSynonymePreparer(session));
-
-		return loaders;
+	public GraphDbPopulation prepareDatabasePopulation(
+			Path mmiPharmindexDirectoryPath,
+			Path neo4jImportDirectoryPath,
+			Path amiceDataFilePath) {
+		return new GraphDbPopulation(mmiPharmindexDirectoryPath, neo4jImportDirectoryPath, amiceDataFilePath);
 	}
 
 	/**
@@ -144,7 +80,7 @@ public class GraphDbPopulator {
 	 *                                  the mmiPharmindexDirectoryPath, also if the neo4jImportDirectoryPath does not
 	 *                                  point to a directory
 	 */
-	public void copyKnowledgeGraphSourceDataToNeo4jImportDirectory(
+	void copyKnowledgeGraphSourceDataToNeo4jImportDirectory(
 			Path mmiPharmindexDirectoryPath,
 			Path amiceDataFilePath,
 			Path neo4jImportDirectoryPath)
@@ -238,7 +174,8 @@ public class GraphDbPopulator {
 		// Copy other files
 		target = targetDir.toPath();
 		for (String resource : REQUIRED_RESOURCE_FILES) {
-			try(InputStream stream = Objects.requireNonNull(GraphDbPopulator.class.getResourceAsStream("/" + resource))) {
+			try (InputStream stream = Objects.requireNonNull(
+					GraphDbPopulator.class.getResourceAsStream("/" + resource))) {
 				Path targetPath = target.resolve(resource);
 				copyCsvAndStripComments(stream, targetPath);
 			}
@@ -251,7 +188,7 @@ public class GraphDbPopulator {
 	 * @param neo4jImportPath the path to the Neo4j import directory
 	 * @throws IOException if a file operation failed
 	 */
-	public void removeFilesFromNeo4jImportDir(Path neo4jImportPath) throws IOException {
+	void removeFilesFromNeo4jImportDir(Path neo4jImportPath) throws IOException {
 		Path mmiTargetDir = neo4jImportPath.resolve(MMI_PHARMINDEX_FILES_SUBPATH);
 
 		for (String filename : REQUIRED_MMI_FILES) {
@@ -303,8 +240,8 @@ public class GraphDbPopulator {
 			while ((line = reader.readLine()) != null) {
 				l++;
 				int lastSplitterIndex = -1;
-				for (int i = line.length() - 2; i >= 2;i--) {
-					if (line.charAt(i) == ';' && line.charAt(i-1) == '"' && line.charAt(i+1) == '"') {
+				for (int i = line.length() - 2; i >= 2; i--) {
+					if (line.charAt(i) == ';' && line.charAt(i - 1) == '"' && line.charAt(i + 1) == '"') {
 						lastSplitterIndex = i;
 						break;
 					}
@@ -312,7 +249,8 @@ public class GraphDbPopulator {
 				if (lastSplitterIndex != -1) {
 					String lastPart = line.substring(lastSplitterIndex + 1);
 					if (lastPart.startsWith("\"") && lastPart.endsWith("\"")) {
-						String newPart = "\"" + lastPart.substring(1, lastPart.length() - 1).replaceAll("\"", "''") +"\"";
+						String newPart = "\"" + lastPart.substring(1, lastPart.length() - 1)
+						                                .replaceAll("\"", "''") + "\"";
 						if (!newPart.equals(lastPart))
 							updatedLines.add(l);
 						lastPart = newPart;
@@ -324,7 +262,7 @@ public class GraphDbPopulator {
 				}
 				writer.write("\n");
 			}
-			System.out.println("Updated lines "+updatedLines);
+			System.out.println("Updated lines " + updatedLines);
 		}
 	}
 

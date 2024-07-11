@@ -24,10 +24,10 @@ private fun ProgressIndication() {
 }
 
 @Composable
-fun ProgressIndication(progressable: Progressable, modifier: Modifier = Modifier) {
+fun ProgressIndication(progressable: Progressable, modifier: Modifier = Modifier, indicateOngoingProgression: Boolean = true) {
     val model = remember { ProgressIndicationViewState(progressable) }
     if (progressable is NamedProgressable) {
-        DetailedProgressIndication(model, modifier)
+        DetailedProgressIndication(model, modifier, indicateOngoingProgression)
     } else {
         Column(modifier) {
             LinearProgressIndicator(model)
@@ -36,14 +36,16 @@ fun ProgressIndication(progressable: Progressable, modifier: Modifier = Modifier
 }
 
 @Composable
-private fun DetailedProgressIndication(state: ProgressIndicationViewState, modifier: Modifier = Modifier) {
+private fun DetailedProgressIndication(state: ProgressIndicationViewState, modifier: Modifier = Modifier, indicateOngoingProgression: Boolean = true) {
     Column(
         modifier = modifier
     ) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             Text(state.primaryTaskDescription)
-            Spacer(modifier = Modifier.width(8.dp))
-            CircularProgressIndicator(modifier = Modifier.size(16.dp))
+            if (indicateOngoingProgression) {
+                Spacer(modifier = Modifier.width(8.dp))
+                CircularProgressIndicator(modifier = Modifier.size(16.dp))
+            }
         }
         LinearProgressIndicator(state)
         val minorStep = state.secondaryTaskDescription
@@ -77,9 +79,9 @@ private class ProgressIndicationViewState(
     var secondaryTaskDescription by mutableStateOf<String?>(null)
 
     init {
-        progressable.registerListener(this)
         if (progressable is NamedProgressable)
             onTaskStackChanged(progressable.currentTaskStack)
+        progressable.registerListener(this)
     }
 
     override fun onProgressChanged(progress: Int, maxProgress: Int) {
