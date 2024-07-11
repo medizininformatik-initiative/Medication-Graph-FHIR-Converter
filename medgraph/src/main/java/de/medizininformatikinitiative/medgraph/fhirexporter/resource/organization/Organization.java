@@ -1,5 +1,6 @@
 package de.medizininformatikinitiative.medgraph.fhirexporter.resource.organization;
 
+import de.medizininformatikinitiative.medgraph.fhirexporter.resource.FhirResource;
 import de.medizininformatikinitiative.medgraph.fhirexporter.resource.Identifier;
 import de.medizininformatikinitiative.medgraph.fhirexporter.resource.medication.Meta;
 
@@ -8,11 +9,9 @@ import de.medizininformatikinitiative.medgraph.fhirexporter.resource.medication.
  *
  * @author Markus Budeus
  */
-public class Organization {
+public class Organization extends FhirResource {
 
-	public Meta meta;
 	public final String resourceType = "Organization";
-	public Identifier identifier;
 	public boolean active = true;
 	// type omitted
 	public String name;

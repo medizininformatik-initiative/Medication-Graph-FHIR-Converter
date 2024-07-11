@@ -7,12 +7,10 @@ import de.medizininformatikinitiative.medgraph.fhirexporter.resource.*;
  *
  * @author Markus Budeus
  */
-public class Medication {
+public class Medication extends FhirResource {
 
 	// id omitted
 	public final String resourceType = "Medication";
-	public Meta meta;
-	public Identifier[] identifier;
 	public CodeableConcept code;
 	private String status = Status.ACTIVE.value;
 	public Reference manufacturer;
