@@ -2,6 +2,8 @@ package de.medizininformatikinitiative.medgraph.searchengine.algorithm.refining;
 
 import de.medizininformatikinitiative.medgraph.searchengine.algorithm.querymanagement.RefinedQuery;
 import de.medizininformatikinitiative.medgraph.searchengine.db.Database;
+import de.medizininformatikinitiative.medgraph.searchengine.matcher.model.DistanceBasedMatch;
+import de.medizininformatikinitiative.medgraph.searchengine.matcher.model.Match;
 import de.medizininformatikinitiative.medgraph.searchengine.matcher.model.ScoreBasedMatch;
 import de.medizininformatikinitiative.medgraph.searchengine.model.SearchQuery;
 import de.medizininformatikinitiative.medgraph.searchengine.model.identifiable.Product;
@@ -92,39 +94,48 @@ public class ExperimentalRefiner implements MatchRefiner {
 		return matching.getCurrentMatchesTree();
 	}
 
-	// TODO Below is unsafe and needs a redesign. This whole mechanism needs one. Remove the initialmatchfinder, it makes
-	//  no sense to separate that.
+	// TODO Below is poor design and needs a redesign. This whole mechanism should get one.
+	//  Remove the initialmatchfinder, it makes no sense to separate that.
 
 	/**
-	 * <b>This only works if all elements in the given tree originate from a score-based matcher!</b>
-	 * Sorts all elements in the tree based on the score assigned by the score based matcher.
+	 * Sorts all elements in the tree based on the score assigned by the origin. Only works if the origin is a
+	 * {@link MatchOrigin} with a {@link ScoreBasedMatch} or {@link DistanceBasedMatch}. Otherwise, the assigned score
+	 * is zero.
 	 */
 	private	void forceSortByMatchScore(SubSortingTree<MatchingObject<?>> tree){
 		tree.applySortingStep(new ScoreSortDirective<>("Product Edit Distance",
-				this::forceAcquireScore,null));
+				this::acquireScore,null));
 	}
 
-	private double forceAcquireScore(MatchingObject<?> matchingObject) {
+	private double acquireScore(MatchingObject<?> matchingObject) {
 		if (matchingObject instanceof OriginalMatch<?> m) {
-			return forceAcquireScore(m);
+			return acquireScore(m);
 		} else if (matchingObject instanceof Merge<?> m) {
 			double maxScore = 0;
 			for (MatchingObject<?> source: m.getSourceObjects()) {
-				double score = forceAcquireScore(source);
+				double score = acquireScore(source);
 				if (score > maxScore) {
 					maxScore = score;
 				}
 			}
 			return maxScore;
 		} else if (matchingObject instanceof TransformedObject<?,?> t){
-			return forceAcquireScore(t.getSourceObject());
+			return acquireScore(t.getSourceObject());
 		}
 		return 0;
 	}
 
-	private double forceAcquireScore(OriginalMatch<?> originalMatch) {
-		MatchOrigin<? extends ScoreBasedMatch<?, ?>> origin = (MatchOrigin<? extends ScoreBasedMatch<?,?>>) originalMatch.getOrigin();
-		return origin.getMatch().getScore();
+	private double acquireScore(OriginalMatch<?> originalMatch) {
+		Origin origin = originalMatch.getOrigin();
+		if (origin instanceof MatchOrigin<?> m) {
+			Match<?, ?> match = m.getMatch();
+			if (match instanceof ScoreBasedMatch<?,?> s) {
+				return ((ScoreBasedMatch<?, ?>) match).getScore();
+			} if (match instanceof DistanceBasedMatch<?,?> d) {
+				return 1.0 / (1 + d.getDistance());
+			}
+		}
+		return 0;
 	}
 
 }
