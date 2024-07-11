@@ -60,7 +60,7 @@ public class Neo4jOrganizationExporter extends Neo4jExporter<Organization> {
 		organization.meta.source = META_SOURCE;
 		organization.active = true;
 		organization.name = exportOrganisation.name;
-		organization.identifier = Identifier.fromOrganizationMmiId(exportOrganisation.mmiId);
+		organization.identifier = new Identifier[] { Identifier.fromOrganizationMmiId(exportOrganisation.mmiId) };
 		if (exportOrganisation.shortName != null && !exportOrganisation.shortName.equals(exportOrganisation.name)) {
 			organization.alias = new String[]{exportOrganisation.shortName};
 		}

@@ -20,6 +20,8 @@ import java.util.List;
  */
 public class GraphDbPopulation extends NamedProgressableImpl {
 
+	// No separate test case exists for this class. It is indirectly tested through the integration test.
+
 	@NotNull
 	private final Path mmiPharmindexPath;
 	@NotNull
@@ -27,10 +29,25 @@ public class GraphDbPopulation extends NamedProgressableImpl {
 	@Nullable
 	private final Path amiceFilePath;
 
+	/**
+	 * Creates a {@link GraphDbPopulator}, which is capable of executing the tasks required to fill the Neo4j database
+	 * with the MMI Pharmindex data.
+	 *
+	 * @param mmiPharmindexPath the path to the MMI Pharmindex data to use for loading
+	 * @param neo4jImportPath   the path to the Neo4j import directory
+	 */
 	public GraphDbPopulation(@NotNull Path mmiPharmindexPath, @NotNull Path neo4jImportPath) {
 		this(mmiPharmindexPath, neo4jImportPath, null);
 	}
 
+	/**
+	 * Creates a {@link GraphDbPopulator}, which is capable of executing the tasks required to fill the Neo4j database
+	 * with the MMI Pharmindex data.
+	 *
+	 * @param mmiPharmindexPath the path to the MMI Pharmindex data to use for loading
+	 * @param neo4jImportPath   the path to the Neo4j import directory
+	 * @param amiceFilePath     optionally, a path to the AMIce Stoffbezeichnungen Rohdaten file, may be null
+	 */
 	public GraphDbPopulation(@NotNull Path mmiPharmindexPath, @NotNull Path neo4jImportPath,
 	                         @Nullable Path amiceFilePath) {
 		this.mmiPharmindexPath = mmiPharmindexPath;
@@ -39,12 +56,12 @@ public class GraphDbPopulation extends NamedProgressableImpl {
 	}
 
 	public void executeDatabasePopulation(DatabaseConnection connection) throws IOException {
-		GraphDbPopulator populator = new GraphDbPopulator();
-
 		setTaskStack("Preparing data import");
 		setProgress(0);
 
-		populator.copyKnowledgeGraphSourceDataToNeo4jImportDirectory(
+		GraphDbPopulator graphDbPopulator = new GraphDbPopulator();
+
+		graphDbPopulator.copyKnowledgeGraphSourceDataToNeo4jImportDirectory(
 				mmiPharmindexPath,
 				amiceFilePath,
 				neo4jImportPath
@@ -63,7 +80,7 @@ public class GraphDbPopulation extends NamedProgressableImpl {
 		}
 
 		setTaskStack("Cleaning up");
-		populator.removeFilesFromNeo4jImportDir(neo4jImportPath);
+		graphDbPopulator.removeFilesFromNeo4jImportDir(neo4jImportPath);
 		incrementProgress();
 
 		setTaskStack();
@@ -139,7 +156,7 @@ public class GraphDbPopulation extends NamedProgressableImpl {
 	}
 
 	private void runLoader(Loader loader) {
-		String taskName = "Running "+loader.getClass().getSimpleName();
+		String taskName = "Running " + loader.getClass().getSimpleName();
 		setTaskStack(taskName);
 		loader.setOnSubtaskStartedListener(s -> setTaskStack(taskName, s));
 		loader.setOnSubtaskCompletedListener(() -> setTaskStack(taskName));
