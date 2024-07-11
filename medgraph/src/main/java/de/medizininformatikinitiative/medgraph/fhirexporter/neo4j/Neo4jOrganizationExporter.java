@@ -46,6 +46,11 @@ public class Neo4jOrganizationExporter extends Neo4jExporter<Organization> {
 		return result.stream().map(Neo4jOrganizationExporter::toOrganization);
 	}
 
+	@Override
+	protected String createObjectCountQuery() {
+		return "MATCH (o:"+COMPANY_LABEL+") RETURN COUNT(o)";
+	}
+
 	private static Organization toOrganization(Record record) {
 		Neo4jExportOrganisation exportOrganisation = new Neo4jExportOrganisation(record);
 

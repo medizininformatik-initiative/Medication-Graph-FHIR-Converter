@@ -25,11 +25,11 @@ public class Main {
 	private static final Path BASE_PATH = Path.of("output"); // Specify the path to the generated FHIR files here!
 
 	private static final File MEDICATION_DIR = BASE_PATH.resolve(
-			de.medizininformatikinitiative.medgraph.fhirexporter.FhirExporter.MEDICATION_OUT_PATH).toFile();
+			de.medizininformatikinitiative.medgraph.fhirexporter.FhirExport.MEDICATION_OUT_PATH).toFile();
 	private static final File SUBSTANCE_DIR = BASE_PATH.resolve(
-			de.medizininformatikinitiative.medgraph.fhirexporter.FhirExporter.SUBSTANCE_OUT_PATH).toFile();
+			de.medizininformatikinitiative.medgraph.fhirexporter.FhirExport.SUBSTANCE_OUT_PATH).toFile();
 	private static final File ORGANIZATION_DIR = BASE_PATH.resolve(
-			de.medizininformatikinitiative.medgraph.fhirexporter.FhirExporter.ORGANIZATION_OUT_PATH).toFile();
+			de.medizininformatikinitiative.medgraph.fhirexporter.FhirExport.ORGANIZATION_OUT_PATH).toFile();
 
 	private static final Pattern PRODUCT_IDENTIFIER_PATTERN = Pattern.compile("^[0-9]+-[0-9]+");
 	private static final Pattern COMPOSITE_CHILD_PATTERN = Pattern.compile("^([0-9]+-[0-9]+)-[0-9]+");

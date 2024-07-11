@@ -15,6 +15,8 @@ import de.medizininformatikinitiative.medgraph.ui.resources.StringRes
 import de.medizininformatikinitiative.medgraph.ui.theme.ApplicationTheme
 import de.medizininformatikinitiative.medgraph.ui.theme.localColors
 import de.medizininformatikinitiative.medgraph.ui.theme.templates.Button
+import de.medizininformatikinitiative.medgraph.ui.theme.templates.ProgressIndication
+import de.medizininformatikinitiative.medgraph.ui.tools.preview.TestOnlyProgressable
 import javax.swing.JFileChooser
 
 
@@ -24,8 +26,7 @@ private fun FhirExporterUI() {
     ApplicationTheme {
         val viewModel = FhirExporterScreenModel()
         viewModel.exportUnderway = true
-        viewModel.exportCurrentTask = "Export underway..."
-        viewModel.exportProgress = 2
+        viewModel.exportTask = TestOnlyProgressable()
         FhirExporterUI(viewModel, Modifier.fillMaxWidth().padding(8.dp))
     }
 }
@@ -66,17 +67,13 @@ fun FhirExporterUI(viewModel: FhirExporterScreenModel, modifier: Modifier = Modi
         Divider(modifier = Modifier.padding(vertical = 4.dp), thickness = 2.dp)
 
         if (viewModel.exportUnderway) {
-            ExportProgressIndicator(viewModel.exportProgress * 1.0f / viewModel.exportMaxProgress, viewModel.exportCurrentTask)
+            val exportTask = viewModel.exportTask
+            if (exportTask != null)
+                ProgressIndication(exportTask)
         } else {
             val error = viewModel.errorText
             if (error != null)
                 Text(error, color = MaterialTheme.localColors.error)
         }
     }
-}
-
-@Composable
-private fun ExportProgressIndicator(progress: Float, currentTask: String) {
-    Text(currentTask)
-    LinearProgressIndicator(progress, modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp).height(12.dp))
 }

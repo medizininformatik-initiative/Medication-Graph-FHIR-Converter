@@ -135,6 +135,22 @@ public class Neo4jMedicationExporter extends Neo4jExporter<Medication> {
 		return stream;
 	}
 
+	@Override
+	protected String createObjectCountQuery() {
+		return "CALL {\n" +
+				"    MATCH (c:"+COMPANY_LABEL+")-[:"+MANUFACTURES_LABEL+"]->(p:"+PRODUCT_LABEL+")\n" +
+				"    WHERE (p)-[:"+PRODUCT_CONTAINS_DRUG_LABEL+"]->(:"+DRUG_LABEL+")-[:"+DRUG_CONTAINS_INGREDIENT_LABEL+"]->(:"+INGREDIENT_LABEL+")\n" +
+				"    RETURN COUNT(p) AS parents\n" +
+				"}\n" +
+				"CALL {\n" +
+				"    MATCH (c:"+COMPANY_LABEL+")-[:"+MANUFACTURES_LABEL+"]->(p:"+PRODUCT_LABEL+")-[:"+PRODUCT_CONTAINS_DRUG_LABEL+"]->(d:"+DRUG_LABEL+")\n" +
+				"    WHERE (d)-[:"+DRUG_CONTAINS_INGREDIENT_LABEL+"]->(:"+INGREDIENT_LABEL+")\n" +
+				"    WITH c, p, COUNT(DISTINCT d) AS drugs WHERE drugs > 1\n" +
+				"    RETURN SUM(drugs) as children\n" +
+				"}\n" +
+				"RETURN parents + children";
+	}
+
 	private Medication addToStatistics(Medication medication) {
 		statistics.add(medication);
 		return medication;
