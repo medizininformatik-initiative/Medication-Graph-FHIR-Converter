@@ -6,6 +6,9 @@ import androidx.compose.runtime.setValue
 import cafe.adriel.voyager.core.model.ScreenModel
 import cafe.adriel.voyager.core.model.screenModelScope
 import de.medizininformatikinitiative.medgraph.common.db.DatabaseConnection
+import de.medizininformatikinitiative.medgraph.common.mvc.NamedProgressable
+import de.medizininformatikinitiative.medgraph.common.mvc.Progressable
+import de.medizininformatikinitiative.medgraph.fhirexporter.FhirExport
 import de.medizininformatikinitiative.medgraph.fhirexporter.FhirExporter
 import de.medizininformatikinitiative.medgraph.ui.resources.StringRes
 import kotlinx.coroutines.Dispatchers
@@ -35,19 +38,9 @@ class FhirExporterScreenModel(
     var exportUnderway by mutableStateOf(false)
 
     /**
-     * Current export progress as a numeric value. (Relative to [exportMaxProgress])
+     * The currently ongoing export task if available, otherwise null.
      */
-    var exportProgress by mutableStateOf(0)
-
-    /**
-     * Human-readable description of the current export task.
-     */
-    var exportCurrentTask by mutableStateOf("")
-
-    /**
-     * The maximum export progress, i.e. when the export is complete.
-     */
-    val exportMaxProgress = 3
+    var exportTask by mutableStateOf<NamedProgressable?>(null)
 
     /**
      * In case there was an error, information about the last occurred error. Otherwise null.
@@ -71,8 +64,6 @@ class FhirExporterScreenModel(
             if (exportUnderway) return
             exportUnderway = true
         }
-        exportProgress = 0
-        exportCurrentTask = ""
         try {
             doExportTaskChain()
         } catch (e: AccessDeniedException) {
@@ -81,6 +72,7 @@ class FhirExporterScreenModel(
             errorText = e.message
         } finally {
             exportUnderway = false
+            exportTask = null
         }
     }
 
@@ -90,18 +82,13 @@ class FhirExporterScreenModel(
     private fun doExportTaskChain() {
         val path = Path.of(exportPath)
         if (!validateAndPrepareExportPath(path)) return
+
+        val export = fhirExporter.prepareExport(path);
+        this.exportTask = export
+
         DatabaseConnection.createDefault().use {
             it.createSession().use { session ->
-                exportCurrentTask = StringRes.fhir_exporter_exporting_medications
-                fhirExporter.exportMedications(session, path.resolve(FhirExporter.MEDICATION_OUT_PATH), false)
-                exportProgress = 1
-                exportCurrentTask = StringRes.fhir_exporter_exporting_substances
-                fhirExporter.exportSubstances(session, path.resolve(FhirExporter.SUBSTANCE_OUT_PATH), false)
-                exportProgress = 2
-                exportCurrentTask = StringRes.fhir_exporter_exporting_organizations
-                fhirExporter.exportOrganizations(session, path.resolve(FhirExporter.ORGANIZATION_OUT_PATH))
-                exportProgress = 3
-                exportCurrentTask = StringRes.fhir_exporter_done
+                export.doExport(session)
             }
         }
     }
@@ -121,9 +108,9 @@ class FhirExporterScreenModel(
         }
 
         for (outputDir in setOf(
-            FhirExporter.MEDICATION_OUT_PATH,
-            FhirExporter.SUBSTANCE_OUT_PATH,
-            FhirExporter.ORGANIZATION_OUT_PATH
+            FhirExport.MEDICATION_OUT_PATH,
+            FhirExport.SUBSTANCE_OUT_PATH,
+            FhirExport.ORGANIZATION_OUT_PATH
         )) {
             val p = path.resolve(outputDir)
             if (Files.exists(p)) {
@@ -137,6 +124,5 @@ class FhirExporterScreenModel(
         }
         return true
     }
-
 
 }
