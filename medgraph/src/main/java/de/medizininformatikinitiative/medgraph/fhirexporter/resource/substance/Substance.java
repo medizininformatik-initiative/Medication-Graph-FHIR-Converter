@@ -1,6 +1,7 @@
 package de.medizininformatikinitiative.medgraph.fhirexporter.resource.substance;
 
 import de.medizininformatikinitiative.medgraph.fhirexporter.resource.CodeableConcept;
+import de.medizininformatikinitiative.medgraph.fhirexporter.resource.FhirResource;
 import de.medizininformatikinitiative.medgraph.fhirexporter.resource.Identifier;
 import de.medizininformatikinitiative.medgraph.fhirexporter.resource.Status;
 import de.medizininformatikinitiative.medgraph.fhirexporter.resource.medication.Meta;
@@ -10,11 +11,9 @@ import de.medizininformatikinitiative.medgraph.fhirexporter.resource.medication.
  *
  * @author Markus Budeus
  */
-public class Substance {
+public class Substance extends FhirResource {
 
-	public Meta meta;
 	public final String resourceType = "Substance";
-	public Identifier[] identifier;
 	private String  status = Status.ACTIVE.value;
 	public CodeableConcept[] category;
 	/**
