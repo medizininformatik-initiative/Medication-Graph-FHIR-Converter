@@ -232,15 +232,6 @@ class StringRes {
         val graph_db_populator_run = "Run import"
 
         @JvmStatic
-        val fhir_exporter_exporting_medications = "Exporting Medications"
-
-        @JvmStatic
-        val fhir_exporter_exporting_substances = "Exporting Substances"
-
-        @JvmStatic
-        val fhir_exporter_exporting_organizations = "Exporting Manufacturers"
-
-        @JvmStatic
         val fhir_exporter_invalid_output_dir = "The given output path does not point to a directory!"
 
         @JvmStatic
@@ -256,9 +247,6 @@ class StringRes {
 
         @JvmStatic
         val fhir_exporter_do_export = "Export"
-
-        @JvmStatic
-        val fhir_exporter_done = "Export complete."
 
         @JvmStatic
         val fhir_exporter_missing_permissions = "Failed to write output files. Ensure you have write permissions for the provided output path."

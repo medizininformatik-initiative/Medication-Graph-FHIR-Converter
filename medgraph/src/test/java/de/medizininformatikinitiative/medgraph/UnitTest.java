@@ -7,6 +7,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.mockito.MockitoAnnotations;
 
 import java.util.*;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -98,6 +99,22 @@ public class UnitTest {
 	 */
 	private List<String> trimAll(List<String> parts) {
 		return parts.stream().map(String::trim).collect(Collectors.toList());
+	}
+
+	/**
+	 * Shuffles the given array, i.e. puts the elements into a random order.
+	 */
+	// Implementing Fisher-Yates shuffle
+	// Thanks to https://stackoverflow.com/a/1520212/14612693
+	public static void shuffleArray(Object[] ar) {
+		Random rnd = ThreadLocalRandom.current();
+		for (int i = ar.length - 1; i > 0; i--) {
+			int index = rnd.nextInt(i + 1);
+			// Simple swap
+			Object a = ar[index];
+			ar[index] = ar[i];
+			ar[i] = a;
+		}
 	}
 
 }

@@ -67,6 +67,11 @@ public class Neo4jSubstanceExporter extends Neo4jExporter<Substance> {
 		return stream;
 	}
 
+	@Override
+	protected String createObjectCountQuery() {
+		return "MATCH (s:"+SUBSTANCE_LABEL+") RETURN COUNT(s)";
+	}
+
 	private Substance addToStatistics(Substance substance) {
 		statistics.add(substance);
 		return substance;
