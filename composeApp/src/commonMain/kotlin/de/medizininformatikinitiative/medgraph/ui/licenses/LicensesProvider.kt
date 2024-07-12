@@ -66,7 +66,8 @@ class LicenseProvider {
             ),
             License("Apache Commons", "https://commons.apache.org", DefaultLicense.APACHE_2_0),
             License("Gson", "https://github.com/google/gson", DefaultLicense.APACHE_2_0, "Google Inc.", "2008-2011"),
-            License("OpenCSV", "https://opencsv.sourceforge.net", DefaultLicense.APACHE_2_0)
+            License("OpenCSV", "https://opencsv.sourceforge.net", DefaultLicense.APACHE_2_0),
+            License("Apache Log4j 2", "https://logging.apache.org/log4j/2.x/", DefaultLicense.APACHE_2_0),
         )
     }
 
