@@ -15,6 +15,8 @@ dependencies {
     implementation("org.apache.commons:commons-text:1.12.0")
     implementation("com.opencsv:opencsv:5.9") // CSV Library
     implementation("com.google.code.gson:gson:2.10.1") // JSON Library
+    implementation("org.apache.logging.log4j:log4j-api:2.17.2") // Logging
+    implementation("org.apache.logging.log4j:log4j-core:2.17.2") // Logging
 
     testImplementation(platform("org.junit:junit-bom:5.10.0")) // JUnit 5
     testImplementation("org.junit.jupiter:junit-jupiter") // JUnit 5
