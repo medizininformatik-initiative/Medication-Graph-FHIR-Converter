@@ -1,6 +1,5 @@
 package de.medizininformatikinitiative.medgraph.common.db;
 
-import de.medizininformatikinitiative.medgraph.common.ApplicationPreferences;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.neo4j.driver.Session;
@@ -18,10 +17,6 @@ public class ConnectionConfiguration {
 	 * Default connection configuration.
 	 */
 	private static ConnectionConfiguration defaultConfig;
-
-	static {
-		defaultConfig = new ConnectionConfiguration(ApplicationPreferences.getDatabaseConnectionPreferences());
-	}
 
 	/**
 	 * Sets the default connection configuration.
@@ -48,6 +43,7 @@ public class ConnectionConfiguration {
 
 	/**
 	 * Creates a connection configuration using data from the given preferences.
+	 *
 	 * @param preferences the preferences from which to retrieve the configuration
 	 */
 	public ConnectionConfiguration(@NotNull ConnectionPreferences preferences) {
@@ -55,10 +51,11 @@ public class ConnectionConfiguration {
 	}
 
 	/**
-	 * Creates a connection configuration using the given uri and user, but taking the password from the
-	 * given preferences.
-	 * @param uri the connection URI
-	 * @param user the user to authenticate with
+	 * Creates a connection configuration using the given uri and user, but taking the password from the given
+	 * preferences.
+	 *
+	 * @param uri         the connection URI
+	 * @param user        the user to authenticate with
 	 * @param preferences the preferences from which to take the password
 	 */
 	public ConnectionConfiguration(@NotNull String uri, @NotNull String user,
@@ -121,6 +118,7 @@ public class ConnectionConfiguration {
 
 	/**
 	 * Attempts to create a connection to the database using this configuration and reports the result.
+	 *
 	 * @return a {@link ConnectionResult} indicating the result of the connection attempt
 	 */
 	public ConnectionResult testConnection() {
