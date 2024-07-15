@@ -17,4 +17,12 @@ public interface LoggerFactory {
 	@NotNull
 	Logger getLogger(Class<?> clazz);
 
+	/**
+	 * Creates a logger with the given tag.
+	 * @param tag the tag to assign to the logger
+	 * @return a {@link Logger}, never null
+	 */
+	@NotNull
+	Logger getLogger(String tag);
+
 }

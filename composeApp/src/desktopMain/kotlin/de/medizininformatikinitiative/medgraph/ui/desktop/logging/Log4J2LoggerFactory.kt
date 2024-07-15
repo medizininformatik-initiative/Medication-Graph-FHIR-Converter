@@ -10,7 +10,11 @@ import org.apache.logging.log4j.LogManager
  * @author Markus Budeus
  */
 class Log4J2LoggerFactory : LoggerFactory {
-    override fun getLogger(clazz: Class<*>?): Logger {
+    override fun getLogger(clazz: Class<*>): Logger {
         return Log4j2Logger(LogManager.getLogger(clazz))
+    }
+
+    override fun getLogger(tag: String): Logger {
+        return Log4j2Logger(LogManager.getLogger(tag))
     }
 }
