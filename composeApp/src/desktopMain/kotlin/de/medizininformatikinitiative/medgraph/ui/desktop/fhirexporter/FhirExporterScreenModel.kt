@@ -6,8 +6,9 @@ import androidx.compose.runtime.setValue
 import cafe.adriel.voyager.core.model.ScreenModel
 import cafe.adriel.voyager.core.model.screenModelScope
 import de.medizininformatikinitiative.medgraph.common.db.DatabaseConnection
+import de.medizininformatikinitiative.medgraph.common.logging.Level
+import de.medizininformatikinitiative.medgraph.common.logging.LogManager
 import de.medizininformatikinitiative.medgraph.common.mvc.NamedProgressable
-import de.medizininformatikinitiative.medgraph.common.mvc.Progressable
 import de.medizininformatikinitiative.medgraph.fhirexporter.FhirExport
 import de.medizininformatikinitiative.medgraph.fhirexporter.FhirExporter
 import de.medizininformatikinitiative.medgraph.ui.resources.StringRes
@@ -26,6 +27,8 @@ import java.nio.file.Path
 class FhirExporterScreenModel(
     private val fhirExporter: FhirExporter = FhirExporter()
 ) : ScreenModel {
+
+    private val logger = LogManager.getLogger(FhirExporterScreenModel::class.java)
 
     /**
      * The current export path as specified by the user.
@@ -67,8 +70,11 @@ class FhirExporterScreenModel(
         try {
             doExportTaskChain()
         } catch (e: AccessDeniedException) {
+            logger.log(Level.WARN, "Missing permissions for export.", e)
             errorText = StringRes.fhir_exporter_missing_permissions
+
         } catch (e: Exception) {
+            logger.log(Level.ERROR, "FHIR Export failed.", e)
             errorText = e.message
         } finally {
             exportUnderway = false

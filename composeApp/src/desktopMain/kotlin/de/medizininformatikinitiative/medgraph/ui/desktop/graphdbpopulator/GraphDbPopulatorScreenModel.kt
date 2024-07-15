@@ -6,6 +6,8 @@ import androidx.compose.runtime.setValue
 import cafe.adriel.voyager.core.model.ScreenModel
 import cafe.adriel.voyager.core.model.screenModelScope
 import de.medizininformatikinitiative.medgraph.common.db.DatabaseConnection
+import de.medizininformatikinitiative.medgraph.common.logging.Level
+import de.medizininformatikinitiative.medgraph.common.logging.LogManager
 import de.medizininformatikinitiative.medgraph.common.mvc.NamedProgressable
 import de.medizininformatikinitiative.medgraph.graphdbpopulator.GraphDbPopulation
 import de.medizininformatikinitiative.medgraph.graphdbpopulator.GraphDbPopulator
@@ -24,6 +26,8 @@ import java.nio.file.Path
 class GraphDbPopulatorScreenModel(
     private val graphDbPopulator: GraphDbPopulator = GraphDbPopulator()
 ) : ScreenModel {
+
+    private val logger = LogManager.getLogger(GraphDbPopulatorScreenModel::class.java)
 
     /**
      * The user-designated MMI Pharmindex data directory.
@@ -89,8 +93,8 @@ class GraphDbPopulatorScreenModel(
             runPopulationTaskChain()
 
         } catch (e: Exception) {
+            logger.log(Level.ERROR, "Graph DB population failed.", e)
             errorMessage = e.message
-            e.printStackTrace()
         } finally {
             executionUnderway = false
         }

@@ -17,7 +17,7 @@ import org.neo4j.driver.exceptions.ServiceUnavailableException;
  */
 public class ConnectionConfiguration {
 
-	private static final Logger logger = LogManager.get(ConnectionConfiguration.class);
+	private static final Logger logger = LogManager.getLogger(ConnectionConfiguration.class);
 
 	/**
 	 * Default connection configuration.

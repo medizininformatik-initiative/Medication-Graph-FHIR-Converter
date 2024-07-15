@@ -1,5 +1,8 @@
 package de.medizininformatikinitiative.medgraph.fhirexporter;
 
+import de.medizininformatikinitiative.medgraph.common.logging.Level;
+import de.medizininformatikinitiative.medgraph.common.logging.LogManager;
+import de.medizininformatikinitiative.medgraph.common.logging.Logger;
 import de.medizininformatikinitiative.medgraph.common.mvc.NamedProgressableImpl;
 import de.medizininformatikinitiative.medgraph.fhirexporter.json.GsonExporter;
 import de.medizininformatikinitiative.medgraph.fhirexporter.json.JsonExporter;
@@ -7,6 +10,7 @@ import de.medizininformatikinitiative.medgraph.fhirexporter.neo4j.Neo4jExporter;
 import de.medizininformatikinitiative.medgraph.fhirexporter.neo4j.Neo4jMedicationExporter;
 import de.medizininformatikinitiative.medgraph.fhirexporter.neo4j.Neo4jOrganizationExporter;
 import de.medizininformatikinitiative.medgraph.fhirexporter.neo4j.Neo4jSubstanceExporter;
+import de.medizininformatikinitiative.medgraph.fhirexporter.resource.FhirResource;
 import de.medizininformatikinitiative.medgraph.fhirexporter.resource.medication.Medication;
 import de.medizininformatikinitiative.medgraph.fhirexporter.resource.organization.Organization;
 import de.medizininformatikinitiative.medgraph.fhirexporter.resource.substance.Substance;
@@ -16,6 +20,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -28,6 +33,8 @@ import java.util.function.Function;
  * @author Markus Budeus
  */
 public class FhirExport extends NamedProgressableImpl {
+
+	private static final Logger logger = LogManager.getLogger(FhirExport.class);
 
 	private static final int ITERATIONS_PER_PROGRESS_UPDATE = 200;
 
@@ -98,8 +105,8 @@ public class FhirExport extends NamedProgressableImpl {
 	 * @param filenameProvider a function which provides a filename for each exported object - the .json-suffix will be
 	 *                         appended automatically!
 	 */
-	private <T> void exportToJsonFiles(Neo4jExporter<T> exporter, Path outPath,
-	                                   Function<T, String> filenameProvider) throws IOException {
+	private <T extends FhirResource> void exportToJsonFiles(Neo4jExporter<T> exporter, Path outPath,
+	                                                        Function<T, String> filenameProvider) throws IOException {
 		if (!outPath.toFile().exists())
 			Files.createDirectory(outPath);
 
@@ -116,7 +123,8 @@ public class FhirExport extends NamedProgressableImpl {
 
 				jsonExporter.writeToJsonFile(filename + ".json", object);
 			} catch (IOException e) {
-				throw new RuntimeException(e);
+				logger.log(Level.ERROR, "Failed to export FHIR object \"" + Arrays.toString(object.identifier) + "\"",
+						e);
 			} finally {
 				if (iteration.addAndGet(1) % ITERATIONS_PER_PROGRESS_UPDATE == 0) {
 					addLocalProgress(ITERATIONS_PER_PROGRESS_UPDATE);

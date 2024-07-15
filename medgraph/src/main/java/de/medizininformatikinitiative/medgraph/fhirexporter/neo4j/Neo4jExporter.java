@@ -1,5 +1,6 @@
 package de.medizininformatikinitiative.medgraph.fhirexporter.neo4j;
 
+import de.medizininformatikinitiative.medgraph.fhirexporter.resource.FhirResource;
 import org.neo4j.driver.Result;
 import org.neo4j.driver.Session;
 
@@ -11,7 +12,7 @@ import java.util.stream.Stream;
  * @param <T> the type of exported objects
  * @author Markus Budeus
  */
-public abstract class Neo4jExporter<T> {
+public abstract class Neo4jExporter<T extends FhirResource> {
 
 	public static final String META_SOURCE = "https://www.mmi.de/mmi-pharmindex/mmi-pharmindex-daten";
 

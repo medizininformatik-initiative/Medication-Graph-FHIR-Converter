@@ -17,6 +17,11 @@ class SystemOutLogger implements Logger {
 		public @NotNull Logger getLogger(Class<?> clazz) {
 			return new SystemOutLogger(clazz);
 		}
+
+		@Override
+		public @NotNull Logger getLogger(String tag) {
+			return new SystemOutLogger(tag);
+		}
 	};
 
 	private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("uuuu-MM-dd hh:mm:ss");
