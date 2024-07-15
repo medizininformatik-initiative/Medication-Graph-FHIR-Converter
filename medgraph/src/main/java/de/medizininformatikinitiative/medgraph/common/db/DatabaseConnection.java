@@ -17,7 +17,7 @@ import java.util.function.Consumer;
  */
 public class DatabaseConnection implements AutoCloseable {
 
-	private static final Logger logger = LogManager.get(DatabaseConnection.class);
+	private static final Logger logger = LogManager.getLogger(DatabaseConnection.class);
 
 	/**
 	 * Attempts to create a database connection using the current default connection configuration.

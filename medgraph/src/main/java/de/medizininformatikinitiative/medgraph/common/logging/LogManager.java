@@ -18,8 +18,19 @@ public class LogManager {
 	 * @return a {@link Logger}, never null
 	 */
 	@NotNull
-	public static Logger get(Class<?> clazz) {
+	public static Logger getLogger(Class<?> clazz) {
 		return loggerFactory.getLogger(clazz);
+	}
+
+	/**
+	 * Creates a logger with the given tag.
+	 *
+	 * @param tag the tag to assign to the logger
+	 * @return a {@link Logger}, never null
+	 */
+	@NotNull
+	public static Logger getLogger(String tag) {
+		return loggerFactory.getLogger(tag);
 	}
 
 	/**
