@@ -15,6 +15,7 @@ dependencies {
     implementation("org.apache.commons:commons-text:1.12.0")
     implementation("com.opencsv:opencsv:5.9") // CSV Library
     implementation("com.google.code.gson:gson:2.10.1") // JSON Library
+    implementation("commons-cli:commons-cli:1.3.1") // Command Line Parser
 
     testImplementation(platform("org.junit:junit-bom:5.10.0")) // JUnit 5
     testImplementation("org.junit.jupiter:junit-jupiter") // JUnit 5
