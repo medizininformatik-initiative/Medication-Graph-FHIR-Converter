@@ -31,6 +31,10 @@ kotlin {
             // Neo4j driver
             implementation("org.neo4j.driver:neo4j-java-driver:5.19.0")
 
+            // Logging
+            implementation("org.apache.logging.log4j:log4j-api:2.17.2")
+            implementation("org.apache.logging.log4j:log4j-core:2.17.2")
+
             // Voyager - Navigation Framework
             val voyagerVersion = "1.0.0"
             // Navigator
