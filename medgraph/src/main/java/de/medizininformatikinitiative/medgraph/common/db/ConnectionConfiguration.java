@@ -1,5 +1,9 @@
 package de.medizininformatikinitiative.medgraph.common.db;
 
+import de.medizininformatikinitiative.medgraph.common.ApplicationPreferences;
+import de.medizininformatikinitiative.medgraph.common.logging.Level;
+import de.medizininformatikinitiative.medgraph.common.logging.LogManager;
+import de.medizininformatikinitiative.medgraph.common.logging.Logger;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.neo4j.driver.Session;
@@ -13,16 +17,24 @@ import org.neo4j.driver.exceptions.ServiceUnavailableException;
  */
 public class ConnectionConfiguration {
 
+	private static final Logger logger = LogManager.get(ConnectionConfiguration.class);
+
 	/**
 	 * Default connection configuration.
 	 */
 	private static ConnectionConfiguration defaultConfig;
+
+	static {
+		defaultConfig = new ConnectionConfiguration(ApplicationPreferences.getDatabaseConnectionPreferences());
+	}
 
 	/**
 	 * Sets the default connection configuration.
 	 */
 	public static void setDefault(@NotNull ConnectionConfiguration connectionConfiguration) {
 		defaultConfig = connectionConfiguration;
+		logger.log(Level.DEBUG,
+				"Default connection configuration updated: " + connectionConfiguration);
 	}
 
 	/**
@@ -122,16 +134,21 @@ public class ConnectionConfiguration {
 	 * @return a {@link ConnectionResult} indicating the result of the connection attempt
 	 */
 	public ConnectionResult testConnection() {
+		logger.log(Level.DEBUG, "Running connection test: "+this);
 		try (DatabaseConnection connection = createConnection();
 		     Session session = connection.createSession()) {
 			session.beginTransaction();
 			session.close();
+			logger.log(Level.DEBUG, "Connection successful!");
 			return ConnectionResult.SUCCESS;
 		} catch (IllegalArgumentException e) {
+			logger.log(Level.INFO, "Invalid connection string! ("+e.getMessage()+")");
 			return ConnectionResult.INVALID_CONNECTION_STRING;
 		} catch (AuthenticationException e) {
+			logger.log(Level.INFO, "Authentication failed! ("+e.getMessage()+")");
 			return ConnectionResult.AUTHENTICATION_FAILED;
 		} catch (ServiceUnavailableException e) {
+			logger.log(Level.INFO, "Neo Neo4j service is reachable at " + this.getUri()+". ("+e.getMessage()+")");
 			return ConnectionResult.SERVICE_UNAVAILABLE;
 		}
 	}
@@ -156,5 +173,10 @@ public class ConnectionConfiguration {
 		 * The authentication was unsuccessful.
 		 */
 		AUTHENTICATION_FAILED
+	}
+
+	@Override
+	public String toString() {
+		return uri + " (" + user + ")";
 	}
 }

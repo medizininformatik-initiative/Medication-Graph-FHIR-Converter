@@ -4,6 +4,7 @@
 # CUSTOM
 output/
 *.log
+logs/
 
 # User-specific stuff
 .idea/**/workspace.xml
