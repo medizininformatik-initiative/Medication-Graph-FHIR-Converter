@@ -1,5 +1,8 @@
 package de.medizininformatikinitiative.medgraph.common.db;
 
+import de.medizininformatikinitiative.medgraph.common.logging.Level;
+import de.medizininformatikinitiative.medgraph.common.logging.LogManager;
+import de.medizininformatikinitiative.medgraph.common.logging.Logger;
 import org.neo4j.driver.AuthTokens;
 import org.neo4j.driver.Driver;
 import org.neo4j.driver.GraphDatabase;
@@ -13,6 +16,8 @@ import java.util.function.Consumer;
  * @author Markus Budeus
  */
 public class DatabaseConnection implements AutoCloseable {
+
+	private static final Logger logger = LogManager.get(DatabaseConnection.class);
 
 	/**
 	 * Attempts to create a database connection using the current default connection configuration.
@@ -51,7 +56,7 @@ public class DatabaseConnection implements AutoCloseable {
 	@Override
 	public void close() {
 		driver.closeAsync().exceptionally(t -> {
-			t.printStackTrace();
+			logger.log(Level.ERROR, "Error while attempting to close database connection", t);
 			return null;
 		});
 	}
