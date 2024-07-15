@@ -84,7 +84,7 @@ public class ConnectionConfiguration {
 	 * @param user     the user to authenticate with
 	 * @param password the password to authenticate with
 	 */
-	public ConnectionConfiguration(@NotNull String uri, @NotNull String user, char @NotNull [] password) {
+	public ConnectionConfiguration(@NotNull String uri, @NotNull String user, char @Nullable [] password) {
 		this.uri = uri;
 		this.user = user;
 		this.password = password;
