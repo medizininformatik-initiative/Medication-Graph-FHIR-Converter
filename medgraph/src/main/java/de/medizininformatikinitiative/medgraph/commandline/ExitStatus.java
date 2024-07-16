@@ -11,11 +11,11 @@ public class ExitStatus {
 	/**
 	 * The command line could not be parsed successfully.
 	 */
-	public static final ExitStatus COMMAND_LINE_PARSING_UNSUCCESSFUL = new ExitStatus(1, "");
+	public static final ExitStatus COMMAND_LINE_PARSING_UNSUCCESSFUL = new ExitStatus(3, "");
 	/**
 	 * Some options related to the database connection were provided, but some were missing.
 	 */
-	public static final ExitStatus INCOMPLETE_CONNECTION_DATA = new ExitStatus(2, "Incomplete connection data! The database uri, user and password must either all be provided or none.");
+	public static final ExitStatus INCOMPLETE_CONNECTION_DATA = new ExitStatus(4, "Incomplete connection data! The database uri, user and password must either all be provided or none.");
 
 	/**
 	 * The process exit code associated with this status.
