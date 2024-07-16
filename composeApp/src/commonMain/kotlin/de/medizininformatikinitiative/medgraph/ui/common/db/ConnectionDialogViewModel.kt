@@ -24,6 +24,7 @@ class ConnectionDialogViewModel(
     /**
      * The preferences to which to save the selected configuration settings.
      */
+    // TODO This does not work well when setting connection data via CLI
     private val preferences: ConnectionPreferences = ApplicationPreferences.getDatabaseConnectionPreferences(),
     /**
      * Only meant for testing purposes, allows to mock the [ConnectionConfiguration.testConnection] function.
