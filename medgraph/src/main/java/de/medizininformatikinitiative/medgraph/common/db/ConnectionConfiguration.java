@@ -8,7 +8,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.neo4j.driver.Session;
 import org.neo4j.driver.exceptions.AuthenticationException;
-import org.neo4j.driver.exceptions.ServiceUnavailableException;
+import org.neo4j.driver.exceptions.Neo4jException;
 
 /**
  * Stores connection configuration for a {@link DatabaseConnection}. This class is immutable.
@@ -147,7 +147,7 @@ public class ConnectionConfiguration {
 		} catch (AuthenticationException e) {
 			logger.log(Level.INFO, "Authentication failed! ("+e.getMessage()+")");
 			return ConnectionResult.AUTHENTICATION_FAILED;
-		} catch (ServiceUnavailableException e) {
+		} catch (Neo4jException e) {
 			logger.log(Level.INFO, "Neo Neo4j service is reachable at " + this.getUri()+". ("+e.getMessage()+")");
 			return ConnectionResult.SERVICE_UNAVAILABLE;
 		}
