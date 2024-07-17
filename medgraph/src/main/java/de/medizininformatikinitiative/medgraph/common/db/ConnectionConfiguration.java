@@ -59,22 +59,22 @@ public class ConnectionConfiguration {
 	 * @param preferences the preferences from which to retrieve the configuration
 	 */
 	public ConnectionConfiguration(@NotNull ConnectionPreferences preferences) {
-		this(preferences.getConnectionUri(), preferences.getUser(), preferences);
+		this(preferences.getConnectionUri(), preferences.getUser(), preferences.getPassword());
 	}
 
 	/**
 	 * Creates a connection configuration using the given uri and user, but taking the password from the given
-	 * preferences.
+	 * configuration.
 	 *
-	 * @param uri         the connection URI
-	 * @param user        the user to authenticate with
-	 * @param preferences the preferences from which to take the password
+	 * @param uri           the connection URI
+	 * @param user          the user to authenticate with
+	 * @param configuration the other configuration from which to take the password
 	 */
 	public ConnectionConfiguration(@NotNull String uri, @NotNull String user,
-	                               @NotNull ConnectionPreferences preferences) {
+	                               @NotNull ConnectionConfiguration configuration) {
 		this.uri = uri;
 		this.user = user;
-		this.password = preferences.getPassword();
+		this.password = configuration.password;
 	}
 
 	/**
@@ -82,7 +82,7 @@ public class ConnectionConfiguration {
 	 *
 	 * @param uri      the connection URI to use
 	 * @param user     the user to authenticate with
-	 * @param password the password to authenticate with
+	 * @param password the password to authenticate with or null to create an instance without configured password
 	 */
 	public ConnectionConfiguration(@NotNull String uri, @NotNull String user, char @Nullable [] password) {
 		this.uri = uri;
@@ -105,7 +105,17 @@ public class ConnectionConfiguration {
 	}
 
 	/**
-	 * Creates a {@link DatabaseConnection}-object using this configuration.
+	 * Returns whether a password is specified in this instance.
+	 *
+	 * @return true if this configuration includes a password, false otherwise
+	 */
+	public boolean hasConfiguredPassword() {
+		return password != null;
+	}
+
+	/**
+	 * Creates a {@link DatabaseConnection}-object using this configuration. If this configuration lacks a password, the
+	 * connection is attempted with the empty string as password.
 	 */
 	public DatabaseConnection createConnection() {
 		return new DatabaseConnection(uri, user, password != null ? password : new char[0]);
@@ -134,7 +144,7 @@ public class ConnectionConfiguration {
 	 * @return a {@link ConnectionResult} indicating the result of the connection attempt
 	 */
 	public ConnectionResult testConnection() {
-		logger.log(Level.DEBUG, "Running connection test: "+this);
+		logger.log(Level.DEBUG, "Running connection test: " + this);
 		try (DatabaseConnection connection = createConnection();
 		     Session session = connection.createSession()) {
 			session.beginTransaction();
@@ -142,13 +152,13 @@ public class ConnectionConfiguration {
 			logger.log(Level.DEBUG, "Connection successful!");
 			return ConnectionResult.SUCCESS;
 		} catch (IllegalArgumentException e) {
-			logger.log(Level.INFO, "Invalid connection string! ("+e.getMessage()+")");
+			logger.log(Level.INFO, "Invalid connection string! (" + e.getMessage() + ")");
 			return ConnectionResult.INVALID_CONNECTION_STRING;
 		} catch (AuthenticationException e) {
-			logger.log(Level.INFO, "Authentication failed! ("+e.getMessage()+")");
+			logger.log(Level.INFO, "Authentication failed! (" + e.getMessage() + ")");
 			return ConnectionResult.AUTHENTICATION_FAILED;
 		} catch (Neo4jException e) {
-			logger.log(Level.INFO, "Neo Neo4j service is reachable at " + this.getUri()+". ("+e.getMessage()+")");
+			logger.log(Level.INFO, "Neo Neo4j service is reachable at " + this.getUri() + ". (" + e.getMessage() + ")");
 			return ConnectionResult.SERVICE_UNAVAILABLE;
 		}
 	}

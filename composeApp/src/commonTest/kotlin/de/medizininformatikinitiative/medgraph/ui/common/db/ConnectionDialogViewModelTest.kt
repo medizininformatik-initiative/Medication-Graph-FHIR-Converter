@@ -26,21 +26,24 @@ class ConnectionDialogViewModelTest : UnitTest() {
     lateinit var preferences: ConnectionPreferences
 
     @Mock
-    lateinit var mockedConfiguration: ConnectionConfiguration
+    lateinit var configuration: ConnectionConfiguration
 
     lateinit var sut: ConnectionDialogViewModel
 
     @BeforeEach
     fun setUp() {
-        `when`(preferences.connectionUri).thenReturn(URI)
-        `when`(preferences.user).thenReturn(USER)
-        `when`(preferences.hasConfiguredPassword()).thenReturn(true)
+        `when`(configuration.uri).thenReturn(URI)
+        `when`(configuration.user).thenReturn(USER)
+        `when`(configuration.hasConfiguredPassword()).thenReturn(true)
 
         setupSut()
     }
 
     private fun setupSut() {
-        sut = ConnectionDialogViewModel(preferences, { mockedConfiguration.testConnection() })
+        sut = ConnectionDialogViewModel(
+            configuration,
+            preferences
+        ) { configuration.testConnection() }
     }
 
     @Test
@@ -63,7 +66,7 @@ class ConnectionDialogViewModelTest : UnitTest() {
 
     @Test
     fun getPasswordUnchangedWithoutPreconfiguredPassword() {
-        `when`(preferences.hasConfiguredPassword()).thenReturn(false)
+        `when`(configuration.hasConfiguredPassword()).thenReturn(false)
         setupSut()
 
         assertFalse(sut.configuredPasswordExists)
@@ -83,7 +86,7 @@ class ConnectionDialogViewModelTest : UnitTest() {
     @ParameterizedTest
     @ValueSource(booleans = booleanArrayOf(false, true))
     fun apply(savePassword: Boolean) {
-        `when`(mockedConfiguration.testConnection()).thenReturn(ConnectionResult.SUCCESS)
+        `when`(configuration.testConnection()).thenReturn(ConnectionResult.SUCCESS)
         sut.uri.value = "bolt://neo4j"
         sut.user.value = "Neo5k"
         sut.setPassword("Password!")
@@ -104,7 +107,7 @@ class ConnectionDialogViewModelTest : UnitTest() {
     @ParameterizedTest
     @ValueSource(booleans = booleanArrayOf(false, true))
     fun applyWithUnchangedPassword(savePassword: Boolean) {
-        `when`(mockedConfiguration.testConnection()).thenReturn(ConnectionResult.SUCCESS)
+        `when`(configuration.testConnection()).thenReturn(ConnectionResult.SUCCESS)
         sut.savePassword.value = savePassword
 
         assertTrue(sut.apply().get())
@@ -115,10 +118,11 @@ class ConnectionDialogViewModelTest : UnitTest() {
             verify(preferences).clearPassword() // However, we do need to clear it if the user desires so
         }
     }
+
     @ParameterizedTest
     @ValueSource(booleans = booleanArrayOf(false, true))
     fun applyFails(savePassword: Boolean) {
-        `when`(mockedConfiguration.testConnection()).thenReturn(ConnectionResult.AUTHENTICATION_FAILED)
+        `when`(configuration.testConnection()).thenReturn(ConnectionResult.AUTHENTICATION_FAILED)
         sut.savePassword.value = savePassword
 
         assertFalse(sut.apply().get())
@@ -132,7 +136,7 @@ class ConnectionDialogViewModelTest : UnitTest() {
     @ParameterizedTest
     @EnumSource
     fun testConnection(result: ConnectionResult) {
-        `when`(mockedConfiguration.testConnection()).thenReturn(result)
+        `when`(configuration.testConnection()).thenReturn(result)
 
         assertEquals(result == ConnectionResult.SUCCESS, sut.testConnection().get())
         assertEquals(result, sut.connectionTestResult.value)
@@ -141,7 +145,7 @@ class ConnectionDialogViewModelTest : UnitTest() {
     @Test
     fun testConnectionFails() {
         val exception = IllegalStateException("This is a test, so you fail.")
-        `when`(mockedConfiguration.testConnection()).thenThrow(exception)
+        `when`(configuration.testConnection()).thenThrow(exception)
 
         try {
             sut.testConnection().get()
