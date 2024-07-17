@@ -15,6 +15,7 @@ import java.util.Scanner;
  */
 public class CommandLineExecutor {
 
+	static final Options OPTIONS = new Options();
 	static final Option OPTION_HELP = new Option("h", "help", false, "Prints this usage dialog.");
 	static final Option OPTION_DB_URI = new Option("r", "database-uri", true,
 			"The URI of the Neo4j service to connect to.");
@@ -25,6 +26,13 @@ public class CommandLineExecutor {
 	static final Option OPTION_DB_PASSIN = new Option("pi", "database-passin", false,
 			"Reads the Neo4j database password to use from system-in.");
 
+	static {
+		OPTIONS.addOption(OPTION_HELP);
+		OPTIONS.addOption(OPTION_DB_URI);
+		OPTIONS.addOption(OPTION_DB_USER);
+		OPTIONS.addOption(OPTION_DB_PASSWORD);
+		OPTIONS.addOption(OPTION_DB_PASSIN);
+	}
 
 	private static final String UTILITY_NAME = "medgraph";
 
@@ -56,37 +64,23 @@ public class CommandLineExecutor {
 	public OptionalInt evaluateAndExecuteCommandLineArguments(String[] args) {
 		if (args == null || args.length == 0) return OptionalInt.empty();
 
-		Options options = new Options();
-		for (Option option : constructOptions()) {
-			options.addOption(option);
-		}
-
 		CommandLineParser parser = new DefaultParser();
 		CommandLine commandLine;
 
 		try {
-			commandLine = parser.parse(options, args);
+			commandLine = parser.parse(OPTIONS, args);
 		} catch (ParseException e) {
 			System.out.println(e.getMessage());
-			new HelpFormatter().printHelp(UTILITY_NAME, options);
-			return OptionalInt.of(ExitStatus.COMMAND_LINE_PARSING_UNSUCCESSFUL.code);
+			new HelpFormatter().printHelp(UTILITY_NAME, OPTIONS);
+			return exit(ExitStatus.COMMAND_LINE_PARSING_UNSUCCESSFUL);
 		}
 
 		if (commandLine.hasOption("help")) {
-			new HelpFormatter().printHelp(UTILITY_NAME, options);
-			return OptionalInt.of(ExitStatus.SUCCESS.code);
+			new HelpFormatter().printHelp(UTILITY_NAME, OPTIONS);
+			return exit(ExitStatus.SUCCESS);
 		}
 
 		return executeCommandLine(commandLine);
-	}
-
-	/**
-	 * Adds all different command line options used by this application to the given {@link Options} object.
-	 */
-	private Option[] constructOptions() {
-		return new Option[]{
-				OPTION_HELP, OPTION_DB_URI, OPTION_DB_USER, OPTION_DB_PASSWORD, OPTION_DB_PASSIN
-		};
 	}
 
 	/**
@@ -131,11 +125,12 @@ public class CommandLineExecutor {
 	}
 
 	/**
-	 * Prints the status message associated with the given status and then returns the status code wrapped in an
-	 * {@link OptionalInt}.
+	 * Prints the status message associated with the given status (unless it's null) and then returns the status code
+	 * wrapped in an {@link OptionalInt}.
 	 */
 	private OptionalInt exit(ExitStatus exitStatus) {
-		System.out.println(exitStatus.message);
+		if (exitStatus.message != null)
+			System.out.println(exitStatus.message);
 		return OptionalInt.of(exitStatus.code);
 	}
 

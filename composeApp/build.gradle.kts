@@ -87,6 +87,7 @@ fun KotlinJvmTarget.registerShadowJar() {
 //                group = "build"
                 from(output)
                 configurations = listOf(runtimeDependencyFiles)
+                archiveBaseName.set("medgraph")
                 archiveAppendix.set(targetName)
                 archiveClassifier.set("all")
                 manifest {
