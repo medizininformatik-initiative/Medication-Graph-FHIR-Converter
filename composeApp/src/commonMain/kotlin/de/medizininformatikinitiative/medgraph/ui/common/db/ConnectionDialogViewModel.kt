@@ -20,11 +20,13 @@ import java.util.concurrent.CompletableFuture
  * @author Markus Budeus
  */
 class ConnectionDialogViewModel(
-
+    /**
+     * The initial configuration to apply.
+     */
+    private val configuration: ConnectionConfiguration = ConnectionConfiguration.getDefault(),
     /**
      * The preferences to which to save the selected configuration settings.
      */
-    // TODO This does not work well when setting connection data via CLI
     private val preferences: ConnectionPreferences = ApplicationPreferences.getDatabaseConnectionPreferences(),
     /**
      * Only meant for testing purposes, allows to mock the [ConnectionConfiguration.testConnection] function.
@@ -66,10 +68,10 @@ class ConnectionDialogViewModel(
     private var completeOnSuccessfulTest = false
 
     init {
-        uri = mutableStateOf(preferences.connectionUri)
-        user = mutableStateOf(preferences.user)
+        uri = mutableStateOf(configuration.uri)
+        user = mutableStateOf(configuration.user)
         passwordInternal = mutableStateOf("")
-        configuredPasswordExists = preferences.hasConfiguredPassword()
+        configuredPasswordExists = configuration.hasConfiguredPassword()
         passwordUnchanged = mutableStateOf(configuredPasswordExists)
     }
 
@@ -134,7 +136,7 @@ class ConnectionDialogViewModel(
             return ConnectionConfiguration(
                 uri.value,
                 user.value,
-                preferences
+                configuration,
             )
         } else {
             return ConnectionConfiguration(
