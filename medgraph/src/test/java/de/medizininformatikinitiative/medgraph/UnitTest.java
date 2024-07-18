@@ -18,6 +18,13 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
  */
 public class UnitTest {
 
+	/**
+	 * This variable is true if the dependency injection {@link DI} has been "polluted" with mocks.
+	 */
+	private boolean diDirty = false;
+	/**
+	 * Closeable-object provided by mockito when generating mocks.
+	 */
 	private AutoCloseable mocks;
 
 	@BeforeEach
@@ -30,27 +37,56 @@ public class UnitTest {
 		mocks.close();
 	}
 
+	@AfterEach
+	void resetDI() {
+		if (diDirty) {
+			diDirty = false;
+			DI.reset();
+		}
+	}
+
+	/**
+	 * Inserts a mock dependency into the {@link DI} class. Note that inserted mocks are cleared after every test.
+	 *
+	 * @param mock   the mock instance to insert
+	 */
+	@SuppressWarnings("unchecked")
+	protected <T> void insertMockDependency(T mock) {
+		DI.insertDependency((Class<T>) mock.getClass(), mock);
+		diDirty = true;
+	}
+	/**
+	 * Inserts a mock dependency into the {@link DI} class. Note that inserted mocks are cleared after every test.
+	 *
+	 * @param target the target object type for which to insert a mock
+	 * @param mock   the mock instance to insert
+	 */
+	protected <T> void insertMockDependency(Class<T> target, T mock) {
+		DI.insertDependency(target, mock);
+		diDirty = true;
+	}
+
 	/**
 	 * Asserts the contents of the two lists are equal when ignoring the order of elements.
 	 */
 	protected void assertEqualsIgnoreOrder(List<?> expected, List<?> actual) {
 		if (expected == null && actual == null) return;
-		assertNotNull(expected, "Expected null, but got "+ actual);
-		assertNotNull(actual, "Expected "+expected+", but got null!");
-		assertEquals(expected.size(), actual.size(), "Expected "+expected+", but got "+actual);
+		assertNotNull(expected, "Expected null, but got " + actual);
+		assertNotNull(actual, "Expected " + expected + ", but got null!");
+		assertEquals(expected.size(), actual.size(), "Expected " + expected + ", but got " + actual);
 
 		// Their sets may overlap, but duplicate elements may still differ in how often they occur
 		assertEquals(toOccurrenceMap(expected), toOccurrenceMap(actual),
-				"Expected "+expected+", but got "+actual);
+				"Expected " + expected + ", but got " + actual);
 	}
 
 	/**
-	 * Returns a map whose keys are the values in the given list and whose values are how often
-	 * the respective key exists in the input list.
+	 * Returns a map whose keys are the values in the given list and whose values are how often the respective key
+	 * exists in the input list.
 	 */
 	private <T> Map<T, Integer> toOccurrenceMap(List<T> list) {
 		Map<T, Integer> map = new HashMap<>();
-		for (T element: list) {
+		for (T element : list) {
 			map.compute(element, (key, value) -> value == null ? 1 : value + 1);
 		}
 		return map;

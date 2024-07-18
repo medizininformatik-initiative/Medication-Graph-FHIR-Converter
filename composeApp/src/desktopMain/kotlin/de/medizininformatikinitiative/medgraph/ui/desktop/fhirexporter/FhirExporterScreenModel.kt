@@ -5,12 +5,13 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import cafe.adriel.voyager.core.model.ScreenModel
 import cafe.adriel.voyager.core.model.screenModelScope
+import de.medizininformatikinitiative.medgraph.DI
 import de.medizininformatikinitiative.medgraph.common.db.DatabaseConnection
 import de.medizininformatikinitiative.medgraph.common.logging.Level
 import de.medizininformatikinitiative.medgraph.common.logging.LogManager
 import de.medizininformatikinitiative.medgraph.common.mvc.NamedProgressable
 import de.medizininformatikinitiative.medgraph.fhirexporter.FhirExport
-import de.medizininformatikinitiative.medgraph.fhirexporter.FhirExporter
+import de.medizininformatikinitiative.medgraph.fhirexporter.FhirExportFactory
 import de.medizininformatikinitiative.medgraph.ui.resources.StringRes
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -25,7 +26,7 @@ import java.nio.file.Path
  * @author Markus Budeus
  */
 class FhirExporterScreenModel(
-    private val fhirExporter: FhirExporter = FhirExporter()
+    private val fhirExporter: FhirExportFactory = DI.get(FhirExportFactory::class.java)
 ) : ScreenModel {
 
     private val logger = LogManager.getLogger(FhirExporterScreenModel::class.java)

@@ -2,7 +2,7 @@ package de.medizininformatikinitiative.medgraph.ui.desktop.fhirexporter
 
 import de.medizininformatikinitiative.medgraph.common.mvc.NamedProgressable
 import de.medizininformatikinitiative.medgraph.fhirexporter.FhirExport
-import de.medizininformatikinitiative.medgraph.fhirexporter.FhirExporter
+import de.medizininformatikinitiative.medgraph.fhirexporter.FhirExportFactory
 import de.medizininformatikinitiative.medgraph.ui.TempDirectoryTestExtension
 import de.medizininformatikinitiative.medgraph.ui.UnitTest
 import de.medizininformatikinitiative.medgraph.ui.resources.StringRes
@@ -14,11 +14,9 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.Mock
 import org.mockito.Mockito.*
-import java.io.File
 import java.nio.file.Files
 import java.nio.file.Path
 import java.util.concurrent.atomic.AtomicBoolean
-import java.util.concurrent.atomic.AtomicInteger
 import java.util.concurrent.atomic.AtomicReference
 
 /**
@@ -28,7 +26,7 @@ import java.util.concurrent.atomic.AtomicReference
 class FhirExporterScreenModelTest : UnitTest() {
 
     @Mock
-    lateinit var fhirExporter: FhirExporter
+    lateinit var fhirExporter: FhirExportFactory
 
     @Mock
     lateinit var fhirExport: FhirExport
