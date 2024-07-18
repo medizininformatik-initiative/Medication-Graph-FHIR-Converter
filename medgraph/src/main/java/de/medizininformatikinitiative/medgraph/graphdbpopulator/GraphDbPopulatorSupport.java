@@ -12,9 +12,11 @@ import java.util.List;
 import java.util.Objects;
 
 /**
+ * Utility class for functions required for the Graph DB population mechanism.
+ *
  * @author Markus Budeus
  */
-public class GraphDbPopulator {
+public class GraphDbPopulatorSupport {
 
 	/**
 	 * If a line in a CSV file starts with this string, it is considered a comment.
@@ -51,21 +53,6 @@ public class GraphDbPopulator {
 	};
 
 	private static final String MMI_PHARMINDEX_FILES_SUBPATH = "mmi_pharmindex";
-
-	/**
-	 * Creates a {@link GraphDbPopulation}-instance which can be used to run the graph database population chain.
-	 *
-	 * @param mmiPharmindexDirectoryPath the path where the MMI Pharmindex files can be found
-	 * @param neo4jImportDirectoryPath   the Neo4j import directory to copy the required files to
-	 * @param amiceDataFilePath          optionally, a path to the AMIce Stoffbezeichnungen Rohdaten file, may be null
-	 * @return a ready-for-use {@link GraphDbPopulation}-instance
-	 */
-	public GraphDbPopulation prepareDatabasePopulation(
-			Path mmiPharmindexDirectoryPath,
-			Path neo4jImportDirectoryPath,
-			Path amiceDataFilePath) {
-		return new GraphDbPopulation(mmiPharmindexDirectoryPath, neo4jImportDirectoryPath, amiceDataFilePath);
-	}
 
 	/**
 	 * Attempts to copy the required MMI Pharmindex files from the given path as well as the resource files packaged
@@ -175,7 +162,7 @@ public class GraphDbPopulator {
 		target = targetDir.toPath();
 		for (String resource : REQUIRED_RESOURCE_FILES) {
 			try (InputStream stream = Objects.requireNonNull(
-					GraphDbPopulator.class.getResourceAsStream("/" + resource))) {
+					GraphDbPopulatorSupport.class.getResourceAsStream("/" + resource))) {
 				Path targetPath = target.resolve(resource);
 				copyCsvAndStripComments(stream, targetPath);
 			}

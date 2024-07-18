@@ -5,14 +5,12 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import cafe.adriel.voyager.core.model.ScreenModel
 import cafe.adriel.voyager.core.model.screenModelScope
+import de.medizininformatikinitiative.medgraph.DI
 import de.medizininformatikinitiative.medgraph.common.db.DatabaseConnection
 import de.medizininformatikinitiative.medgraph.common.logging.Level
 import de.medizininformatikinitiative.medgraph.common.logging.LogManager
 import de.medizininformatikinitiative.medgraph.common.mvc.NamedProgressable
-import de.medizininformatikinitiative.medgraph.graphdbpopulator.GraphDbPopulation
-import de.medizininformatikinitiative.medgraph.graphdbpopulator.GraphDbPopulator
-import de.medizininformatikinitiative.medgraph.graphdbpopulator.loaders.Loader
-import de.medizininformatikinitiative.medgraph.ui.resources.StringRes
+import de.medizininformatikinitiative.medgraph.graphdbpopulator.GraphDbPopulationFactory
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
@@ -24,7 +22,7 @@ import java.nio.file.Path
  * @author Markus Budeus
  */
 class GraphDbPopulatorScreenModel(
-    private val graphDbPopulator: GraphDbPopulator = GraphDbPopulator()
+    private val graphDbPopulationFactory: GraphDbPopulationFactory = DI.get(GraphDbPopulationFactory::class.java)
 ) : ScreenModel {
 
     private val logger = LogManager.getLogger(GraphDbPopulatorScreenModel::class.java)
@@ -105,7 +103,7 @@ class GraphDbPopulatorScreenModel(
         val neo4jImportPath: Path = Path.of(neo4jImportDirectory)
         val amiceFilePath: Path? = if (amiceStoffBezFile.isEmpty()) null else Path.of(amiceStoffBezFile)
 
-        val population = graphDbPopulator.prepareDatabasePopulation(mmiPharmindexPath, neo4jImportPath, amiceFilePath)
+        val population = graphDbPopulationFactory.prepareDatabasePopulation(mmiPharmindexPath, neo4jImportPath, amiceFilePath)
         this.executionTask = population
 
         try {

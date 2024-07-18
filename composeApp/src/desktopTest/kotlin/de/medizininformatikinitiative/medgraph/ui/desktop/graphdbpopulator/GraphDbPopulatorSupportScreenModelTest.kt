@@ -1,10 +1,8 @@
 package de.medizininformatikinitiative.medgraph.ui.desktop.graphdbpopulator
 
 import de.medizininformatikinitiative.medgraph.graphdbpopulator.GraphDbPopulation
-import de.medizininformatikinitiative.medgraph.graphdbpopulator.GraphDbPopulator
-import de.medizininformatikinitiative.medgraph.graphdbpopulator.loaders.Loader
+import de.medizininformatikinitiative.medgraph.graphdbpopulator.GraphDbPopulatorSupport
 import de.medizininformatikinitiative.medgraph.ui.UnitTest
-import kotlinx.coroutines.Runnable
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach
@@ -13,16 +11,14 @@ import org.mockito.Mock
 import org.mockito.Mockito.*
 import java.nio.file.Path
 import java.util.concurrent.atomic.AtomicBoolean
-import java.util.concurrent.atomic.AtomicReference
-import java.util.function.Consumer
 
 /**
  * @author Markus Budeus
  */
-class GraphDbPopulatorScreenModelTest : UnitTest() {
+class GraphDbPopulatorSupportScreenModelTest : UnitTest() {
 
     @Mock
-    private lateinit var graphDbPopulator: GraphDbPopulator
+    private lateinit var graphDbPopulatorSupport: GraphDbPopulatorSupport
 
     @Mock
     private lateinit var graphDbPopulation: GraphDbPopulation
@@ -31,8 +27,8 @@ class GraphDbPopulatorScreenModelTest : UnitTest() {
 
     @BeforeEach
     fun setUp() {
-        `when`(graphDbPopulator.prepareDatabasePopulation(any(), any(), any())).thenReturn(graphDbPopulation)
-        sut = GraphDbPopulatorScreenModel(graphDbPopulator)
+        `when`(graphDbPopulatorSupport.prepareDatabasePopulation(any(), any(), any())).thenReturn(graphDbPopulation)
+        sut = GraphDbPopulatorScreenModel(graphDbPopulatorSupport)
 
         sut.mmiPharmindexDirectory = System.getProperty("user.home")
         sut.neo4jImportDirectory = System.getProperty("user.home")
@@ -60,7 +56,7 @@ class GraphDbPopulatorScreenModelTest : UnitTest() {
         runSut()
 
         val otherTask: GraphDbPopulation = mock()
-        `when`(graphDbPopulator.prepareDatabasePopulation(any(), any(), any())).thenReturn(otherTask)
+        `when`(graphDbPopulatorSupport.prepareDatabasePopulation(any(), any(), any())).thenReturn(otherTask)
         val completedStateGoneAgain = AtomicBoolean(false)
         val newTaskAssigned = AtomicBoolean(false)
 
@@ -88,7 +84,7 @@ class GraphDbPopulatorScreenModelTest : UnitTest() {
 
     @Test
     fun preparationFails() {
-        doThrow(IllegalArgumentException("No way!")).`when`(graphDbPopulator)
+        doThrow(IllegalArgumentException("No way!")).`when`(graphDbPopulatorSupport)
             .prepareDatabasePopulation(any(), any(), any())
 
         runSut()
@@ -102,7 +98,7 @@ class GraphDbPopulatorScreenModelTest : UnitTest() {
         sut.amiceStoffBezFile = "/boot/efi"
         runSut()
 
-        verify(graphDbPopulator).prepareDatabasePopulation(
+        verify(graphDbPopulatorSupport).prepareDatabasePopulation(
             Path.of(sut.mmiPharmindexDirectory),
             Path.of(sut.neo4jImportDirectory),
             Path.of("/boot/efi"),
@@ -114,7 +110,7 @@ class GraphDbPopulatorScreenModelTest : UnitTest() {
         sut.amiceStoffBezFile = ""
         runSut()
 
-        verify(graphDbPopulator).prepareDatabasePopulation(
+        verify(graphDbPopulatorSupport).prepareDatabasePopulation(
             Path.of(sut.mmiPharmindexDirectory),
             Path.of(sut.neo4jImportDirectory),
             null,

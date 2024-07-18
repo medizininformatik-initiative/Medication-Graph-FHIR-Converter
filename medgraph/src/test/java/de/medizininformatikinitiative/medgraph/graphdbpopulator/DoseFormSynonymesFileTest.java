@@ -24,14 +24,14 @@ public class DoseFormSynonymesFileTest extends UnitTest {
 	void allHandwrittenDoseFormSynonymesExist() throws IOException {
 		Set<EdqmObject> edqmObjects = new HashSet<>();
 
-		try (CSVReader objectsReader = CSVReader.open(GraphDbPopulator.class.getResourceAsStream("/edqm_objects.csv"))) {
+		try (CSVReader objectsReader = CSVReader.open(GraphDbPopulatorSupport.class.getResourceAsStream("/edqm_objects.csv"))) {
 			objectsReader.readAll().stream().skip(1).forEach(line -> {
 				edqmObjects.add(new EdqmObject(line[0] + "-" + line[1], line[2]));
 			});
 		}
 
 		try (CSVReader synonymesReader = CSVReader.open(
-				GraphDbPopulator.class.getResourceAsStream("/dose_form_synonymes.csv"))) {
+				GraphDbPopulatorSupport.class.getResourceAsStream("/dose_form_synonymes.csv"))) {
 			synonymesReader.readAll().stream().skip(1).forEach(line -> {
 				String targetCode = line[1];
 				String targetName = line[2];
