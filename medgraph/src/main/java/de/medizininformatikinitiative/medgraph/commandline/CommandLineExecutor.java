@@ -1,6 +1,8 @@
 package de.medizininformatikinitiative.medgraph.commandline;
 
+import de.medizininformatikinitiative.medgraph.DI;
 import de.medizininformatikinitiative.medgraph.common.db.ConnectionConfiguration;
+import de.medizininformatikinitiative.medgraph.common.db.ConnectionConfigurationService;
 import org.apache.commons.cli.*;
 
 import java.io.InputStream;
@@ -40,6 +42,7 @@ public class CommandLineExecutor {
 	 * The input stream from which to read the password if required.
 	 */
 	private final InputStream inputStream;
+	private final ConnectionConfigurationService conService = DI.get(ConnectionConfigurationService.class);
 
 	public CommandLineExecutor() {
 		this(System.in);
@@ -113,7 +116,8 @@ public class CommandLineExecutor {
 			if (dbUri == null || dbUser == null || dbPass == null) {
 				return exit(ExitStatus.INCOMPLETE_CONNECTION_DATA);
 			}
-			ConnectionConfiguration.setDefault(new ConnectionConfiguration(dbUri, dbUser, dbPass.toCharArray()));
+			conService.setConnectionConfiguration(new ConnectionConfiguration(dbUri, dbUser, dbPass.toCharArray()),
+					ConnectionConfigurationService.SaveOption.DONT_SAVE);
 		}
 		return OptionalInt.empty();
 	}

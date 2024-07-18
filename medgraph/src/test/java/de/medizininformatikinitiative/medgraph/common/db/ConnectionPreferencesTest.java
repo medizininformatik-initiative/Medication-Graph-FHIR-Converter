@@ -1,6 +1,6 @@
 package de.medizininformatikinitiative.medgraph.common.db;
 
-import de.medizininformatikinitiative.medgraph.common.ApplicationPreferences;
+import de.medizininformatikinitiative.medgraph.ApplicationPreferences;
 import org.junit.jupiter.api.*;
 
 import java.util.prefs.BackingStoreException;
