@@ -30,7 +30,7 @@ public class GraphDbPopulation extends NamedProgressableImpl {
 	private final Path amiceFilePath;
 
 	/**
-	 * Creates a {@link GraphDbPopulator}, which is capable of executing the tasks required to fill the Neo4j database
+	 * Creates a {@link GraphDbPopulatorSupport}, which is capable of executing the tasks required to fill the Neo4j database
 	 * with the MMI Pharmindex data.
 	 *
 	 * @param mmiPharmindexPath the path to the MMI Pharmindex data to use for loading
@@ -41,7 +41,7 @@ public class GraphDbPopulation extends NamedProgressableImpl {
 	}
 
 	/**
-	 * Creates a {@link GraphDbPopulator}, which is capable of executing the tasks required to fill the Neo4j database
+	 * Creates a {@link GraphDbPopulatorSupport}, which is capable of executing the tasks required to fill the Neo4j database
 	 * with the MMI Pharmindex data.
 	 *
 	 * @param mmiPharmindexPath the path to the MMI Pharmindex data to use for loading
@@ -59,9 +59,9 @@ public class GraphDbPopulation extends NamedProgressableImpl {
 		setTaskStack("Preparing data import");
 		setProgress(0);
 
-		GraphDbPopulator graphDbPopulator = new GraphDbPopulator();
+		GraphDbPopulatorSupport graphDbPopulatorSupport = new GraphDbPopulatorSupport();
 
-		graphDbPopulator.copyKnowledgeGraphSourceDataToNeo4jImportDirectory(
+		graphDbPopulatorSupport.copyKnowledgeGraphSourceDataToNeo4jImportDirectory(
 				mmiPharmindexPath,
 				amiceFilePath,
 				neo4jImportPath
@@ -80,7 +80,7 @@ public class GraphDbPopulation extends NamedProgressableImpl {
 		}
 
 		setTaskStack("Cleaning up");
-		graphDbPopulator.removeFilesFromNeo4jImportDir(neo4jImportPath);
+		graphDbPopulatorSupport.removeFilesFromNeo4jImportDir(neo4jImportPath);
 		incrementProgress();
 
 		setTaskStack();

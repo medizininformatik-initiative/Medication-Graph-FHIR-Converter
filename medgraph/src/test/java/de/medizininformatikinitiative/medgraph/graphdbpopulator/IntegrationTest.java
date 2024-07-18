@@ -1,5 +1,6 @@
 package de.medizininformatikinitiative.medgraph.graphdbpopulator;
 
+import de.medizininformatikinitiative.medgraph.DI;
 import de.medizininformatikinitiative.medgraph.common.db.DatabaseConnection;
 import org.junit.jupiter.api.*;
 import org.neo4j.driver.Record;
@@ -38,13 +39,12 @@ public class IntegrationTest {
 		connection = DatabaseConnection.createDefault();
 		session = connection.createSession();
 
-		GraphDbPopulator graphDbPopulator = new GraphDbPopulator();
-		graphDbPopulator.prepareDatabasePopulation(
+		DI.get(GraphDbPopulationFactory.class).prepareDatabasePopulation(
 				                Path.of("src", "test", "resources", "sample"),
 				                Path.of("/var", "lib", "neo4j", "import"),
 				                Path.of("src", "test", "resources", "sample", "amice_stoffbez_synthetic.csv")
 		                )
-		                .executeDatabasePopulation(connection);
+		  .executeDatabasePopulation(connection);
 	}
 
 	@AfterAll
@@ -380,12 +380,12 @@ public class IntegrationTest {
 	 */
 	private int getCsvEntries(String resourceName) throws IOException {
 		int lines = 0;
-		try (InputStream inputStream = GraphDbPopulator.class.getResourceAsStream(resourceName)) {
+		try (InputStream inputStream = GraphDbPopulatorSupport.class.getResourceAsStream(resourceName)) {
 			assertNotNull(inputStream);
 			try (BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream))) {
 				String line;
 				while ((line = reader.readLine()) != null) {
-					if (!line.startsWith(GraphDbPopulator.CSV_COMMENT_INDICATOR) && !line.isBlank()) lines++;
+					if (!line.startsWith(GraphDbPopulatorSupport.CSV_COMMENT_INDICATOR) && !line.isBlank()) lines++;
 				}
 			}
 		}
