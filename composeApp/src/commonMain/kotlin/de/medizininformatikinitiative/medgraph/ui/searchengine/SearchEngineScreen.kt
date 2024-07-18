@@ -6,7 +6,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.core.model.rememberScreenModel
 import cafe.adriel.voyager.core.screen.Screen
+import de.medizininformatikinitiative.medgraph.DI
 import de.medizininformatikinitiative.medgraph.common.db.ConnectionConfiguration
+import de.medizininformatikinitiative.medgraph.common.db.DatabaseConnectionService
 import de.medizininformatikinitiative.medgraph.searchengine.algorithm.PerSessionQueryManager
 import de.medizininformatikinitiative.medgraph.searchengine.algorithm.SimpleQueryExecutor
 import de.medizininformatikinitiative.medgraph.searchengine.algorithm.initial.LevenshteinSearchMatchFinder
@@ -46,7 +48,7 @@ class SearchEngineScreen : Screen {
                         ExperimentalRefiner(session, Neo4jCypherDatabase(session))
                     )
                 },
-                ConnectionConfiguration.getDefault().createConnection()
+                DI.get(DatabaseConnectionService::class.java).createConnection()
             )
     }
 

@@ -5,10 +5,14 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import cafe.adriel.voyager.core.model.ScreenModel
 import cafe.adriel.voyager.core.model.screenModelScope
-import de.medizininformatikinitiative.medgraph.common.ApplicationPreferences
+import de.medizininformatikinitiative.medgraph.ApplicationPreferences
+import de.medizininformatikinitiative.medgraph.DI
 import de.medizininformatikinitiative.medgraph.common.db.ConnectionConfiguration
-import de.medizininformatikinitiative.medgraph.common.db.ConnectionConfiguration.ConnectionResult
+import de.medizininformatikinitiative.medgraph.common.db.ConnectionConfigurationService
+import de.medizininformatikinitiative.medgraph.common.db.ConnectionConfigurationService.SaveOption
+import de.medizininformatikinitiative.medgraph.common.db.ConnectionConfigurationService.SaveOption.*
 import de.medizininformatikinitiative.medgraph.common.db.ConnectionPreferences
+import de.medizininformatikinitiative.medgraph.common.db.ConnectionResult
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -21,17 +25,9 @@ import java.util.concurrent.CompletableFuture
  */
 class ConnectionDialogViewModel(
     /**
-     * The initial configuration to apply.
+     * The connection manager to interact with.
      */
-    private val configuration: ConnectionConfiguration = ConnectionConfiguration.getDefault(),
-    /**
-     * The preferences to which to save the selected configuration settings.
-     */
-    private val preferences: ConnectionPreferences = ApplicationPreferences.getDatabaseConnectionPreferences(),
-    /**
-     * Only meant for testing purposes, allows to mock the [ConnectionConfiguration.testConnection] function.
-     */
-    private val connectionTester: suspend (ConnectionConfiguration) -> ConnectionResult = { c -> c.testConnection() },
+    private val connectionManager: ConnectionConfigurationService = DI.get(ConnectionConfigurationService::class.java)
 ) : ScreenModel {
 
     val uri: MutableState<String>
@@ -65,9 +61,17 @@ class ConnectionDialogViewModel(
      */
     val connectionTestResult: MutableState<ConnectionResult?> = mutableStateOf(null)
 
+    /**
+     * The base configuration acquried from the [connectionManager]. Contains the password in case a saved password
+     * exists. Since we cannot extract this password, we need to store this whole configuration. The password
+     * is extracted indirectly in [createConfiguration], where this instance gets passed to the new config.
+     */
+    private val configuration: ConnectionConfiguration
+
     private var completeOnSuccessfulTest = false
 
     init {
+        configuration = connectionManager.connectionConfiguration
         uri = mutableStateOf(configuration.uri)
         user = mutableStateOf(configuration.user)
         passwordInternal = mutableStateOf("")
@@ -104,8 +108,9 @@ class ConnectionDialogViewModel(
     private suspend fun applyInternal(): Boolean {
         val config = createConfiguration();
         if (testConnection(config)) {
-            config.save(preferences, savePassword.value)
-            ConnectionConfiguration.setDefault(config)
+            connectionManager.setConnectionConfiguration(
+                config, if (savePassword.value) SAVE_ALL else EXCLUDE_PASSWORD
+            )
             return true
         }
         return false
@@ -119,7 +124,7 @@ class ConnectionDialogViewModel(
     suspend fun testConnection(config: ConnectionConfiguration): Boolean {
         testingConnection.value = true
         try {
-            val result = connectionTester.invoke(config)
+            val result = config.testConnection()
             connectionTestResult.value = result
             return result == ConnectionResult.SUCCESS;
         } finally {

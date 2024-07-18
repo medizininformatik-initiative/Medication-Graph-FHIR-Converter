@@ -1,14 +1,14 @@
 package de.medizininformatikinitiative.medgraph.commandline;
 
-import de.medizininformatikinitiative.medgraph.common.db.ConnectionConfiguration;
+import de.medizininformatikinitiative.medgraph.DI;
 import de.medizininformatikinitiative.medgraph.common.db.DatabaseConnection;
+import de.medizininformatikinitiative.medgraph.common.db.DatabaseConnectionException;
+import de.medizininformatikinitiative.medgraph.common.db.DatabaseConnectionService;
 import de.medizininformatikinitiative.medgraph.common.logging.Level;
 import de.medizininformatikinitiative.medgraph.common.logging.LogManager;
 import de.medizininformatikinitiative.medgraph.common.logging.Logger;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.HelpFormatter;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 import java.util.List;
 import java.util.function.Function;
@@ -21,7 +21,7 @@ import java.util.function.Function;
 public abstract class CommandLineUtility {
 
 	private static final Logger logger = LogManager.getLogger(CommandLineUtility.class);
-	private static final Log log = LogFactory.getLog(CommandLineUtility.class);
+	private final DatabaseConnectionService connectionService = DI.get(DatabaseConnectionService.class);
 
 	/**
 	 * Invokes this command line utility. The given command line parameter is the parsed command line as passed to the
@@ -48,20 +48,18 @@ public abstract class CommandLineUtility {
 	 * given action if the database connection is functional
 	 */
 	protected ExitStatus withDatabaseConnection(Function<DatabaseConnection, ExitStatus> action) {
-		ConnectionConfiguration configuration = ConnectionConfiguration.getDefault();
-		return switch (configuration.testConnection()) {
-			case SUCCESS -> {
-				try (DatabaseConnection connection = configuration.createConnection()) {
-					yield action.apply(connection);
-				} catch (Exception e) {
-					logger.log(Level.ERROR, "Failed to execute command line utility!", e);
-					yield ExitStatus.internalError(e);
-				}
-			}
-			case INVALID_CONNECTION_STRING -> ExitStatus.INVALID_DB_CONNECTION_STRING;
-			case SERVICE_UNAVAILABLE -> ExitStatus.NEO4J_SERVICE_UNAVAILABLE;
-			case AUTHENTICATION_FAILED -> ExitStatus.NEO4J_AUTHENTICATION_FAILED;
-		};
+		try (DatabaseConnection connection = connectionService.createConnection(true)){
+			return action.apply(connection);
+		} catch (DatabaseConnectionException e) {
+			logger.log(Level.ERROR, "Failed to connect to database!", e);
+			return switch (e.getConnectionResult()) {
+				case SUCCESS -> throw new IllegalStateException("DatabaseConnectionException with SUCCESS connection result.");
+				case INVALID_CONNECTION_STRING -> ExitStatus.INVALID_DB_CONNECTION_STRING;
+				case SERVICE_UNAVAILABLE -> ExitStatus.NEO4J_SERVICE_UNAVAILABLE;
+				case AUTHENTICATION_FAILED -> ExitStatus.NEO4J_AUTHENTICATION_FAILED;
+				case INTERNAL_ERROR -> ExitStatus.internalError(e.getCause());
+			};
+		}
 	}
 
 	/**

@@ -7,6 +7,7 @@ import cafe.adriel.voyager.core.model.ScreenModel
 import cafe.adriel.voyager.core.model.screenModelScope
 import de.medizininformatikinitiative.medgraph.DI
 import de.medizininformatikinitiative.medgraph.common.db.DatabaseConnection
+import de.medizininformatikinitiative.medgraph.common.db.DatabaseConnectionService
 import de.medizininformatikinitiative.medgraph.common.logging.Level
 import de.medizininformatikinitiative.medgraph.common.logging.LogManager
 import de.medizininformatikinitiative.medgraph.common.mvc.NamedProgressable
@@ -22,7 +23,8 @@ import java.nio.file.Path
  * @author Markus Budeus
  */
 class GraphDbPopulatorScreenModel(
-    private val graphDbPopulationFactory: GraphDbPopulationFactory = DI.get(GraphDbPopulationFactory::class.java)
+    private val graphDbPopulationFactory: GraphDbPopulationFactory = DI.get(GraphDbPopulationFactory::class.java),
+    private val connectionService: DatabaseConnectionService = DI.get(DatabaseConnectionService::class.java)
 ) : ScreenModel {
 
     private val logger = LogManager.getLogger(GraphDbPopulatorScreenModel::class.java)
@@ -107,7 +109,7 @@ class GraphDbPopulatorScreenModel(
         this.executionTask = population
 
         try {
-            population.executeDatabasePopulation(DatabaseConnection.createDefault());
+            population.executeDatabasePopulation(connectionService.createConnection());
         } catch (e: IllegalArgumentException) {
             errorMessage = e.message
             return

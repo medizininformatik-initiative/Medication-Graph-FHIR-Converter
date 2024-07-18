@@ -8,8 +8,6 @@ import org.neo4j.driver.Driver;
 import org.neo4j.driver.GraphDatabase;
 import org.neo4j.driver.Session;
 
-import java.util.function.Consumer;
-
 /**
  * Represents a connection to a Neo4j graph database.
  *
@@ -19,23 +17,7 @@ public class DatabaseConnection implements AutoCloseable {
 
 	private static final Logger logger = LogManager.getLogger(DatabaseConnection.class);
 
-	/**
-	 * Attempts to create a database connection using the current default connection configuration.
-	 */
-	public static DatabaseConnection createDefault() {
-		return ConnectionConfiguration.getDefault().createConnection();
-	}
-
 	private final Driver driver;
-
-	/**
-	 * Creates a new connection and a session, which are both automatically closed when the given action exits.
-	 */
-	public static void runSession(Consumer<Session> action) {
-		try (DatabaseConnection connection = createDefault(); Session session = connection.createSession()) {
-			action.accept(session);
-		}
-	}
 
 	/**
 	 * Creates a new database connection.

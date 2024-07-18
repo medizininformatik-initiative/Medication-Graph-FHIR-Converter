@@ -70,6 +70,9 @@ class StringRes {
         val db_connection_dialog_test_authentication_failed = "Authentication failed!"
 
         @JvmStatic
+        val db_connection_dialog_test_internal_error = "Something went wrong. Please contact the developer."
+
+        @JvmStatic
         val db_connection_dialog_test_service_unavailable = "No Neo4j Service is reachable at the given URI."
 
         @JvmStatic

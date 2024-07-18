@@ -7,6 +7,7 @@ import cafe.adriel.voyager.core.model.ScreenModel
 import cafe.adriel.voyager.core.model.screenModelScope
 import de.medizininformatikinitiative.medgraph.DI
 import de.medizininformatikinitiative.medgraph.common.db.DatabaseConnection
+import de.medizininformatikinitiative.medgraph.common.db.DatabaseConnectionService
 import de.medizininformatikinitiative.medgraph.common.logging.Level
 import de.medizininformatikinitiative.medgraph.common.logging.LogManager
 import de.medizininformatikinitiative.medgraph.common.mvc.NamedProgressable
@@ -93,7 +94,7 @@ class FhirExporterScreenModel(
         val export = fhirExporter.prepareExport(path);
         this.exportTask = export
 
-        DatabaseConnection.createDefault().use {
+        DI.get(DatabaseConnectionService::class.java).createConnection().use {
             it.createSession().use { session ->
                 export.doExport(session)
             }
