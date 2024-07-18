@@ -1,4 +1,4 @@
-package de.medizininformatikinitiative.medgraph.common;
+package de.medizininformatikinitiative.medgraph;
 
 import de.medizininformatikinitiative.medgraph.common.db.ConnectionPreferences;
 
@@ -19,7 +19,7 @@ public class ApplicationPreferences {
 		return Preferences.userRoot().node(APPLICATION_ROOT_NODE);
 	}
 
-	public static ConnectionPreferences getDatabaseConnectionPreferences() {
+	static ConnectionPreferences getDatabaseConnectionPreferences() {
 		if (connectionPreferences == null) {
 			synchronized (ApplicationPreferences.class) {
 				if (connectionPreferences == null) {
