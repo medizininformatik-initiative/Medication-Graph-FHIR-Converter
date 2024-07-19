@@ -4,6 +4,7 @@ import de.medizininformatikinitiative.medgraph.UnitTest
 import de.medizininformatikinitiative.medgraph.common.db.ConnectionConfiguration
 import de.medizininformatikinitiative.medgraph.common.db.ConnectionConfigurationService
 import de.medizininformatikinitiative.medgraph.common.db.ConnectionFailureReason
+import de.medizininformatikinitiative.medgraph.common.db.ConnectionTestService
 import de.medizininformatikinitiative.medgraph.common.db.DatabaseConnectionException
 import de.medizininformatikinitiative.medgraph.common.db.DatabaseConnectionService
 import de.medizininformatikinitiative.medgraph.ui.common.db.ConnectionDialogViewModel.ConnectionResult
@@ -16,8 +17,6 @@ import org.junit.jupiter.params.provider.ValueSource
 import org.mockito.Mock
 import org.mockito.Mockito.*
 import java.util.concurrent.ExecutionException
-import javax.xml.crypto.Data
-import kotlin.math.exp
 
 /**
  * @author Markus Budeus
@@ -31,7 +30,7 @@ class ConnectionDialogViewModelTest : UnitTest() {
     lateinit var configurationService: ConnectionConfigurationService
 
     @Mock
-    lateinit var connectionService: DatabaseConnectionService
+    lateinit var testService: ConnectionTestService
 
     @Mock
     lateinit var configuration: ConnectionConfiguration
@@ -46,13 +45,13 @@ class ConnectionDialogViewModelTest : UnitTest() {
         `when`(configurationService.connectionConfiguration).thenReturn(configuration)
 
         insertMockDependency(ConnectionConfigurationService::class.java, configurationService)
-        insertMockDependency(DatabaseConnectionService::class.java, connectionService)
+        insertMockDependency(ConnectionTestService::class.java, testService)
 
         setupSut()
     }
 
     private fun setupSut() {
-        sut = ConnectionDialogViewModel(configurationService, connectionService)
+        sut = ConnectionDialogViewModel(configurationService, testService)
     }
 
     @Test
@@ -140,7 +139,7 @@ class ConnectionDialogViewModelTest : UnitTest() {
     @ParameterizedTest
     @ValueSource(booleans = booleanArrayOf(false, true))
     fun applyFails(savePassword: Boolean) {
-        `when`(connectionService.verifyConnection(notNull())).thenThrow(
+        `when`(testService.verifyConnection(notNull())).thenThrow(
             DatabaseConnectionException(
                 ConnectionFailureReason.AUTHENTICATION_FAILED,
                 "Invalid authentication provided."
@@ -156,7 +155,7 @@ class ConnectionDialogViewModelTest : UnitTest() {
     @ParameterizedTest
     @EnumSource
     fun testConnection(result: ConnectionFailureReason) {
-        `when`(connectionService.verifyConnection(notNull())).thenThrow(
+        `when`(testService.verifyConnection(notNull())).thenThrow(
             DatabaseConnectionException(result, "Something went wrong.")
         )
 
@@ -175,7 +174,7 @@ class ConnectionDialogViewModelTest : UnitTest() {
     @Test
     fun testConnectionFails() {
         val exception = IllegalStateException("This is a test, so you fail.")
-        `when`(connectionService.verifyConnection(notNull())).thenThrow(exception)
+        `when`(testService.verifyConnection(notNull())).thenThrow(exception)
 
         try {
             sut.testConnection().get()
