@@ -1,11 +1,10 @@
 package de.medizininformatikinitiative.medgraph.ui.common.db
 
+import de.medizininformatikinitiative.medgraph.UnitTest
 import de.medizininformatikinitiative.medgraph.common.db.ConnectionConfiguration
-import de.medizininformatikinitiative.medgraph.common.db.ConnectionConfiguration.ConnectionResult
 import de.medizininformatikinitiative.medgraph.common.db.ConnectionConfigurationService
 import de.medizininformatikinitiative.medgraph.common.db.ConnectionPreferences
 import de.medizininformatikinitiative.medgraph.common.db.ConnectionResult
-import de.medizininformatikinitiative.medgraph.ui.UnitTest
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -39,14 +38,13 @@ class ConnectionDialogViewModelTest : UnitTest() {
         `when`(configuration.hasConfiguredPassword()).thenReturn(true)
         `when`(configurationService.connectionConfiguration).thenReturn(configuration)
 
+        insertMockDependency(ConnectionConfigurationService::class.java, configurationService)
+
         setupSut()
     }
 
     private fun setupSut() {
-        sut = ConnectionDialogViewModel(
-            configuration,
-            preferences
-        ) { configuration.testConnection() }
+        sut = ConnectionDialogViewModel(configurationService)
     }
 
     @Test
@@ -86,7 +84,7 @@ class ConnectionDialogViewModelTest : UnitTest() {
         assertEquals("", sut.password.value)
     }
 
-    @ParameterizedTest
+    @ParameterizedTest(name = "savePassword: {0}")
     @ValueSource(booleans = booleanArrayOf(false, true))
     fun apply(savePassword: Boolean) {
         `when`(configuration.testConnection()).thenReturn(ConnectionResult.SUCCESS)
@@ -97,17 +95,15 @@ class ConnectionDialogViewModelTest : UnitTest() {
 
         assertTrue(sut.apply().get())
 
-        verify(preferences).user = "Neo5k"
-        verify(preferences).connectionUri = "bolt://neo4j"
-
+        val expectedConfig = ConnectionConfiguration("bolt://neo4j", "Neo5k", "Password!".toCharArray());
         if (savePassword) {
-            verify(preferences).setPassword("Password!".toCharArray())
+            verify(configurationService).setConnectionConfiguration(eq(expectedConfig), eq(ConnectionConfigurationService.SaveOption.SAVE_ALL))
         } else {
-            verify(preferences).clearPassword()
+            verify(configurationService).setConnectionConfiguration(eq(expectedConfig), eq(ConnectionConfigurationService.SaveOption.EXCLUDE_PASSWORD))
         }
     }
 
-    @ParameterizedTest
+    @ParameterizedTest(name = "savePassword: {0}")
     @ValueSource(booleans = booleanArrayOf(false, true))
     fun applyWithUnchangedPassword(savePassword: Boolean) {
         `when`(configuration.testConnection()).thenReturn(ConnectionResult.SUCCESS)
@@ -115,10 +111,11 @@ class ConnectionDialogViewModelTest : UnitTest() {
 
         assertTrue(sut.apply().get())
 
+        val expectedConfig = ConnectionConfiguration("bolt://neo4j", "Neo5k", configuration);
         if (savePassword) {
-            verify(preferences, never()).setPassword(any()) // Password unchanged, so we cannot overwrite it!
+            verify(configurationService).setConnectionConfiguration(eq(expectedConfig), eq(ConnectionConfigurationService.SaveOption.SAVE_ALL))
         } else {
-            verify(preferences).clearPassword() // However, we do need to clear it if the user desires so
+            verify(configurationService).setConnectionConfiguration(eq(expectedConfig), eq(ConnectionConfigurationService.SaveOption.EXCLUDE_PASSWORD))
         }
     }
 
@@ -130,10 +127,7 @@ class ConnectionDialogViewModelTest : UnitTest() {
 
         assertFalse(sut.apply().get())
 
-        verify(preferences, never()).connectionUri = any()
-        verify(preferences, never()).user = any()
-        verify(preferences, never()).setPassword(any())
-        verify(preferences, never()).clearPassword()
+        verify(configurationService, never()).setConnectionConfiguration(any(), any())
     }
 
     @ParameterizedTest

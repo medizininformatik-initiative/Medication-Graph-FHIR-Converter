@@ -2,7 +2,7 @@ plugins {
     id("java")
 }
 
-group = "de.medizininformatikinitiative"
+group = "de.medizininformatikinitiative.medgraph"
 version = "1.0"
 
 repositories {
@@ -17,10 +17,10 @@ dependencies {
     implementation("com.google.code.gson:gson:2.10.1") // JSON Library
     implementation("commons-cli:commons-cli:1.3.1") // Command Line Parser
 
+    testImplementation(project(":testFixtures")) // Reference to test fixtures
     testImplementation(platform("org.junit:junit-bom:5.10.0")) // JUnit 5
     testImplementation("org.junit.jupiter:junit-jupiter") // JUnit 5
     testImplementation("org.mockito:mockito-core:5.12.0") // Mocking
-    testImplementation("org.neo4j.test:neo4j-harness:5.19.0") // Neo4j local instance to test classes accessing the DB
 }
 
 tasks.test {
