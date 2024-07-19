@@ -4,7 +4,6 @@ import de.medizininformatikinitiative.medgraph.searchengine.model.*;
 import de.medizininformatikinitiative.medgraph.searchengine.model.identifiable.*;
 import de.medizininformatikinitiative.medgraph.searchengine.provider.BaseProvider;
 import de.medizininformatikinitiative.medgraph.searchengine.provider.MappedIdentifier;
-import org.checkerframework.checker.units.qual.A;
 
 import java.math.BigDecimal;
 import java.util.List;

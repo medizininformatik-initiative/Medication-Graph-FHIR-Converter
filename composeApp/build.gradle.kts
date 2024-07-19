@@ -46,6 +46,7 @@ kotlin {
         }
         commonTest.dependencies {
             val junit_version = "5.10.2"
+            implementation(project(":testFixtures")) // Test fixtures
             implementation("org.junit.jupiter:junit-jupiter-api:$junit_version") // JUnit 5
             implementation("org.junit.jupiter:junit-jupiter-params:$junit_version") // JUnit 5
             implementation("org.junit.jupiter:junit-jupiter-engine:$junit_version") // JUnit 5
