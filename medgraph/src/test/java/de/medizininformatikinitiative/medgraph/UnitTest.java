@@ -14,6 +14,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
+ * Basic superclass for unit tests. Takes care of mocking objects carrying the {@link org.mockito.Mock Mock} annotation,
+ * enables inserting dependencies via {@link #insertMockDependency(Class, Object)} and resetting the dependencies to
+ * their defaults after each test. Furthermore, this class provides a few utility functions for testing.
+ *
  * @author Markus Budeus
  */
 public class UnitTest {
@@ -45,16 +49,6 @@ public class UnitTest {
 		}
 	}
 
-	/**
-	 * Inserts a mock dependency into the {@link DI} class. Note that inserted mocks are cleared after every test.
-	 *
-	 * @param mock   the mock instance to insert
-	 */
-	@SuppressWarnings("unchecked")
-	protected <T> void insertMockDependency(T mock) {
-		DI.insertDependency((Class<T>) mock.getClass(), mock);
-		diDirty = true;
-	}
 	/**
 	 * Inserts a mock dependency into the {@link DI} class. Note that inserted mocks are cleared after every test.
 	 *

@@ -1,6 +1,10 @@
 package de.medizininformatikinitiative.medgraph.common.db;
 
 /**
+ * Service class managing the application's default database connection. Do not use this class to acquire a connection
+ * configuration which you then use to instantiate a database connection. Rather, use the
+ * {@link DatabaseConnectionService} to create a database connection.
+ *
  * @author Markus Budeus
  */
 public interface ConnectionConfigurationService {

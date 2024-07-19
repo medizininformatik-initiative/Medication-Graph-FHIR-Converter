@@ -34,7 +34,7 @@ public class HeadlessGraphDbPopulatorTest extends UnitTest {
 
 	@BeforeEach
 	void setUp() {
-		insertMockDependency(factory);
+		insertMockDependency(GraphDbPopulationFactory.class, factory);
 		Mockito.when(factory.prepareDatabasePopulation(notNull(), notNull(), any())).thenReturn(population);
 		sut = new HeadlessGraphDbPopulator();
 	}
