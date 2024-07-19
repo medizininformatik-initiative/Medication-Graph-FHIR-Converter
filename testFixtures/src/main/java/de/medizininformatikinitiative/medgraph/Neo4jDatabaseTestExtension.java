@@ -1,15 +1,12 @@
 package de.medizininformatikinitiative.medgraph;
 
-import de.medizininformatikinitiative.medgraph.common.db.ConnectionConfiguration;
-import de.medizininformatikinitiative.medgraph.common.db.ConnectionConfigurationService;
-import de.medizininformatikinitiative.medgraph.common.db.DatabaseConnection;
-import de.medizininformatikinitiative.medgraph.common.db.DatabaseConnectionService;
-import org.junit.jupiter.api.extension.*;
+import de.medizininformatikinitiative.medgraph.common.db.*;
+import org.junit.jupiter.api.extension.BeforeAllCallback;
+import org.junit.jupiter.api.extension.BeforeEachCallback;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.api.extension.ExtensionContext;
 import org.neo4j.harness.Neo4j;
 import org.neo4j.harness.Neo4jBuilders;
-
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 /**
  * Test extension which provides a local JVM Neo4j database instance for testing. Test classes can use
@@ -18,8 +15,8 @@ import static org.mockito.Mockito.when;
  * note your test case must subclass {@link UnitTest}, as its functionality for inserting mock dependencies is used.
  * <p>
  * For each test, the {@link ConnectionConfigurationService} and {@link DatabaseConnectionService} dependencies are set
- * to mock instances which point to the test database. However, you can override that by inserting your own dependencies
- * in your tests or in a {@link org.junit.jupiter.api.BeforeEach BeforeEach} method.
+ * to instances which point to the test database. However, you can override that by inserting your own dependencies in
+ * your tests or in a {@link org.junit.jupiter.api.BeforeEach BeforeEach} method.
  * <p>
  * The database is shared among all test classes using it and not reset between tests or test classes in any way. Write
  * access to the database is therefore highly discouraged.
@@ -32,7 +29,7 @@ public class Neo4jDatabaseTestExtension implements BeforeAllCallback, BeforeEach
 	private static volatile Neo4j neo4j;
 	private static volatile DatabaseConnection connection;
 
-	private static volatile ConnectionConfiguration connectionConfiguration;
+	private static volatile ApplicationDatabaseConnectionManager connectionManager;
 
 	/**
 	 * Returns the database instance.
@@ -81,18 +78,12 @@ public class Neo4jDatabaseTestExtension implements BeforeAllCallback, BeforeEach
 			// UnitTest, these dependencies will not be reset after the test and may spill into other tests, which
 			// can cause unexpected and hard-to-diagnose issues. By requiring the use of UnitTest, I assume the user
 			// is informed about the dependency injection mocking policy.
-			throw new UnsupportedOperationException("Your test class must extend UnitTest, as its dependency injection " +
-					"overriding mechanism is used!");
+			throw new UnsupportedOperationException(
+					"Your test class must extend UnitTest, as its dependency injection " +
+							"overriding mechanism is used!");
 		}
-		ConnectionConfigurationService connectionConfigurationService = mock();
-		DatabaseConnectionService databaseConnectionService = mock();
-
-		when(connectionConfigurationService.getConnectionConfiguration()).thenReturn(connectionConfiguration);
-		when(databaseConnectionService.createConnection()).thenAnswer(
-				req -> connectionConfiguration.createConnection());
-
-		unitTest.insertMockDependency(ConnectionConfigurationService.class, connectionConfigurationService);
-		unitTest.insertMockDependency(DatabaseConnectionService.class, databaseConnectionService);
+		unitTest.insertMockDependency(ConnectionConfigurationService.class, connectionManager);
+		unitTest.insertMockDependency(DatabaseConnectionService.class, connectionManager);
 	}
 
 	private static void initializeDatabase() {
@@ -100,13 +91,18 @@ public class Neo4jDatabaseTestExtension implements BeforeAllCallback, BeforeEach
 		                                                .withFixture(getDatabaseFixture())
 		                                                .build();
 
-		connectionConfiguration = new ConnectionConfiguration(
+		ConnectionConfiguration connectionConfiguration = new ConnectionConfiguration(
 				neo4j.boltURI().toString(),
 				"neo4j",
 				"neo4j".toCharArray()
 		);
+		connectionManager = new ApplicationDatabaseConnectionManager(new StubPreferencesWriter(), connectionConfiguration);
 
-		Neo4jDatabaseTestExtension.connection = connectionConfiguration.createConnection();
+		try {
+			Neo4jDatabaseTestExtension.connection = connectionManager.createConnection(true);
+		} catch (DatabaseConnectionException e) {
+			throw new IllegalStateException("Failed to connect to the Neo4j test harness database!");
+		}
 	}
 
 	private void registerShutdownHook(ExtensionContext extensionContext) {

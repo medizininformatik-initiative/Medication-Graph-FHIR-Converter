@@ -1,11 +1,17 @@
 package de.medizininformatikinitiative.medgraph.commandline;
 
 import de.medizininformatikinitiative.medgraph.UnitTest;
+import de.medizininformatikinitiative.medgraph.common.db.ConnectionFailureReason;
+import de.medizininformatikinitiative.medgraph.common.db.DatabaseConnection;
+import de.medizininformatikinitiative.medgraph.common.db.DatabaseConnectionException;
+import de.medizininformatikinitiative.medgraph.common.db.DatabaseConnectionService;
 import de.medizininformatikinitiative.medgraph.graphdbpopulator.GraphDbPopulation;
 import de.medizininformatikinitiative.medgraph.graphdbpopulator.GraphDbPopulationFactory;
 import org.apache.commons.cli.CommandLine;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 
@@ -29,13 +35,20 @@ public class HeadlessGraphDbPopulatorTest extends UnitTest {
 	private GraphDbPopulation population;
 	@Mock
 	private CommandLine commandLine;
+	@Mock
+	private DatabaseConnectionService databaseConnectionService;
+	@Mock
+	private DatabaseConnection connection;
 
 	private HeadlessGraphDbPopulator sut;
 
 	@BeforeEach
-	void setUp() {
+	void setUp() throws DatabaseConnectionException {
 		insertMockDependency(GraphDbPopulationFactory.class, factory);
+		insertMockDependency(DatabaseConnectionService.class, databaseConnectionService);
 		Mockito.when(factory.prepareDatabasePopulation(notNull(), notNull(), any())).thenReturn(population);
+		Mockito.when(databaseConnectionService.createConnection()).thenReturn(connection);
+		Mockito.when(databaseConnectionService.createConnection(anyBoolean())).thenReturn(connection);
 		sut = new HeadlessGraphDbPopulator();
 	}
 
@@ -79,9 +92,21 @@ public class HeadlessGraphDbPopulatorTest extends UnitTest {
 				List.of("This", "is", "n\0t fine")).code);
 	}
 
-	@Test
-	void neo4jUnreachable() {
+	@ParameterizedTest
+	@EnumSource
+	void neo4jUnreachable(ConnectionFailureReason failureReason) throws DatabaseConnectionException {
+		RuntimeException cause = new RuntimeException("RIP");
+		when(databaseConnectionService.createConnection(true)).thenThrow(
+				new DatabaseConnectionException(failureReason, "Ooops...", cause));
 
+		ExitStatus exitStatus = sut.invoke(commandLine, List.of("A", "2", "5"));
+
+		switch (failureReason) {
+			case INVALID_CONNECTION_STRING -> assertEquals(exitStatus, ExitStatus.INVALID_DB_CONNECTION_STRING);
+			case SERVICE_UNAVAILABLE -> assertEquals(exitStatus, ExitStatus.NEO4J_SERVICE_UNAVAILABLE);
+			case AUTHENTICATION_FAILED -> assertEquals(exitStatus, ExitStatus.NEO4J_AUTHENTICATION_FAILED);
+			case INTERNAL_ERROR -> assertEquals(exitStatus, ExitStatus.internalError(cause));
+		}
 	}
 
 	@Test

@@ -1,15 +1,11 @@
 package de.medizininformatikinitiative.medgraph.common.db;
 
 /**
- * Indicates the result of a connection attempt to the Neo4j database.
+ * Indicates the underlying cause of a failed connection attempt to the Neo4j database.
  *
  * @author Markus Budeus
  */
-public enum ConnectionResult {
-	/**
-	 * The connection was successful.
-	 */
-	SUCCESS,
+public enum ConnectionFailureReason {
 	/**
 	 * The provided connection URI is invalid.
 	 */

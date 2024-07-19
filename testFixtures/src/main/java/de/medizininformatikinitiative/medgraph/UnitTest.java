@@ -1,5 +1,8 @@
 package de.medizininformatikinitiative.medgraph;
 
+import de.medizininformatikinitiative.medgraph.common.db.DatabaseConnection;
+import de.medizininformatikinitiative.medgraph.common.db.DatabaseConnectionException;
+import de.medizininformatikinitiative.medgraph.common.db.DatabaseConnectionService;
 import de.medizininformatikinitiative.medgraph.searchengine.tracing.IntRange;
 import de.medizininformatikinitiative.medgraph.searchengine.tracing.SubstringUsageStatement;
 import org.junit.jupiter.api.AfterEach;
@@ -12,6 +15,10 @@ import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.mockito.ArgumentMatchers.anyBoolean;
+import static org.mockito.ArgumentMatchers.notNull;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 /**
  * Basic superclass for unit tests. Takes care of mocking objects carrying the {@link org.mockito.Mock Mock} annotation,
@@ -58,6 +65,25 @@ public class UnitTest {
 	protected <T> void insertMockDependency(Class<T> target, T mock) {
 		DI.insertDependency(target, mock);
 		diDirty = true;
+	}
+
+	/**
+	 * Adds a mock {@link DatabaseConnectionService} into the dependency injection, which creates new, also mocked
+	 * {@link DatabaseConnection}s when requested (unless you overwrite the mock configuration, of course).
+	 *
+	 * @return the mocked {@link DatabaseConnectionService}
+	 */
+	protected DatabaseConnectionService insertDatabaseConnectionServiceMock() {
+		DatabaseConnectionService service = mock();
+		try {
+			when(service.createConnection()).thenAnswer(req -> mock(DatabaseConnection.class));
+			when(service.createConnection(anyBoolean())).thenAnswer(req -> mock(DatabaseConnection.class));
+			when(service.createConnection(notNull(), anyBoolean())).thenAnswer(req -> mock(DatabaseConnection.class));
+			insertMockDependency(DatabaseConnectionService.class, service);
+		} catch (DatabaseConnectionException e) {
+			throw new RuntimeException(e);
+		}
+		return service;
 	}
 
 	/**

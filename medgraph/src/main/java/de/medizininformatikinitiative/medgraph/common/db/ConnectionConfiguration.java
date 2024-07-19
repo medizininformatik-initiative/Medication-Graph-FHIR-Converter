@@ -3,6 +3,9 @@ package de.medizininformatikinitiative.medgraph.common.db;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Arrays;
+import java.util.Objects;
+
 /**
  * Stores connection configuration for a {@link DatabaseConnection}. This class is immutable.
  *
@@ -84,42 +87,43 @@ public class ConnectionConfiguration {
 	 * connection is attempted with the empty string as password.
 	 */
 	@NotNull
-	public DatabaseConnection createConnection() {
+	DatabaseConnection createConnection() {
 		return new DatabaseConnection(uri, user, password != null ? password : new char[0]);
 	}
 
 	/**
 	 * Saves this configuration to the given preferences.
 	 *
-	 * @param preferences  the preferences object to which to save
+	 * @param preferencesWriter  the preferences writer to which to save
 	 * @param savePassword if true, saves the password as well, otherwise erases the stored password from the
 	 *                     preferences if it is present
 	 */
-	public void save(ConnectionPreferences preferences, boolean savePassword) {
-		preferences.setConnectionUri(uri);
-		preferences.setUser(user);
+	void save(ConnectionPreferencesWriter preferencesWriter, boolean savePassword) {
+		preferencesWriter.setConnectionUri(uri);
+		preferencesWriter.setUser(user);
 		if (savePassword && password != null) {
-			preferences.setPassword(password);
+			preferencesWriter.setPassword(password);
 		} else {
-			preferences.clearPassword();
-		}
-	}
-
-	/**
-	 * Attempts to create a connection to the database using this configuration and reports the result.
-	 *
-	 * @return a {@link ConnectionResult} indicating the result of the connection attempt
-	 */
-	public ConnectionResult testConnection() {
-		try (DatabaseConnection ignored = DatabaseConnectionUtil.createConnection(this, true)){
-			return ConnectionResult.SUCCESS;
-		} catch (DatabaseConnectionException e) {
-			return e.getConnectionResult();
+			preferencesWriter.clearPassword();
 		}
 	}
 
 	@Override
 	public String toString() {
 		return uri + " (" + user + ")";
+	}
+
+	@Override
+	public boolean equals(Object object) {
+		if (this == object) return true;
+		if (object == null || getClass() != object.getClass()) return false;
+		ConnectionConfiguration that = (ConnectionConfiguration) object;
+		return Objects.equals(uri, that.uri) && Objects.equals(user,
+				that.user) && Objects.deepEquals(password, that.password);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(uri, user);
 	}
 }
