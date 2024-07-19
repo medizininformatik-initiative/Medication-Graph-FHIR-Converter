@@ -10,13 +10,13 @@ import de.medizininformatikinitiative.medgraph.common.db.ConnectionConfiguration
 import de.medizininformatikinitiative.medgraph.common.db.ConnectionConfigurationService
 import de.medizininformatikinitiative.medgraph.common.db.ConnectionConfigurationService.SaveOption.*
 import de.medizininformatikinitiative.medgraph.common.db.ConnectionFailureReason
+import de.medizininformatikinitiative.medgraph.common.db.ConnectionTestService
 import de.medizininformatikinitiative.medgraph.common.db.DatabaseConnectionException
 import de.medizininformatikinitiative.medgraph.common.db.DatabaseConnectionService
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.util.concurrent.CompletableFuture
-import javax.xml.crypto.Data
 
 /**
  * Manages the state of the database connection dialog.
@@ -31,7 +31,7 @@ class ConnectionDialogViewModel(
     /**
      * The database connection service to use for testing the connection configuration.
      */
-    private val connectionManager: DatabaseConnectionService = DI.get(DatabaseConnectionService::class.java)
+    private val testService: ConnectionTestService = DI.get(ConnectionTestService::class.java)
 ) : ScreenModel {
 
     enum class ConnectionResult {
@@ -136,11 +136,11 @@ class ConnectionDialogViewModel(
     suspend fun testConnection(config: ConnectionConfiguration): Boolean {
         testingConnection.value = true
         try {
-            connectionManager.verifyConnection(config)
+            testService.verifyConnection(config)
             connectionTestResult.value = ConnectionResult.SUCCESS
             return true
         } catch (e: DatabaseConnectionException) {
-            connectionTestResult.value = when (e.connectionResult) {
+            connectionTestResult.value = when (e.failureReason) {
                 ConnectionFailureReason.INVALID_CONNECTION_STRING -> ConnectionResult.INVALID_CONNECTION_STRING
                 ConnectionFailureReason.SERVICE_UNAVAILABLE -> ConnectionResult.SERVICE_UNAVAILABLE
                 ConnectionFailureReason.AUTHENTICATION_FAILED -> ConnectionResult.AUTHENTICATION_FAILED
