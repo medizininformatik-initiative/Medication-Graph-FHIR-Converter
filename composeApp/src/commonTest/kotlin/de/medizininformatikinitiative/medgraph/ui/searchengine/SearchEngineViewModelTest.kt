@@ -8,7 +8,7 @@ import de.medizininformatikinitiative.medgraph.searchengine.model.SearchQuery
 import de.medizininformatikinitiative.medgraph.searchengine.model.identifiable.Product
 import de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject.MatchingObject
 import de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject.OriginalMatch
-import de.medizininformatikinitiative.medgraph.ui.UnitTest
+import de.medizininformatikinitiative.medgraph.UnitTest
 import de.medizininformatikinitiative.medgraph.ui.searchengine.results.SearchResultsListViewModel
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Assertions.assertEquals

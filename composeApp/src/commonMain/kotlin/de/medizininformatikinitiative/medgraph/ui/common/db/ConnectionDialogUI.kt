@@ -15,8 +15,7 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
-import de.medizininformatikinitiative.medgraph.common.db.ConnectionConfiguration
-import de.medizininformatikinitiative.medgraph.common.db.ConnectionResult
+import de.medizininformatikinitiative.medgraph.common.db.ConnectionFailureReason
 import de.medizininformatikinitiative.medgraph.ui.resources.StringRes
 
 @Composable
@@ -129,23 +128,23 @@ private fun ConnectionTestStatus(viewModel: ConnectionDialogViewModel, modifier:
             Text(StringRes.db_connection_dialog_test_underway)
         } else {
             when (viewModel.connectionTestResult.value) {
-                ConnectionResult.SUCCESS -> {
+                ConnectionDialogViewModel.ConnectionResult.SUCCESS -> {
                     Text(StringRes.db_connection_dialog_test_success)
                 }
 
-                ConnectionResult.INVALID_CONNECTION_STRING -> {
+                ConnectionDialogViewModel.ConnectionResult.INVALID_CONNECTION_STRING -> {
                     Text(StringRes.db_connection_dialog_test_invalid_connection_string)
                 }
 
-                ConnectionResult.SERVICE_UNAVAILABLE -> {
+                ConnectionDialogViewModel.ConnectionResult.SERVICE_UNAVAILABLE -> {
                     Text(StringRes.db_connection_dialog_test_service_unavailable)
                 }
 
-                ConnectionResult.AUTHENTICATION_FAILED -> {
+                ConnectionDialogViewModel.ConnectionResult.AUTHENTICATION_FAILED -> {
                     Text(StringRes.db_connection_dialog_test_authentication_failed)
                 }
 
-                ConnectionResult.INTERNAL_ERROR -> {
+                ConnectionDialogViewModel.ConnectionResult.INTERNAL_ERROR -> {
                     Text(StringRes.db_connection_dialog_test_internal_error)
                 }
 

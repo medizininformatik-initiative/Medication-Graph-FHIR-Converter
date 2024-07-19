@@ -49,9 +49,10 @@ public class DI {
 
 		dependencyMap.put(GraphDbPopulationFactory.class, GraphDbPopulation::new);
 		dependencyMap.put(FhirExportFactory.class, FhirExport::new);
-		dependencyMap.put(ConnectionPreferences.class, ApplicationPreferences.getDatabaseConnectionPreferences());
+		ConnectionPreferences preferences = ApplicationPreferences.getDatabaseConnectionPreferences();
+		dependencyMap.put(ConnectionPreferences.class, preferences);
 
-		ApplicationDatabaseConnectionManager conManager = new ApplicationDatabaseConnectionManager();
+		ApplicationDatabaseConnectionManager conManager = new ApplicationDatabaseConnectionManager(preferences);
 		dependencyMap.put(ConnectionConfigurationService.class, conManager);
 		dependencyMap.put(DatabaseConnectionService.class, conManager);
 	}

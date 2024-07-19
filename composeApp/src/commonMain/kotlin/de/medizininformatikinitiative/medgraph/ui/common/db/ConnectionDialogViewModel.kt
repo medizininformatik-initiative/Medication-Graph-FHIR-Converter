@@ -5,18 +5,18 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import cafe.adriel.voyager.core.model.ScreenModel
 import cafe.adriel.voyager.core.model.screenModelScope
-import de.medizininformatikinitiative.medgraph.ApplicationPreferences
 import de.medizininformatikinitiative.medgraph.DI
 import de.medizininformatikinitiative.medgraph.common.db.ConnectionConfiguration
 import de.medizininformatikinitiative.medgraph.common.db.ConnectionConfigurationService
-import de.medizininformatikinitiative.medgraph.common.db.ConnectionConfigurationService.SaveOption
 import de.medizininformatikinitiative.medgraph.common.db.ConnectionConfigurationService.SaveOption.*
-import de.medizininformatikinitiative.medgraph.common.db.ConnectionPreferences
-import de.medizininformatikinitiative.medgraph.common.db.ConnectionResult
+import de.medizininformatikinitiative.medgraph.common.db.ConnectionFailureReason
+import de.medizininformatikinitiative.medgraph.common.db.DatabaseConnectionException
+import de.medizininformatikinitiative.medgraph.common.db.DatabaseConnectionService
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.util.concurrent.CompletableFuture
+import javax.xml.crypto.Data
 
 /**
  * Manages the state of the database connection dialog.
@@ -27,8 +27,20 @@ class ConnectionDialogViewModel(
     /**
      * The connection manager to interact with.
      */
-    private val connectionManager: ConnectionConfigurationService = DI.get(ConnectionConfigurationService::class.java)
+    private val configManager: ConnectionConfigurationService = DI.get(ConnectionConfigurationService::class.java),
+    /**
+     * The database connection service to use for testing the connection configuration.
+     */
+    private val connectionManager: DatabaseConnectionService = DI.get(DatabaseConnectionService::class.java)
 ) : ScreenModel {
+
+    enum class ConnectionResult {
+        SUCCESS,
+        INVALID_CONNECTION_STRING,
+        SERVICE_UNAVAILABLE,
+        AUTHENTICATION_FAILED,
+        INTERNAL_ERROR,
+    }
 
     val uri: MutableState<String>
     val user: MutableState<String>
@@ -62,7 +74,7 @@ class ConnectionDialogViewModel(
     val connectionTestResult: MutableState<ConnectionResult?> = mutableStateOf(null)
 
     /**
-     * The base configuration acquried from the [connectionManager]. Contains the password in case a saved password
+     * The base configuration acquried from the [configManager]. Contains the password in case a saved password
      * exists. Since we cannot extract this password, we need to store this whole configuration. The password
      * is extracted indirectly in [createConfiguration], where this instance gets passed to the new config.
      */
@@ -71,7 +83,7 @@ class ConnectionDialogViewModel(
     private var completeOnSuccessfulTest = false
 
     init {
-        configuration = connectionManager.connectionConfiguration
+        configuration = configManager.connectionConfiguration
         uri = mutableStateOf(configuration.uri)
         user = mutableStateOf(configuration.user)
         passwordInternal = mutableStateOf("")
@@ -108,7 +120,7 @@ class ConnectionDialogViewModel(
     private suspend fun applyInternal(): Boolean {
         val config = createConfiguration();
         if (testConnection(config)) {
-            connectionManager.setConnectionConfiguration(
+            configManager.setConnectionConfiguration(
                 config, if (savePassword.value) SAVE_ALL else EXCLUDE_PASSWORD
             )
             return true
@@ -124,9 +136,17 @@ class ConnectionDialogViewModel(
     suspend fun testConnection(config: ConnectionConfiguration): Boolean {
         testingConnection.value = true
         try {
-            val result = config.testConnection()
-            connectionTestResult.value = result
-            return result == ConnectionResult.SUCCESS;
+            connectionManager.verifyConnection(config)
+            connectionTestResult.value = ConnectionResult.SUCCESS
+            return true
+        } catch (e: DatabaseConnectionException) {
+            connectionTestResult.value = when (e.connectionResult) {
+                ConnectionFailureReason.INVALID_CONNECTION_STRING -> ConnectionResult.INVALID_CONNECTION_STRING
+                ConnectionFailureReason.SERVICE_UNAVAILABLE -> ConnectionResult.SERVICE_UNAVAILABLE
+                ConnectionFailureReason.AUTHENTICATION_FAILED -> ConnectionResult.AUTHENTICATION_FAILED
+                ConnectionFailureReason.INTERNAL_ERROR -> ConnectionResult.INTERNAL_ERROR
+            }
+            return false
         } finally {
             testingConnection.value = false
             completeOnSuccessfulTest = false
