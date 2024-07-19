@@ -1,5 +1,7 @@
 package de.medizininformatikinitiative.medgraph.common.db;
 
+import org.jetbrains.annotations.NotNull;
+
 /**
  * Indicates that an attempt to start a {@link DatabaseConnection} was not successful.
  *
@@ -10,19 +12,21 @@ public class DatabaseConnectionException extends Exception {
 	/**
 	 * The result of the connection attempt (i.e. the reason why the database connection was unsuccessful.)
 	 */
-	private final ConnectionResult connectionResult;
+	@NotNull
+	private final ConnectionFailureReason connectionFailureReason;
 
-	public DatabaseConnectionException(ConnectionResult connectionResult, String message) {
+	public DatabaseConnectionException(@NotNull ConnectionFailureReason connectionFailureReason, String message) {
 		super(message);
-		this.connectionResult = connectionResult;
+		this.connectionFailureReason = connectionFailureReason;
 	}
 
-	public DatabaseConnectionException(ConnectionResult connectionResult, String message, Throwable cause) {
+	public DatabaseConnectionException(@NotNull ConnectionFailureReason connectionFailureReason, String message, Throwable cause) {
 		super(message, cause);
-		this.connectionResult = connectionResult;
+		this.connectionFailureReason = connectionFailureReason;
 	}
 
-	public ConnectionResult getConnectionResult() {
-		return connectionResult;
+	@NotNull
+	public ConnectionFailureReason getConnectionResult() {
+		return connectionFailureReason;
 	}
 }

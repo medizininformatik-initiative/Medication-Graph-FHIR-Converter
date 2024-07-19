@@ -53,7 +53,6 @@ public abstract class CommandLineUtility {
 		} catch (DatabaseConnectionException e) {
 			logger.log(Level.ERROR, "Failed to connect to database!", e);
 			return switch (e.getConnectionResult()) {
-				case SUCCESS -> throw new IllegalStateException("DatabaseConnectionException with SUCCESS connection result.");
 				case INVALID_CONNECTION_STRING -> ExitStatus.INVALID_DB_CONNECTION_STRING;
 				case SERVICE_UNAVAILABLE -> ExitStatus.NEO4J_SERVICE_UNAVAILABLE;
 				case AUTHENTICATION_FAILED -> ExitStatus.NEO4J_AUTHENTICATION_FAILED;

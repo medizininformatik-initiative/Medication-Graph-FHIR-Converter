@@ -1,11 +1,11 @@
 package de.medizininformatikinitiative.medgraph.ui.desktop.fhirexporter
 
+import de.medizininformatikinitiative.medgraph.TempDirectoryTestExtension
 import de.medizininformatikinitiative.medgraph.common.mvc.NamedProgressable
 import de.medizininformatikinitiative.medgraph.fhirexporter.FhirExport
 import de.medizininformatikinitiative.medgraph.fhirexporter.FhirExportFactory
-import de.medizininformatikinitiative.medgraph.ui.TempDirectoryTestExtension
-import de.medizininformatikinitiative.medgraph.ui.UnitTest
 import de.medizininformatikinitiative.medgraph.ui.resources.StringRes
+import de.medizininformatikinitiative.medgraph.UnitTest
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.BeforeEach
 
@@ -35,6 +35,7 @@ class FhirExporterScreenModelTest : UnitTest() {
 
     @BeforeEach
     fun setUp(tempDirectory: Path) {
+        insertDatabaseConnectionServiceMock()
         sut = FhirExporterScreenModel(fhirExporter)
         `when`(fhirExporter.prepareExport(any())).thenReturn(fhirExport)
         sut.exportPath = tempDirectory.toAbsolutePath().toString()

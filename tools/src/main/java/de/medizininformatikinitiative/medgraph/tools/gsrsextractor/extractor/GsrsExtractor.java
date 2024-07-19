@@ -1,6 +1,9 @@
 package de.medizininformatikinitiative.medgraph.tools.gsrsextractor.extractor;
 
+import de.medizininformatikinitiative.medgraph.DI;
+import de.medizininformatikinitiative.medgraph.common.db.ApplicationDatabaseConnectionManager;
 import de.medizininformatikinitiative.medgraph.common.db.DatabaseConnection;
+import de.medizininformatikinitiative.medgraph.common.db.DatabaseConnectionException;
 import de.medizininformatikinitiative.medgraph.tools.gsrsextractor.GsrsApiClient;
 import org.neo4j.driver.Result;
 import org.neo4j.driver.Session;
@@ -28,7 +31,7 @@ public class GsrsExtractor {
 
 		GsrsApiClient client = new GsrsApiClient();
 
-		try (DatabaseConnection connection = DatabaseConnection.createDefault();
+		try (DatabaseConnection connection = DI.get(ApplicationDatabaseConnectionManager.class).createConnection(true);
 		     Session session = connection.createSession()) {
 
 			Result result = session.run(
@@ -56,6 +59,10 @@ public class GsrsExtractor {
 
 			writeResultsToFile(resultIterator, OUT_PATH);
 
+		} catch (DatabaseConnectionException e) {
+			throw new UnsupportedOperationException(
+					"Failed to connect to Neo4j database. You probalby have no locally saved configuration. " +
+							"Please initialize the DatabaseConnection() object manually.", e);
 		}
 	}
 

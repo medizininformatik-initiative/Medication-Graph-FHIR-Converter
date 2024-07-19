@@ -27,6 +27,7 @@ class GraphDbPopulatorSupportScreenModelTest : UnitTest() {
 
     @BeforeEach
     fun setUp() {
+        insertDatabaseConnectionServiceMock()
         `when`(graphDbPopulationFactory.prepareDatabasePopulation(any(), any(), any())).thenReturn(graphDbPopulation)
         sut = GraphDbPopulatorScreenModel(graphDbPopulationFactory)
 

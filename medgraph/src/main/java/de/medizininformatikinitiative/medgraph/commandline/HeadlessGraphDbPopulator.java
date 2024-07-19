@@ -9,6 +9,7 @@ import de.medizininformatikinitiative.medgraph.graphdbpopulator.GraphDbPopulatio
 import org.apache.commons.cli.CommandLine;
 
 import java.io.IOException;
+import java.nio.file.AccessDeniedException;
 import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
 import java.util.List;
@@ -48,12 +49,16 @@ public class HeadlessGraphDbPopulator extends CommandLineUtility {
 
 		final Path fixedAmicePath = amicePath;
 		return withDatabaseConnection(connection -> {
-			GraphDbPopulation population = factory.prepareDatabasePopulation(mmiPharmindexPath, neo4jImportPath, fixedAmicePath);
+			GraphDbPopulation population = factory.prepareDatabasePopulation(mmiPharmindexPath, neo4jImportPath,
+					fixedAmicePath);
 			try {
 				logger.log(Level.INFO, "Starting headless database population.");
 				population.executeDatabasePopulation(connection);
 				logger.log(Level.INFO, "Headless database population completed.");
 				return ExitStatus.SUCCESS;
+			} catch (AccessDeniedException e) {
+				logger.log(Level.ERROR, "Access denied: " + e.getMessage());
+				return ExitStatus.accessDenied(e);
 			} catch (IOException e) {
 				logger.log(Level.ERROR, "An I/O exception occurred.", e);
 				return ExitStatus.ioException(e);
@@ -68,6 +73,6 @@ public class HeadlessGraphDbPopulator extends CommandLineUtility {
 
 	public String getUsage() {
 		return USAGE;
-	};
+	}
 
 }

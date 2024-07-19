@@ -3,8 +3,10 @@ package de.medizininformatikinitiative.medgraph.ui.common.db
 import de.medizininformatikinitiative.medgraph.UnitTest
 import de.medizininformatikinitiative.medgraph.common.db.ConnectionConfiguration
 import de.medizininformatikinitiative.medgraph.common.db.ConnectionConfigurationService
-import de.medizininformatikinitiative.medgraph.common.db.ConnectionPreferences
-import de.medizininformatikinitiative.medgraph.common.db.ConnectionResult
+import de.medizininformatikinitiative.medgraph.common.db.ConnectionFailureReason
+import de.medizininformatikinitiative.medgraph.common.db.DatabaseConnectionException
+import de.medizininformatikinitiative.medgraph.common.db.DatabaseConnectionService
+import de.medizininformatikinitiative.medgraph.ui.common.db.ConnectionDialogViewModel.ConnectionResult
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -14,6 +16,8 @@ import org.junit.jupiter.params.provider.ValueSource
 import org.mockito.Mock
 import org.mockito.Mockito.*
 import java.util.concurrent.ExecutionException
+import javax.xml.crypto.Data
+import kotlin.math.exp
 
 /**
  * @author Markus Budeus
@@ -25,6 +29,9 @@ class ConnectionDialogViewModelTest : UnitTest() {
 
     @Mock
     lateinit var configurationService: ConnectionConfigurationService
+
+    @Mock
+    lateinit var connectionService: DatabaseConnectionService
 
     @Mock
     lateinit var configuration: ConnectionConfiguration
@@ -39,12 +46,13 @@ class ConnectionDialogViewModelTest : UnitTest() {
         `when`(configurationService.connectionConfiguration).thenReturn(configuration)
 
         insertMockDependency(ConnectionConfigurationService::class.java, configurationService)
+        insertMockDependency(DatabaseConnectionService::class.java, connectionService)
 
         setupSut()
     }
 
     private fun setupSut() {
-        sut = ConnectionDialogViewModel(configurationService)
+        sut = ConnectionDialogViewModel(configurationService, connectionService)
     }
 
     @Test
@@ -87,7 +95,6 @@ class ConnectionDialogViewModelTest : UnitTest() {
     @ParameterizedTest(name = "savePassword: {0}")
     @ValueSource(booleans = booleanArrayOf(false, true))
     fun apply(savePassword: Boolean) {
-        `when`(configuration.testConnection()).thenReturn(ConnectionResult.SUCCESS)
         sut.uri.value = "bolt://neo4j"
         sut.user.value = "Neo5k"
         sut.setPassword("Password!")
@@ -97,32 +104,48 @@ class ConnectionDialogViewModelTest : UnitTest() {
 
         val expectedConfig = ConnectionConfiguration("bolt://neo4j", "Neo5k", "Password!".toCharArray());
         if (savePassword) {
-            verify(configurationService).setConnectionConfiguration(eq(expectedConfig), eq(ConnectionConfigurationService.SaveOption.SAVE_ALL))
+            verify(configurationService).setConnectionConfiguration(
+                eq(expectedConfig),
+                eq(ConnectionConfigurationService.SaveOption.SAVE_ALL)
+            )
         } else {
-            verify(configurationService).setConnectionConfiguration(eq(expectedConfig), eq(ConnectionConfigurationService.SaveOption.EXCLUDE_PASSWORD))
+            verify(configurationService).setConnectionConfiguration(
+                eq(expectedConfig),
+                eq(ConnectionConfigurationService.SaveOption.EXCLUDE_PASSWORD)
+            )
         }
     }
 
     @ParameterizedTest(name = "savePassword: {0}")
     @ValueSource(booleans = booleanArrayOf(false, true))
     fun applyWithUnchangedPassword(savePassword: Boolean) {
-        `when`(configuration.testConnection()).thenReturn(ConnectionResult.SUCCESS)
         sut.savePassword.value = savePassword
 
         assertTrue(sut.apply().get())
 
-        val expectedConfig = ConnectionConfiguration("bolt://neo4j", "Neo5k", configuration);
+        val expectedConfig = ConnectionConfiguration(URI, USER, configuration);
         if (savePassword) {
-            verify(configurationService).setConnectionConfiguration(eq(expectedConfig), eq(ConnectionConfigurationService.SaveOption.SAVE_ALL))
+            verify(configurationService).setConnectionConfiguration(
+                eq(expectedConfig),
+                eq(ConnectionConfigurationService.SaveOption.SAVE_ALL)
+            )
         } else {
-            verify(configurationService).setConnectionConfiguration(eq(expectedConfig), eq(ConnectionConfigurationService.SaveOption.EXCLUDE_PASSWORD))
+            verify(configurationService).setConnectionConfiguration(
+                eq(expectedConfig),
+                eq(ConnectionConfigurationService.SaveOption.EXCLUDE_PASSWORD)
+            )
         }
     }
 
     @ParameterizedTest
     @ValueSource(booleans = booleanArrayOf(false, true))
     fun applyFails(savePassword: Boolean) {
-        `when`(configuration.testConnection()).thenReturn(ConnectionResult.AUTHENTICATION_FAILED)
+        `when`(connectionService.verifyConnection(notNull())).thenThrow(
+            DatabaseConnectionException(
+                ConnectionFailureReason.AUTHENTICATION_FAILED,
+                "Invalid authentication provided."
+            )
+        )
         sut.savePassword.value = savePassword
 
         assertFalse(sut.apply().get())
@@ -132,17 +155,27 @@ class ConnectionDialogViewModelTest : UnitTest() {
 
     @ParameterizedTest
     @EnumSource
-    fun testConnection(result: ConnectionResult) {
-        `when`(configuration.testConnection()).thenReturn(result)
+    fun testConnection(result: ConnectionFailureReason) {
+        `when`(connectionService.verifyConnection(notNull())).thenThrow(
+            DatabaseConnectionException(result, "Something went wrong.")
+        )
 
-        assertEquals(result == ConnectionResult.SUCCESS, sut.testConnection().get())
-        assertEquals(result, sut.connectionTestResult.value)
+        assertFalse(sut.testConnection().get())
+
+        val expected = when(result) {
+            ConnectionFailureReason.INVALID_CONNECTION_STRING -> ConnectionResult.INVALID_CONNECTION_STRING
+            ConnectionFailureReason.SERVICE_UNAVAILABLE -> ConnectionResult.SERVICE_UNAVAILABLE
+            ConnectionFailureReason.AUTHENTICATION_FAILED -> ConnectionResult.AUTHENTICATION_FAILED
+            ConnectionFailureReason.INTERNAL_ERROR -> ConnectionResult.INTERNAL_ERROR
+        }
+
+        assertEquals(expected, sut.connectionTestResult.value)
     }
 
     @Test
     fun testConnectionFails() {
         val exception = IllegalStateException("This is a test, so you fail.")
-        `when`(configuration.testConnection()).thenThrow(exception)
+        `when`(connectionService.verifyConnection(notNull())).thenThrow(exception)
 
         try {
             sut.testConnection().get()

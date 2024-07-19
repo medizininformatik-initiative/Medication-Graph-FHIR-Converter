@@ -14,7 +14,7 @@ import java.util.prefs.Preferences;
  *
  * @author Markus Budeus
  */
-public class ConnectionPreferences {
+public class ConnectionPreferences implements ConnectionPreferencesWriter {
 
 	public static final String DEFAULT_URI = "neo4j://localhost:7687";
 	public static final String DEFAULT_USER = "neo4j";
@@ -33,6 +33,7 @@ public class ConnectionPreferences {
 	 *
 	 * @param connectionUri the connection uri to store
 	 */
+	@Override
 	public void setConnectionUri(@NotNull String connectionUri) {
 		node.put(URI_KEY, connectionUri);
 	}
@@ -45,11 +46,7 @@ public class ConnectionPreferences {
 		return node.get(URI_KEY, DEFAULT_URI);
 	}
 
-	/**
-	 * Sets the username which is to be stored in the preferences.
-	 *
-	 * @param user the username to stroe
-	 */
+	@Override
 	public void setUser(@NotNull String user) {
 		node.put(USER_KEY, user);
 	}
@@ -62,18 +59,12 @@ public class ConnectionPreferences {
 		return node.get(USER_KEY, DEFAULT_USER);
 	}
 
-	/**
-	 * Sets the password which is to be stored in the preferences.
-	 *
-	 * @param password the password to stroe
-	 */
+	@Override
 	public void setPassword(char @NotNull [] password) {
 		node.putByteArray(PASSWORD_KEY, toByteArray(password));
 	}
 
-	/**
-	 * Clears a stored password if there is one.
-	 */
+	@Override
 	public void clearPassword() {
 		node.remove(PASSWORD_KEY);
 	}
