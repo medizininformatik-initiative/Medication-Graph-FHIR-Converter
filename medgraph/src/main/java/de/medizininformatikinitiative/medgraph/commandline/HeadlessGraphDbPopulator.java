@@ -7,6 +7,8 @@ import de.medizininformatikinitiative.medgraph.common.logging.Logger;
 import de.medizininformatikinitiative.medgraph.graphdbpopulator.GraphDbPopulation;
 import de.medizininformatikinitiative.medgraph.graphdbpopulator.GraphDbPopulationFactory;
 import org.apache.commons.cli.CommandLine;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import java.io.IOException;
 import java.nio.file.AccessDeniedException;
@@ -26,6 +28,7 @@ public class HeadlessGraphDbPopulator extends CommandLineUtility {
 	static final String CALL_ARG = "populate";
 
 	static final String USAGE = CALL_ARG + " <path_to_mmi_pharmindex_files> <path_to_neo4j_import_dir> [path_to_amice_dataset]";
+	private static final Log log = LogFactory.getLog(HeadlessGraphDbPopulator.class);
 
 	private final GraphDbPopulationFactory factory = DI.get(GraphDbPopulationFactory.class);
 
@@ -48,6 +51,13 @@ public class HeadlessGraphDbPopulator extends CommandLineUtility {
 		}
 
 		final Path fixedAmicePath = amicePath;
+
+		String format = "%31s %s";
+		logger.log(Level.DEBUG, String.format(format, "Path to MMI Pharmindex files:", mmiPharmindexPath.toAbsolutePath()));
+		logger.log(Level.DEBUG,  String.format(format, "Path to Neo4j import directory:", neo4jImportPath.toAbsolutePath()));
+		if (amicePath != null)
+			logger.log(Level.DEBUG,  String.format(format, "Path to AMIce data file:", amicePath.toAbsolutePath()));
+
 		return withDatabaseConnection(connection -> {
 			GraphDbPopulation population = factory.prepareDatabasePopulation(mmiPharmindexPath, neo4jImportPath,
 					fixedAmicePath);

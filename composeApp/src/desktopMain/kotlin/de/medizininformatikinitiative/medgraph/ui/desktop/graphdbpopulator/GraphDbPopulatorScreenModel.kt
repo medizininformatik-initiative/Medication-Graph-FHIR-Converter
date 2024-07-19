@@ -6,12 +6,12 @@ import androidx.compose.runtime.setValue
 import cafe.adriel.voyager.core.model.ScreenModel
 import cafe.adriel.voyager.core.model.screenModelScope
 import de.medizininformatikinitiative.medgraph.DI
-import de.medizininformatikinitiative.medgraph.common.db.DatabaseConnection
 import de.medizininformatikinitiative.medgraph.common.db.DatabaseConnectionService
 import de.medizininformatikinitiative.medgraph.common.logging.Level
 import de.medizininformatikinitiative.medgraph.common.logging.LogManager
 import de.medizininformatikinitiative.medgraph.common.mvc.NamedProgressable
 import de.medizininformatikinitiative.medgraph.graphdbpopulator.GraphDbPopulationFactory
+import de.medizininformatikinitiative.medgraph.ui.resources.StringRes
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
@@ -92,6 +92,9 @@ class GraphDbPopulatorScreenModel(
 
             runPopulationTaskChain()
 
+        } catch (e: java.nio.file.AccessDeniedException) {
+            logger.log(Level.ERROR, "Access denied: "+e.message)
+            errorMessage = StringRes.get(StringRes.graph_db_populator_access_denied, e.message ?: "[unknown]")
         } catch (e: Exception) {
             logger.log(Level.ERROR, "Graph DB population failed.", e)
             errorMessage = e.message
