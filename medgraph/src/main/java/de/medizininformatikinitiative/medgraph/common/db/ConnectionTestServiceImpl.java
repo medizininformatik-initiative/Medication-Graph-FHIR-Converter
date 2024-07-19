@@ -8,9 +8,7 @@ import org.neo4j.driver.exceptions.Neo4jException;
 /**
  * @author Markus Budeus
  */
-class DatabaseConnectionUtil {
-
-	// TODO Test
+public class ConnectionTestServiceImpl implements ConnectionTestService {
 
 	/**
 	 * Creates a new {@link DatabaseConnection} using the given {@link ConnectionConfiguration} and optionally tests
@@ -22,7 +20,7 @@ class DatabaseConnectionUtil {
 	 * @throws DatabaseConnectionException if creating the connection failed or the test is enabled and failed
 	 */
 	@NotNull
-	static DatabaseConnection createConnection(ConnectionConfiguration connectionConfiguration, boolean test)
+	public DatabaseConnection createConnection(ConnectionConfiguration connectionConfiguration, boolean test)
 	throws DatabaseConnectionException {
 		DatabaseConnection connection;
 		try {

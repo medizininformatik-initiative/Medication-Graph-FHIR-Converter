@@ -1,5 +1,6 @@
 package de.medizininformatikinitiative.medgraph.common.db;
 
+import de.medizininformatikinitiative.medgraph.DI;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -9,8 +10,8 @@ import org.jetbrains.annotations.NotNull;
  */
 public class ApplicationDatabaseConnectionManager implements ConnectionConfigurationService, DatabaseConnectionService {
 
-	// TODO Test
-
+	@NotNull
+	private final ConnectionTestService connectionTestService = DI.get(ConnectionTestService.class);
 	@NotNull
 	private final ConnectionPreferencesWriter preferencesWriter;
 	@NotNull
@@ -43,12 +44,7 @@ public class ApplicationDatabaseConnectionManager implements ConnectionConfigura
 
 	@Override
 	public @NotNull DatabaseConnection createConnection(boolean test) throws DatabaseConnectionException {
-		return createConnection(connectionConfiguration, test);
+		return connectionTestService.createConnection(connectionConfiguration, test);
 	}
 
-	@Override
-	public @NotNull DatabaseConnection createConnection(ConnectionConfiguration connection, boolean test)
-	throws DatabaseConnectionException {
-		return DatabaseConnectionUtil.createConnection(connectionConfiguration, test);
-	}
 }

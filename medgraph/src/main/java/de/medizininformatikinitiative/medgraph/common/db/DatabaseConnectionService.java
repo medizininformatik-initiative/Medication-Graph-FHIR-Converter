@@ -32,33 +32,12 @@ public interface DatabaseConnectionService {
 	DatabaseConnection createConnection(boolean test) throws DatabaseConnectionException;
 
 	/**
-	 * Creates and returns a new database connection if possible.
-	 *
-	 * @param connection the connection configuration to use for establishing the database connection
-	 * @param test if true, runs a short test with the database connection before returning it
-	 * @throws DatabaseConnectionException if the database connection could not be established or testing is enabled and
-	 *                                     the connection test failed
-	 */
-	@NotNull
-	DatabaseConnection createConnection(ConnectionConfiguration connection, boolean test) throws DatabaseConnectionException;
-
-	/**
 	 * Tests the current default configuration to ensure a successful database connection can be established.
 	 * If it can, this method simply returns.
 	 * @throws DatabaseConnectionException if the connection could not be established
 	 */
 	default void verifyConnection() throws DatabaseConnectionException {
 		createConnection(true).close();
-	}
-
-	/**
-	 * Tests the given connection configuration and verifies a successful database connection can be established.
-	 * If it can, this method simply returns.
-	 * @param connectionConfiguration the connection configuration to test
-	 * @throws DatabaseConnectionException if the connection could not be established
-	 */
-	default void verifyConnection(ConnectionConfiguration connectionConfiguration) throws DatabaseConnectionException {
-		createConnection(connectionConfiguration, true).close();
 	}
 
 }

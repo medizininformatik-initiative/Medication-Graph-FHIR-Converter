@@ -16,7 +16,6 @@ import java.util.stream.Collectors;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.anyBoolean;
-import static org.mockito.ArgumentMatchers.notNull;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -78,7 +77,6 @@ public class UnitTest {
 		try {
 			when(service.createConnection()).thenAnswer(req -> mock(DatabaseConnection.class));
 			when(service.createConnection(anyBoolean())).thenAnswer(req -> mock(DatabaseConnection.class));
-			when(service.createConnection(notNull(), anyBoolean())).thenAnswer(req -> mock(DatabaseConnection.class));
 			insertMockDependency(DatabaseConnectionService.class, service);
 		} catch (DatabaseConnectionException e) {
 			throw new RuntimeException(e);

@@ -51,6 +51,7 @@ public class DI {
 		dependencyMap.put(FhirExportFactory.class, FhirExport::new);
 		ConnectionPreferences preferences = ApplicationPreferences.getDatabaseConnectionPreferences();
 		dependencyMap.put(ConnectionPreferences.class, preferences);
+		dependencyMap.put(ConnectionTestService.class, new ConnectionTestServiceImpl());
 
 		ApplicationDatabaseConnectionManager conManager = new ApplicationDatabaseConnectionManager(preferences);
 		dependencyMap.put(ConnectionConfigurationService.class, conManager);

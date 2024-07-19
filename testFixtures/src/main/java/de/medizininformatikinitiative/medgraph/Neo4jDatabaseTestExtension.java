@@ -5,8 +5,14 @@ import org.junit.jupiter.api.extension.BeforeAllCallback;
 import org.junit.jupiter.api.extension.BeforeEachCallback;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.extension.ExtensionContext;
+import org.neo4j.configuration.GraphDatabaseSettings;
+import org.neo4j.configuration.connectors.BoltConnector;
+import org.neo4j.driver.Session;
+import org.neo4j.driver.TransactionConfig;
 import org.neo4j.harness.Neo4j;
 import org.neo4j.harness.Neo4jBuilders;
+
+import static de.medizininformatikinitiative.medgraph.common.db.ConnectionConfigurationService.SaveOption.DONT_SAVE;
 
 /**
  * Test extension which provides a local JVM Neo4j database instance for testing. Test classes can use
@@ -19,13 +25,15 @@ import org.neo4j.harness.Neo4jBuilders;
  * your tests or in a {@link org.junit.jupiter.api.BeforeEach BeforeEach} method.
  * <p>
  * The database is shared among all test classes using it and not reset between tests or test classes in any way. Write
- * access to the database is therefore highly discouraged.
+ * access to the database is therefore highly discouraged. If your test needs to write to the database, extend
+ * {@link ReadWriteNeo4jTest}.
  *
  * @author Markus Budeus
  * @see Neo4jTest
  */
 public class Neo4jDatabaseTestExtension implements BeforeAllCallback, BeforeEachCallback, ExtensionContext.Store.CloseableResource {
 
+	private static final String PASSWORD = "testdbpassword";
 	private static volatile Neo4j neo4j;
 	private static volatile DatabaseConnection connection;
 
@@ -69,7 +77,7 @@ public class Neo4jDatabaseTestExtension implements BeforeAllCallback, BeforeEach
 	 * test Neo4j database.
 	 */
 	@Override
-	public void beforeEach(ExtensionContext context) throws Exception {
+	public void beforeEach(ExtensionContext context) {
 		UnitTest unitTest;
 		try {
 			unitTest = (UnitTest) context.getRequiredTestInstance();
@@ -96,13 +104,16 @@ public class Neo4jDatabaseTestExtension implements BeforeAllCallback, BeforeEach
 				"neo4j",
 				"neo4j".toCharArray()
 		);
-		connectionManager = new ApplicationDatabaseConnectionManager(new StubPreferencesWriter(), connectionConfiguration);
+
+		connectionManager = new ApplicationDatabaseConnectionManager(new StubPreferencesWriter(),
+				connectionConfiguration);
 
 		try {
 			Neo4jDatabaseTestExtension.connection = connectionManager.createConnection(true);
 		} catch (DatabaseConnectionException e) {
-			throw new IllegalStateException("Failed to connect to the Neo4j test harness database!");
+			throw new IllegalStateException("Failed to connect to the Neo4j test harness database!", e);
 		}
+
 	}
 
 	private void registerShutdownHook(ExtensionContext extensionContext) {

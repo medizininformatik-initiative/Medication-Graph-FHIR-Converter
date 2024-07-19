@@ -10,7 +10,7 @@ import org.jetbrains.annotations.NotNull;
 public class DatabaseConnectionException extends Exception {
 
 	/**
-	 * The result of the connection attempt (i.e. the reason why the database connection was unsuccessful.)
+	 * The reason why the database connection attempt was unsuccessful.
 	 */
 	@NotNull
 	private final ConnectionFailureReason connectionFailureReason;
@@ -26,7 +26,7 @@ public class DatabaseConnectionException extends Exception {
 	}
 
 	@NotNull
-	public ConnectionFailureReason getConnectionResult() {
+	public ConnectionFailureReason getFailureReason() {
 		return connectionFailureReason;
 	}
 }
