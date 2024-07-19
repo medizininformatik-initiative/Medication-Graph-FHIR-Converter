@@ -2,6 +2,8 @@ package de.medizininformatikinitiative.medgraph.graphdbpopulator;
 
 import de.medizininformatikinitiative.medgraph.DI;
 import de.medizininformatikinitiative.medgraph.common.db.DatabaseConnection;
+import de.medizininformatikinitiative.medgraph.common.db.DatabaseConnectionException;
+import de.medizininformatikinitiative.medgraph.common.db.DatabaseConnectionService;
 import org.junit.jupiter.api.*;
 import org.neo4j.driver.Record;
 import org.neo4j.driver.Result;
@@ -36,14 +38,26 @@ public class IntegrationTest {
 
 	@BeforeAll
 	public void integrationTestSetup() throws IOException {
-		connection = DatabaseConnection.createDefault();
+		// The integration test must run against a "real" Neo4j environment!
+		// The connection mechanism below only works if you have locally saved connection information (happens when you
+		// connect via the regular application UI once.) Otherwise you must provide the connection information via
+		// new DatabaseConnection(...)
+		try {
+			connection = DI.get(DatabaseConnectionService.class).createConnection();
+		} catch (DatabaseConnectionException e) {
+			throw new IllegalStateException(
+					"Failed to create database connection for integration test! The integration test must run against a \"real\" Neo4j environment! " +
+							"The default connection mechanism in this test only works if you have locally saved connection information (happens when you" +
+							" connect via the regular application UI once.) Otherwise you must provide the connection information via" +
+							" new DatabaseConnection(...)", e);
+		}
 		session = connection.createSession();
 
 		DI.get(GraphDbPopulationFactory.class).prepareDatabasePopulation(
-				                Path.of("src", "test", "resources", "sample"),
-				                Path.of("/var", "lib", "neo4j", "import"),
-				                Path.of("src", "test", "resources", "sample", "amice_stoffbez_synthetic.csv")
-		                )
+				  Path.of("src", "test", "resources", "sample"),
+				  Path.of("/var", "lib", "neo4j", "import"),
+				  Path.of("src", "test", "resources", "sample", "amice_stoffbez_synthetic.csv")
+		  )
 		  .executeDatabasePopulation(connection);
 	}
 

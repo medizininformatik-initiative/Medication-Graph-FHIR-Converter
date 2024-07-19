@@ -2,7 +2,9 @@ package de.medizininformatikinitiative.medgraph.ui.common.db
 
 import de.medizininformatikinitiative.medgraph.common.db.ConnectionConfiguration
 import de.medizininformatikinitiative.medgraph.common.db.ConnectionConfiguration.ConnectionResult
+import de.medizininformatikinitiative.medgraph.common.db.ConnectionConfigurationService
 import de.medizininformatikinitiative.medgraph.common.db.ConnectionPreferences
+import de.medizininformatikinitiative.medgraph.common.db.ConnectionResult
 import de.medizininformatikinitiative.medgraph.ui.UnitTest
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach
@@ -23,7 +25,7 @@ class ConnectionDialogViewModelTest : UnitTest() {
     private val URI = "neo4j://FAKEURI.com"
 
     @Mock
-    lateinit var preferences: ConnectionPreferences
+    lateinit var configurationService: ConnectionConfigurationService
 
     @Mock
     lateinit var configuration: ConnectionConfiguration
@@ -35,6 +37,7 @@ class ConnectionDialogViewModelTest : UnitTest() {
         `when`(configuration.uri).thenReturn(URI)
         `when`(configuration.user).thenReturn(USER)
         `when`(configuration.hasConfiguredPassword()).thenReturn(true)
+        `when`(configurationService.connectionConfiguration).thenReturn(configuration)
 
         setupSut()
     }
