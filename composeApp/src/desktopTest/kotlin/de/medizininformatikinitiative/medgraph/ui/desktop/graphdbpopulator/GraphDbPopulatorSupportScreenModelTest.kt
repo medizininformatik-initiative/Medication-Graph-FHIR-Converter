@@ -1,8 +1,8 @@
 package de.medizininformatikinitiative.medgraph.ui.desktop.graphdbpopulator
 
 import de.medizininformatikinitiative.medgraph.graphdbpopulator.GraphDbPopulation
-import de.medizininformatikinitiative.medgraph.graphdbpopulator.GraphDbPopulatorSupport
-import de.medizininformatikinitiative.medgraph.ui.UnitTest
+import de.medizininformatikinitiative.medgraph.UnitTest
+import de.medizininformatikinitiative.medgraph.graphdbpopulator.GraphDbPopulationFactory
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach
@@ -18,7 +18,7 @@ import java.util.concurrent.atomic.AtomicBoolean
 class GraphDbPopulatorSupportScreenModelTest : UnitTest() {
 
     @Mock
-    private lateinit var graphDbPopulatorSupport: GraphDbPopulatorSupport
+    private lateinit var graphDbPopulationFactory: GraphDbPopulationFactory
 
     @Mock
     private lateinit var graphDbPopulation: GraphDbPopulation
@@ -27,8 +27,8 @@ class GraphDbPopulatorSupportScreenModelTest : UnitTest() {
 
     @BeforeEach
     fun setUp() {
-        `when`(graphDbPopulatorSupport.prepareDatabasePopulation(any(), any(), any())).thenReturn(graphDbPopulation)
-        sut = GraphDbPopulatorScreenModel(graphDbPopulatorSupport)
+        `when`(graphDbPopulationFactory.prepareDatabasePopulation(any(), any(), any())).thenReturn(graphDbPopulation)
+        sut = GraphDbPopulatorScreenModel(graphDbPopulationFactory)
 
         sut.mmiPharmindexDirectory = System.getProperty("user.home")
         sut.neo4jImportDirectory = System.getProperty("user.home")
@@ -56,7 +56,7 @@ class GraphDbPopulatorSupportScreenModelTest : UnitTest() {
         runSut()
 
         val otherTask: GraphDbPopulation = mock()
-        `when`(graphDbPopulatorSupport.prepareDatabasePopulation(any(), any(), any())).thenReturn(otherTask)
+        `when`(graphDbPopulationFactory.prepareDatabasePopulation(any(), any(), any())).thenReturn(otherTask)
         val completedStateGoneAgain = AtomicBoolean(false)
         val newTaskAssigned = AtomicBoolean(false)
 
@@ -84,7 +84,7 @@ class GraphDbPopulatorSupportScreenModelTest : UnitTest() {
 
     @Test
     fun preparationFails() {
-        doThrow(IllegalArgumentException("No way!")).`when`(graphDbPopulatorSupport)
+        doThrow(IllegalArgumentException("No way!")).`when`(graphDbPopulationFactory)
             .prepareDatabasePopulation(any(), any(), any())
 
         runSut()
@@ -98,7 +98,7 @@ class GraphDbPopulatorSupportScreenModelTest : UnitTest() {
         sut.amiceStoffBezFile = "/boot/efi"
         runSut()
 
-        verify(graphDbPopulatorSupport).prepareDatabasePopulation(
+        verify(graphDbPopulationFactory).prepareDatabasePopulation(
             Path.of(sut.mmiPharmindexDirectory),
             Path.of(sut.neo4jImportDirectory),
             Path.of("/boot/efi"),
@@ -110,7 +110,7 @@ class GraphDbPopulatorSupportScreenModelTest : UnitTest() {
         sut.amiceStoffBezFile = ""
         runSut()
 
-        verify(graphDbPopulatorSupport).prepareDatabasePopulation(
+        verify(graphDbPopulationFactory).prepareDatabasePopulation(
             Path.of(sut.mmiPharmindexDirectory),
             Path.of(sut.neo4jImportDirectory),
             null,

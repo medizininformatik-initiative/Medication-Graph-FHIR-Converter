@@ -12,6 +12,8 @@ import java.nio.file.Path
  */
 class TempDirectoryTestExtension : Extension, BeforeEachCallback, AfterEachCallback, ParameterResolver {
 
+    // TODO Remove
+
     companion object {
         private val NAMESPACE = ExtensionContext.Namespace.create(TempDirectoryTestExtension::class.java)
         private val DIRECTORY_KEY = "tempdir"
