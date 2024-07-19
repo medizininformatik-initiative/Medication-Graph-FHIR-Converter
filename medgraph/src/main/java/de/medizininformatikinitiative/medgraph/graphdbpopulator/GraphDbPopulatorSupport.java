@@ -136,17 +136,15 @@ public class GraphDbPopulatorSupport {
 			throw new IllegalArgumentException("The given Neo4j import directory is not a directory!");
 		}
 
-		File mmiTargetDir = new File(targetDir + File.separator + MMI_PHARMINDEX_FILES_SUBPATH);
-		if (!mmiTargetDir.exists())
-			if (!mmiTargetDir.mkdir())
-				throw new IOException("Failed to create subdirectory in Neo4j import directory.");
+		Path mmiTargetDir = neo4jImportPath.resolve(MMI_PHARMINDEX_FILES_SUBPATH);
+		if (!Files.exists(mmiTargetDir))
+			Files.createDirectory(neo4jImportPath.resolve(MMI_PHARMINDEX_FILES_SUBPATH));
 
 		// Copy MMI Pharmindex files
-		Path target = mmiTargetDir.toPath();
 		Path source = mmiSourceDir.toPath();
 		for (String file : REQUIRED_MMI_FILES) {
 			Path original = source.resolve(file);
-			Path targetFile = target.resolve(file);
+			Path targetFile = mmiTargetDir.resolve(file);
 			Files.copy(original, targetFile, StandardCopyOption.REPLACE_EXISTING);
 		}
 
@@ -159,7 +157,7 @@ public class GraphDbPopulatorSupport {
 		}
 
 		// Copy other files
-		target = targetDir.toPath();
+		Path target = targetDir.toPath();
 		for (String resource : REQUIRED_RESOURCE_FILES) {
 			try (InputStream stream = Objects.requireNonNull(
 					GraphDbPopulatorSupport.class.getResourceAsStream("/" + resource))) {

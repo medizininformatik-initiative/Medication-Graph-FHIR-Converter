@@ -16,8 +16,10 @@ public class ExitStatus {
 
 	public static final ExitStatus SUCCESS = new ExitStatus(0, null);
 
+	public static final int INTERNAL_ERROR_CODE = 1;
+
 	public static ExitStatus internalError(Throwable t) {
-		return new ExitStatus(1, "Something went wrong: "+t.getMessage());
+		return new ExitStatus(INTERNAL_ERROR_CODE, "Something went wrong: "+t.getMessage());
 	}
 
 	/**

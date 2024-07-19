@@ -11,14 +11,18 @@ import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.Mock;
 
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.util.List;
+import java.util.Map;
 import java.util.OptionalInt;
 
 import static de.medizininformatikinitiative.medgraph.commandline.CommandLineExecutor.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 
 /**
  * @author Markus Budeus
@@ -30,17 +34,28 @@ public class CommandLineExecutorTest extends UnitTest {
 	@Mock
 	private ConnectionConfigurationService configurationService;
 
+	@Mock
+	private CommandLineUtility utility;
+
 	private CommandLineExecutor sut;
 
 	@BeforeEach
 	void setUp() {
 		insertMockDependency(ConnectionConfigurationService.class, configurationService);
-		sut = new CommandLineExecutor(new ByteArrayInputStream((PASSWORD + "\n").getBytes(StandardCharsets.UTF_8)));
+		when(utility.invoke(any(), any())).thenReturn(ExitStatus.SUCCESS);
+		when(utility.getUsage()).thenReturn("testUtil");
+		sut = new CommandLineExecutor(new ByteArrayInputStream((PASSWORD + "\n").getBytes(StandardCharsets.UTF_8)),
+				Map.of("testUtil", utility));
 	}
 
 	@Test
 	void noArguments() {
 		test(null);
+	}
+
+	@Test
+	void getHelp() {
+		test(ExitStatus.SUCCESS.code, "--help");
 	}
 
 	@Test
@@ -84,7 +99,7 @@ public class CommandLineExecutorTest extends UnitTest {
 	}
 
 	@ParameterizedTest(name = "usePassIn: {0}")
-	@ValueSource(booleans = { false, true })
+	@ValueSource(booleans = {false, true})
 	void validDatabaseParameters(boolean usePassIn) {
 		if (usePassIn) {
 			test(null,
@@ -107,6 +122,35 @@ public class CommandLineExecutorTest extends UnitTest {
 				ConnectionConfigurationService.SaveOption.DONT_SAVE));
 	}
 
+	@Test
+	void utilityNotInvokedCorrectly() {
+		test(ExitStatus.INCORRECT_USAGE.code, "randomUtility");
+	}
+
+	@Test
+	void utilityInvoked() {
+		test(ExitStatus.SUCCESS.code, "testUtil", "a", "b");
+		verify(utility).invoke(any(), eq(List.of("a", "b")));
+	}
+
+	@Test
+	void utilityFails() {
+		when(utility.invoke(any(), any())).thenReturn(ExitStatus.ioException(new IOException("RIP")));
+		test(ExitStatus.IO_EXCEPTION_CODE, "testUtil");
+	}
+
+	@Test
+	void utilityThrows() {
+		when(utility.invoke(any(), any())).thenThrow(new UnsupportedOperationException("This failed!"));
+		test(ExitStatus.INTERNAL_ERROR_CODE, "testUtil", "x");
+	}
+
+	@Test
+	void utilityHelpDialogRequested() {
+		test(ExitStatus.SUCCESS.code, "testUtil", "-h");
+		verify(utility, never()).invoke(any(), any());
+	}
+
 	/**
 	 * Runs the command line executor using the given arguments (only accepts strings and
 	 * {@link org.apache.commons.cli.Option}).
@@ -120,8 +164,9 @@ public class CommandLineExecutorTest extends UnitTest {
 		for (int i = 0; i < arguments.length; i++) {
 			Object arg = arguments[i];
 			if (arg instanceof String s) args[i] = s;
-			else if (arg instanceof Option o) args[i] = "-"+o.getOpt();
-			else throw new IllegalArgumentException("Passed an argument of unsupported type "+arguments.getClass().getSimpleName());
+			else if (arg instanceof Option o) args[i] = "-" + o.getOpt();
+			else throw new IllegalArgumentException(
+						"Passed an argument of unsupported type " + arguments.getClass().getSimpleName());
 		}
 
 		OptionalInt statusCode = sut.evaluateAndExecuteCommandLineArguments(args);

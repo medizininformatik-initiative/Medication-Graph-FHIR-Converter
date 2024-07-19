@@ -232,6 +232,9 @@ class StringRes {
         val graph_db_populator_amice_stoffbez_description_p2 = ". Please note you must only provide the .csv file here, NOT the .zip file which contains it."
 
         @JvmStatic
+        val graph_db_populator_access_denied = "Access denied: {0}"
+
+        @JvmStatic
         val graph_db_populator_run = "Run import"
 
         @JvmStatic
