@@ -15,6 +15,10 @@ public class DatabaseConnectionException extends Exception {
 	@NotNull
 	private final ConnectionFailureReason connectionFailureReason;
 
+	public DatabaseConnectionException(@NotNull ConnectionFailureReason connectionFailureReason) {
+		this.connectionFailureReason = connectionFailureReason;
+	}
+
 	public DatabaseConnectionException(@NotNull ConnectionFailureReason connectionFailureReason, String message) {
 		super(message);
 		this.connectionFailureReason = connectionFailureReason;

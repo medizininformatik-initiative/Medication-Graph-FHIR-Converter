@@ -2,7 +2,6 @@ package de.medizininformatikinitiative.medgraph.commandline;
 
 import de.medizininformatikinitiative.medgraph.UnitTest;
 import de.medizininformatikinitiative.medgraph.common.db.ConnectionFailureReason;
-import de.medizininformatikinitiative.medgraph.common.db.DatabaseConnection;
 import de.medizininformatikinitiative.medgraph.common.db.DatabaseConnectionException;
 import de.medizininformatikinitiative.medgraph.common.db.DatabaseConnectionService;
 import de.medizininformatikinitiative.medgraph.graphdbpopulator.GraphDbPopulation;
@@ -20,7 +19,7 @@ import java.nio.file.AccessDeniedException;
 import java.nio.file.Path;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
@@ -35,20 +34,16 @@ public class HeadlessGraphDbPopulatorTest extends UnitTest {
 	private GraphDbPopulation population;
 	@Mock
 	private CommandLine commandLine;
-	@Mock
 	private DatabaseConnectionService databaseConnectionService;
-	@Mock
-	private DatabaseConnection connection;
 
 	private HeadlessGraphDbPopulator sut;
 
 	@BeforeEach
-	void setUp() throws DatabaseConnectionException {
+	void setUp() {
 		insertMockDependency(GraphDbPopulationFactory.class, factory);
 		insertMockDependency(DatabaseConnectionService.class, databaseConnectionService);
 		Mockito.when(factory.prepareDatabasePopulation(notNull(), notNull(), any())).thenReturn(population);
-		Mockito.when(databaseConnectionService.createConnection()).thenReturn(connection);
-		Mockito.when(databaseConnectionService.createConnection(anyBoolean())).thenReturn(connection);
+		databaseConnectionService = insertDatabaseConnectionServiceMock();
 		sut = new HeadlessGraphDbPopulator();
 	}
 
