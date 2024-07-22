@@ -9,6 +9,7 @@ import de.medizininformatikinitiative.medgraph.common.logging.LogManager;
 import de.medizininformatikinitiative.medgraph.common.logging.Logger;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.HelpFormatter;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.function.Function;
@@ -36,6 +37,7 @@ public abstract class CommandLineUtility {
 	 *                    utility
 	 * @return the exit status to exit the program with
 	 */
+	@NotNull
 	public abstract ExitStatus invoke(CommandLine commandLine, List<String> args);
 
 	/**

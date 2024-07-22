@@ -9,6 +9,7 @@ import de.medizininformatikinitiative.medgraph.graphdbpopulator.GraphDbPopulatio
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.nio.file.AccessDeniedException;
@@ -28,12 +29,11 @@ public class HeadlessGraphDbPopulator extends CommandLineUtility {
 	static final String CALL_ARG = "populate";
 
 	static final String USAGE = CALL_ARG + " <path_to_mmi_pharmindex_files> <path_to_neo4j_import_dir> [path_to_amice_dataset]";
-	private static final Log log = LogFactory.getLog(HeadlessGraphDbPopulator.class);
 
 	private final GraphDbPopulationFactory factory = DI.get(GraphDbPopulationFactory.class);
 
 	@Override
-	public ExitStatus invoke(CommandLine commandLine, List<String> args) {
+	public @NotNull ExitStatus invoke(CommandLine commandLine, List<String> args) {
 		if (args.size() < 2 || args.size() > 3) {
 			printHelp();
 			return ExitStatus.INCORRECT_USAGE;
