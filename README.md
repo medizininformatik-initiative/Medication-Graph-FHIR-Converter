@@ -11,7 +11,7 @@ As of: July 3rd, 2024
 ---
 
 This is a Java tool meant for supporting the transformation of clinical medication-related documentation
-into a structured FHIR format. Using it requires a Neo4j database to be available.
+into a structured FHIR format. Using it requires a Neo4j database and the MMI Pharmindex data to be available.
 
 It currently comprises three core features:
 - Setting up a knowledge graph containing data related to pharmaceutical products in a Neo4j database
