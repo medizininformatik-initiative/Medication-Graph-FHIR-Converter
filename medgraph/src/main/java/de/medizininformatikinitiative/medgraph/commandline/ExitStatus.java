@@ -19,7 +19,7 @@ public class ExitStatus {
 	public static final int INTERNAL_ERROR_CODE = 1;
 
 	public static ExitStatus internalError(Throwable t) {
-		return new ExitStatus(INTERNAL_ERROR_CODE, "Something went wrong: "+t.getMessage());
+		return new ExitStatus(INTERNAL_ERROR_CODE, "Something went wrong: " + t.getMessage());
 	}
 
 	/**
@@ -38,7 +38,7 @@ public class ExitStatus {
 	public static final ExitStatus INVALID_DB_CONNECTION_STRING = new ExitStatus(6,
 			"The provided Neo4j connection uri is invalid.");
 	public static final ExitStatus NEO4J_SERVICE_UNAVAILABLE = new ExitStatus(7,
-			"No Neo4j service is reachable at the configured connection uri.");
+			"No Neo4j service is reachable at the configured connection uri. Make sure you specify the correct connection URI and the Neo4j service is running.");
 	public static final ExitStatus NEO4J_AUTHENTICATION_FAILED = new ExitStatus(8,
 			"Authentication at the Neo4j database unsuccessful!");
 
@@ -48,10 +48,11 @@ public class ExitStatus {
 	 * Builds an {@link ExitStatus} indicating that a path provided via CLI is invalid.
 	 */
 	public static ExitStatus invalidPath(InvalidPathException e) {
-		return new ExitStatus(INVALID_PATH_CODE, "Invalid path provided! "+e.getMessage());
+		return new ExitStatus(INVALID_PATH_CODE, "Invalid path provided! " + e.getMessage());
 	}
 
 	public static final int ACCESS_DENIED_CODE = 10;
+
 	public static ExitStatus accessDenied(AccessDeniedException e) {
 		return new ExitStatus(ACCESS_DENIED_CODE, e.getMessage());
 	}
@@ -62,7 +63,7 @@ public class ExitStatus {
 	 * Builds an {@link ExitStatus} based on an {@link IOException}.
 	 */
 	public static ExitStatus ioException(IOException e) {
-		return new ExitStatus(IO_EXCEPTION_CODE, "An I/O operation was unsuccessful: "+e.getMessage());
+		return new ExitStatus(IO_EXCEPTION_CODE, "An I/O operation was unsuccessful: " + e.getMessage());
 	}
 
 	/**
@@ -95,6 +96,6 @@ public class ExitStatus {
 
 	@Override
 	public String toString() {
-		return "Status "+code+": "+message;
+		return "Status " + code + ": " + message;
 	}
 }
