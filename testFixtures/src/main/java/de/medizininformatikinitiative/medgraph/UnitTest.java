@@ -8,6 +8,7 @@ import de.medizininformatikinitiative.medgraph.searchengine.tracing.SubstringUsa
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.mockito.MockitoAnnotations;
+import org.neo4j.driver.Session;
 
 import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
@@ -76,7 +77,11 @@ public class UnitTest {
 		DatabaseConnectionService service = mock();
 		try {
 			when(service.createConnection()).thenAnswer(req -> mock(DatabaseConnection.class));
-			when(service.createConnection(anyBoolean())).thenAnswer(req -> mock(DatabaseConnection.class));
+			when(service.createConnection(anyBoolean())).thenAnswer(req -> {
+				DatabaseConnection conMock = mock(DatabaseConnection.class);
+				when(conMock.createSession()).thenAnswer(req1 -> mock(Session.class));
+				return conMock;
+			});
 			insertMockDependency(DatabaseConnectionService.class, service);
 		} catch (DatabaseConnectionException e) {
 			throw new RuntimeException(e);
