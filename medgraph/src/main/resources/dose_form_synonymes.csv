@@ -37,6 +37,12 @@
 "Gas";"BDF-0087";"Medicinal gas"
 "Spray";"BDF-0094";"Spray (unspecified)"
 "Zement";"BDF-0103";"Cement"
+##### Intended Site ---------------------------------------------------------------------------------------------------
+"i.g.";"ISI-0106";"Gastric"
+"i.p.";"ISI-0109";"Intraperitoneal"
+"p.i.";"ISI-0034";"Pulmonary"
+"p.o.";"ISI-0031";"Oral"
+"s.l.";"ISI-0118";"Sublingual"
 # Pharmaceutical Dose Form --------------------------------------------------------------------------------------------
 "Tablette";"PDF-10219000";"Tablet"
 "Tabl.";"PDF-10219000";"Tablet"
