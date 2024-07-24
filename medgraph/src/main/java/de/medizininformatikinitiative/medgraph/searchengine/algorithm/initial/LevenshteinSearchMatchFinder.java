@@ -63,6 +63,7 @@ public class LevenshteinSearchMatchFinder implements InitialMatchFinder {
 				.sorted(Comparator.reverseOrder())
 				.map(match -> new OriginalMatch<>(
 						(Matchable) match.getMatchedIdentifier().target,
+						match.getScore(),
 						new MatchOrigin<>(match, levenshteinSetMatcher)
 				));
 	}

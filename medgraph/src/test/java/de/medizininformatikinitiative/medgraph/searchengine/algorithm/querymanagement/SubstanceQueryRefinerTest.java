@@ -121,6 +121,15 @@ public class SubstanceQueryRefinerTest extends UnitTest {
 				SearchEngineTools.unwrap(query.getSubstances()));
 	}
 
+	@Test
+	void scoreAssigned() {
+		SubstanceQueryRefiner.Result result1 = parse("Midazolam hydrochlorid");
+		SubstanceQueryRefiner.Result result2 = parse("Midazloam hydrochlorid");
+		assertEqualsIgnoreOrder(List.of(MIDAZOLAM_HYDROCHLORIDE), SearchEngineTools.unwrap(result1.getSubstances()));
+		assertEqualsIgnoreOrder(List.of(MIDAZOLAM_HYDROCHLORIDE), SearchEngineTools.unwrap(result2.getSubstances()));
+		assertTrue(result1.getSubstances().getFirst().getScore() > result2.getSubstances().getFirst().getScore());
+	}
+
 	private SubstanceQueryRefiner.Result parse(String query) {
 		return sut.parse(new OriginalIdentifier<>(query, OriginalIdentifier.Source.RAW_QUERY));
 	}

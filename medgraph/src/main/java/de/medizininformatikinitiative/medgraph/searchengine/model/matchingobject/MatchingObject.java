@@ -11,7 +11,8 @@ import java.util.Objects;
 
 /**
  * Carrier object for {@link Matchable} during the matching process. Stores information about
- * judgements and transformations applied to the object during the matching.
+ * judgements and transformations applied to the object during the matching as well as a global score assigned
+ * to this objecdt.
  *
  * @param <T> the type of object carried
  * @author Markus Budeus
@@ -22,13 +23,18 @@ public abstract class MatchingObject<T extends Matchable> {
 	private final T object;
 	@NotNull
 	private final LinkedList<Judgement> appliedJudgements = new LinkedList<>();
+	/**
+	 * The current score of this match.
+	 */
+	private final double score;
 
 	/**
 	 * Creates a new {@link MatchingObject} which manages the given {@link Matchable}.
 	 * @param object the object to be managed by this instance
 	 */
-	protected MatchingObject(@NotNull T object) {
+	protected MatchingObject(@NotNull T object, double score) {
 		this.object = object;
+		this.score = score;
 	}
 
 	/**
@@ -37,6 +43,13 @@ public abstract class MatchingObject<T extends Matchable> {
 	@NotNull
 	public T getObject() {
 		return object;
+	}
+
+	/**
+	 * Returns the score assigned to this match at the current time.
+	 */
+	public double getScore() {
+		return score;
 	}
 
 	/**

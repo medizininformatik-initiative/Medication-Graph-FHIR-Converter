@@ -23,8 +23,7 @@ import java.util.Objects;
 import java.util.Set;
 
 import static de.medizininformatikinitiative.medgraph.TestFactory.DoseForms.*;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * @author Markus Budeus
@@ -132,6 +131,15 @@ public class DoseFormQueryRefinerTest extends UnitTest {
 		// what the user meant...
 		DoseFormQueryRefiner.Result r2 = parse("Sulfamethoxzaol 400mg Susp. gum Einnehmen");
 		assertEquals(List.of(gum), SearchEngineTools.unwrap(r2.getDoseForms()));
+	}
+
+	@Test
+	void scoreAssigned() {
+		DoseFormQueryRefiner.Result result1 = parse("Granuls");
+		DoseFormQueryRefiner.Result result2 = parse("Granules");
+		assertEqualsIgnoreOrder(List.of(GRANULES), SearchEngineTools.unwrap(result1.getDoseForms()));
+		assertEqualsIgnoreOrder(List.of(GRANULES), SearchEngineTools.unwrap(result2.getDoseForms()));
+		assertTrue(result1.getDoseForms().getFirst().getScore() < result2.getDoseForms().getFirst().getScore());
 	}
 
 	private DoseFormQueryRefiner.Result parse(String query) {

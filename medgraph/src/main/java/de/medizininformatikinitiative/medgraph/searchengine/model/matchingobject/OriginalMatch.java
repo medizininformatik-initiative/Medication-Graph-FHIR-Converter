@@ -28,13 +28,25 @@ public class OriginalMatch<T extends Matchable> extends MatchingObject<T> {
 	}
 
 	/**
-	 * Creates a new {@link MatchingObject} which manages the given {@link Matchable}.
+	 * Creates a new {@link MatchingObject} which manages the given {@link Matchable} and assigns a default score of 1.
 	 *
 	 * @param object the object to be managed by this instance
 	 * @param origin the source this match originated from
 	 */
+	@Deprecated
 	public OriginalMatch(@NotNull T object, @NotNull Origin origin) {
-		super(object);
+		this(object, 1, origin);
+	}
+
+	/**
+	 * Creates a new {@link MatchingObject} which manages the given {@link Matchable}.
+	 *
+	 * @param object the object to be managed by this instance
+	 * @param score  the score to assign to this match
+	 * @param origin the source this match originated from
+	 */
+	public OriginalMatch(@NotNull T object, double score, @NotNull Origin origin) {
+		super(object, score);
 		this.origin = origin;
 	}
 
