@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.text.SpanStyle
@@ -14,7 +13,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.navigator.LocalNavigator
-import de.medizininformatikinitiative.medgraph.common.mvc.Progressable
 import de.medizininformatikinitiative.medgraph.ui.desktop.templates.PathTextField
 import de.medizininformatikinitiative.medgraph.ui.resources.StringRes
 import de.medizininformatikinitiative.medgraph.ui.theme.ApplicationTheme
@@ -64,11 +62,18 @@ fun GraphDbPopulatorUI(viewModel: GraphDbPopulatorScreenModel, modifier: Modifie
             modifier = Modifier.fillMaxWidth(),
             fileSelectionMode = JFileChooser.DIRECTORIES_ONLY
         )
-        Text(
-            StringRes.graph_db_populator_neo4j_import_dir_description,
+        val annotatedNeo4jDesc = buildAnnotatedImportDirDescriptionText()
+        ClickableText(
+            annotatedNeo4jDesc,
             style = MaterialTheme.typography.body2,
             modifier = Modifier.padding(horizontal = 8.dp)
-        )
+        ) {
+            annotatedNeo4jDesc
+                .getStringAnnotations("neo4jpath", it, it)
+                .firstOrNull()?.let { stringAnnotation ->
+                    viewModel.neo4jImportDirectory = StringRes.graph_db_populator_neo4j_import_dir_path
+                }
+        }
         PathTextField(
             viewModel.amiceStoffBezFile,
             { value -> viewModel.amiceStoffBezFile = value },
@@ -150,6 +155,17 @@ private fun ImportProgressUI(viewModel: GraphDbPopulatorScreenModel, modifier: M
     if (task != null) {
         ProgressIndication(task, modifier, viewModel.executionUnderway)
     }
+}
+
+@Composable
+private fun buildAnnotatedImportDirDescriptionText() = buildAnnotatedString {
+    append(StringRes.graph_db_populator_neo4j_import_dir_description_prefix)
+    pushStringAnnotation(tag = "neo4jpath", annotation = StringRes.graph_db_populator_amice_stoffbez_description_link)
+    withStyle(style = SpanStyle(color = MaterialTheme.colors.primary)) {
+        append(StringRes.graph_db_populator_neo4j_import_dir_path)
+    }
+    pop()
+    append(StringRes.graph_db_populator_neo4j_import_dir_description_suffix)
 }
 
 @Composable
