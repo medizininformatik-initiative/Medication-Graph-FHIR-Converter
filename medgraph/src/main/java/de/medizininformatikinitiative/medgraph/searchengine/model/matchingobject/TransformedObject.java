@@ -24,7 +24,7 @@ public class TransformedObject<S extends Matchable, T extends Matchable> extends
 	 * @param transformation the {@link Transformation} which generated this instance
 	 */
 	public TransformedObject(T object, MatchingObject<S> source, Transformation transformation) {
-		super(object);
+		super(object, source.getScore());
 		this.source = source;
 		this.transformation = transformation;
 	}

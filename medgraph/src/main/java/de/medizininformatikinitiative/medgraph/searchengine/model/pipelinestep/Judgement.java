@@ -10,7 +10,7 @@ package de.medizininformatikinitiative.medgraph.searchengine.model.pipelinestep;
 public interface Judgement extends MatchingPipelineStep {
 
 	/**
-	 * Whether or not the object in question has passed the judgement.
+	 * Whether the object in question has passed the judgement.
 	 * Objects which do not pass a judgement are typically removed from the matching.
 	 */
 	boolean passed();

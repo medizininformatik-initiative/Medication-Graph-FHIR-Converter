@@ -75,7 +75,7 @@ public class SubstanceQueryRefiner implements PartialQueryRefiner<SubstanceQuery
 		matches.forEach(match -> {
 			Substance substance = (Substance) match.getMatchedIdentifier().target;
 			Origin origin = new MatchOrigin<>(match, editDistanceSetMatcher);
-			substances.add(new OriginalMatch<>(substance, origin));
+			substances.add(new OriginalMatch<>(substance,  match.getScore(), origin));
 			usedTokens.addAll(match.getUsageStatement().getUsedTokens());
 		});
 
