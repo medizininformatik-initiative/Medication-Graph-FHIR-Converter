@@ -17,6 +17,7 @@ import de.medizininformatikinitiative.medgraph.searchengine.stringtransformer.Tr
 import de.medizininformatikinitiative.medgraph.searchengine.stringtransformer.WhitespaceTokenizer;
 import de.medizininformatikinitiative.medgraph.searchengine.tools.SearchEngineTools;
 import de.medizininformatikinitiative.medgraph.searchengine.tools.SearchEngineTools.OverlapResolutionStrategy;
+import de.medizininformatikinitiative.medgraph.searchengine.tools.Util;
 import de.medizininformatikinitiative.medgraph.searchengine.tracing.DistinctMultiSubstringUsageStatement;
 import de.medizininformatikinitiative.medgraph.searchengine.tracing.StringListUsageStatement;
 import org.jetbrains.annotations.NotNull;
@@ -84,10 +85,11 @@ public class DoseFormQueryRefiner implements PartialQueryRefiner<DoseFormQueryRe
 		matches.forEach(match -> {
 			EdqmConcept concept = (EdqmConcept) match.getMatchedIdentifier().target;
 			Origin origin = new MatchOrigin<>(match, editDistanceListMatcher);
+			double score = Util.distanceToScore(match.getDistance().editDistance());
 			if (concept instanceof EdqmPharmaceuticalDoseForm df) {
-				doseForms.add(new OriginalMatch<>(df, origin));
+				doseForms.add(new OriginalMatch<>(df, score, origin));
 			} else {
-				characteristics.add(new OriginalMatch<>(concept, origin));
+				characteristics.add(new OriginalMatch<>(concept, score, origin));
 			}
 			usedTokens.addAll(match.getUsageStatement().getUsedIndices());
 		});
