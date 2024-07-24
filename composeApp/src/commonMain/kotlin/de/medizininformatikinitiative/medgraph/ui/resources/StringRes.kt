@@ -211,9 +211,15 @@ class StringRes {
         val graph_db_populator_neo4j_import_dir = "Path to the Neo4j import directory"
 
         @JvmStatic
-        val graph_db_populator_neo4j_import_dir_description =
+        val graph_db_populator_neo4j_import_dir_description_prefix =
             "On most systems, the default Neo4j import directory is at <NEO4J_HOME>/import, with <NEO4J_HOME> being the installation directory of Neo4j.\n" +
-                "On Debian- and RPM-based systems, the default path is /var/lib/neo4j/import"
+                "On Debian- and RPM-based systems, the default path is "
+
+        @JvmStatic
+        val graph_db_populator_neo4j_import_dir_path = "/var/lib/neo4j/import"
+
+        @JvmStatic
+        val graph_db_populator_neo4j_import_dir_description_suffix = "."
 
         @JvmStatic
         val graph_db_populator_amice_stoffbez_path = "Path to AMIce \"Stoffbezeichnungen Rohdaten\" file. (optional)"
