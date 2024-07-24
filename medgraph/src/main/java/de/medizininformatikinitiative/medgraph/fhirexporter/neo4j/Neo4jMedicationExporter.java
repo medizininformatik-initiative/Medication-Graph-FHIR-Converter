@@ -1,5 +1,8 @@
 package de.medizininformatikinitiative.medgraph.fhirexporter.neo4j;
 
+import de.medizininformatikinitiative.medgraph.common.logging.Level;
+import de.medizininformatikinitiative.medgraph.common.logging.LogManager;
+import de.medizininformatikinitiative.medgraph.common.logging.Logger;
 import de.medizininformatikinitiative.medgraph.fhirexporter.resource.*;
 import de.medizininformatikinitiative.medgraph.fhirexporter.resource.medication.Ingredient;
 import de.medizininformatikinitiative.medgraph.fhirexporter.resource.medication.Medication;
@@ -9,6 +12,8 @@ import de.medizininformatikinitiative.medgraph.fhirexporter.resource.organizatio
 import de.medizininformatikinitiative.medgraph.fhirexporter.resource.substance.Substance;
 import de.medizininformatikinitiative.medgraph.fhirexporter.resource.substance.SubstanceReference;
 import de.medizininformatikinitiative.medgraph.graphdbpopulator.CodingSystem;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.neo4j.driver.Record;
 import org.neo4j.driver.*;
 import org.neo4j.driver.types.MapAccessorWithDefaultValue;
@@ -30,12 +35,16 @@ import static de.medizininformatikinitiative.medgraph.common.db.DatabaseDefiniti
  */
 public class Neo4jMedicationExporter extends Neo4jExporter<Medication> {
 
+	private static final Logger logger = LogManager.getLogger(Neo4jMedicationExporter.class);
+
+
 	public static final String CODE = "code";
 	public static final String SYSTEM_URI = "uri";
 	public static final String SYSTEM_DATE = "date";
 	public static final String SYSTEM_VERSION = "version";
 
 	private static final String UCUM_SYSTEM = "http://unitsofmeasure.org";
+	private static final Log log = LogFactory.getLog(Neo4jMedicationExporter.class);
 
 	private final boolean allowMedicationsWithoutIngredients;
 	private final boolean collectStatistics;
@@ -123,7 +132,7 @@ public class Neo4jMedicationExporter extends Neo4jExporter<Medication> {
 						"drugs, " +
 						"packages";
 
-//		System.out.println(query);
+		logger.log(Level.DEBUG, "Medication Graph DB Query: "+query);
 
 		Result result = session.run(new Query(query));
 
@@ -138,13 +147,13 @@ public class Neo4jMedicationExporter extends Neo4jExporter<Medication> {
 	@Override
 	protected String createObjectCountQuery() {
 		return "CALL {\n" +
-				"    MATCH (c:"+COMPANY_LABEL+")-[:"+MANUFACTURES_LABEL+"]->(p:"+PRODUCT_LABEL+")\n" +
-				"    WHERE (p)-[:"+PRODUCT_CONTAINS_DRUG_LABEL+"]->(:"+DRUG_LABEL+")-[:"+DRUG_CONTAINS_INGREDIENT_LABEL+"]->(:"+INGREDIENT_LABEL+")\n" +
+				"    MATCH (c:" + COMPANY_LABEL + ")-[:" + MANUFACTURES_LABEL + "]->(p:" + PRODUCT_LABEL + ")\n" +
+				"    WHERE (p)-[:" + PRODUCT_CONTAINS_DRUG_LABEL + "]->(:" + DRUG_LABEL + ")-[:" + DRUG_CONTAINS_INGREDIENT_LABEL + "]->(:" + INGREDIENT_LABEL + ")\n" +
 				"    RETURN COUNT(p) AS parents\n" +
 				"}\n" +
 				"CALL {\n" +
-				"    MATCH (c:"+COMPANY_LABEL+")-[:"+MANUFACTURES_LABEL+"]->(p:"+PRODUCT_LABEL+")-[:"+PRODUCT_CONTAINS_DRUG_LABEL+"]->(d:"+DRUG_LABEL+")\n" +
-				"    WHERE (d)-[:"+DRUG_CONTAINS_INGREDIENT_LABEL+"]->(:"+INGREDIENT_LABEL+")\n" +
+				"    MATCH (c:" + COMPANY_LABEL + ")-[:" + MANUFACTURES_LABEL + "]->(p:" + PRODUCT_LABEL + ")-[:" + PRODUCT_CONTAINS_DRUG_LABEL + "]->(d:" + DRUG_LABEL + ")\n" +
+				"    WHERE (d)-[:" + DRUG_CONTAINS_INGREDIENT_LABEL + "]->(:" + INGREDIENT_LABEL + ")\n" +
 				"    WITH c, p, COUNT(DISTINCT d) AS drugs WHERE drugs > 1\n" +
 				"    RETURN SUM(drugs) as children\n" +
 				"}\n" +
@@ -160,7 +169,7 @@ public class Neo4jMedicationExporter extends Neo4jExporter<Medication> {
 		Neo4jExportProduct exportProduct = new Neo4jExportProduct(record);
 
 		if (exportProduct.drugs.isEmpty()) {
-			System.err.println("Skipping product '" + exportProduct.name + "', because it contains no drugs!");
+			logger.log(Level.WARN, "Skipping product '" + exportProduct.name + "', because it contains no drugs!");
 			return null;
 		}
 
@@ -201,7 +210,7 @@ public class Neo4jMedicationExporter extends Neo4jExporter<Medication> {
 				else {
 					parentAmount = parentAmount.plus(child.amount);
 					if (parentAmount == null) {
-						System.err.println(
+						logger.log(Level.DEBUG,
 								"Combined preparation " + exportProduct.name + " contains ingredients with incompatible units. Parent Medication will contain no amount data.");
 						break;
 					}
