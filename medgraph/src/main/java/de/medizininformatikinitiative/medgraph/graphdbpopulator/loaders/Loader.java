@@ -1,5 +1,8 @@
 package de.medizininformatikinitiative.medgraph.graphdbpopulator.loaders;
 
+import de.medizininformatikinitiative.medgraph.common.logging.Level;
+import de.medizininformatikinitiative.medgraph.common.logging.LogManager;
+import de.medizininformatikinitiative.medgraph.common.logging.Logger;
 import org.neo4j.driver.Query;
 import org.neo4j.driver.Session;
 
@@ -16,6 +19,7 @@ import static org.neo4j.driver.Values.parameters;
  */
 public abstract class Loader {
 
+	private final Logger logger = LogManager.getLogger(getClass());
 	private static final boolean DRY_RUN = false;
 
 	private static final DateTimeFormatter cypherDateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
@@ -53,11 +57,12 @@ public abstract class Loader {
 	}
 
 	public void execute() {
+		logger.log(Level.INFO, "Running " + getClass().getSimpleName());
 		System.out.print("Running " + getClass().getSimpleName() + "...");
 		long time = System.currentTimeMillis();
 		executeLoad();
 		completeSubtask();
-		System.out.println("done (" + (System.currentTimeMillis() - time) + "ms)");
+		logger.log(Level.INFO, getClass().getSimpleName() + " execution complete (" + (System.currentTimeMillis() - time) + "ms)");
 	}
 
 	/**
@@ -67,10 +72,8 @@ public abstract class Loader {
 	protected void startSubtask(String subtask) {
 		if (subtaskStartTime != -1) {
 			completeSubtask();
-		} else {
-			System.out.println();
 		}
-		System.out.print("    " + subtask + "...");
+		logger.log(Level.DEBUG, getClass().getSimpleName() + " started a subtask: "+subtask);
 		ifNotNull(onSubtaskStarted, listener -> listener.accept(subtask));
 		subtaskStartTime = System.currentTimeMillis();
 	}
@@ -81,7 +84,7 @@ public abstract class Loader {
 	protected void completeSubtask() {
 		if (subtaskStartTime == -1) return;
 		ifNotNull(onSubtaskCompleted, Runnable::run);
-		System.out.println("done ("+(System.currentTimeMillis() - subtaskStartTime)+"ms)");
+		logger.log(Level.DEBUG, getClass().getSimpleName() + " completed current subtask. ("+(System.currentTimeMillis() - subtaskStartTime)+"ms)");
 		subtaskStartTime = -1;
 	}
 

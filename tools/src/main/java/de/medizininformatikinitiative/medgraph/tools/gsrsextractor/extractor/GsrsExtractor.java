@@ -75,7 +75,6 @@ public class GsrsExtractor {
 			if (!cont) writer.write("MMIID;UUID;NAME;CAS;UNII;RXCUI\n");
 
 			while (iterator.hasNext()) {
-				System.out.print("\r" + iteration + "/4653");
 				iteration++;
 				GsrsResult result = iterator.next();
 				writer.write(toCsvLine(result));
