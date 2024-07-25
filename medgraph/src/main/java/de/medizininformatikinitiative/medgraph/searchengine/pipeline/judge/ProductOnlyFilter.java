@@ -9,7 +9,7 @@ import de.medizininformatikinitiative.medgraph.searchengine.model.identifiable.P
  *
  * @author Markus Budeus
  */
-public class ProductOnlyFilter implements Filter {
+public class ProductOnlyFilter implements Filter<Matchable> {
 
 	public static final String NAME = "Product Only Filter";
 	public static final String DESCRIPTION = "Removes all matches which are not products.";

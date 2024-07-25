@@ -48,7 +48,7 @@ public class ScoreJudgeTest {
 		assertFalse(judgements.get(1).passed());
 	}
 
-	private static class TestJudge extends ScoreJudge {
+	private static class TestJudge extends ScoreJudge<Matchable> {
 
 		private final double judgement;
 		private final List<Double> batchJudgement;

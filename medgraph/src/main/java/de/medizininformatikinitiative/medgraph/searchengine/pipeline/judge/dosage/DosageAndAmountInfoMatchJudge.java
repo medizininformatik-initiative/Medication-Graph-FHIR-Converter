@@ -3,24 +3,18 @@ package de.medizininformatikinitiative.medgraph.searchengine.pipeline.judge.dosa
 import de.medizininformatikinitiative.medgraph.searchengine.model.Drug;
 import de.medizininformatikinitiative.medgraph.searchengine.model.SearchQuery;
 import de.medizininformatikinitiative.medgraph.searchengine.model.identifiable.DetailedProduct;
-import de.medizininformatikinitiative.medgraph.searchengine.model.identifiable.Matchable;
 import de.medizininformatikinitiative.medgraph.searchengine.pipeline.judge.ScoreJudge;
 
-import java.util.*;
+import java.util.List;
 
 /**
  * Judge which assigns scores based on how well drug dosage and drug amount information from the query matches the
- * previously found products. {@link Matchable}s which are not {@link DetailedProduct}s are assigned the
- * {@link #NO_DETAILED_PRODUCT_SCORE}.
+ * previously found products.
  *
  * @author Markus Budeus
  */
-public class DosageAndAmountInfoMatchJudge extends ScoreJudge {
+public class DosageAndAmountInfoMatchJudge extends ScoreJudge<DetailedProduct> {
 
-	/**
-	 * The score which is assigned if the given matching target is not a detailed product.
-	 */
-	public static final double NO_DETAILED_PRODUCT_SCORE = 0.1;
 	/**
 	 * The score which is assigned if the search query specifies neither dosage nor drug amount information.
 	 */
@@ -55,10 +49,9 @@ public class DosageAndAmountInfoMatchJudge extends ScoreJudge {
 	}
 
 	@Override
-	protected double judgeInternal(Matchable target, SearchQuery query) {
-		if (!(target instanceof DetailedProduct)) return NO_DETAILED_PRODUCT_SCORE;
+	protected double judgeInternal(DetailedProduct target, SearchQuery query) {
 		if (specifiesNoRelevantData(query)) return NO_DOSAGE_AND_AMOUNT_SCORE;
-		return judge(((DetailedProduct) target).getDrugs(), query);
+		return judge(target.getDrugs(), query);
 	}
 
 	private double judge(List<Drug> drugInfo, SearchQuery query) {

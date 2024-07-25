@@ -14,12 +14,7 @@ import java.util.List;
  *
  * @author Markus Budeus
  */
-public class DosagesInProductNameJudge extends ScoreJudge {
-
-	/**
-	 * Score applied to any {@link Matchable} that is not a product.
-	 */
-	public static final double NOT_A_PRODUCT_SCORE = 0;
+public class DosagesInProductNameJudge extends ScoreJudge<Product> {
 
 	/**
 	 * Score applied for every searched dosage found in the product name.
@@ -31,8 +26,7 @@ public class DosagesInProductNameJudge extends ScoreJudge {
 	}
 
 	@Override
-	protected double judgeInternal(Matchable matchable, SearchQuery query) {
-		if (!(matchable instanceof Product product)) return NOT_A_PRODUCT_SCORE;
+	protected double judgeInternal(Product product, SearchQuery query) {
 		List<DosageDetector.DetectedDosage> detectedDosages = DosageDetector.detectDosages(product.getName());
 		List<Dosage> searchDosages = query.getActiveIngredientDosages();
 
