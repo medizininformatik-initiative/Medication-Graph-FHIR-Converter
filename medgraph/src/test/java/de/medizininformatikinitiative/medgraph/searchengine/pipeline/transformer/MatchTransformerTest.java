@@ -58,7 +58,7 @@ public class MatchTransformerTest {
 
 		TestMatchTransformer transformer = new TestMatchTransformer(tfMap);
 
-		List<Transformation> tfResults = transformer.batchTransform(
+		List<Transformation<Matchable>> tfResults = transformer.batchTransform(
 				List.of(SAMPLE_PRODUCT_1, SAMPLE_PRODUCT_2, SAMPLE_PRODUCT_3, new Substance(0, "goodbye")), null);
 
 		assertTrue(transformer.isUsedBatchTransform(),
@@ -71,7 +71,7 @@ public class MatchTransformerTest {
 		assertEquals(List.of(), tfResults.get(3).result());
 	}
 
-	private static class TestMatchTransformer extends MatchTransformer {
+	private static class TestMatchTransformer extends MatchTransformer<Matchable, Matchable> {
 
 		private boolean usedBatchTransform = false;
 		private final Map<Matchable, List<Matchable>> transformationMap;

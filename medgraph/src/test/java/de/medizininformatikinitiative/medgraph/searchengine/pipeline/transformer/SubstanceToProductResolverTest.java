@@ -2,7 +2,8 @@ package de.medizininformatikinitiative.medgraph.searchengine.pipeline.transforme
 
 import de.medizininformatikinitiative.medgraph.Neo4jTest;
 import de.medizininformatikinitiative.medgraph.TestFactory;
-import de.medizininformatikinitiative.medgraph.searchengine.model.identifiable.Matchable;
+import de.medizininformatikinitiative.medgraph.searchengine.model.identifiable.Product;
+import de.medizininformatikinitiative.medgraph.searchengine.model.identifiable.Substance;
 import de.medizininformatikinitiative.medgraph.searchengine.model.pipelinestep.Transformation;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -14,7 +15,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import static de.medizininformatikinitiative.medgraph.TestFactory.SAMPLE_PRODUCT_1;
 import static de.medizininformatikinitiative.medgraph.TestFactory.SAMPLE_SEARCH_QUERY;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -32,22 +32,15 @@ public class SubstanceToProductResolverTest extends Neo4jTest {
 
 	@ParameterizedTest(name = "batchMode: {0}")
 	@ValueSource(booleans = {false, true})
-	public void transformProduct(boolean batchMode) {
-		Transformation t = transform(SAMPLE_PRODUCT_1, batchMode);
-		assertEquals(List.of(SAMPLE_PRODUCT_1), t.result());
-	}
-
-	@ParameterizedTest(name = "batchMode: {0}")
-	@ValueSource(booleans = {false, true})
 	public void resolveSingleProduct(boolean batchMode) {
-		Transformation t = transform(TestFactory.Substances.ACETYLSALICYLIC_ACID, batchMode);
+		Transformation<Product> t = transform(TestFactory.Substances.ACETYLSALICYLIC_ACID, batchMode);
 		assertEquals(List.of(TestFactory.Products.ASPIRIN), t.result());
 	}
 
 	@ParameterizedTest(name = "batchMode: {0}")
 	@ValueSource(booleans = {false, true})
 	public void resolveMultipleProducts(boolean batchMode) {
-		Transformation t = transform(TestFactory.Substances.MIDAZOLAM_HYDROCHLORIDE, batchMode);
+		Transformation<Product> t = transform(TestFactory.Substances.MIDAZOLAM_HYDROCHLORIDE, batchMode);
 		assertEquals(Set.of(TestFactory.Products.DORMICUM_5, TestFactory.Products.DORMICUM_15),
 				new HashSet<>(t.result()));
 	}
@@ -55,7 +48,7 @@ public class SubstanceToProductResolverTest extends Neo4jTest {
 	@ParameterizedTest(name = "batchMode: {0}")
 	@ValueSource(booleans = {false, true})
 	public void resolveMultipleProductsFromCorrespondingIngredient(boolean batchMode) {
-		Transformation t = transform(TestFactory.Substances.MIDAZOLAM, batchMode);
+		Transformation<Product> t = transform(TestFactory.Substances.MIDAZOLAM, batchMode);
 		assertEquals(Set.of(TestFactory.Products.DORMICUM_5, TestFactory.Products.DORMICUM_15),
 				new HashSet<>(t.result()));
 	}
@@ -64,13 +57,13 @@ public class SubstanceToProductResolverTest extends Neo4jTest {
 	@ValueSource(booleans = {false, true})
 	public void resolveNonActiveIngredient(boolean batchMode) {
 		// Water is a nonactive ingredient and therefore no results should occur
-		Transformation t = transform(TestFactory.Substances.WATER, batchMode);
+		Transformation<Product> t = transform(TestFactory.Substances.WATER, batchMode);
 		assertEquals(Collections.emptyList(), t.result());
 	}
 
 	@Test
 	public void batchTransform() {
-		List<Transformation> transformations = sut.batchTransform(
+		List<Transformation<Product>> transformations = sut.batchTransform(
 				List.of(TestFactory.Substances.MIDAZOLAM, TestFactory.Substances.ACETYLSALICYLIC_ACID),
 				SAMPLE_SEARCH_QUERY
 		);
@@ -81,7 +74,7 @@ public class SubstanceToProductResolverTest extends Neo4jTest {
 				new HashSet<>(transformations.get(1).result()));
 	}
 
-	private Transformation transform(Matchable matchable, boolean batchMode) {
+	private Transformation<Product> transform(Substance matchable, boolean batchMode) {
 		if (batchMode) {
 			return sut.batchTransform(List.of(matchable), SAMPLE_SEARCH_QUERY).getFirst();
 		} else {

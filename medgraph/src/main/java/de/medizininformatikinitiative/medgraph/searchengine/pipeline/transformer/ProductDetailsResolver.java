@@ -3,7 +3,6 @@ package de.medizininformatikinitiative.medgraph.searchengine.pipeline.transforme
 import de.medizininformatikinitiative.medgraph.searchengine.db.Database;
 import de.medizininformatikinitiative.medgraph.searchengine.model.SearchQuery;
 import de.medizininformatikinitiative.medgraph.searchengine.model.identifiable.DetailedProduct;
-import de.medizininformatikinitiative.medgraph.searchengine.model.identifiable.Matchable;
 import de.medizininformatikinitiative.medgraph.searchengine.model.identifiable.Product;
 
 import java.util.*;
@@ -13,7 +12,7 @@ import java.util.*;
  *
  * @author Markus Budeus
  */
-public class ProductDetailsResolver extends MatchTransformer {
+public class ProductDetailsResolver extends MatchTransformer<Product, DetailedProduct> {
 
 	private final Database database;
 
@@ -22,45 +21,41 @@ public class ProductDetailsResolver extends MatchTransformer {
 	}
 
 	@Override
-	protected List<Matchable> transformInternal(Matchable matchable, SearchQuery query) {
-		if (isApplicable(matchable)) {
-			return new ArrayList<>(database.getDetailedProductInfo(Set.of(((Product) matchable).getId())));
-		} else return List.of(matchable);
+	protected List<DetailedProduct> transformInternal(Product matchable, SearchQuery query) {
+		if (matchable instanceof DetailedProduct p) return List.of(p);
+		return new ArrayList<>(database.getDetailedProductInfo(Set.of(matchable.getId())));
 	}
 
 	@Override
-	protected List<List<Matchable>> batchTransformInternal(List<? extends Matchable> matchables, SearchQuery query) {
+	protected List<List<DetailedProduct>> batchTransformInternal(List<? extends Product> matchables,
+	                                                             SearchQuery query) {
 		Set<Long> productIds = new HashSet<>();
 		matchables.forEach(m -> {
-			if (isApplicable(m)) productIds.add(((Product) m).getId());
+			if (!(m instanceof DetailedProduct)) productIds.add(m.getId());
 		});
 
 		Set<DetailedProduct> detailedProducts = database.getDetailedProductInfo(productIds);
 		Map<Long, DetailedProduct> detailedProductsById = new HashMap<>();
 		detailedProducts.forEach(d -> detailedProductsById.put(d.getId(), d));
 
-		List<List<Matchable>> outList = new ArrayList<>();
+		List<List<DetailedProduct>> outList = new ArrayList<>();
 
 		matchables.forEach(m -> {
-			if (isApplicable(m)) {
+			if (m instanceof DetailedProduct d) {
+				outList.add(List.of(d));
+			} else {
 				DetailedProduct detailedProduct = detailedProductsById.get(((Product) m).getId());
 				if (detailedProduct != null) {
 					outList.add(List.of(detailedProduct));
 				} else {
-					System.out.println("Warning: Transformation of product with id " + ((Product) m).getId() +
+					System.out.println("Warning: Transformation of product with id " + m.getId() +
 							" was requested, but the database provided no info on this product upon querying.");
 					outList.add(List.of());
 				}
-			} else {
-				outList.add(List.of(m));
 			}
 		});
 
 		return outList;
-	}
-
-	private boolean isApplicable(Matchable matchable) {
-		return matchable instanceof Product && !(matchable instanceof DetailedProduct);
 	}
 
 	@Override
