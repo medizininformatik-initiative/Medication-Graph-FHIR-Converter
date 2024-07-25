@@ -14,6 +14,7 @@ public class ScoredJudgement implements Judgement {
 	private final String name;
 	private final String description;
 	private final double score;
+	@Deprecated // TODO Remove from here
 	private final Double passingScore;
 
 	public ScoredJudgement(String name, String description, double score, Double passingScore) {
@@ -27,6 +28,7 @@ public class ScoredJudgement implements Judgement {
 	/**
 	 * Returns the issued score.
 	 */
+	@Override
 	public double getScore() {
 		return score;
 	}
@@ -40,7 +42,6 @@ public class ScoredJudgement implements Judgement {
 		return OptionalDouble.empty();
 	}
 
-	@Override
 	public boolean passed() {
 		return passingScore == null || score >= passingScore;
 	}

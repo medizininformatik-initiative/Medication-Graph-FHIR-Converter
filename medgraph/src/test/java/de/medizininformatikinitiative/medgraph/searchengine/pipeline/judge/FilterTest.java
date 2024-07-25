@@ -48,7 +48,7 @@ public class FilterTest {
 		assertFalse(list.get(3).passed());
 	}
 
-	private static class TestFilter implements Filter {
+	private static class TestFilter implements Filter<Matchable> {
 
 		private final Boolean[] result;
 
