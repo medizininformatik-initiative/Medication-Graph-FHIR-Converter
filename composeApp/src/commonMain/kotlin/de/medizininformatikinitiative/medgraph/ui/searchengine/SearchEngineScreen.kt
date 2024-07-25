@@ -9,10 +9,8 @@ import cafe.adriel.voyager.core.screen.Screen
 import de.medizininformatikinitiative.medgraph.DI
 import de.medizininformatikinitiative.medgraph.common.db.DatabaseConnectionService
 import de.medizininformatikinitiative.medgraph.searchengine.algorithm.PerSessionQueryManager
-import de.medizininformatikinitiative.medgraph.searchengine.algorithm.SimpleQueryExecutor
-import de.medizininformatikinitiative.medgraph.searchengine.algorithm.initial.LevenshteinSearchMatchFinder
+import de.medizininformatikinitiative.medgraph.searchengine.algorithm.WeightedScoringBasedQueryExecutor
 import de.medizininformatikinitiative.medgraph.searchengine.algorithm.querymanagement.*
-import de.medizininformatikinitiative.medgraph.searchengine.algorithm.refining.ExperimentalRefiner
 import de.medizininformatikinitiative.medgraph.searchengine.db.Neo4jCypherDatabase
 import de.medizininformatikinitiative.medgraph.searchengine.provider.Providers
 
@@ -39,14 +37,7 @@ class SearchEngineScreen : Screen {
                         )
                     )
                 },
-                { session ->
-                    SimpleQueryExecutor(
-                        LevenshteinSearchMatchFinder(
-                            Providers.getProductSynonyms(session),
-                        ),
-                        ExperimentalRefiner(session, Neo4jCypherDatabase(session))
-                    )
-                },
+                ::WeightedScoringBasedQueryExecutor,
                 DI.get(DatabaseConnectionService::class.java).createConnection()
             )
     }

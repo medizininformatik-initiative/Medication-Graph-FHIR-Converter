@@ -2,7 +2,7 @@ package de.medizininformatikinitiative.medgraph.searchengine.model.pipelinestep;
 
 import de.medizininformatikinitiative.medgraph.searchengine.model.identifiable.Matchable;
 
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -10,21 +10,17 @@ import java.util.List;
  * {@link Matchable Matchables}. For example, substances may be converted to products via searching for producs with a
  * given active substance.
  *
+ * @param <T> the type of matchable to which this transformation converted objects
  * @author Markus Budeus
  */
-public record Transformation(String name, String description, List<Matchable> result) implements MatchingPipelineStep {
-
-	public Transformation(String name, String description, List<Matchable> result) {
-		this.name = name;
-		this.description = description;
-		this.result = Collections.unmodifiableList(result);
-	}
+public record Transformation<T extends Matchable>(String name, String description,
+                                                  List<T> result) implements MatchingPipelineStep {
 
 	/**
 	 * Returns a list of {@link Matchable}s which were generated as a result of the transformation.
 	 */
 	@Override
-	public List<Matchable> result() {
+	public List<T> result() {
 		return result;
 	}
 }

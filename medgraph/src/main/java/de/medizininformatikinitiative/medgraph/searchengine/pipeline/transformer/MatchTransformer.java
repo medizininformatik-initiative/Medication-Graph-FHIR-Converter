@@ -10,20 +10,22 @@ import java.util.List;
  * Extension of {@link IMatchTransformer} which simplifies implementation by taking care of creating the
  * {@link Transformation} objects.
  *
+ * @param <S> the type of source objects this transformer suports
+ * @param <T> the type of target objects this transformer converts to
  * @author Markus Budeus
  */
-public abstract class MatchTransformer implements IMatchTransformer {
+public abstract class MatchTransformer<S extends Matchable, T extends  Matchable> implements IMatchTransformer<S, T> {
 	@Override
-	public Transformation transform(Matchable matchable, SearchQuery query) {
-		return new Transformation(toString(), getDescription(), transformInternal(matchable, query));
+	public Transformation<T> transform(S matchable, SearchQuery query) {
+		return new Transformation<>(toString(), getDescription(), transformInternal(matchable, query));
 	}
 
 	@Override
-	public List<Transformation> batchTransform(List<? extends Matchable> matchables, SearchQuery query) {
+	public List<Transformation<T>> batchTransform(List<? extends S> matchables, SearchQuery query) {
 		String name = toString();
 		String desc = getDescription();
 		return batchTransformInternal(matchables, query).stream()
-		                                                .map(result -> new Transformation(name, desc, result))
+		                                                .map(result -> new Transformation<>(name, desc, result))
 		                                                .toList();
 	}
 
@@ -34,7 +36,7 @@ public abstract class MatchTransformer implements IMatchTransformer {
 	 * @param query     the search query to consider for the transformation
 	 * @return a list of {@link Matchable}s into which the input has been transformed
 	 */
-	protected abstract List<Matchable> transformInternal(Matchable matchable, SearchQuery query);
+	protected abstract List<T> transformInternal(S matchable, SearchQuery query);
 
 	/**
 	 * Transforms each of the given {@link Matchable} into new {@link Matchable}s. Must provide the same results as if
@@ -44,7 +46,7 @@ public abstract class MatchTransformer implements IMatchTransformer {
 	 * @param query      the search query to consider for the transformation
 	 * @return a list of {@link Matchable}s into which the input has been transformed
 	 */
-	protected List<List<Matchable>> batchTransformInternal(List<? extends Matchable> matchables, SearchQuery query) {
+	protected List<List<T>> batchTransformInternal(List<? extends S> matchables, SearchQuery query) {
 		return matchables.stream().map(m -> transformInternal(m, query)).toList();
 	}
 

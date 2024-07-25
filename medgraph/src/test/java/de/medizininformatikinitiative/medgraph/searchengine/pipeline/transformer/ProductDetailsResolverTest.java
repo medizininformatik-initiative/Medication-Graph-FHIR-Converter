@@ -3,7 +3,6 @@ package de.medizininformatikinitiative.medgraph.searchengine.pipeline.transforme
 import de.medizininformatikinitiative.medgraph.UnitTest;
 import de.medizininformatikinitiative.medgraph.searchengine.db.Database;
 import de.medizininformatikinitiative.medgraph.searchengine.model.identifiable.DetailedProduct;
-import de.medizininformatikinitiative.medgraph.searchengine.model.identifiable.Matchable;
 import de.medizininformatikinitiative.medgraph.searchengine.model.identifiable.Product;
 import de.medizininformatikinitiative.medgraph.searchengine.model.pipelinestep.Transformation;
 import org.junit.jupiter.api.BeforeEach;
@@ -14,9 +13,9 @@ import org.mockito.Mock;
 
 import java.util.*;
 
-import static de.medizininformatikinitiative.medgraph.TestFactory.*;
 import static de.medizininformatikinitiative.medgraph.TestFactory.Products.*;
-import static org.junit.jupiter.api.Assertions.*;
+import static de.medizininformatikinitiative.medgraph.TestFactory.SAMPLE_SEARCH_QUERY;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.anyCollection;
 import static org.mockito.Mockito.when;
 
@@ -66,15 +65,6 @@ public class ProductDetailsResolverTest extends UnitTest {
 
 	@ParameterizedTest(name = "batchMode: {0}")
 	@ValueSource(booleans = { false, true })
-	public void transformNonProduct(boolean batchMode) {
-		// Non-Products stay the same
-		assertEquals(List.of(SAMPLE_SUBSTANCE_1), transform(SAMPLE_SUBSTANCE_1, batchMode));
-		assertEquals(List.of(SAMPLE_SUBSTANCE_2), transform(SAMPLE_SUBSTANCE_2, batchMode));
-		assertEquals(List.of(SAMPLE_SUBSTANCE_3), transform(SAMPLE_SUBSTANCE_3, batchMode));
-	}
-
-	@ParameterizedTest(name = "batchMode: {0}")
-	@ValueSource(booleans = { false, true })
 	public void transformAlreadyDetailedProduct(boolean batchMode) {
 		assertEquals(List.of(Detailed.ANAPEN), transform(Detailed.ANAPEN, batchMode));
 		assertEquals(List.of(Detailed.PREDNISOLUT), transform(Detailed.PREDNISOLUT, batchMode));
@@ -94,28 +84,26 @@ public class ProductDetailsResolverTest extends UnitTest {
 
 	@Test
 	public void batchTransform() {
-		List<Transformation> transformations = sut.batchTransform(List.of(
+		List<Transformation<DetailedProduct>> transformations = sut.batchTransform(List.of(
 				ASPIRIN,
 				DORMICUM_5,
-				SAMPLE_SUBSTANCE_3,
 				PREDNISOLUT,
 				ASEPTODERM
 		), SAMPLE_SEARCH_QUERY);
 
 		assertEquals(List.of(Detailed.ASPIRIN), transformations.get(0).result());
 		assertEquals(List.of(Detailed.DORMICUM_5), transformations.get(1).result());
-		assertEquals(List.of(SAMPLE_SUBSTANCE_3), transformations.get(2).result());
-		assertEquals(List.of(Detailed.PREDNISOLUT), transformations.get(3).result());
-		assertEquals(List.of(Detailed.ASEPTODERM), transformations.get(4).result());
+		assertEquals(List.of(Detailed.PREDNISOLUT), transformations.get(2).result());
+		assertEquals(List.of(Detailed.ASEPTODERM), transformations.get(3).result());
 	}
 
-	private List<Matchable> transform(Matchable matchable, boolean batchMode) {
+	private List<DetailedProduct> transform(Product product, boolean batchMode) {
 		if (batchMode) {
-			List<Transformation> transformations = sut.batchTransform(List.of(matchable), SAMPLE_SEARCH_QUERY);
+			List<Transformation<DetailedProduct>> transformations = sut.batchTransform(List.of(product), SAMPLE_SEARCH_QUERY);
 			assertEquals(1, transformations.size(), "Exactly one transformation was requested, but "+transformations.size()+" were returned!");
 			return transformations.getFirst().result();
 		} else {
-			return sut.transform(matchable, SAMPLE_SEARCH_QUERY).result();
+			return sut.transform(product, SAMPLE_SEARCH_QUERY).result();
 		}
 	}
 }
