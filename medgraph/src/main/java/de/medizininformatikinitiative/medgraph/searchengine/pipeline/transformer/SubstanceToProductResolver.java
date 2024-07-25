@@ -20,7 +20,7 @@ import static org.neo4j.driver.Values.parameters;
  *
  * @author Markus Budeus
  */
-public class SubstanceToProductResolver extends MatchTransformer {
+public class SubstanceToProductResolver extends MatchTransformer<Substance, Product> {
 
 	// TODO Ideally modify class to use the Database interface instead of Session
 
@@ -31,47 +31,40 @@ public class SubstanceToProductResolver extends MatchTransformer {
 	}
 
 	@Override
-	public List<List<Matchable>> batchTransformInternal(List<? extends Matchable> targets, SearchQuery query) {
+	public List<List<Product>> batchTransformInternal(List<? extends Substance> targets, SearchQuery query) {
 		List<Long> substanceMmiIds = new ArrayList<>(targets.size());
 		for (Matchable t : targets) {
 			if (t instanceof Substance s)
 				substanceMmiIds.add(s.getId());
 		}
-		Map<Long, List<Matchable>> remappedSubstances = queryAndParseProductsForSubstanceMmiIds(substanceMmiIds);
+		Map<Long, List<Product>> remappedSubstances = queryAndParseProductsForSubstanceMmiIds(substanceMmiIds);
 
-		List<List<Matchable>> resultList = new ArrayList<>(targets.size());
-		for (Matchable target : targets) {
-			if (target instanceof Substance s) {
-				List<Matchable> remaps = remappedSubstances.get(s.getId());
-				if (remaps == null) {
-					remaps = new ArrayList<>();
-				}
-				resultList.add(remaps);
-			} else {
-				resultList.add(List.of(target));
+		List<List<Product>> resultList = new ArrayList<>(targets.size());
+		for (Substance target : targets) {
+			List<Product> remaps = remappedSubstances.get(target.getId());
+			if (remaps == null) {
+				remaps = new ArrayList<>();
 			}
+			resultList.add(remaps);
 		}
 
 		return resultList;
 	}
 
 	@Override
-	public List<Matchable> transformInternal(Matchable target, SearchQuery query) {
-		if (target instanceof Substance s) {
-			List<Matchable> results = queryAndParseProductsForSubstanceMmiIds(List.of(s.getId())).get(s.getId());
-			if (results == null) return Collections.emptyList();
-			return results;
-		}
-		return List.of(target);
+	public List<Product> transformInternal(Substance target, SearchQuery query) {
+		List<Product> results = queryAndParseProductsForSubstanceMmiIds(List.of(target.getId())).get(target.getId());
+		if (results == null) return Collections.emptyList();
+		return results;
 	}
 
-	private Map<Long, List<Matchable>> queryAndParseProductsForSubstanceMmiIds(List<Long> substanceMmiIds) {
+	private Map<Long, List<Product>> queryAndParseProductsForSubstanceMmiIds(List<Long> substanceMmiIds) {
 		Result result = queryProductsForSubstanceMmiIds(substanceMmiIds);
-		Map<Long, List<Matchable>> res = new HashMap<>();
+		Map<Long, List<Product>> res = new HashMap<>();
 		while (result.hasNext()) {
 			Record record = result.next();
 			Long id = record.get(0).asLong();
-			Matchable target = new Product(record.get(1).asLong(), record.get(2).asString());
+			Product target = new Product(record.get(1).asLong(), record.get(2).asString());
 			res.computeIfAbsent(id, i -> new ArrayList<>()).add(target);
 		}
 		return res;
