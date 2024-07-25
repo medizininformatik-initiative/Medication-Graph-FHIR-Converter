@@ -5,11 +5,11 @@ import de.medizininformatikinitiative.medgraph.searchengine.model.identifiable.M
 import de.medizininformatikinitiative.medgraph.searchengine.model.identifiable.Substance;
 
 /**
- * Filter which only product matches pass.
+ * Filter which only substance matches pass.
  *
  * @author Markus Budeus
  */
-public class SubstanceOnlyFilter implements Filter {
+public class SubstanceOnlyFilter implements Filter<Matchable> {
 
 	public static final String NAME = "Substance Only Filter";
 	public static final String DESCRIPTION = "Removes all matches which are not substances.";

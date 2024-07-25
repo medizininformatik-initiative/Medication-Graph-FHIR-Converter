@@ -9,17 +9,18 @@ import java.util.List;
 /**
  * A {@link Judge}-implementation which only passes or denies specific {@link Matchable}s
  *
+ * @param <S> the type of {@link Matchable} this filter supports
  * @author Markus Budeus
  */
-public interface Filter extends Judge<Filtering> {
+public interface Filter<S extends Matchable> extends Judge<S, Filtering> {
 
 	@Override
-	default Filtering judge(Matchable matchable, SearchQuery query) {
+	default Filtering judge(S matchable, SearchQuery query) {
 		return new Filtering(toString(), getDescription(), passesFilter(matchable, query));
 	}
 
 	@Override
-	default List<Filtering> batchJudge(List<? extends Matchable> matchables, SearchQuery query) {
+	default List<Filtering> batchJudge(List<? extends S> matchables, SearchQuery query) {
 		String name = toString();
 		String desc = getDescription();
 		return batchPassesFilter(matchables, query)

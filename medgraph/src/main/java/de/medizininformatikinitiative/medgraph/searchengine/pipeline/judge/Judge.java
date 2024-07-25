@@ -11,11 +11,12 @@ import java.util.List;
  * An instance of this class judges {@link Matchable}s using any metric and possibly using information from the search
  * query.
  *
+ * @param <S> the type of {@link Matchable}s this instance is capable of judging
  * @param <T> the type of judgement produced by this instance
  * @author Markus Budeus
  * @see Judgement
  */
-public interface Judge<T extends Judgement> extends MatchingPipelineComponent {
+public interface Judge<S extends Matchable, T extends Judgement> extends MatchingPipelineComponent {
 
 	/**
 	 * Judges the given {@link Matchable} using information from the {@link SearchQuery} if required. When judging
@@ -25,7 +26,7 @@ public interface Judge<T extends Judgement> extends MatchingPipelineComponent {
 	 * @param query     the {@link SearchQuery} from which to take information needed for the judgement
 	 * @return the {@link Judgement}
 	 */
-	T judge(Matchable matchable, SearchQuery query);
+	T judge(S matchable, SearchQuery query);
 
 	/**
 	 * Like {@link #judge(Matchable, SearchQuery)}, but runs on multiple {@link Matchable}s at once to allow the
@@ -36,7 +37,7 @@ public interface Judge<T extends Judgement> extends MatchingPipelineComponent {
 	 * @return a list of {@link Judgement}s, each one corresponding to the {@link Matchable} in the input list at the
 	 * same position
 	 */
-	default List<T> batchJudge(List<? extends Matchable> matchables, SearchQuery query) {
+	default List<T> batchJudge(List<? extends S> matchables, SearchQuery query) {
 		return matchables.stream().map(m -> judge(m, query)).toList();
 	}
 

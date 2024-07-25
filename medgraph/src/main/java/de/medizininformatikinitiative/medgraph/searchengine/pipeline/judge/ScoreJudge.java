@@ -8,11 +8,12 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 
 /**
- * Simple {@link Judge}-implementation, which works by having a score assigned to each
+ * Simple {@link Judge}-implementation, which works by having a score assigned to each {@link Matchable}.
  *
+ * @param <S> the type of {@link Matchable} this judge supports
  * @author Markus Budeus
  */
-public abstract class ScoreJudge implements Judge<ScoredJudgement> {
+public abstract class ScoreJudge<S extends  Matchable> implements Judge<S, ScoredJudgement> {
 
 	@Nullable
 	private final Double passingScore;
@@ -22,12 +23,12 @@ public abstract class ScoreJudge implements Judge<ScoredJudgement> {
 	}
 
 	@Override
-	public ScoredJudgement judge(Matchable matchable, SearchQuery query) {
+	public ScoredJudgement judge(S matchable, SearchQuery query) {
 		return new ScoredJudgement(toString(), getDescription(), judgeInternal(matchable, query), passingScore);
 	}
 
 	@Override
-	public List<ScoredJudgement> batchJudge(List<? extends Matchable> matchables, SearchQuery query) {
+	public List<ScoredJudgement> batchJudge(List<? extends S> matchables, SearchQuery query) {
 		String name = toString();
 		String desc = getDescription();
 		return batchJudgeInternal(matchables, query)
@@ -43,7 +44,7 @@ public abstract class ScoreJudge implements Judge<ScoredJudgement> {
 	 * @param query     the {@link SearchQuery} to utilize for the judgement, if required
 	 * @return the assigned score
 	 */
-	protected abstract double judgeInternal(Matchable matchable, SearchQuery query);
+	protected abstract double judgeInternal(S matchable, SearchQuery query);
 
 	/**
 	 * Returns the scores of the given {@link Matchable}s based on the given search query.
@@ -53,7 +54,7 @@ public abstract class ScoreJudge implements Judge<ScoredJudgement> {
 	 * @return the assigned score for each {@link Matchable}, with each entry in the list being the score of the
 	 * {@link Matchable} in the input list at the same position
 	 */
-	protected List<Double> batchJudgeInternal(List<? extends Matchable> matchables, SearchQuery query) {
+	protected List<Double> batchJudgeInternal(List<? extends S> matchables, SearchQuery query) {
 		return matchables.stream().map(m -> judgeInternal(m, query)).toList();
 	}
 

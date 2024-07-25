@@ -1,6 +1,5 @@
 package de.medizininformatikinitiative.medgraph.searchengine.pipeline.judge.dosage;
 
-import de.medizininformatikinitiative.medgraph.TestFactory;
 import de.medizininformatikinitiative.medgraph.UnitTest;
 import de.medizininformatikinitiative.medgraph.searchengine.model.Amount;
 import de.medizininformatikinitiative.medgraph.searchengine.model.Dosage;
@@ -33,15 +32,6 @@ public class DosagesInProductNameJudgeTest extends UnitTest {
 				.build();
 		double judgement = sut.judgeInternal(new Product(0, "Aspirin 500mg"), query);
 		assertEquals(DosagesInProductNameJudge.SCORE_PER_MATCH, judgement);
-	}
-
-	@Test
-	void notAProduct() {
-		SearchQuery query = new SearchQuery.Builder()
-				.withActiveIngredientDosages(List.of(Dosage.of(500, "mg")))
-				.build();
-		double judgement = sut.judgeInternal(TestFactory.SAMPLE_SUBSTANCE_1, query);
-		assertEquals(DosagesInProductNameJudge.NOT_A_PRODUCT_SCORE, judgement);
 	}
 
 	@Test
