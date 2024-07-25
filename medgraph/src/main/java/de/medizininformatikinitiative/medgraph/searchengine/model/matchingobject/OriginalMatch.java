@@ -10,7 +10,7 @@ import java.util.Objects;
  *
  * @author Markus Budeus
  */
-public class OriginalMatch<T extends Matchable> extends MatchingObject<T> {
+public class OriginalMatch<T extends Matchable> extends MatchingObjectBase<T> {
 
 	/**
 	 * The origin where this match originated from.
