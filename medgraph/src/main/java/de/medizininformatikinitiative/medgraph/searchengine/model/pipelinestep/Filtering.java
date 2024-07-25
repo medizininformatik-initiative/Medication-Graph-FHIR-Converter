@@ -7,6 +7,6 @@ import de.medizininformatikinitiative.medgraph.searchengine.model.identifiable.M
  *
  * @author Markus Budeus
  */
-public record Filtering(String name, String description, boolean passed) implements Judgement {
+public record Filtering(String name, String description, boolean passed) implements MatchingPipelineStep {
 
 }

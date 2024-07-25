@@ -14,7 +14,7 @@ import java.util.Objects;
  *
  * @author Markus Budeus
  */
-public class Merge<T extends Matchable> extends MatchingObject<T> {
+public class Merge<T extends Matchable> extends MatchingObjectBase<T> {
 
 	/**
 	 * Verifies all entries in {@link #sourceObjects} reference the same {@link Matchable} and then returns the
