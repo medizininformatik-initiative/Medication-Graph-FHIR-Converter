@@ -1,14 +1,30 @@
 package de.medizininformatikinitiative.medgraph.ui.licenses
 
 import de.medizininformatikinitiative.medgraph.graphdbpopulator.CodingSystem
+import de.medizininformatikinitiative.medgraph.ui.Application
 import java.time.format.DateTimeFormatter
 
 class LicenseProvider {
 
-    val licenses: List<License>
+    /**
+     * The license of the project code itself.
+     */
+    val license: License
+
+    /**
+     * The licenses of dependencies.
+     */
+    val dependencyLicenses: List<License>
 
     init {
-        licenses = listOf(
+        license = License(
+            Application.NAME,
+            "https://github.com/medizininformatik-initiative/Medication-Graph-FHIR-Converter",
+            DefaultLicense.MIT,
+            "Markus Budeus",
+            "2023-2024"
+        )
+        dependencyLicenses = listOf(
             License(
                 "EDQM Standard Terms",
                 "https://standardterms.edqm.eu/",
@@ -27,7 +43,8 @@ class LicenseProvider {
                 "JetBrains s.r.o. and and respective authors and developers.",
                 "2020-2021"
             ),
-            License("Neo4j Java Driver", "https://github.com/neo4j/neo4j-java-driver", DefaultLicense.APACHE_2_0,
+            License(
+                "Neo4j Java Driver", "https://github.com/neo4j/neo4j-java-driver", DefaultLicense.APACHE_2_0,
                 notice = """
                     Copyright (c) "Neo4j"
                     Neo4j Sweden AB [https://neo4j.com]
@@ -48,7 +65,8 @@ class LicenseProvider {
 
                     Third-party licenses
                     --------------------
-                """.trimIndent()),
+                """.trimIndent()
+            ),
             License("Voyager", "https://github.com/adrielcafe/voyager", DefaultLicense.MIT, "Adriel Café", "2021"),
             License(
                 "Kotlin Coroutines",

@@ -8,6 +8,8 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.ButtonColors
+import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
@@ -23,6 +25,7 @@ import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import de.medizininformatikinitiative.medgraph.ui.resources.StringRes
 import de.medizininformatikinitiative.medgraph.ui.theme.ApplicationTheme
+import de.medizininformatikinitiative.medgraph.ui.theme.localColors
 import de.medizininformatikinitiative.medgraph.ui.theme.templates.Button
 
 @Composable
@@ -39,13 +42,26 @@ fun LicensesUI(modifier: Modifier = Modifier, onReturn: () -> Unit) {
         modifier
     ) {
         Button(onReturn) { Text(StringRes.do_return) }
-        Text(StringRes.licenses_about)
+
+        val lp = LicenseProvider()
+
+        Text(StringRes.license_about)
+        Spacer(modifier = Modifier.height(8.dp))
+        LicenseButton(
+            lp.license,
+            modifier = Modifier.fillMaxWidth()
+                .padding(vertical = 8.dp, horizontal = 16.dp)
+                .height(60.dp),
+            buttonColors = ButtonDefaults.buttonColors(backgroundColor = MaterialTheme.localColors.primaryVariant)
+        )
+
+        Text(StringRes.dependency_licenses_about)
         Spacer(modifier = Modifier.height(8.dp))
 
         Column(
             Modifier.verticalScroll(rememberScrollState())
         ) {
-            for (s in LicenseProvider().licenses) {
+            for (s in lp.dependencyLicenses) {
                 LicenseButton(
                     s, modifier = Modifier.fillMaxWidth()
                         .padding(vertical = 8.dp, horizontal = 16.dp)
@@ -57,7 +73,7 @@ fun LicensesUI(modifier: Modifier = Modifier, onReturn: () -> Unit) {
 }
 
 @Composable
-fun LicenseButton(license: License, modifier: Modifier) {
+fun LicenseButton(license: License, modifier: Modifier, buttonColors: ButtonColors = ButtonDefaults.buttonColors()) {
     var detailsVisible by remember { mutableStateOf(false) }
 
     if (detailsVisible) {
@@ -68,7 +84,8 @@ fun LicenseButton(license: License, modifier: Modifier) {
         onClick = {
             detailsVisible = true
         },
-        modifier = modifier
+        modifier = modifier,
+        colors = buttonColors,
     ) {
         Text(license.libraryName, textAlign = TextAlign.Center, modifier = Modifier.fillMaxWidth())
     }

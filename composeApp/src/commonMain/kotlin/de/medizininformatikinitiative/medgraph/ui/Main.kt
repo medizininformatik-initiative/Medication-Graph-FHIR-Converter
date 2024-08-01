@@ -8,6 +8,10 @@ import de.medizininformatikinitiative.medgraph.common.db.DatabaseConnectionServi
 import de.medizininformatikinitiative.medgraph.common.logging.Level
 import de.medizininformatikinitiative.medgraph.common.logging.LogManager
 
+object Application {
+    const val NAME = "Medication Graph FHIR Converter"
+}
+
 fun main() {
     LogManager.getLogger("Application").log(Level.INFO, "Application started.")
     UI.startUi(!hasFunctioningDatabaseConnection())
