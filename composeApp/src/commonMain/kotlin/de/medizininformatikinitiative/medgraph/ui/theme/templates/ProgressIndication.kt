@@ -25,7 +25,7 @@ private fun ProgressIndication() {
 
 @Composable
 fun ProgressIndication(progressable: Progressable, modifier: Modifier = Modifier, indicateOngoingProgression: Boolean = true) {
-    val model = remember { ProgressIndicationViewState(progressable) }
+    val model = ProgressIndicationViewState(progressable)
     if (progressable is NamedProgressable) {
         DetailedProgressIndication(model, modifier, indicateOngoingProgression)
     } else {
