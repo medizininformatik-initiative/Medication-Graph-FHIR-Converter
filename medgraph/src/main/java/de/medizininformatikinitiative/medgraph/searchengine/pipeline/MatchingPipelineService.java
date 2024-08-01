@@ -2,17 +2,17 @@ package de.medizininformatikinitiative.medgraph.searchengine.pipeline;
 
 import de.medizininformatikinitiative.medgraph.searchengine.model.SearchQuery;
 import de.medizininformatikinitiative.medgraph.searchengine.model.identifiable.Matchable;
-import de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject.JudgedObject;
-import de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject.MatchingObject;
+import de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject.*;
 import de.medizininformatikinitiative.medgraph.searchengine.model.pipelinestep.Judgement;
 import de.medizininformatikinitiative.medgraph.searchengine.model.pipelinestep.ScoredJudgement;
+import de.medizininformatikinitiative.medgraph.searchengine.model.pipelinestep.Transformation;
 import de.medizininformatikinitiative.medgraph.searchengine.pipeline.judge.Filter;
 import de.medizininformatikinitiative.medgraph.searchengine.pipeline.judge.ScoreJudge;
 import de.medizininformatikinitiative.medgraph.searchengine.pipeline.judge.ScoreJudgeConfiguration;
+import de.medizininformatikinitiative.medgraph.searchengine.pipeline.transformer.IMatchTransformer;
 import de.medizininformatikinitiative.medgraph.searchengine.tools.Util;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 /**
  * Service class which provides utility functions to apply matching pipeline components to
@@ -83,7 +83,7 @@ public class MatchingPipelineService {
 	 *                       filter
 	 * @return the filtered list of {@link MatchingObject}s
 	 */
-	public <S extends T, T extends Matchable> List<MatchingObject<S>> applyFilter(List<MatchingObject<S>> objects,
+	public <S extends T, T extends Matchable> List<MatchingObject<S>> applyFilter(List<? extends MatchingObject<S>> objects,
 	                                                                              Filter<S> filter,
 	                                                                              boolean ensureSurvival) {
 		List<Boolean> passes = filter.batchPassesFilter(Util.unpack(objects), query);
@@ -96,7 +96,7 @@ public class MatchingPipelineService {
 		}
 
 		if (passes.isEmpty() && ensureSurvival) {
-			return objects;
+			return new ArrayList<>(objects);
 		}
 
 		List<MatchingObject<S>> survivors = new ArrayList<>(n);
@@ -105,150 +105,104 @@ public class MatchingPipelineService {
 		}
 		return survivors;
 	}
-//
-//	public void transformMatches(IMatchTransformer transformer) {
-//		// This function is sadly a lot more complicated than applying a judgement.
-//		//
-//		// First, we feed all current matches into the transformer.
-//		// Then, we construct new TransformedObject-instances for every output of each transformation.
-//		// Now, intuitively, the final step is to replace each MatchingObject with its transformations using
-//		// SubSortingTree.batchReplace.
-//		//
-//		// However, there is one issue: The MatchTransformer may have generated the same output within the
-//		// transformations of different inputs. For example, say we transform substances into products by searching
-//		// for products which use the substance as their active ingredient. But, product [A] may be a combination
-//		// product, containing substances [B] and [C]. Both [B] and [C] are then resolved to product [A].
-//		// Now, [A] exists twice in the resulting matches. Which means, we need to merge them.
-//		//
-//		// The way we do that is we group all TransformedObject-instances by their Matchable in a hash table.
-//		// Then, everytime a Matchable is linked to multiple TransformedObject-instances, we merge them.
-//		// Finally, we do the batchReplace. For groups, we replace the first occurrence on the matches (i.e. the
-//		// highest-rated) with the Merge object and eliminate the others.
-//
-//		// Step 1: Run the transformer
-//		List<MatchingObject<?>> matchingObjects = getCurrentMatches();
-//		List<? extends Matchable> matchables = matchingObjects.stream().map(MatchingObject::getObject).toList();
-//		List<Transformation> transformations = transformer.batchTransform(matchables, query);
-//
-//		// Verify we got the expected amount of transformations
-//		int size = matchables.size();
-//		if (size != transformations.size()) {
-//			throw new IllegalStateException(
-//					"The transformer was given " + matchables.size() + " objects to transform, " +
-//							"but returned " + transformations.size() + " transformations!");
-//		}
-//
-//		// Step 2: create TransformedObject-instances and group by outcome Matchable
-//		// Use LinkedHashMap to ensure order to objects in transformation output is preserved.
-//		Map<Matchable, LinkedList<TransformedObject<?, ?>>> postTransformationMap = new LinkedHashMap<>();
-//		for (int i = 0; i < size; i++) {
-//			MatchingObject<?> sourceObject = matchingObjects.get(i);
-//			Transformation transformation = transformations.get(i);
-//			for (Matchable output : transformation.result()) {
-//				TransformedObject<?, ?> transformedObject = new TransformedObject<>(output, sourceObject, transformation);
-//				// Add to the list of TransformedObjects which represent this Matchable, creating the list if required
-//				postTransformationMap.computeIfAbsent(output, m -> new LinkedList<>()).add(transformedObject);
-//			}
-//		}
-//
-//		// Step 3: Merge all TransformedObjects which reference the same Matchable.
-//		// While doing that, prepare the replacement map for the SubSortingTree.
-//		Map<MatchingObject<?>, List<MatchingObject<?>>> replacementMap = new HashMap<>();
-//		for (MatchingObject<?> sourceObject : matchingObjects) {
-//			replacementMap.put(sourceObject, new LinkedList<>());
-//		}
-//		for (LinkedList<TransformedObject<?, ?>> list : postTransformationMap.values()) {
-//			MatchingObject<?> result;
-//			assert !list.isEmpty();
-//			if (list.size() == 1) {
-//				result = list.getFirst();
-//			} else {
-//				result = new Merge<>(list);
-//			}
-//			// The remappingKey is the object in the SubSortingTree which is to be replaced with the result.
-//			// In case of a single-entry list, this is trivial. We simply replace the source object with the
-//			// transformed one.
-//			// For a merge, we don't want the Merge to be inserted multiple times, once for each of the merged objects.
-//			// Instead we use the position closest to the beginning of the list (i.e. the highest-rated position.)
-//			// The object at this position is the source object of the first transformed object in the list, because
-//			// the processing happened in this order. So elements further back in the original list are processed later
-//			// and therefore end up at later positions in the list of transformed objects.
-//			MatchingObject<?> remappingKey = list.getFirst().getSourceObject();
-//
-//			replacementMap.get(remappingKey).add(result);
-//		}
-//
-//		// Finally, replace MatchingObjects in the SubSortingTree by their TransformedObject or Merge object
-//		currentMatches.batchReplace(replacementMap);
-//	}
-//
-//	/**
-//	 * Runs the given judge against all current matches and assigns its judgement to the corresponding
-//	 * {@link MatchingObject}s.
-//	 *
-//	 * @param judge the judge to use
-//	 * @return true, if at least one object has passed the judgement, false otherwise
-//	 */
-//	private boolean judgeMatches(Judge<?> judge) {
-//		List<MatchingObject<?>> objects = currentMatches.getContents();
-//		List<? extends Matchable> matchables = objects.stream().map(MatchingObject::getObject).toList();
-//		List<? extends Judgement> judgements = judge.batchJudge(matchables, query);
-//		assert judgements.size() == objects.size();
-//		boolean atLeastOnePass = false;
-//		for (int i = 0; i < objects.size(); i++) {
-//			Judgement judgement = judgements.get(i);
-//			objects.get(i).addJudgement(judgement);
-//			atLeastOnePass = atLeastOnePass || judgement.passed();
-//		}
-//		return atLeastOnePass;
-//	}
-//
-//	/**
-//	 * Applies a sorting step to the current matches, removing all which have not passed the last applied judgement.
-//	 * Requires that at least one judgement has been applied and no result transformation has happened since then.
-//	 *
-//	 * @param name the name to apply to the sort directive
-//	 */
-//	private void removeMatchesWhichFailedTheLastFiltering(String name) {
-//		currentMatches.applySortingStep(
-//				new BinarySortDirective<>(name,
-//						matchingObject -> matchingObject.getAppliedJudgements().getLast().passed(),
-//						true)
-//		);
-//	}
-//
-//	/**
-//	 * Applies a sorting step to the current matches, sorting along the score of the last applied judgement. Requires
-//	 * that the last applied judgement creates {@link ScoredJudgement}-instances and no result transformation has
-//	 * happened since then.
-//	 *
-//	 * @param name            the name to apply to the sort directive
-//	 * @param retainThreshold the retain threshold to use
-//	 */
-//	private void sortMatchesByLatestScoredJudgement(String name, Double retainThreshold) {
-//		currentMatches.applySortingStep(
-//				new ScoreSortDirective<>(name,
-//						matchingObject -> ((ScoredJudgement) matchingObject.getAppliedJudgements()
-//						                                                   .getLast()).getScore(),
-//						retainThreshold)
-//		);
-//	}
-//
-//	/**
-//	 * Returns the current intermediate matches.
-//	 */
-//	public List<MatchingObject<?>> getCurrentMatches() {
-//		return currentMatches.getContents();
-//	}
-//
-//	/**
-//	 * Returns the current matches as {@link SubSortingTree}. Note that modifications to this tree will
-//	 * affect the matching, in possibly unpredicatable ways.
-//	 */
-//	public SubSortingTree<MatchingObject<?>> getCurrentMatchesTree() {
-//		return currentMatches;
-//	}
-//
 
+	/**
+	 * Transforms the given objects using the given transformer. If the transformer produces duplicates (including
+	 * indirectly, if two different inputs result in the same output), these duplicates are merged.
+	 *
+	 * @param objects              the objects to transform
+	 * @param transformer          the transformer to use
+	 * @param scoreMergingStrategy the strategy to use for assigning scores to merges if the transformation produces
+	 *                             duplicates
+	 * @param <S>                  the type of input {@link Matchable}s
+	 * @param <T>                  the type of {@link Matchable}s produced by the transformer
+	 * @return a list {@link TransformedObject} instances, possibly intertwined with {@link Merge}-objects
+	 */
+	public <S extends Matchable, T extends Matchable> List<MatchingObject<T>> transformMatches(
+			List<? extends MatchingObject<S>> objects,
+			IMatchTransformer<S, T> transformer,
+			ScoreMergingStrategy scoreMergingStrategy) {
+		return mergeDuplicates(transformMatches(objects, transformer), scoreMergingStrategy);
+	}
+
+	/**
+	 * Transforms the given objects using the given transformer. Note that if the transformer produces duplicates
+	 * (including indirectly, if two different inputs result in the same output), this means the output contains
+	 * multiple {@link MatchingObject}-instances referencing the same {@link Matchable}
+	 *
+	 * @param objects     the objects to transform
+	 * @param transformer the transformer to use
+	 * @param <S>         the type of input {@link Matchable}s
+	 * @param <T>         the type of {@link Matchable}s produced by the transformer
+	 * @return a list {@link TransformedObject} instances
+	 */
+	<S extends Matchable, T extends Matchable> List<TransformedObject<S, T>> transformMatches(List<? extends MatchingObject<S>> objects,
+	                                                                                    IMatchTransformer<S, T> transformer) {
+		// Step 1: Run the transformer
+		List<S> matchables = Util.unpack(objects);
+		List<Transformation<T>> transformations = transformer.batchTransform(matchables, query);
+
+		// Verify we got the expected amount of transformations
+		int size = matchables.size();
+		if (size != transformations.size()) {
+			throw new IllegalStateException(
+					"The transformer was given " + matchables.size() + " objects to transform, " +
+							"but returned " + transformations.size() + " transformations!");
+		}
+
+		List<TransformedObject<S, T>> outList = new ArrayList<>(size);
+		for (int i = 0; i < size; i++) {
+			Transformation<T> transformation = transformations.get(i);
+			MatchingObject<S> source = objects.get(i);
+			for (T matchable : transformation.result()) {
+				outList.add(new TransformedObject<>(matchable, source, transformation));
+			}
+		}
+
+		return outList;
+	}
+
+	/**
+	 * Merges all {@link MatchingObject}-instances in the given list which point to the same {@link Matchable}. Merging
+	 * means that a {@link Merge}-instance is created which references the {@link MatchingObject}s that reference the
+	 * same object. If an object is only referenced by a single {@link MatchingObject}, it is not merged and directly
+	 * inserted into the output list. If there are no duplicates in the input list, the output list will be the same as
+	 * the input list.
+	 * <p>
+	 * This function preserves the list ordering. In case of duplicates, the corresponding {@link Merge}-object is
+	 * inserted at the first occurrence of one of its source objects.
+	 *
+	 * @param objects              the objects to merge
+	 * @param scoreMergingStrategy the strategy to use for merging the scores of carriers which reference the same
+	 *                             object
+	 * @param <S>                  the type of {@link Matchable} held by the objects
+	 * @return the input list, with {@link MatchingObject}s which reference the same {@link Matchable} replaced by a
+	 * corresponding {@link Merge}.
+	 */
+	<S extends Matchable> List<MatchingObject<S>> mergeDuplicates(List<? extends MatchingObject<S>> objects,
+	                                                              ScoreMergingStrategy scoreMergingStrategy) {
+		// Group carrier objects by Matchable
+		// Use LinkedHashMap to ensure order to objects in transformation output is preserved.
+		Map<Matchable, LinkedList<MatchingObject<S>>> objectsByMatchable = new LinkedHashMap<>();
+
+		for (MatchingObject<S> sourceObject : objects) {
+			objectsByMatchable.computeIfAbsent(sourceObject.getObject(), m -> new LinkedList<>()).add(sourceObject);
+		}
+
+		// Next, merge elements of all lists with more than one element.
+		List<MatchingObject<S>> outList = new ArrayList<>(objectsByMatchable.size());
+		for (LinkedList<MatchingObject<S>> group : objectsByMatchable.values()) {
+			if (group.isEmpty()) {
+				throw new IllegalStateException("Found an empty objects list, altough they are only created once " +
+						"an object has been found. This should not be possible. Please investigate.");
+			} else if (group.size() == 1) {
+				outList.add(group.getFirst());
+			} else {
+				outList.add(new Merge<>(outList, scoreMergingStrategy));
+			}
+		}
+
+		return outList;
+	}
 
 }

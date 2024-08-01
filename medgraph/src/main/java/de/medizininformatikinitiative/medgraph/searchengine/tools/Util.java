@@ -31,7 +31,7 @@ public class Util {
 	 * @return a list of the {@link Matchable}-objects held by the carrier objects in the input list, with ordering
 	 * preserved
 	 */
-	public static <S extends Matchable> List<S> unpack(List<MatchingObject<S>> objectList) {
+	public static <S extends Matchable> List<S> unpack(List<? extends MatchingObject<S>> objectList) {
 		return objectList.stream().map(MatchingObject::getObject).toList();
 	}
 
