@@ -7,8 +7,6 @@ import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 
 /**
@@ -220,10 +218,7 @@ public class GraphDbPopulatorSupport {
 		try (BufferedReader reader = new BufferedReader(new InputStreamReader(from));
 		     BufferedWriter writer = new BufferedWriter(new FileWriter(to.toFile()))) {
 			String line;
-			List<Integer> updatedLines = new ArrayList<>();
-			int l = 0;
 			while ((line = reader.readLine()) != null) {
-				l++;
 				int lastSplitterIndex = -1;
 				for (int i = line.length() - 2; i >= 2; i--) {
 					if (line.charAt(i) == ';' && line.charAt(i - 1) == '"' && line.charAt(i + 1) == '"') {
@@ -234,11 +229,8 @@ public class GraphDbPopulatorSupport {
 				if (lastSplitterIndex != -1) {
 					String lastPart = line.substring(lastSplitterIndex + 1);
 					if (lastPart.startsWith("\"") && lastPart.endsWith("\"")) {
-						String newPart = "\"" + lastPart.substring(1, lastPart.length() - 1)
-						                                .replaceAll("\"", "''") + "\"";
-						if (!newPart.equals(lastPart))
-							updatedLines.add(l);
-						lastPart = newPart;
+						lastPart = "\"" + lastPart.substring(1, lastPart.length() - 1)
+						                          .replaceAll("\"", "''") + "\"";
 					}
 					writer.write(line.substring(0, lastSplitterIndex + 1));
 					writer.write(lastPart);
@@ -247,7 +239,6 @@ public class GraphDbPopulatorSupport {
 				}
 				writer.write("\n");
 			}
-			System.out.println("Updated lines " + updatedLines);
 		}
 	}
 
