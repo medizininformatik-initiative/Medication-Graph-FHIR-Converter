@@ -4,9 +4,10 @@ use it without running into legal issues. I am on it, but unfortunately, I need 
 is in line with MII/DIFUTURE and TUM/MRI regulations.
 
 It is planned to provide the source code under the MIT license, whereas the binaries will likely be restricted to the Apache 2.0 license requirements, as this is required by included dependencies.
-I am currently waiting for confirmation from the TUM and hope I can provide a license and a binary by the end of July.
+Sadly, a new licensing issue has popped up on August 1st which requires me to investigate this issue AGAIN :(
+I am currently waiting for confirmation from the MRI and hope I can provide a license and a binary by the mid of August.
 
-As of: July 3rd, 2024
+As of: August 1st, 2024
 
 ---
 
