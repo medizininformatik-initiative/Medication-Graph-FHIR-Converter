@@ -14,14 +14,14 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 /**
  * @author Markus Budeus
  */
-public class DoseFormSynonymesFileTest extends UnitTest {
+public class DoseFormSynonymsFileTest extends UnitTest {
 
 	/**
-	 * This test ensures that all EDQM Concepts referenced in dose_form_synonymes.csv actually exist in
+	 * This test ensures that all EDQM Concepts referenced in dose_form_synonyms.csv actually exist in
 	 * edqm_objects.csv.
 	 */
 	@Test
-	void allHandwrittenDoseFormSynonymesExist() throws IOException {
+	void allHandwrittenDoseFormSynonymsExist() throws IOException {
 		Set<EdqmObject> edqmObjects = new HashSet<>();
 
 		try (CSVReader objectsReader = CSVReader.open(GraphDbPopulatorSupport.class.getResourceAsStream("/edqm_objects.csv"))) {
@@ -30,14 +30,14 @@ public class DoseFormSynonymesFileTest extends UnitTest {
 			});
 		}
 
-		try (CSVReader synonymesReader = CSVReader.open(
-				GraphDbPopulatorSupport.class.getResourceAsStream("/dose_form_synonymes.csv"))) {
-			synonymesReader.readAll().stream().skip(1).forEach(line -> {
+		try (CSVReader synonymsReader = CSVReader.open(
+				GraphDbPopulatorSupport.class.getResourceAsStream("/dose_form_synonyms.csv"))) {
+			synonymsReader.readAll().stream().skip(1).forEach(line -> {
 				String targetCode = line[1];
 				String targetName = line[2];
 				EdqmObject expectedObject = new EdqmObject(targetCode, targetName);
 				assertTrue(edqmObjects.contains(expectedObject),
-						"Object \""+targetCode+"\" ("+targetName+") mentioned in the dose_form_synonymes.csv file " +
+						"Object \""+targetCode+"\" ("+targetName+") mentioned in the dose_form_synonyms.csv file " +
 								"does not exist in the edqm_objects.csv file!"
 				);
 			});

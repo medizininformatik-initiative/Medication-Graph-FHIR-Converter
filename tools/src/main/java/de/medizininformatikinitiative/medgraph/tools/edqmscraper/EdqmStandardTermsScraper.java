@@ -61,7 +61,7 @@ public class EdqmStandardTermsScraper {
 			relationsOutFileWriter.write(notice);
 			relationsWriter.write("SOURCECLASS", "SOURCECODE", "TARGETCLASS", "TARGETCODE");
 			translationsOutFileWriter.write(notice);
-			translationsWriter.write("CLASS", "CODE", "SYNONYME");
+			translationsWriter.write("CLASS", "CODE", "SYNONYM");
 
 			loadClassAndWriteObjectsAndTranslations(objectsLoader, PHARMACEUTICAL_DOSE_FORM_CLASS, apiClient,
 					objectsWriter, translationsWriter);

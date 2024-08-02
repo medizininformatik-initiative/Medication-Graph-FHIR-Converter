@@ -7,7 +7,6 @@ import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.core.model.rememberScreenModel
 import cafe.adriel.voyager.core.screen.Screen
 import de.medizininformatikinitiative.medgraph.DI
-import de.medizininformatikinitiative.medgraph.common.db.ConnectionConfiguration
 import de.medizininformatikinitiative.medgraph.common.db.DatabaseConnectionService
 import de.medizininformatikinitiative.medgraph.searchengine.algorithm.PerSessionQueryManager
 import de.medizininformatikinitiative.medgraph.searchengine.algorithm.SimpleQueryExecutor
@@ -36,14 +35,14 @@ class SearchEngineScreen : Screen {
                             Providers.getEdqmConceptIdentifiers(session)
                         ),
                         SubstanceQueryRefiner(
-                            Providers.getSubstanceSynonymes(session)
+                            Providers.getSubstanceSynonyms(session)
                         )
                     )
                 },
                 { session ->
                     SimpleQueryExecutor(
                         LevenshteinSearchMatchFinder(
-                            Providers.getProductSynonymes(session),
+                            Providers.getProductSynonyms(session),
                         ),
                         ExperimentalRefiner(session, Neo4jCypherDatabase(session))
                     )

@@ -327,9 +327,9 @@ public class IntegrationTest {
 	}
 
 	@Test
-	public void customDoseFormSynonymeApplied() {
-		Result result = session.run("MATCH (s:" + SYNONYME_LABEL + "{name: 'Filmtbl.'})" +
-				"-[r:" + SYNONYME_REFERENCES_NODE_LABEL + "]->(e:" + EDQM_LABEL + "{code: 'PDF-10221000'}) " +
+	public void customDoseFormSynonymApplied() {
+		Result result = session.run("MATCH (s:" + SYNONYM_LABEL + "{name: 'Filmtbl.'})" +
+				"-[r:" + SYNONYM_REFERENCES_NODE_LABEL + "]->(e:" + EDQM_LABEL + "{code: 'PDF-10221000'}) " +
 				"RETURN e.name");
 
 		Record record = result.next();
@@ -339,8 +339,8 @@ public class IntegrationTest {
 
 	@Test
 	public void doseFormTranslationApplied() {
-		Result result = session.run("MATCH (s:" + SYNONYME_LABEL + "{name: 'Teeaufgusspulver'})" +
-				"-[r:" + SYNONYME_REFERENCES_NODE_LABEL + "]->(e:" + EDQM_LABEL + "{code: 'PDF-10202000'}) " +
+		Result result = session.run("MATCH (s:" + SYNONYM_LABEL + "{name: 'Teeaufgusspulver'})" +
+				"-[r:" + SYNONYM_REFERENCES_NODE_LABEL + "]->(e:" + EDQM_LABEL + "{code: 'PDF-10202000'}) " +
 				"RETURN e.name");
 
 		Record record = result.next();
@@ -349,9 +349,9 @@ public class IntegrationTest {
 	}
 
 	@Test
-	public void substanceNameSynonymesExist() {
-		Result result = session.run("MATCH (s:" + SYNONYME_LABEL + " {name: 'Midazolamhydrochlorid'})" +
-				"-[:" + SYNONYME_REFERENCES_NODE_LABEL + "]->(t:" + SUBSTANCE_LABEL + "{mmiId: 1}) RETURN t.name");
+	public void substanceNameSynonymsExist() {
+		Result result = session.run("MATCH (s:" + SYNONYM_LABEL + " {name: 'Midazolamhydrochlorid'})" +
+				"-[:" + SYNONYM_REFERENCES_NODE_LABEL + "]->(t:" + SUBSTANCE_LABEL + "{mmiId: 1}) RETURN t.name");
 
 		Record record = result.next();
 		assertEquals("Midazolamhydrochlorid", record.get(0).asString());
@@ -359,9 +359,9 @@ public class IntegrationTest {
 	}
 
 	@Test
-	public void productNameSynonymesExist() {
-		Result result = session.run("MATCH (s:" + SYNONYME_LABEL + " {name: 'Dormicum 15 mg/3 ml'})" +
-				"-[:" + SYNONYME_REFERENCES_NODE_LABEL + "]->(t:" + PRODUCT_LABEL + " {mmiId: 0}) RETURN t.name");
+	public void productNameSynonymsExist() {
+		Result result = session.run("MATCH (s:" + SYNONYM_LABEL + " {name: 'Dormicum 15 mg/3 ml'})" +
+				"-[:" + SYNONYM_REFERENCES_NODE_LABEL + "]->(t:" + PRODUCT_LABEL + " {mmiId: 0}) RETURN t.name");
 
 		Record record = result.next();
 		assertEquals("Dormicum 15 mg/3 ml", record.get(0).asString());
@@ -369,9 +369,9 @@ public class IntegrationTest {
 	}
 
 	@Test
-	public void edqmConceptNameSynonymesExist() {
-		Result result = session.run("MATCH (s:" + SYNONYME_LABEL + " {name: 'Oral drops, solution'})" +
-				"-[:" + SYNONYME_REFERENCES_NODE_LABEL + "]->(t:" + EDQM_LABEL + " {code: 'PDF-10101000'}) RETURN t.name");
+	public void edqmConceptNameSynonymsExist() {
+		Result result = session.run("MATCH (s:" + SYNONYM_LABEL + " {name: 'Oral drops, solution'})" +
+				"-[:" + SYNONYM_REFERENCES_NODE_LABEL + "]->(t:" + EDQM_LABEL + " {code: 'PDF-10101000'}) RETURN t.name");
 
 		Record record = result.next();
 		assertEquals("Oral drops, solution", record.get(0).asString());

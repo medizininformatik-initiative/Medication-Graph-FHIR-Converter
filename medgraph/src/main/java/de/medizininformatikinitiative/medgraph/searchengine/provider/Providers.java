@@ -13,8 +13,8 @@ import java.util.stream.Stream;
  */
 public class Providers {
 
-	private static final LazyProvider PRODUCT_SYNONYMES = new LazyProvider(DatabaseProviders::getProductSynonyms);
-	private static final LazyProvider SUBSTANCE_SYNONYMES = new LazyProvider(DatabaseProviders::getSubstanceSynonyms);
+	private static final LazyProvider PRODUCT_SYNONYMS = new LazyProvider(DatabaseProviders::getProductSynonyms);
+	private static final LazyProvider SUBSTANCE_SYNONYMS = new LazyProvider(DatabaseProviders::getSubstanceSynonyms);
 	private static final LazyProvider EDQM_CONCEPT_IDENTIFIERS = new LazyProvider(
 			DatabaseProviders::getEdqmConceptIdentifiers);
 
@@ -25,8 +25,8 @@ public class Providers {
 	 * @param session the session to access the data
 	 * @return the provider for product names
 	 */
-	public static BaseProvider<String> getProductSynonymes(Session session) {
-		return PRODUCT_SYNONYMES.get(session);
+	public static BaseProvider<String> getProductSynonyms(Session session) {
+		return PRODUCT_SYNONYMS.get(session);
 	}
 
 	/**
@@ -36,8 +36,8 @@ public class Providers {
 	 * @param session the session to access the data
 	 * @return the provider for substance names
 	 */
-	public static BaseProvider<String> getSubstanceSynonymes(Session session) {
-		return SUBSTANCE_SYNONYMES.get(session);
+	public static BaseProvider<String> getSubstanceSynonyms(Session session) {
+		return SUBSTANCE_SYNONYMS.get(session);
 	}
 
 	/**

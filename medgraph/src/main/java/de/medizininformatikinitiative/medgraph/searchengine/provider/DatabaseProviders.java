@@ -57,18 +57,18 @@ class DatabaseProviders {
 	}
 
 	/**
-	 * Queries synonymes pointing to nodes with the given label in the database. Do not pass a user-provided string as
+	 * Queries synonyms pointing to nodes with the given label in the database. Do not pass a user-provided string as
 	 * label, as it is inserted into the query unsafely. This is because Neo4j does not support labels being
 	 * parameterized.
 	 *
 	 * @param session the session to use for accessing the database
-	 * @param label   the label on the nodes which shall be referenced by the synonymes - DO NOT PASS IN USER-PROVIDED
+	 * @param label   the label on the nodes which shall be referenced by the synonyms - DO NOT PASS IN USER-PROVIDED
 	 *                STRINGS
 	 * @return a stream of found records, each record containing the synonym name, mmiId of target and name of target
 	 */
 	private static Stream<Record> downloadMmiObjectSynonyms(Session session, String label) {
 		return session.run(
-				"MATCH (sy:" + SYNONYME_LABEL + ")-[:"+SYNONYME_REFERENCES_NODE_LABEL+"]->(t:" + label + ") " +
+				"MATCH (sy:" + SYNONYM_LABEL + ")-[:"+ SYNONYM_REFERENCES_NODE_LABEL +"]->(t:" + label + ") " +
 						"RETURN sy.name, t.mmiId, t.name"
 		).stream();
 	}
@@ -78,7 +78,7 @@ class DatabaseProviders {
 				"MATCH (e:" + EDQM_LABEL + ") " +
 						"OPTIONAL MATCH (e)-[:" + EDQM_HAS_CHARACTERISTIC_LABEL + "]->(c:" + EDQM_LABEL + ") " +
 						"WITH e, collect(CASE WHEN c IS NULL THEN NULL ELSE {code:c.code,name:c.name,type:c.type} END) as characteristics " +
-						"OPTIONAL MATCH (s:" + SYNONYME_LABEL + ")-[:" + SYNONYME_REFERENCES_NODE_LABEL + "]->(e) " +
+						"OPTIONAL MATCH (s:" + SYNONYM_LABEL + ")-[:" + SYNONYM_REFERENCES_NODE_LABEL + "]->(e) " +
 						"RETURN e.code AS code, e.name AS name, e.type AS type, characteristics, " +
 						"collect(DISTINCT s.name) AS identifiers"
 		).stream();

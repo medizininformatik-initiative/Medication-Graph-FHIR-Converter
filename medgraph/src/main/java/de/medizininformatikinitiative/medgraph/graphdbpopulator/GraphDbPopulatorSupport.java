@@ -37,13 +37,13 @@ public class GraphDbPopulatorSupport {
 			"PRODUCT_FLAG.CSV"
 	};
 	private static final String[] REQUIRED_RESOURCE_FILES = new String[]{
-			"custom_synonymes.csv",
+			"custom_synonyms.csv",
 			"dose_form_mapping.csv",
 			"gsrs_matches.csv",
 			"edqm_objects.csv",
 			"pdf_relations.csv",
 			"edqm_translations.csv",
-			"dose_form_synonymes.csv",
+			"dose_form_synonyms.csv",
 			"NOTICE.txt",
 	};
 	private static final Path[] OPTIONAL_FILES = new Path[]{

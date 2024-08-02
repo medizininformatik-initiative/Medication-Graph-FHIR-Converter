@@ -1,6 +1,6 @@
 # 2024-05-29
-# This is a hand-crafted list providing synonymes for EDQM Standard Terms
-"SYNONYME";"TARGETCODE";"NAME"
+# This is a hand-crafted list providing synonyms for EDQM Standard Terms
+"SYNONYM";"TARGETCODE";"NAME"
 ###### Release characteristics  ---------------------------------------------------------------------------------------
 "Magensaftresistent";"RCA-0044";"Delayed"
 "Magensaftresist.";"RCA-0044";"Delayed"

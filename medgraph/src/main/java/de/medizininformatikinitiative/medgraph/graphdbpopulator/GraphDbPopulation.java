@@ -141,16 +141,16 @@ public class GraphDbPopulation extends NamedProgressableImpl {
 		loaders.add(new UniiLoader(session));
 		// Corresponding ingredients and their amounts
 		loaders.add(new IngredientCorrespondenceLoader(session));
-		// Custom synonymes
-		loaders.add(new CustomSynonymeLoader(session));
+		// Custom synonyms
+		loaders.add(new CustomSynonymLoader(session));
 		// Dose form translations
 		loaders.add(new EdqmStandardTermsTranslationsLoader(session));
-		// Custom dose form synonymes
-		loaders.add(new EdqmStandardTermsCustomSynonymesLoader(session));
+		// Custom dose form synonyms
+		loaders.add(new EdqmStandardTermsCustomSynonymsLoader(session));
 		// Coding System Nodes and connections to it
 		loaders.add(new CodingSystemNodeCreator(session));
-		// Synonymes from other nodes
-		loaders.add(new DatabaseSynonymePreparer(session));
+		// Synonyms from other nodes
+		loaders.add(new DatabaseSynonymPreparer(session));
 
 		return loaders;
 	}

@@ -27,7 +27,7 @@ public class AmiceStoffBezLoader extends CsvLoader {
 
 	private static final String INN_SOURCE = "INNBEZ1";
 
-	private static final String SYNONYMES = "SYN";
+	private static final String SYNONYMS = "SYN";
 
 	public AmiceStoffBezLoader(Session session) {
 		super(RAW_DATA_FILE_PATH, session);
@@ -73,39 +73,39 @@ public class AmiceStoffBezLoader extends CsvLoader {
 						"CREATE (c)-[:" + CODE_REFERENCE_RELATIONSHIP_NAME + "]->(s)"
 		));
 
-		// Load synonymes
+		// Load synonyms
 		executeQuery(withLoadStatement(
 				"WITH " + ROW_IDENTIFIER + " WHERE size(" + ROW_IDENTIFIER + ") > 15 AND linenumber() > 1 " +
 						"MATCH (a:" + ASK_LABEL + " {code: " + row(0) + "})" +
 						"-[:" + CODE_REFERENCE_RELATIONSHIP_NAME + "]->(s:" + SUBSTANCE_LABEL + ") " +
 						"WITH s, " + ROW_IDENTIFIER + "[16..] + " + row(6) + " + " + row(9) + " + " + row(
-						12) + " AS synonymes " +
-						"UNWIND synonymes as synonyme " +
-						"MERGE (c:" + SYNONYME_LABEL + " {name: synonyme})" +
+						12) + " AS synonyms " +
+						"UNWIND synonyms as synonym " +
+						"MERGE (c:" + SYNONYM_LABEL + " {name: synonym})" +
 						"ON CREATE SET c:TEMP, c.target = [s.mmiId] " +
 						"ON MATCH SET c.target = c.target + s.mmiId ",
 				DEFAULT_FIELD_TERMINATOR, false)
 		);
 
-		// Build synonyme relationships
-		executeQuery("MATCH (c:" + SYNONYME_LABEL + ":TEMP) " +
+		// Build synonym relationships
+		executeQuery("MATCH (c:" + SYNONYM_LABEL + ":TEMP) " +
 				"WITH c, c.target AS targets " +
 				"UNWIND targets AS target " +
 				"MATCH (s:" + SUBSTANCE_LABEL + " {mmiId: target}) " +
-				withRowLimit("WITH c, s CREATE (c)-[:" + SYNONYME_REFERENCES_NODE_LABEL + "]->(s) "));
+				withRowLimit("WITH c, s CREATE (c)-[:" + SYNONYM_REFERENCES_NODE_LABEL + "]->(s) "));
 
 		// Remove temporary markers
-		executeQuery("MATCH (s:" + SYNONYME_LABEL + ":TEMP) " +
+		executeQuery("MATCH (s:" + SYNONYM_LABEL + ":TEMP) " +
 				withRowLimit("WITH s " +
 						"REMOVE s.target " +
 						"REMOVE s:TEMP"));
 
 		// Remove the trash entry
-		executeQuery("MATCH (c:" + SYNONYME_LABEL + " {name: '-'}) DETACH DELETE c");
+		executeQuery("MATCH (c:" + SYNONYM_LABEL + " {name: '-'}) DETACH DELETE c");
 
 		// Remove duplicate references, which are created if names exist twice in the dataset
 		executeQuery(
-				"MATCH (s:" + SUBSTANCE_LABEL + ")<-[r1]-(sy:" + SYNONYME_LABEL + ") " +
+				"MATCH (s:" + SUBSTANCE_LABEL + ")<-[r1]-(sy:" + SYNONYM_LABEL + ") " +
 						"MATCH (s)<-[r2]-(sy) " +
 						"WHERE elementId(r1) < elementId(r2) " +
 						withRowLimit("WITH r2 DELETE r2")
