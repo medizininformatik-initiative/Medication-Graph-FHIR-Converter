@@ -23,7 +23,7 @@ public class ProvidersTest extends Neo4jTest {
 						new MappedIdentifier<>("Dormicum", DORMICUM_15),
 						new MappedIdentifier<>("Aspirin Complex Granulat-Sticks", ASPIRIN),
 						new MappedIdentifier<>("Aspirin Sticks", ASPIRIN)),
-				Providers.getProductSynonymes(session).getIdentifiers().collect(Collectors.toSet())
+				Providers.getProductSynonyms(session).getIdentifiers().collect(Collectors.toSet())
 		);
 	}
 
@@ -34,7 +34,7 @@ public class ProvidersTest extends Neo4jTest {
 						new MappedIdentifier<>("Midazolam", MIDAZOLAM),
 						new MappedIdentifier<>("Wasser", WATER),
 						new MappedIdentifier<>("Adrenalin", EPINEPHRINE)),
-				Providers.getSubstanceSynonymes(session).getIdentifiers().collect(Collectors.toSet())
+				Providers.getSubstanceSynonyms(session).getIdentifiers().collect(Collectors.toSet())
 		);
 	}
 

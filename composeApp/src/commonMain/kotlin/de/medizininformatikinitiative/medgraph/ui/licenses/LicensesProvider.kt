@@ -21,7 +21,7 @@ class LicenseProvider {
             Application.NAME,
             "https://github.com/medizininformatik-initiative/Medication-Graph-FHIR-Converter",
             DefaultLicense.MIT,
-            "Markus Budeus",
+            "Markus Budeus, Chair of Medical Informatics, TUM",
             "2023-2024"
         )
         dependencyLicenses = listOf(

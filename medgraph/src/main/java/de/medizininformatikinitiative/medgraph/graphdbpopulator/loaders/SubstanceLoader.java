@@ -39,7 +39,7 @@ public class SubstanceLoader extends CsvLoader {
 		executeQuery(
 				"CREATE CONSTRAINT innCodeConstraint IF NOT EXISTS FOR (i:" + INN_LABEL + ") REQUIRE i.code IS UNIQUE");
 		executeQuery(
-				"CREATE CONSTRAINT synonymeConstraint IF NOT EXISTS FOR (s:" + SYNONYME_LABEL + ") REQUIRE s.name IS UNIQUE");
+				"CREATE CONSTRAINT synonymConstraint IF NOT EXISTS FOR (s:" + SYNONYM_LABEL + ") REQUIRE s.name IS UNIQUE");
 		executeQuery(withLoadStatement(
 				"CREATE (s:" + DatabaseDefinitions.SUBSTANCE_LABEL + " {name: " + row(NAME) + ", mmiId: " + intRow(ID) + "}) " +
 						"WITH * " +

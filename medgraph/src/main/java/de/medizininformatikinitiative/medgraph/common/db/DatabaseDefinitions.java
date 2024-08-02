@@ -51,7 +51,7 @@ public class DatabaseDefinitions {
 	 */
 	public static final String EDQM_PDF_LABEL = "DoseForm";
 	public static final String DOSE_FORM_IS_EDQM = "CORRESPONDS_TO";
-	public static final String SYNONYME_LABEL = "Synonyme";
-	public static final String SYNONYME_REFERENCES_NODE_LABEL = "REFERENCES";
+	public static final String SYNONYM_LABEL = "Synonym";
+	public static final String SYNONYM_REFERENCES_NODE_LABEL = "REFERENCES";
 
 }

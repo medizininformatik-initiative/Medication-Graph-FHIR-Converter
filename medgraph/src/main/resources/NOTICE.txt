@@ -1,7 +1,7 @@
 This project uses data copies from external data sources which may not be up to date!
 
 For one, the internal file amice_stoffbezeichnungen_utf8.csv is the 2023 version of this file as provided by the German Federal Institute for Drugs and Medical Devices.
-From this file we extract CAS numbers, INNs and synonymes for substances and link them via the ASK.
+From this file we extract CAS numbers, INNs and synonyms for substances and link them via the ASK.
 
 The UNIIs and RXCUIs are from the Global Substance Registration System and were extracted on 2023-11-30 via the public GSRS api via known CAS numbers.
 
