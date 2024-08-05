@@ -69,7 +69,7 @@ public class AmiceStoffBezLoader extends CsvLoader {
 						"MATCH (a:" + ASK_LABEL + " {code: " + row(ASK) + "})" +
 						"-[:" + CODE_REFERENCE_RELATIONSHIP_NAME + "]->(s:" + SUBSTANCE_LABEL + ") " +
 						"MERGE (c:" + INN_LABEL + " {code: " + row(INN) + "}) " +
-						"ON CREATE SET c.source = " + row(INN_SOURCE) + ", c:" + CODE_LABEL + " " +
+						"ON CREATE SET c.source = " + nullIfBlank(row(INN_SOURCE)) + ", c:" + CODE_LABEL + " " +
 						"CREATE (c)-[:" + CODE_REFERENCE_RELATIONSHIP_NAME + "]->(s)"
 		));
 
