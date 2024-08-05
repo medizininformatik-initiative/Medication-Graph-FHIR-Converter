@@ -42,11 +42,11 @@ public class CompanyAddressLoader extends CsvLoader {
 						"MATCH (c:" + COMPANY_LABEL + " {mmiId: " + intRow(COMPANY_ID) + "}) " +
 						"CREATE (c)-[:" + COMPANY_HAS_ADDRESS_LABEL + "]->(a:" + ADDRESS_LABEL + " {" +
 						"mmiId: " + intRow(MMI_ID) + ", " +
-						"countryCode: " + row(COUNTRY_CATALOG_CODE) + ", " +
-						"street: " + row(STREET) + ", " +
-						"streetNumber: " + row(STREET_NUMBER) + ", " +
-						"postalCode: " + row(ZIP_CODE) + ", " +
-						"city: " + row(CITY) +
+						"countryCode: " + nullIfBlank(row(COUNTRY_CATALOG_CODE)) + ", " +
+						"street: " + nullIfBlank(row(STREET)) + ", " +
+						"streetNumber: " + nullIfBlank(row(STREET_NUMBER)) + ", " +
+						"postalCode: " + nullIfBlank(row(ZIP_CODE)) + ", " +
+						"city: " + nullIfBlank(row(CITY)) +
 						"})"
 		));
 

@@ -36,9 +36,6 @@ public class PackageLoader extends CsvLoader {
 				"CREATE CONSTRAINT pznCodeConstraint IF NOT EXISTS FOR (p:" + DatabaseDefinitions.PZN_LABEL + ") REQUIRE p.code IS UNIQUE"
 		);
 		executeQuery(
-				"CREATE CONSTRAINT pznConstraint IF NOT EXISTS FOR (p:" + DatabaseDefinitions.PZN_LABEL + ") REQUIRE p.pzn IS UNIQUE"
-		);
-		executeQuery(
 				"CREATE CONSTRAINT packageMmiIdConstraint IF NOT EXISTS FOR (p:" + DatabaseDefinitions.PACKAGE_LABEL + ") REQUIRE p.mmiId IS UNIQUE"
 		);
 
