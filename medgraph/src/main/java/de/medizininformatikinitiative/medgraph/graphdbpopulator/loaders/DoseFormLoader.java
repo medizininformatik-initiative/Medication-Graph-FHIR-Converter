@@ -27,7 +27,7 @@ public class DoseFormLoader extends CatalogEntryLoader {
 		);
 		executeQuery(withFilteredLoadStatement(DOSE_FORM_CATALOG_ID,
 				"CREATE (d:" + MMI_DOSE_FORM_LABEL +
-						" {mmiCode: " + row(CODE) + ", mmiName: " + row(NAME) + ", mmiDesc: " + nullIfBlank(
+						" {mmiCode: " + row(CODE) + ", mmiName: " + nullIfBlank(row(NAME)) + ", mmiDesc: " + nullIfBlank(
 						row(DESC)) + "})"
 		));
 	}
