@@ -2,8 +2,6 @@ package de.medizininformatikinitiative.medgraph.graphdbpopulator.loaders;
 
 import org.neo4j.driver.Session;
 
-import java.io.IOException;
-
 import static de.medizininformatikinitiative.medgraph.common.db.DatabaseDefinitions.COMPANY_LABEL;
 
 /**
@@ -28,7 +26,7 @@ public class CompanyLoader extends CsvLoader {
 		);
 		executeQuery(withLoadStatement(
 				"CREATE (c:" + COMPANY_LABEL +
-						" {name: " + row(NAME) + ", shortName: " + row(SHORT_NAME) + ", mmiId: " + intRow(ID) + "})"
+						" {name: " + nullIfBlank(row(NAME)) + ", shortName: " + nullIfBlank(row(SHORT_NAME)) + ", mmiId: " + intRow(ID) + "})"
 		));
 	}
 }

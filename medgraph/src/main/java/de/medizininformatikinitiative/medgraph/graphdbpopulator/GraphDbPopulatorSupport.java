@@ -3,6 +3,7 @@ package de.medizininformatikinitiative.medgraph.graphdbpopulator;
 import de.medizininformatikinitiative.medgraph.graphdbpopulator.loaders.AmiceStoffBezLoader;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
@@ -213,10 +214,12 @@ public class GraphDbPopulatorSupport {
 	/**
 	 * Copies the CSV data from the given input stream to the given target path. Assumes the semicolon is the separator
 	 * sign and checks the last entry in each row for misplaced double quotes.
+	 * <p>
+	 * Also, rewrites the file from ISO-8859-1 encoding to UTF-8.
 	 */
 	private static void copyAmiceFileAndFixBrokenSynonyms(InputStream from, Path to) throws IOException {
-		try (BufferedReader reader = new BufferedReader(new InputStreamReader(from));
-		     BufferedWriter writer = new BufferedWriter(new FileWriter(to.toFile()))) {
+		try (BufferedReader reader = new BufferedReader(new InputStreamReader(from, StandardCharsets.ISO_8859_1));
+		     BufferedWriter writer = new BufferedWriter(new FileWriter(to.toFile(), StandardCharsets.UTF_8))) {
 			String line;
 			while ((line = reader.readLine()) != null) {
 				int lastSplitterIndex = -1;

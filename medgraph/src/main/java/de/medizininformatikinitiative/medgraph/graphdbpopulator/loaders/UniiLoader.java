@@ -2,7 +2,6 @@ package de.medizininformatikinitiative.medgraph.graphdbpopulator.loaders;
 
 import org.neo4j.driver.Session;
 
-import java.io.IOException;
 import java.nio.file.Path;
 
 import static de.medizininformatikinitiative.medgraph.common.db.DatabaseDefinitions.*;
