@@ -23,6 +23,7 @@ public class NamedProgressableImpl extends Dispatcher<Progressable.Listener> imp
 	}
 
 	protected void setTaskStack(String... taskStack) {
+		if (taskStack == null) throw new NullPointerException("The task stack cannot be null!");
 		this.taskStack = taskStack;
 		dispatchEvent(listener -> {
 			if (listener instanceof NamedProgressable.Listener l) l.onTaskStackChanged(taskStack);

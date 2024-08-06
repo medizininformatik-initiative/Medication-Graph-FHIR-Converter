@@ -15,7 +15,7 @@ import java.util.concurrent.atomic.AtomicBoolean
 /**
  * @author Markus Budeus
  */
-class GraphDbPopulatorSupportScreenModelTest : UnitTest() {
+class GraphDbPopulatorScreenModelTest : UnitTest() {
 
     @Mock
     private lateinit var graphDbPopulationFactory: GraphDbPopulationFactory
@@ -29,6 +29,7 @@ class GraphDbPopulatorSupportScreenModelTest : UnitTest() {
     fun setUp() {
         insertDatabaseConnectionServiceMock()
         `when`(graphDbPopulationFactory.prepareDatabasePopulation(any(), any(), any())).thenReturn(graphDbPopulation)
+        `when`(graphDbPopulation.currentTaskStack).thenReturn(arrayOf())
         sut = GraphDbPopulatorScreenModel(graphDbPopulationFactory)
 
         sut.mmiPharmindexDirectory = System.getProperty("user.home")
@@ -40,7 +41,7 @@ class GraphDbPopulatorSupportScreenModelTest : UnitTest() {
         assertNull(sut.errorMessage)
         assertFalse(sut.executionComplete)
         assertFalse(sut.executionUnderway)
-        assertNull(sut.executionTask)
+        assertNull(sut.executionTaskState.progressable)
     }
 
     @Test
@@ -49,7 +50,7 @@ class GraphDbPopulatorSupportScreenModelTest : UnitTest() {
         assertFalse(sut.executionUnderway)
         assertTrue(sut.executionComplete)
         assertNull(sut.errorMessage)
-        assertEquals(graphDbPopulation, sut.executionTask)
+        assertEquals(graphDbPopulation, sut.executionTaskState.progressable)
     }
 
     @Test
@@ -58,12 +59,13 @@ class GraphDbPopulatorSupportScreenModelTest : UnitTest() {
 
         val otherTask: GraphDbPopulation = mock()
         `when`(graphDbPopulationFactory.prepareDatabasePopulation(any(), any(), any())).thenReturn(otherTask)
+        `when`(otherTask.currentTaskStack).thenReturn(arrayOf())
         val completedStateGoneAgain = AtomicBoolean(false)
         val newTaskAssigned = AtomicBoolean(false)
 
         doAnswer({ req ->
             completedStateGoneAgain.set(!sut.executionComplete)
-            newTaskAssigned.set(sut.executionTask == otherTask)
+            newTaskAssigned.set(sut.executionTaskState.progressable == otherTask)
             return@doAnswer null
         }).`when`(otherTask).executeDatabasePopulation(any())
 

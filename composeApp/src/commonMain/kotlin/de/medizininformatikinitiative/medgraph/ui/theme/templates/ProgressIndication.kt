@@ -10,7 +10,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import de.medizininformatikinitiative.medgraph.common.mvc.NamedProgressable
-import de.medizininformatikinitiative.medgraph.common.mvc.NamedProgressableImpl
 import de.medizininformatikinitiative.medgraph.common.mvc.Progressable
 import de.medizininformatikinitiative.medgraph.ui.theme.ApplicationTheme
 import de.medizininformatikinitiative.medgraph.ui.tools.preview.TestOnlyProgressable
@@ -18,25 +17,19 @@ import de.medizininformatikinitiative.medgraph.ui.tools.preview.TestOnlyProgress
 @Composable
 @Preview
 private fun ProgressIndication() {
+    val model = ProgressIndicationViewState()
+    model.bind(TestOnlyProgressable())
     ApplicationTheme {
-        ProgressIndication(TestOnlyProgressable(), modifier = Modifier.fillMaxWidth())
+        DetailedProgressIndication(model, modifier = Modifier.fillMaxWidth())
     }
 }
 
 @Composable
-fun ProgressIndication(progressable: Progressable, modifier: Modifier = Modifier, indicateOngoingProgression: Boolean = true) {
-    val model = ProgressIndicationViewState(progressable)
-    if (progressable is NamedProgressable) {
-        DetailedProgressIndication(model, modifier, indicateOngoingProgression)
-    } else {
-        Column(modifier) {
-            LinearProgressIndicator(model)
-        }
-    }
-}
-
-@Composable
-private fun DetailedProgressIndication(state: ProgressIndicationViewState, modifier: Modifier = Modifier, indicateOngoingProgression: Boolean = true) {
+fun DetailedProgressIndication(
+    state: ProgressIndicationViewState,
+    modifier: Modifier = Modifier,
+    indicateOngoingProgression: Boolean = true
+) {
     Column(
         modifier = modifier
     ) {
@@ -47,7 +40,7 @@ private fun DetailedProgressIndication(state: ProgressIndicationViewState, modif
                 CircularProgressIndicator(modifier = Modifier.size(16.dp))
             }
         }
-        LinearProgressIndicator(state)
+        LinearProgressIndicaton(state)
         val minorStep = state.secondaryTaskDescription
         if (minorStep != null)
             Text(minorStep, modifier = Modifier.padding(horizontal = 8.dp))
@@ -55,7 +48,7 @@ private fun DetailedProgressIndication(state: ProgressIndicationViewState, modif
 }
 
 @Composable
-private fun LinearProgressIndicator(
+fun LinearProgressIndicaton(
     state: ProgressIndicationViewState,
     modifier: Modifier = Modifier
         .fillMaxWidth()
@@ -69,19 +62,51 @@ private fun LinearProgressIndicator(
     )
 }
 
-private class ProgressIndicationViewState(
-    progressable: Progressable
-) : NamedProgressable.Listener {
+class ProgressIndicationViewState : NamedProgressable.Listener {
 
-    var progress by mutableStateOf(progressable.progress)
-    var maxProgress by mutableStateOf(progressable.maxProgress)
+    var progress by mutableStateOf(0)
+    var maxProgress by mutableStateOf(1)
     var primaryTaskDescription by mutableStateOf("")
     var secondaryTaskDescription by mutableStateOf<String?>(null)
 
-    init {
-        if (progressable is NamedProgressable)
-            onTaskStackChanged(progressable.currentTaskStack)
-        progressable.registerListener(this)
+    /**
+     * The [Progressable] currently bound to this instance or null if none is bound.
+     */
+    var progressable by mutableStateOf<Progressable?>(null)
+        private set
+
+    /**
+     * Unbinds any previously bound [Progressable] and resets this view state to its default.
+     */
+    fun unbind() = bind(null)
+
+    /**
+     * Binds this view state to the given [Progressable], meaning its states always reflect the state of the given
+     * [Progressable]. If this state was previously bound to a different instance, that binding becomes void.
+     * If you pass null, you unbind this view state, causing it to reset to a default state.
+     */
+    fun bind(progressable: Progressable?) {
+        val current = this.progressable
+        if (current != null)
+            current.unregisterListener(this)
+
+        this.progressable = progressable
+
+        if (progressable != null) {
+            progressable.registerListener(this)
+            onProgressChanged(progressable.progress, progressable.maxProgress)
+            if (progressable is NamedProgressable)
+                onTaskStackChanged(progressable.currentTaskStack)
+        } else {
+            resetToDefault()
+        }
+    }
+
+    private fun resetToDefault() {
+        progress = 0
+        maxProgress = 1
+        primaryTaskDescription = ""
+        secondaryTaskDescription = null
     }
 
     override fun onProgressChanged(progress: Int, maxProgress: Int) {

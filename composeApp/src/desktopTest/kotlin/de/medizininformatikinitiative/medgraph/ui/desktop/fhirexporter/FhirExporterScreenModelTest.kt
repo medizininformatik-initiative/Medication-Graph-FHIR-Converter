@@ -1,15 +1,14 @@
 package de.medizininformatikinitiative.medgraph.ui.desktop.fhirexporter
 
 import de.medizininformatikinitiative.medgraph.TempDirectoryTestExtension
-import de.medizininformatikinitiative.medgraph.common.mvc.NamedProgressable
+import de.medizininformatikinitiative.medgraph.UnitTest
+import de.medizininformatikinitiative.medgraph.common.mvc.Progressable
 import de.medizininformatikinitiative.medgraph.fhirexporter.FhirExport
 import de.medizininformatikinitiative.medgraph.fhirexporter.FhirExportFactory
 import de.medizininformatikinitiative.medgraph.ui.resources.StringRes
-import de.medizininformatikinitiative.medgraph.UnitTest
 import kotlinx.coroutines.runBlocking
-import org.junit.jupiter.api.BeforeEach
-
 import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.Mock
@@ -38,13 +37,14 @@ class FhirExporterScreenModelTest : UnitTest() {
         insertDatabaseConnectionServiceMock()
         sut = FhirExporterScreenModel(fhirExporter)
         `when`(fhirExporter.prepareExport(any())).thenReturn(fhirExport)
+        `when`(fhirExport.currentTaskStack).thenReturn(arrayOf())
         sut.exportPath = tempDirectory.toAbsolutePath().toString()
     }
 
     @Test
     fun initialState() {
         assertNull(sut.errorText)
-        assertNull(sut.exportTask)
+        assertNull(sut.exportTask.progressable)
         assertFalse(sut.exportUnderway)
     }
 
@@ -52,7 +52,7 @@ class FhirExporterScreenModelTest : UnitTest() {
     fun exportSucceeds() {
         runExportSync()
         assertNull(sut.errorText)
-        assertNull(sut.exportTask)
+        assertNull(sut.exportTask.progressable)
         assertFalse(sut.exportUnderway)
     }
 
@@ -60,7 +60,7 @@ class FhirExporterScreenModelTest : UnitTest() {
     fun intermediateState() {
         val exportTaskPresent = AtomicBoolean(false)
         doAnswer {
-            exportTaskPresent.set(sut.exportTask != null)
+            exportTaskPresent.set(sut.exportTask.progressable != null)
         }.`when`(fhirExport).doExport(any())
 
         runExportSync()
@@ -71,10 +71,10 @@ class FhirExporterScreenModelTest : UnitTest() {
     fun intermediateStateAfterRestart() {
         runExportSync()
 
-        val recordedExportTask = AtomicReference<NamedProgressable?>(null)
+        val recordedExportTask = AtomicReference<Progressable?>(null)
         val recordedExportUnderwayState = AtomicBoolean(false)
         doAnswer {
-            recordedExportTask.set(sut.exportTask)
+            recordedExportTask.set(sut.exportTask.progressable)
             recordedExportUnderwayState.set(sut.exportUnderway)
         }.`when`(fhirExport).doExport(any())
 

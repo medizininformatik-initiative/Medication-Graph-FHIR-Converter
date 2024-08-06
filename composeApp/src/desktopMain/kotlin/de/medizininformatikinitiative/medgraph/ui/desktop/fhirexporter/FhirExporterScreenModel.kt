@@ -14,6 +14,7 @@ import de.medizininformatikinitiative.medgraph.common.mvc.NamedProgressable
 import de.medizininformatikinitiative.medgraph.fhirexporter.FhirExport
 import de.medizininformatikinitiative.medgraph.fhirexporter.FhirExportFactory
 import de.medizininformatikinitiative.medgraph.ui.resources.StringRes
+import de.medizininformatikinitiative.medgraph.ui.theme.templates.ProgressIndicationViewState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
@@ -43,12 +44,12 @@ class FhirExporterScreenModel(
     var exportUnderway by mutableStateOf(false)
 
     /**
-     * The currently ongoing export task if available, otherwise null.
+     * View state for the current export task.
      */
-    var exportTask by mutableStateOf<NamedProgressable?>(null)
+    var exportTask = ProgressIndicationViewState()
 
     /**
-     * In case there was an error, information about the last occurred error. Otherwise null.
+     * In case there was an error, information about the last occurred error. Otherwise, null.
      */
     var errorText by mutableStateOf<String?>(null)
 
@@ -80,7 +81,7 @@ class FhirExporterScreenModel(
             errorText = e.message
         } finally {
             exportUnderway = false
-            exportTask = null
+            exportTask.unbind()
         }
     }
 
@@ -92,7 +93,7 @@ class FhirExporterScreenModel(
         if (!validateAndPrepareExportPath(path)) return
 
         val export = fhirExporter.prepareExport(path);
-        this.exportTask = export
+        this.exportTask.bind(export)
 
         DI.get(DatabaseConnectionService::class.java).createConnection().use {
             it.createSession().use { session ->

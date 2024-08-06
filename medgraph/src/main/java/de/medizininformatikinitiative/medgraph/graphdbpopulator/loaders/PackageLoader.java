@@ -3,8 +3,6 @@ package de.medizininformatikinitiative.medgraph.graphdbpopulator.loaders;
 import de.medizininformatikinitiative.medgraph.common.db.DatabaseDefinitions;
 import org.neo4j.driver.Session;
 
-import java.io.IOException;
-
 /**
  * This loader uses the PACKAGE table to create PZN nodes and make them point to the corresponding product nodes.
  *
@@ -45,12 +43,12 @@ public class PackageLoader extends CsvLoader {
 						"mmiId: " + intRow(MMI_ID) + ", " +
 						"productId: " + intRow(PRODUCT_ID) + ", " +
 						"pzn: " + nullIfBlank(row(PZN)) + ", " +
-						"name: " + row(NAME) + ", " +
+						"name: " + nullIfBlank(row(NAME)) + ", " +
 						"onMarketDate: " + nullIfBlank(row(ON_MARKET_DATE)) + ", " +
 						"pznOriginal: " + nullIfBlank(row(PZN_ORIGINAL)) + ", " +
 						"pznSuccessor: " + nullIfBlank(row(PZN_SUCCESSOR)) + ", " +
-						"amountText: " + row(AMOUNT_TEXT) + ", " +
-						"amount: " + row(AMOUNT) + ", " +
+						"amountText: " + nullIfBlank(row(AMOUNT_TEXT)) + ", " +
+						"amount: " + nullIfBlank(row(AMOUNT)) + ", " +
 						"amountFactor1: " + intRow(AMOUNT_F1) + ", " +
 						"amountFactor2: " + intRow(AMOUNT_F2) +
 						"})"
