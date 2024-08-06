@@ -2,8 +2,6 @@ package de.medizininformatikinitiative.medgraph.graphdbpopulator.loaders;
 
 import org.neo4j.driver.Session;
 
-import java.io.IOException;
-
 import static de.medizininformatikinitiative.medgraph.common.db.DatabaseDefinitions.*;
 
 /**
@@ -16,6 +14,8 @@ public class CompanyProductReferenceLoader extends CsvLoader {
 
 	private static final String PRODUCT_ID = "PRODUCTID";
 	private static final String COMPANY_ID = "COMPANYID";
+	private static final String REFERENCE_TYPE = "PRODUCTCOMPANYTYPECODE";
+	public static final String TARGET_REFERENCE_TYPE = "M"; // Manufacturers only, "S" would be distributors.
 
 	public CompanyProductReferenceLoader(Session session) {
 		super("PRODUCT_COMPANY.CSV", session);
@@ -24,7 +24,8 @@ public class CompanyProductReferenceLoader extends CsvLoader {
 	@Override
 	protected void executeLoad() {
 		executeQuery(withLoadStatement(
-				"MATCH (c:" + COMPANY_LABEL + " {mmiId: " + intRow(COMPANY_ID) + "}) " +
+				"WITH " + ROW_IDENTIFIER + " WHERE " + row(REFERENCE_TYPE) + " = '" + TARGET_REFERENCE_TYPE + "' " +
+						"MATCH (c:" + COMPANY_LABEL + " {mmiId: " + intRow(COMPANY_ID) + "}) " +
 						"MATCH (d:" + PRODUCT_LABEL + " {mmiId: " + intRow(PRODUCT_ID) + "}) " +
 						"CREATE (c)-[r:" + MANUFACTURES_LABEL + "]->(d)"
 		));

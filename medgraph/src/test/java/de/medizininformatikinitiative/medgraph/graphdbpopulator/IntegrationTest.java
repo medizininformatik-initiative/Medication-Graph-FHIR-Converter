@@ -107,23 +107,28 @@ public class IntegrationTest {
 	@Test
 	public void manufacturerConnected() {
 		Result result = session.run(
-				"MATCH (m:" + COMPANY_LABEL + ")-[r:" + MANUFACTURES_LABEL + "]-(p:" + PRODUCT_LABEL + ") RETURN p.mmiId"
+				"MATCH (m:" + COMPANY_LABEL + ")-[r:" + MANUFACTURES_LABEL + "]-(p:" + PRODUCT_LABEL + ") RETURN p.mmiId, m.mmiId"
 		);
 
-		boolean[] mmiIdIncluded = new boolean[]{false, false, false};
+		int[] manufacturerMmiId = new int[]{-1, -1, -1}; // Index is the product mmi id, value the manufacturer id
 
+		int results = 0;
 		while (result.hasNext()) {
+			results++;
 			Record record = result.next();
 			int mmiId = record.get(0).asInt();
-			if (mmiIdIncluded[mmiId]) {
+			int manufacturerId = record.get(1).asInt();
+			if (manufacturerMmiId[mmiId] != -1) {
+				// Note: Manufacturer 1 acts as distributor for product 2, but it should not be listed as manufacturer!
 				fail("The product with mmi_id " + mmiId + " was included twice in the result!");
 			}
-			mmiIdIncluded[mmiId] = true;
+			manufacturerMmiId[mmiId] = manufacturerId;
 		}
 
-		assertTrue(mmiIdIncluded[0]);
-		assertTrue(mmiIdIncluded[1]);
-		assertTrue(mmiIdIncluded[2]);
+		assertEquals(3, results);
+		assertEquals(0, manufacturerMmiId[0]);
+		assertEquals(1, manufacturerMmiId[1]);
+		assertEquals(0, manufacturerMmiId[2]);
 	}
 
 	@Test
