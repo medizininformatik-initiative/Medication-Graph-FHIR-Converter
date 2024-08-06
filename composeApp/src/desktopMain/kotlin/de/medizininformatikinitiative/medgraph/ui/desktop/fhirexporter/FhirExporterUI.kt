@@ -3,7 +3,6 @@ package de.medizininformatikinitiative.medgraph.ui.desktop.fhirexporter
 import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Divider
-import androidx.compose.material.LinearProgressIndicator
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -15,7 +14,7 @@ import de.medizininformatikinitiative.medgraph.ui.resources.StringRes
 import de.medizininformatikinitiative.medgraph.ui.theme.ApplicationTheme
 import de.medizininformatikinitiative.medgraph.ui.theme.localColors
 import de.medizininformatikinitiative.medgraph.ui.theme.templates.Button
-import de.medizininformatikinitiative.medgraph.ui.theme.templates.ProgressIndication
+import de.medizininformatikinitiative.medgraph.ui.theme.templates.DetailedProgressIndication
 import de.medizininformatikinitiative.medgraph.ui.tools.preview.TestOnlyProgressable
 import javax.swing.JFileChooser
 
@@ -26,7 +25,7 @@ private fun FhirExporterUI() {
     ApplicationTheme {
         val viewModel = FhirExporterScreenModel()
         viewModel.exportUnderway = true
-        viewModel.exportTask = TestOnlyProgressable()
+        viewModel.exportTask.bind(TestOnlyProgressable())
         FhirExporterUI(viewModel, Modifier.fillMaxWidth().padding(8.dp))
     }
 }
@@ -68,8 +67,8 @@ fun FhirExporterUI(viewModel: FhirExporterScreenModel, modifier: Modifier = Modi
 
         if (viewModel.exportUnderway) {
             val exportTask = viewModel.exportTask
-            if (exportTask != null)
-                ProgressIndication(exportTask)
+            if (exportTask.progressable != null)
+                DetailedProgressIndication(exportTask)
         } else {
             val error = viewModel.errorText
             if (error != null)

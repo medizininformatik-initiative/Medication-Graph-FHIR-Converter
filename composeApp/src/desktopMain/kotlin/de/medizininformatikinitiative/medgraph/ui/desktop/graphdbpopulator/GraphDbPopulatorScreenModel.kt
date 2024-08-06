@@ -9,9 +9,9 @@ import de.medizininformatikinitiative.medgraph.DI
 import de.medizininformatikinitiative.medgraph.common.db.DatabaseConnectionService
 import de.medizininformatikinitiative.medgraph.common.logging.Level
 import de.medizininformatikinitiative.medgraph.common.logging.LogManager
-import de.medizininformatikinitiative.medgraph.common.mvc.NamedProgressable
 import de.medizininformatikinitiative.medgraph.graphdbpopulator.GraphDbPopulationFactory
 import de.medizininformatikinitiative.medgraph.ui.resources.StringRes
+import de.medizininformatikinitiative.medgraph.ui.theme.templates.ProgressIndicationViewState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
@@ -55,9 +55,9 @@ class GraphDbPopulatorScreenModel(
     var executionUnderway by mutableStateOf(false)
 
     /**
-     * The currently ongoing population task or null if no population is ongoing.
+     * The population task view state, holding the current population task if there is one.
      */
-    var executionTask by mutableStateOf<NamedProgressable?>(null)
+    var executionTaskState = ProgressIndicationViewState()
 
     /**
      * Whether this view is in "completed" state.
@@ -109,7 +109,7 @@ class GraphDbPopulatorScreenModel(
         val amiceFilePath: Path? = if (amiceStoffBezFile.isEmpty()) null else Path.of(amiceStoffBezFile)
 
         val population = graphDbPopulationFactory.prepareDatabasePopulation(mmiPharmindexPath, neo4jImportPath, amiceFilePath)
-        this.executionTask = population
+        this.executionTaskState.bind(population)
 
         try {
             population.executeDatabasePopulation(connectionService.createConnection());

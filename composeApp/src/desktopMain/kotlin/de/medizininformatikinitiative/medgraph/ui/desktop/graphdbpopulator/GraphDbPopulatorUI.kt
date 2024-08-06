@@ -3,7 +3,9 @@ package de.medizininformatikinitiative.medgraph.ui.desktop.graphdbpopulator
 import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.ClickableText
-import androidx.compose.material.*
+import androidx.compose.material.Divider
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalUriHandler
@@ -18,7 +20,7 @@ import de.medizininformatikinitiative.medgraph.ui.resources.StringRes
 import de.medizininformatikinitiative.medgraph.ui.theme.ApplicationTheme
 import de.medizininformatikinitiative.medgraph.ui.theme.localColors
 import de.medizininformatikinitiative.medgraph.ui.theme.templates.Button
-import de.medizininformatikinitiative.medgraph.ui.theme.templates.ProgressIndication
+import de.medizininformatikinitiative.medgraph.ui.theme.templates.DetailedProgressIndication
 import de.medizininformatikinitiative.medgraph.ui.tools.preview.TestOnlyProgressable
 import javax.swing.JFileChooser
 import javax.swing.filechooser.FileNameExtensionFilter
@@ -33,7 +35,7 @@ fun GraphDbPopulatorUI() {
         viewModel.errorMessage = "Something went wrong, but this is only a test."
 
         viewModel.executionUnderway = true
-        viewModel.executionTask = TestOnlyProgressable()
+        viewModel.executionTaskState.bind(TestOnlyProgressable())
 
         GraphDbPopulatorUI(
             viewModel, modifier = Modifier
@@ -151,9 +153,9 @@ private fun GraphDbPopulatorControls(viewModel: GraphDbPopulatorScreenModel, mod
 
 @Composable
 private fun ImportProgressUI(viewModel: GraphDbPopulatorScreenModel, modifier: Modifier = Modifier) {
-    val task = viewModel.executionTask
-    if (task != null) {
-        ProgressIndication(task, modifier, viewModel.executionUnderway)
+    val task = viewModel.executionTaskState
+    if (task.progressable != null) {
+        DetailedProgressIndication(task, modifier, viewModel.executionUnderway)
     }
 }
 
