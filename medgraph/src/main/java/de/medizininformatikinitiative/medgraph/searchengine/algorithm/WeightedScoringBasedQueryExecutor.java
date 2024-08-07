@@ -23,6 +23,7 @@ import de.medizininformatikinitiative.medgraph.searchengine.provider.Providers;
 import org.neo4j.driver.Session;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -52,11 +53,11 @@ public class WeightedScoringBasedQueryExecutor implements QueryExecutor<Detailed
 				Providers.getProductSynonyms(session)
 		);
 		substanceToProductResolver = new SubstanceToProductResolver(session);
-		dosageJudge = new DosageAndAmountInfoMatchJudge(0.1);
-		productDetailsResolver = new ProductDetailsResolver(new Neo4jCypherDatabase(session)); // TODO This should not be done here...
-		doseFormJudge = new PharmaceuticalDoseFormJudge(0.1);
-		doseFormCharacteristicJudge = new DoseFormCharacteristicJudge(0.1);
-		dosagesInProductNameJudge = new DosagesInProductNameJudge(null);
+		dosageJudge = new DosageAndAmountInfoMatchJudge();
+		productDetailsResolver = new ProductDetailsResolver(new Neo4jCypherDatabase(session)); // TODO Instantiating the Neo4jCypherDatabase should not be done here...
+		doseFormJudge = new PharmaceuticalDoseFormJudge();
+		doseFormCharacteristicJudge = new DoseFormCharacteristicJudge();
+		dosagesInProductNameJudge = new DosagesInProductNameJudge();
 	}
 
 	@Override
@@ -73,16 +74,17 @@ public class WeightedScoringBasedQueryExecutor implements QueryExecutor<Detailed
 		products = merge(service, products, productsFromSubstances);
 
 		// Product details are required for the subsequent judges.
-		List<MatchingObject<DetailedProduct>> detailedProducts = service.transformMatches(products,
+		List<? extends MatchingObject<DetailedProduct>> detailedProducts = service.transformMatches(products,
 				productDetailsResolver, ScoreMergingStrategy.MAX);
-
 
 		detailedProducts = service.applyScoreJudge(detailedProducts, dosageJudge);
 		detailedProducts = service.applyScoreJudge(detailedProducts, doseFormJudge);
 		detailedProducts = service.applyScoreJudge(detailedProducts, doseFormCharacteristicJudge);
 		detailedProducts = service.applyScoreJudge(detailedProducts, dosagesInProductNameJudge);
 
-		return detailedProducts;
+		detailedProducts.sort(Comparator.naturalOrder());
+
+		return new ArrayList<>(detailedProducts);
 	}
 
 	private List<MatchingObject<Product>> resolveProductsFromSubstances(List<MatchingObject<Substance>> substances,

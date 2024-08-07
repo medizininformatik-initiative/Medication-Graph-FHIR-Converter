@@ -23,16 +23,16 @@ public class DosageAndAmountInfoMatchJudge extends ScoreJudge<DetailedProduct> {
 	private final DosageMatchJudge dosageMatchJudge;
 	private final DrugAmountMatchJudge drugAmountMatchJudge;
 
-	public DosageAndAmountInfoMatchJudge(Double passingScore) {
-		this(passingScore, new DosageMatchJudge(), new DrugAmountMatchJudge());
+	public DosageAndAmountInfoMatchJudge() {
+		this(new DosageMatchJudge(), new DrugAmountMatchJudge());
 	}
 
 	/**
 	 * Constructor for testing purposes, which lets you insert mock judges.
 	 */
-	DosageAndAmountInfoMatchJudge(Double passingScore, DosageMatchJudge dosageMatchJudge,
+	DosageAndAmountInfoMatchJudge(DosageMatchJudge dosageMatchJudge,
 	                              DrugAmountMatchJudge drugAmountMatchJudge) {
-		super(passingScore);
+		super();
 		this.dosageMatchJudge = dosageMatchJudge;
 		this.drugAmountMatchJudge = drugAmountMatchJudge;
 	}

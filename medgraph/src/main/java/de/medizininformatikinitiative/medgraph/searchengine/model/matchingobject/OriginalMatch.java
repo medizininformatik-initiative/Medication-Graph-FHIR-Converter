@@ -19,7 +19,7 @@ public class OriginalMatch<T extends Matchable> extends MatchingObjectBase<T> {
 	private final Origin origin;
 
 	/**
-	 * Creates a new {@link MatchingObject} which manages the given {@link Matchable}.
+	 * Creates a new {@link MatchingObject} which manages the given {@link Matchable}. Assigns a default score of 1.
 	 *
 	 * @param object the object to be managed by this instance
 	 */

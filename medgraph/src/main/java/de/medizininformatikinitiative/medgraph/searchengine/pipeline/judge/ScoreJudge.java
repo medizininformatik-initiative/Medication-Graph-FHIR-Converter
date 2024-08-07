@@ -2,8 +2,6 @@ package de.medizininformatikinitiative.medgraph.searchengine.pipeline.judge;
 
 import de.medizininformatikinitiative.medgraph.searchengine.model.SearchQuery;
 import de.medizininformatikinitiative.medgraph.searchengine.model.identifiable.Matchable;
-import de.medizininformatikinitiative.medgraph.searchengine.model.pipelinestep.ScoredJudgement;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
@@ -13,27 +11,18 @@ import java.util.List;
  * @param <S> the type of {@link Matchable} this judge supports
  * @author Markus Budeus
  */
-public abstract class ScoreJudge<S extends  Matchable> implements Judge<S, ScoredJudgement> {
+public abstract class ScoreJudge<S extends  Matchable> implements Judge<S, ScoreJudgementInfo> {
 
-	@Nullable
-	private final Double passingScore;
-
-	public ScoreJudge(@Nullable Double passingScore) {
-		this.passingScore = passingScore;
+	@Override
+	public ScoreJudgementInfo judge(S matchable, SearchQuery query) {
+		return new ScoreJudgementInfo(judgeInternal(matchable, query));
 	}
 
 	@Override
-	public ScoredJudgement judge(S matchable, SearchQuery query) {
-		return new ScoredJudgement(toString(), getDescription(), judgeInternal(matchable, query), passingScore);
-	}
-
-	@Override
-	public List<ScoredJudgement> batchJudge(List<? extends S> matchables, SearchQuery query) {
-		String name = toString();
-		String desc = getDescription();
+	public List<ScoreJudgementInfo> batchJudge(List<? extends S> matchables, SearchQuery query) {
 		return batchJudgeInternal(matchables, query)
 				.stream()
-				.map(score -> new ScoredJudgement(name, desc, score, passingScore))
+				.map(ScoreJudgementInfo::new)
 				.toList();
 	}
 
@@ -58,11 +47,4 @@ public abstract class ScoreJudge<S extends  Matchable> implements Judge<S, Score
 		return matchables.stream().map(m -> judgeInternal(m, query)).toList();
 	}
 
-	/**
-	 * Returns the minimun required score to pass this judge or null if there is no minimum required score to pass.
-	 */
-	@Nullable
-	public Double getPassingScore() {
-		return passingScore;
-	}
 }

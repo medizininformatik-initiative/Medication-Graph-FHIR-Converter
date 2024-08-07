@@ -22,7 +22,7 @@ public class DosagesInProductNameJudgeTest extends UnitTest {
 
 	@BeforeEach
 	void setUp() {
-		sut = new DosagesInProductNameJudge(null);
+		sut = new DosagesInProductNameJudge();
 	}
 
 	@Test

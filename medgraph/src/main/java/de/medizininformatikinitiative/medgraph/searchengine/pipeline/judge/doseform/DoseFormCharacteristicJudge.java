@@ -21,10 +21,6 @@ public class DoseFormCharacteristicJudge extends ScoreJudge<DetailedProduct> {
 	 */
 	public static final double SCORE_PER_OVERLAP = 1.0;
 
-	public DoseFormCharacteristicJudge(Double passingScore) {
-		super(passingScore);
-	}
-
 	@Override
 	protected double judgeInternal(DetailedProduct product, SearchQuery query) {
 		double score = 0;

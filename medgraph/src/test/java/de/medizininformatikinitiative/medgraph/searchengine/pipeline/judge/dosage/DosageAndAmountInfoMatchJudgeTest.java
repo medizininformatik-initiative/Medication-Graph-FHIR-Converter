@@ -4,7 +4,7 @@ import de.medizininformatikinitiative.medgraph.UnitTest;
 import de.medizininformatikinitiative.medgraph.searchengine.model.*;
 import de.medizininformatikinitiative.medgraph.searchengine.model.identifiable.DetailedProduct;
 
-import de.medizininformatikinitiative.medgraph.searchengine.model.pipelinestep.ScoredJudgement;
+import de.medizininformatikinitiative.medgraph.searchengine.pipeline.judge.ScoreJudgementInfo;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -32,7 +32,7 @@ public class DosageAndAmountInfoMatchJudgeTest extends UnitTest {
 
 	@BeforeEach
 	void setUp() {
-		sut = new DosageAndAmountInfoMatchJudge(1.0, dosageMatchJudge, drugAmountMatchJudge);
+		sut = new DosageAndAmountInfoMatchJudge(dosageMatchJudge, drugAmountMatchJudge);
 	}
 
 	@Test
@@ -166,7 +166,7 @@ public class DosageAndAmountInfoMatchJudgeTest extends UnitTest {
 		when(drugAmountMatchJudge.judge(eq(List.of(SAMPLE_AMOUNT_1)), eq(queryAmounts))).thenReturn(0.0);
 		when(drugAmountMatchJudge.judge(eq(List.of(SAMPLE_AMOUNT_2)), eq(queryAmounts))).thenReturn(5.0);
 
-		List<ScoredJudgement> judgements = sut.batchJudge(
+		List<ScoreJudgementInfo> judgements = sut.batchJudge(
 				List.of(detailedProduct1, detailedProduct2, detailedProduct3),
 				query);
 
