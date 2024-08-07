@@ -13,9 +13,13 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import de.medizininformatikinitiative.medgraph.searchengine.model.ScoreIncorporationStrategy
+import de.medizininformatikinitiative.medgraph.searchengine.model.ScoreJudgedObject
 import de.medizininformatikinitiative.medgraph.searchengine.model.identifiable.Product
 import de.medizininformatikinitiative.medgraph.searchengine.model.identifiable.Substance
 import de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject.*
+import de.medizininformatikinitiative.medgraph.searchengine.model.pipelinestep.ScoredJudgementStep
+import de.medizininformatikinitiative.medgraph.searchengine.pipeline.judge.ScoreJudgeConfiguration
+import de.medizininformatikinitiative.medgraph.searchengine.pipeline.judge.ScoreJudgementInfo
 import de.medizininformatikinitiative.medgraph.searchengine.pipeline.transformer.Transformation
 import de.medizininformatikinitiative.medgraph.ui.searchengine.pipeline.origin.OriginUI
 import de.medizininformatikinitiative.medgraph.ui.searchengine.results.DetailedIdentifiableObjectUI
@@ -41,15 +45,23 @@ private fun MatchingObjectSourcePipelineDisplay() {
                 ), obj
             )
         )
-        obj = JudgedObject(
+        obj = ScoreJudgedObject(
             obj,
-            ScoredJudgement("Judgement 1", "Assigns a score of 0.5", 0.5, 1.0),
-            ScoreIncorporationStrategy.ADD
+            ScoredJudgementStep(
+                "Judgement 1",
+                "Assigns a score of 0.5",
+                ScoreJudgementInfo(0.5),
+                ScoreJudgeConfiguration(1.0, true, 1.0, ScoreIncorporationStrategy.ADD)
+            ),
         )
-        obj = JudgedObject(
+        obj = ScoreJudgedObject(
             obj,
-            ScoredJudgement("Judgement 2", "Assigns a score of 1.5", 1.5, 1.0),
-            ScoreIncorporationStrategy.ADD
+            ScoredJudgementStep(
+                "Judgement 2",
+                "Assigns a score of 1.5",
+                ScoreJudgementInfo(1.5),
+                ScoreJudgeConfiguration(1.0, true, 1.5, ScoreIncorporationStrategy.MULTIPLY)
+            ),
         )
 
         val product =
@@ -71,10 +83,14 @@ private fun MatchingObjectSourcePipelineDisplay() {
             )
         obj = TransformedObject(product, obj, transformation)
 
-        obj = JudgedObject(
+        obj = ScoreJudgedObject(
             obj,
-            ScoredJudgement("Wrath of god", "Barely made it out alive", 1.0, 1.0),
-            ScoreIncorporationStrategy.ADD
+            ScoredJudgementStep(
+                "Wrath of god",
+                "Barely made it out alive",
+                ScoreJudgementInfo(1.0),
+                ScoreJudgeConfiguration(1.0, true, 42.0, ScoreIncorporationStrategy.ADD)
+            ),
         )
 
         MatchingObjectPipelineDisplay(obj, Modifier.padding(4.dp))
