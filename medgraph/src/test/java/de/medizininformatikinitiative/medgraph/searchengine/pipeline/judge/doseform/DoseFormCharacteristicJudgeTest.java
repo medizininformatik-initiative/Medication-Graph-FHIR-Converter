@@ -32,13 +32,6 @@ public class DoseFormCharacteristicJudgeTest extends UnitTest {
 		sut = new DoseFormCharacteristicJudge(1.0);
 	}
 
-	@ParameterizedTest
-	@MethodSource("nonDetailedProducts")
-	void notADetailedProduct(Matchable matchable) {
-		assertEquals(DoseFormCharacteristicJudge.NOT_A_DETAILED_PRODUCT_SCORE,
-				sut.judgeInternal(matchable, SAMPLE_SEARCH_QUERY));
-	}
-
 	@Test
 	void noOverlap() {
 		SearchQuery query = new SearchQuery.Builder().withDoseFormCharacteristics(

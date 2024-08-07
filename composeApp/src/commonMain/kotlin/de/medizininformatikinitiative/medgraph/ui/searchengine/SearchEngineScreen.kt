@@ -12,6 +12,7 @@ import de.medizininformatikinitiative.medgraph.searchengine.algorithm.PerSession
 import de.medizininformatikinitiative.medgraph.searchengine.algorithm.WeightedScoringBasedQueryExecutor
 import de.medizininformatikinitiative.medgraph.searchengine.algorithm.querymanagement.*
 import de.medizininformatikinitiative.medgraph.searchengine.db.Neo4jCypherDatabase
+import de.medizininformatikinitiative.medgraph.searchengine.model.identifiable.DetailedProduct
 import de.medizininformatikinitiative.medgraph.searchengine.provider.Providers
 
 /**
@@ -21,7 +22,7 @@ import de.medizininformatikinitiative.medgraph.searchengine.provider.Providers
  */
 class SearchEngineScreen : Screen {
 
-    private val queryManager: PerSessionQueryManager;
+    private val queryManager: PerSessionQueryManager<DetailedProduct>
 
     init {
         queryManager =
