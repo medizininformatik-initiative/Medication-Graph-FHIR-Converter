@@ -1,8 +1,8 @@
-package de.medizininformatikinitiative.medgraph.searchengine.model.pipelinestep;
+package de.medizininformatikinitiative.medgraph.searchengine.pipeline.transformer;
 
 import de.medizininformatikinitiative.medgraph.searchengine.model.identifiable.Matchable;
+import de.medizininformatikinitiative.medgraph.searchengine.model.pipelinestep.MatchingPipelineStep;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**

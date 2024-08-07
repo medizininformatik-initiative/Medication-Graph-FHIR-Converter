@@ -15,7 +15,7 @@ import androidx.compose.ui.unit.dp
 import de.medizininformatikinitiative.medgraph.searchengine.model.identifiable.Matchable
 import de.medizininformatikinitiative.medgraph.searchengine.model.identifiable.Product
 import de.medizininformatikinitiative.medgraph.searchengine.model.identifiable.Substance
-import de.medizininformatikinitiative.medgraph.searchengine.model.pipelinestep.Transformation
+import de.medizininformatikinitiative.medgraph.searchengine.pipeline.transformer.Transformation
 import de.medizininformatikinitiative.medgraph.ui.resources.StringRes
 import de.medizininformatikinitiative.medgraph.ui.searchengine.results.IdentifiableObjectUI
 import de.medizininformatikinitiative.medgraph.ui.theme.ApplicationTheme
@@ -28,7 +28,11 @@ private fun TransformationDisplay() {
     ApplicationTheme {
         Column {
             TransformationDisplay(
-                Transformation("No output", "This transformation produced nothing.", emptyList()),
+                Transformation(
+                    "No output",
+                    "This transformation produced nothing.",
+                    emptyList()
+                ),
                 modifier = Modifier.padding(4.dp)
             )
             TransformationDisplay(

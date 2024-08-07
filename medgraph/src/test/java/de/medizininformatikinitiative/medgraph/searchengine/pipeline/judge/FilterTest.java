@@ -3,7 +3,6 @@ package de.medizininformatikinitiative.medgraph.searchengine.pipeline.judge;
 import de.medizininformatikinitiative.medgraph.searchengine.model.SearchQuery;
 import de.medizininformatikinitiative.medgraph.searchengine.model.identifiable.Matchable;
 import de.medizininformatikinitiative.medgraph.searchengine.model.identifiable.Substance;
-import de.medizininformatikinitiative.medgraph.searchengine.model.pipelinestep.Filtering;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -20,21 +19,19 @@ public class FilterTest {
 
 	@Test
 	public void singleTest() {
-		Filtering filtering = new TestFilter(true).judge(null, null);
-		assertTrue(filtering.passed());
-		assertEquals("filter", filtering.name());
-		assertEquals("does things", filtering.description());
+		FilteringInfo filteringInfo = new TestFilter(true).judge(null, null);
+		assertTrue(filteringInfo.passed());
 	}
 
 	@Test
 	public void singleTest2() {
-		Filtering filtering = new TestFilter(false).judge(null, null);
-		assertFalse(filtering.passed());
+		FilteringInfo filteringInfo = new TestFilter(false).judge(null, null);
+		assertFalse(filteringInfo.passed());
 	}
 
 	@Test
 	public void batchTest() {
-		List<Filtering> list = new TestFilter(false, false, true, false)
+		List<FilteringInfo> list = new TestFilter(false, false, true, false)
 				.batchJudge(List.of(
 						new Substance(1, "A"),
 						new Substance(2, "A"),
@@ -66,11 +63,6 @@ public class FilterTest {
 			List<Boolean> result = new ArrayList<>(matchables.size());
 			result.addAll(Arrays.asList(this.result).subList(0, matchables.size()));
 			return result;
-		}
-
-		@Override
-		public String toString() {
-			return "filter";
 		}
 
 		@Override

@@ -1,4 +1,4 @@
-package de.medizininformatikinitiative.medgraph.searchengine.model.pipelinestep;
+package de.medizininformatikinitiative.medgraph.searchengine.pipeline.judge;
 
 import de.medizininformatikinitiative.medgraph.searchengine.model.identifiable.Matchable;
 
@@ -7,6 +7,6 @@ import de.medizininformatikinitiative.medgraph.searchengine.model.identifiable.M
  *
  * @author Markus Budeus
  */
-public record Filtering(String name, String description, boolean passed) implements MatchingPipelineStep {
+public record FilteringInfo(boolean passed) implements JudgementInfo {
 
 }

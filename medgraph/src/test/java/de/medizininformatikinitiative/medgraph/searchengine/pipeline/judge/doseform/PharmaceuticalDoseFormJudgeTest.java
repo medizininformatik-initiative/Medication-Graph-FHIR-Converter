@@ -28,7 +28,7 @@ public class PharmaceuticalDoseFormJudgeTest extends UnitTest {
 
 	@BeforeEach
 	void setUp() {
-		sut = new PharmaceuticalDoseFormJudge(1.0);
+		sut = new PharmaceuticalDoseFormJudge();
 	}
 
 	@Test

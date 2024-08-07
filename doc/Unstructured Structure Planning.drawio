@@ -41,7 +41,7 @@
         <mxCell id="ELG1PlljHL2-bM1odg6w-17" style="rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.25;exitY=0;exitDx=0;exitDy=0;entryX=0.75;entryY=1;entryDx=0;entryDy=0;" parent="1" origin="ELG1PlljHL2-bM1odg6w-16" target="ELG1PlljHL2-bM1odg6w-5" edge="1">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="ELG1PlljHL2-bM1odg6w-16" value="Judge&lt;br&gt;(rate the match&lt;br&gt;by some metric,&lt;br&gt;includes filtering)" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+        <mxCell id="ELG1PlljHL2-bM1odg6w-16" value="Judge&lt;br&gt;(rate the match&lt;br&gt;by some metric,&lt;br&gt;includes filteringInfo)" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
           <mxGeometry x="390" y="800" width="120" height="70" as="geometry" />
         </mxCell>
         <mxCell id="ELG1PlljHL2-bM1odg6w-28" value="&lt;span style=&quot;font-weight: normal;&quot;&gt;«interface»&lt;/span&gt;&lt;br&gt;&lt;b&gt;MatchingPipelineStep&lt;/b&gt;" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=40;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">

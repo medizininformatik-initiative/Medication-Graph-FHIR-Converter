@@ -3,7 +3,6 @@ package de.medizininformatikinitiative.medgraph.searchengine.pipeline.judge;
 import de.medizininformatikinitiative.medgraph.searchengine.model.SearchQuery;
 import de.medizininformatikinitiative.medgraph.searchengine.model.identifiable.Matchable;
 import de.medizininformatikinitiative.medgraph.searchengine.model.pipelinestep.Judgement;
-import de.medizininformatikinitiative.medgraph.searchengine.model.pipelinestep.MatchingPipelineStep;
 import de.medizininformatikinitiative.medgraph.searchengine.pipeline.MatchingPipelineComponent;
 
 import java.util.List;
@@ -17,7 +16,7 @@ import java.util.List;
  * @author Markus Budeus
  * @see Judgement
  */
-public interface Judge<S extends Matchable, T extends MatchingPipelineStep> extends MatchingPipelineComponent {
+public interface Judge<S extends Matchable, T extends JudgementInfo> extends MatchingPipelineComponent {
 
 	/**
 	 * Judges the given {@link Matchable} using information from the {@link SearchQuery} if required. When judging

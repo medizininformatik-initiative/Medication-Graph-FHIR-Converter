@@ -1,7 +1,5 @@
 package de.medizininformatikinitiative.medgraph.searchengine.model;
 
-import de.medizininformatikinitiative.medgraph.searchengine.model.pipelinestep.ScoredJudgement;
-
 /**
  * Represents a strategy how a
  * {@link de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject.JudgedObject JudgedObject}
@@ -21,6 +19,10 @@ public interface ScoreIncorporationStrategy {
 	 * The assigned score is the base object's score multiplied by the judgement score.
 	 */
 	ScoreIncorporationStrategy MULTIPLY = (a, b) -> a * b;
+	/**
+	 * The assigned score is the judgement score, ignoring the base object's score.
+	 */
+	ScoreIncorporationStrategy OVERWRITE = (a, b) -> b;
 
 	/**
 	 * Calculates the score to assign to a

@@ -2,7 +2,6 @@ package de.medizininformatikinitiative.medgraph.searchengine.pipeline.judge.dosa
 
 import de.medizininformatikinitiative.medgraph.searchengine.model.Dosage;
 import de.medizininformatikinitiative.medgraph.searchengine.model.SearchQuery;
-import de.medizininformatikinitiative.medgraph.searchengine.model.identifiable.Matchable;
 import de.medizininformatikinitiative.medgraph.searchengine.model.identifiable.Product;
 import de.medizininformatikinitiative.medgraph.searchengine.pipeline.judge.ScoreJudge;
 import de.medizininformatikinitiative.medgraph.searchengine.tools.DosageDetector;
@@ -20,10 +19,6 @@ public class DosagesInProductNameJudge extends ScoreJudge<Product> {
 	 * Score applied for every searched dosage found in the product name.
 	 */
 	public static final double SCORE_PER_MATCH = 1;
-
-	public DosagesInProductNameJudge(Double passingScore) {
-		super(passingScore);
-	}
 
 	@Override
 	protected double judgeInternal(Product product, SearchQuery query) {

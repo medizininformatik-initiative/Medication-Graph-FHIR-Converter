@@ -24,9 +24,12 @@ public class JudgedObject<S extends Matchable> extends MatchingObjectBase<S> {
 	/**
 	 * Creates a new {@link JudgedObject} which manages the given {@link Matchable}.
 	 */
-	public JudgedObject(@NotNull MatchingObject<S> source, Judgement judgement,
-	                       ScoreIncorporationStrategy scoreIncorporationStrategy) {
-		super(source.getObject(), scoreIncorporationStrategy.calculateScore(source.getScore(), judgement.getScore()));
+	public JudgedObject(@NotNull MatchingObject<S> source, Judgement judgement) {
+		this(source, judgement, source.getScore());
+	}
+
+	protected JudgedObject(@NotNull MatchingObject<S> source, Judgement judgement, double score) {
+		super(source.getObject(), score);
 		this.source = source;
 		this.judgement = judgement;
 	}

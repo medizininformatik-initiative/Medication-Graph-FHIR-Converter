@@ -16,8 +16,7 @@ import de.medizininformatikinitiative.medgraph.searchengine.model.ScoreIncorpora
 import de.medizininformatikinitiative.medgraph.searchengine.model.identifiable.Product
 import de.medizininformatikinitiative.medgraph.searchengine.model.identifiable.Substance
 import de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject.*
-import de.medizininformatikinitiative.medgraph.searchengine.model.pipelinestep.ScoredJudgement
-import de.medizininformatikinitiative.medgraph.searchengine.model.pipelinestep.Transformation
+import de.medizininformatikinitiative.medgraph.searchengine.pipeline.transformer.Transformation
 import de.medizininformatikinitiative.medgraph.ui.searchengine.pipeline.origin.OriginUI
 import de.medizininformatikinitiative.medgraph.ui.searchengine.results.DetailedIdentifiableObjectUI
 import de.medizininformatikinitiative.medgraph.ui.theme.ApplicationTheme
@@ -58,17 +57,18 @@ private fun MatchingObjectSourcePipelineDisplay() {
                 2,
                 "THE ACTUAL PRODUCT"
             )
-        val transformation = Transformation(
-            "Transformation X",
-            "Here, the object was transformed",
-            listOf(
-                product,
-                Product(
-                    3,
-                    "Noone cares about this output"
+        val transformation =
+            Transformation(
+                "Transformation X",
+                "Here, the object was transformed",
+                listOf(
+                    product,
+                    Product(
+                        3,
+                        "Noone cares about this output"
+                    )
                 )
             )
-        )
         obj = TransformedObject(product, obj, transformation)
 
         obj = JudgedObject(
@@ -130,7 +130,7 @@ private fun MergedObjectsDisplay(obj: Merge<*>, scrollState: ScrollState) {
 
 @Composable
 private fun TransformedObjectDisplay(obj: TransformedObject<*, *>, scrollState: ScrollState) {
-    MatchingObjectDisplay(obj.sourceObject, scrollState)
+    MatchingObjectDisplay(obj.source, scrollState)
     val targetObjectIndex = obj.transformation.result().indexOf(obj.`object`)
     TransformationDisplay(obj.transformation, highlightedOutputIndex = targetObjectIndex)
 }

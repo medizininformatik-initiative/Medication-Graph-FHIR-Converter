@@ -6,13 +6,11 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import de.medizininformatikinitiative.medgraph.searchengine.model.pipelinestep.Judgement
-import de.medizininformatikinitiative.medgraph.searchengine.model.pipelinestep.ScoredJudgement
 import de.medizininformatikinitiative.medgraph.ui.resources.StringRes
 import de.medizininformatikinitiative.medgraph.ui.theme.ApplicationTheme
-import de.medizininformatikinitiative.medgraph.ui.theme.localColors
+import java.util.OptionalDouble
 
 
 @Composable
@@ -21,7 +19,7 @@ private fun JudgementDisplay() {
     ApplicationTheme {
         Column {
             JudgementDisplay(
-                ScoredJudgement("Sample Judgement", "Always fails", 0.5, 1.0),
+                ScoredJudgement("Sample Judgement", "Always fails", 0.5),
                 Modifier
                     .padding(4.dp)
                     .fillMaxWidth()
@@ -31,7 +29,6 @@ private fun JudgementDisplay() {
                     "Other sample Judgement",
                     "Always passes, also I wanna see what happens if this text becomes very long so I write a lot of text here",
                     1.5,
-                    1.0
                 ),
                 Modifier
                     .padding(4.dp)
@@ -60,7 +57,8 @@ fun JudgementDisplay(judgement: Judgement, modifier: Modifier = Modifier) {
             modifier = Modifier.fillMaxWidth()
         ) {
             if (judgement is ScoredJudgement) {
-                val passingScore = judgement.passingScore
+//                val passingScore = judgement.passingScore
+                val passingScore = OptionalDouble.empty()
                 val text: String;
                 if (passingScore.isPresent) {
                     text = StringRes.get(
@@ -74,15 +72,15 @@ fun JudgementDisplay(judgement: Judgement, modifier: Modifier = Modifier) {
                 Text(text, style = MaterialTheme.typography.h6)
             }
 
-            Row {
-                Text(StringRes.judgement_result, style = MaterialTheme.typography.h6)
-                Text(
-                    StringRes.judgement_failed,
-                    color = MaterialTheme.localColors.strongFailure,
-                    fontWeight = FontWeight.Bold,
-                    style = MaterialTheme.typography.h6
-                )
-            }
+//            Row {
+//                Text(StringRes.judgement_result, style = MaterialTheme.typography.h6)
+//                Text(
+//                    StringRes.judgement_failed,
+//                    color = MaterialTheme.localColors.strongFailure,
+//                    fontWeight = FontWeight.Bold,
+//                    style = MaterialTheme.typography.h6
+//                )
+//            }
         }
     }
 }

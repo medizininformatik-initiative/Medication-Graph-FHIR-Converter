@@ -4,7 +4,6 @@ import de.medizininformatikinitiative.medgraph.Neo4jTest;
 import de.medizininformatikinitiative.medgraph.TestFactory;
 import de.medizininformatikinitiative.medgraph.searchengine.model.identifiable.Product;
 import de.medizininformatikinitiative.medgraph.searchengine.model.identifiable.Substance;
-import de.medizininformatikinitiative.medgraph.searchengine.model.pipelinestep.Transformation;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
