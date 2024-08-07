@@ -1,18 +1,20 @@
 package de.medizininformatikinitiative.medgraph.searchengine.pipeline;
 
+import de.medizininformatikinitiative.medgraph.searchengine.model.ScoreJudgedObject;
 import de.medizininformatikinitiative.medgraph.searchengine.model.SearchQuery;
 import de.medizininformatikinitiative.medgraph.searchengine.model.identifiable.Matchable;
 import de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject.*;
+import de.medizininformatikinitiative.medgraph.searchengine.model.pipelinestep.FilteringStep;
 import de.medizininformatikinitiative.medgraph.searchengine.model.pipelinestep.Judgement;
-import de.medizininformatikinitiative.medgraph.searchengine.model.pipelinestep.ScoredJudgement;
-import de.medizininformatikinitiative.medgraph.searchengine.model.pipelinestep.Transformation;
-import de.medizininformatikinitiative.medgraph.searchengine.pipeline.judge.Filter;
-import de.medizininformatikinitiative.medgraph.searchengine.pipeline.judge.ScoreJudge;
-import de.medizininformatikinitiative.medgraph.searchengine.pipeline.judge.ScoreJudgeConfiguration;
+import de.medizininformatikinitiative.medgraph.searchengine.model.pipelinestep.ScoredJudgementStep;
+import de.medizininformatikinitiative.medgraph.searchengine.pipeline.judge.*;
 import de.medizininformatikinitiative.medgraph.searchengine.pipeline.transformer.IMatchTransformer;
+import de.medizininformatikinitiative.medgraph.searchengine.pipeline.transformer.Transformation;
 import de.medizininformatikinitiative.medgraph.searchengine.tools.Util;
 
 import java.util.*;
+import java.util.function.BiFunction;
+import java.util.function.Function;
 
 /**
  * Service class which provides utility functions to apply matching pipeline components to
@@ -33,12 +35,13 @@ public class MatchingPipelineService {
 	/**
 	 * Sorts the current matches using the given {@link ScoreJudge}. Uses the default score judge configuration.
 	 *
-	 * @param objects       the objects to apply the judge to
-	 * @param judge         the judge to use
+	 * @param objects the objects to apply the judge to
+	 * @param judge   the judge to use
 	 * @see #applyScoreJudge(List, ScoreJudge, ScoreJudgeConfiguration)
 	 */
-	public <S extends T, T extends Matchable> List<MatchingObject<S>> applyScoreJudge(List<MatchingObject<S>> objects,
-	                                                                                  ScoreJudge<T> judge
+	public <S extends T, T extends Matchable> List<ScoreJudgedObject<S>> applyScoreJudge(
+			List<? extends MatchingObject<S>> objects,
+			ScoreJudge<T> judge
 	) {
 		return applyScoreJudge(objects, judge, new ScoreJudgeConfiguration());
 	}
@@ -51,11 +54,12 @@ public class MatchingPipelineService {
 	 * @param judge         the judge to use
 	 * @param configuration some options to use when applying the judge
 	 */
-	public <S extends T, T extends Matchable> List<MatchingObject<S>> applyScoreJudge(List<MatchingObject<S>> objects,
-	                                                                                  ScoreJudge<T> judge,
-	                                                                                  ScoreJudgeConfiguration configuration
+	public <S extends T, T extends Matchable> List<ScoreJudgedObject<S>> applyScoreJudge(
+			List<? extends MatchingObject<S>> objects,
+			ScoreJudge<T> judge,
+			ScoreJudgeConfiguration configuration
 	) {
-		List<ScoredJudgement> judgements = judge.batchJudge(Util.unpack(objects), query);
+		List<ScoreJudgementInfo> judgements = judge.batchJudge(Util.unpack(objects), query);
 
 		int n = objects.size();
 		if (judgements.size() != n) {
@@ -64,60 +68,103 @@ public class MatchingPipelineService {
 							+ judgements.size() + " judgements!");
 		}
 
-		List<MatchingObject<S>> outList = new ArrayList<>(n);
-		List<MatchingObject<S>> eliminatedList = new ArrayList<>(n);
-		double passingScore = configuration.passingScore() != null ? configuration.passingScore() : Double.MIN_VALUE;
-		for (int i = 0; i < n; i++) {
-			Judgement judgement = judgements.get(i);
-			JudgedObject<S> outObject = new JudgedObject<>(objects.get(i), judgement, configuration);
+		String judgeName = judge.toString();
+		String judgeDesc = judge.getDescription();
 
-			if (judgement.getScore() >= passingScore) {
+		return appendJudgementAndFilter(
+				objects,
+				i -> new ScoredJudgementStep(
+						judgeName,
+						judgeDesc,
+						judgements.get(i),
+						configuration
+				),
+				ScoreJudgedObject::new,
+				configuration.mayEliminateAll()
+		);
+	}
+
+	/**
+	 * Filters the given matches using the given filter.
+	 *
+	 * @param objects         the objects to filter
+	 * @param filter          the filter to use
+	 * @param mayEliminateall if this is false, it prevents the elimination of all matches in case no match passes the
+	 *                        filter
+	 * @return the filtered list of {@link MatchingObject}s
+	 */
+	public <S extends T, T extends Matchable> List<JudgedObject<S>> applyFilter(
+			List<? extends MatchingObject<S>> objects,
+			Filter<T> filter,
+			boolean mayEliminateall) {
+		List<FilteringInfo> filterResults = filter.batchJudge(Util.unpack(objects), query);
+
+		int n = objects.size();
+		if (filterResults.size() != n) {
+			throw new IllegalStateException(
+					"Received an invalid number of filter results! Passed " + n + " objects, but got "
+							+ filterResults.size() + " results!");
+		}
+
+		String filterName = filter.toString();
+		String filterDesc = filter.getDescription();
+
+		return appendJudgementAndFilter(
+				objects,
+				i -> new FilteringStep(
+						filterName,
+						filterDesc,
+						filterResults.get(i)
+				),
+				JudgedObject::new,
+				mayEliminateall
+		);
+	}
+
+	/**
+	 * For each object in the given list, creates a new {@link JudgedObject} and appends it to the chain. Then, filters
+	 * the resulting objects based on whether they passed the judgement. If not, they are excluded from the result.
+	 *
+	 * @param objects             the objects for which to append the judgment information to the chain
+	 * @param judgementCreator    a function which generates the corresponding {@link Judgement} based on the index in
+	 *                            the list of objects
+	 * @param judgedObjectWrapper a function which, given the base object and previously generated {@link Judgement},
+	 *                            creates the new {@link JudgedObject} for the chain
+	 * @param mayEliminateAll     if this is set to false and if not a single object passed the judgment, this function
+	 *                            returns all generated {@link JudgedObject} instead of eliminating them all, which
+	 *                            would result in an empty list
+	 * @param <S>                 the type of value held by the {@link JudgedObject}s
+	 * @param <T>                 the type of {@link Judgement} to work with
+	 * @param <O>                 the output {@link MatchingObject} type
+	 * @return a list of the "surviving" {@link JudgedObject}s
+	 */
+	private <S extends Matchable, O extends JudgedObject<S>, T extends Judgement> List<O> appendJudgementAndFilter(
+			List<? extends MatchingObject<S>> objects,
+			Function<Integer, T> judgementCreator,
+			BiFunction<MatchingObject<S>, T, O> judgedObjectWrapper,
+			boolean mayEliminateAll
+	) {
+		int n = objects.size();
+		List<O> outList = new ArrayList<>(n);
+		List<O> eliminatedList = new ArrayList<>(n);
+		for (int i = 0; i < n; i++) {
+			T judgement = judgementCreator.apply(i);
+			O outObject = judgedObjectWrapper.apply(objects.get(i), judgement);
+
+			if (judgement.passed()) {
 				outList.add(outObject);
 			} else {
 				eliminatedList.add(outObject);
 			}
 		}
 
-		if (outList.isEmpty() && !configuration.mayEliminateAll()) {
+		if (outList.isEmpty() && !mayEliminateAll) {
 			// If the outList is empty, that means no object passed the judgement. Which in turn means
 			// all checked objects are in the eliminatedList. If we may not eliminate all objects, we simply
 			// return the eliminated list, which contains all judged objects.
 			return eliminatedList;
 		}
 		return outList;
-	}
-
-	/**
-	 * Filters the given matches using the given filter.
-	 *
-	 * @param objects        the objects to filter
-	 * @param filter         the filter to use
-	 * @param ensureSurvival if this is true, it prevents the elimination of all matches in case no match passes the
-	 *                       filter
-	 * @return the filtered list of {@link MatchingObject}s
-	 */
-	public <S extends T, T extends Matchable> List<MatchingObject<S>> applyFilter(
-			List<? extends MatchingObject<S>> objects,
-			Filter<S> filter,
-			boolean ensureSurvival) {
-		List<Boolean> passes = filter.batchPassesFilter(Util.unpack(objects), query);
-
-		int n = objects.size();
-		if (passes.size() != n) {
-			throw new IllegalStateException(
-					"Received an invalid number of filter results! Passed " + n + " objects, but got "
-							+ passes.size() + " results!");
-		}
-
-		if (passes.isEmpty() && ensureSurvival) {
-			return new ArrayList<>(objects);
-		}
-
-		List<MatchingObject<S>> survivors = new ArrayList<>(n);
-		for (int i = 0; i < n; i++) {
-			if (passes.get(i)) survivors.add(objects.get(i));
-		}
-		return survivors;
 	}
 
 	/**

@@ -29,7 +29,7 @@ public class DoseFormCharacteristicJudgeTest extends UnitTest {
 
 	@BeforeEach
 	void setUp() {
-		sut = new DoseFormCharacteristicJudge(1.0);
+		sut = new DoseFormCharacteristicJudge();
 	}
 
 	@Test

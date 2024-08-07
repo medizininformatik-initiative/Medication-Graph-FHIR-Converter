@@ -6,6 +6,7 @@ import de.medizininformatikinitiative.medgraph.searchengine.QueryExecutor;
 import de.medizininformatikinitiative.medgraph.searchengine.algorithm.querymanagement.QueryRefiner;
 import de.medizininformatikinitiative.medgraph.searchengine.algorithm.querymanagement.RefinedQuery;
 import de.medizininformatikinitiative.medgraph.searchengine.model.RawQuery;
+import de.medizininformatikinitiative.medgraph.searchengine.model.identifiable.Product;
 import de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject.MatchingObject;
 import de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject.Merge;
 import de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject.OriginalMatch;
@@ -36,7 +37,7 @@ public class PerSessionQueryManagerTest extends UnitTest {
 	@Mock
 	private QueryRefiner queryRefiner;
 	@Mock
-	private QueryExecutor queryExecutor;
+	private QueryExecutor<Product> queryExecutor;
 	@Mock
 	private DatabaseConnection connection;
 	@Mock
@@ -49,7 +50,7 @@ public class PerSessionQueryManagerTest extends UnitTest {
 	private boolean sessionClosed;
 
 
-	private PerSessionQueryManager sut;
+	private PerSessionQueryManager<Product> sut;
 
 	@BeforeEach
 	void setUp() {
@@ -60,7 +61,7 @@ public class PerSessionQueryManagerTest extends UnitTest {
 			return null;
 		}).when(session1).close();
 
-		sut = new PerSessionQueryManager(s -> queryRefiner, s -> queryExecutor, connection);
+		sut = new PerSessionQueryManager<>(s -> queryRefiner, s -> queryExecutor, connection);
 	}
 
 	@ParameterizedTest(name = "Refiner: {0}")
@@ -71,7 +72,7 @@ public class PerSessionQueryManagerTest extends UnitTest {
 		                                .thenReturn(session2);
 
 		AtomicReference<Session> session = new AtomicReference<>();
-		sut = new PerSessionQueryManager(s -> {
+		sut = new PerSessionQueryManager<>(s -> {
 			session.set(s);
 			return queryRefiner;
 		}, s -> {
@@ -130,9 +131,9 @@ public class PerSessionQueryManagerTest extends UnitTest {
 
 	@Test
 	public void correctExecutionResultReturned() {
-		List<MatchingObject<?>> resultList = List.of(
+		List<MatchingObject<Product>> resultList = List.of(
 				new OriginalMatch<>(SAMPLE_PRODUCT_1),
-				new Merge<>(List.of(new OriginalMatch<>(SAMPLE_PRODUCT_2), new OriginalMatch<>(SAMPLE_PRODUCT_2)))
+				new Merge<>(List.of(new OriginalMatch<>(SAMPLE_PRODUCT_2), new OriginalMatch<>(SAMPLE_PRODUCT_2)), 1)
 		);
 		when(queryExecutor.executeQuery(query)).thenReturn(resultList);
 

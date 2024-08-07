@@ -2,7 +2,6 @@ package de.medizininformatikinitiative.medgraph.searchengine.pipeline.transforme
 
 import de.medizininformatikinitiative.medgraph.searchengine.model.SearchQuery;
 import de.medizininformatikinitiative.medgraph.searchengine.model.identifiable.Matchable;
-import de.medizininformatikinitiative.medgraph.searchengine.model.pipelinestep.Transformation;
 
 import java.util.List;
 

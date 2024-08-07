@@ -1,7 +1,7 @@
 package de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject;
 
 import de.medizininformatikinitiative.medgraph.searchengine.model.identifiable.Matchable;
-import de.medizininformatikinitiative.medgraph.searchengine.model.pipelinestep.Transformation;
+import de.medizininformatikinitiative.medgraph.searchengine.pipeline.transformer.Transformation;
 
 import java.util.Objects;
 
@@ -34,7 +34,7 @@ public class TransformedObject<S extends Matchable, T extends Matchable> extends
 	/**
 	 * Returns the object this instance originated from via the transformation.
 	 */
-	public MatchingObject<S> getSourceObject() {
+	public MatchingObject<S> getSource() {
 		return source;
 	}
 

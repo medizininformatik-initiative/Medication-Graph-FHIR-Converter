@@ -10,14 +10,13 @@ import java.util.Map;
  *
  * @author Markus Budeus
  */
-public class PredefinedScoreJudge extends ScoreJudge {
+public class PredefinedScoreJudge extends ScoreJudge<Matchable> {
 
 	public static final String DESC = "Assigns a pre-defined score";
 
 	private final Map<Matchable, Double> scoreMap;
 
-	public PredefinedScoreJudge(Map<Matchable, Double> scoreMap, Double passingScore) {
-		super(passingScore);
+	public PredefinedScoreJudge(Map<Matchable, Double> scoreMap) {
 		this.scoreMap = scoreMap;
 	}
 
