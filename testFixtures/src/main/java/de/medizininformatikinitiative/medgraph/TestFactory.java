@@ -199,7 +199,7 @@ public class TestFactory {
 	/**
 	 * Provider which provides all products given in this test factory.
 	 */
-	public static final BaseProvider<String> PRODUCTS_PROVIDER = BaseProvider.ofIdentifiableNames(
+	public static final BaseProvider<String, Product> PRODUCTS_PROVIDER = BaseProvider.ofIdentifiableNames(
 			Set.of(
 					Products.ASPIRIN,
 					Products.DORMICUM_15,
@@ -212,7 +212,7 @@ public class TestFactory {
 	/**
 	 * Provider which provides all substances given in this test factory.
 	 */
-	public static final BaseProvider<String> SUBSTANCES_PROVIDER = BaseProvider.ofIdentifiableNames(
+	public static final BaseProvider<String, Substance> SUBSTANCES_PROVIDER = BaseProvider.ofIdentifiableNames(
 			Set.of(
 					Substances.ACETYLSALICYLIC_ACID,
 					Substances.MIDAZOLAM,
@@ -226,7 +226,7 @@ public class TestFactory {
 	/**
 	 * Provider which provides all EDQM dose forms and characteristics given in this test factory.
 	 */
-	public static final BaseProvider<String> EDQM_PROVIDER = BaseProvider.ofIdentifiableNames(Set.of(
+	public static final BaseProvider<String, EdqmConcept> EDQM_PROVIDER = BaseProvider.ofIdentifiableNames(Set.of(
 			DoseForms.Characteristics.POWDER,
 			DoseForms.Characteristics.SOLUTION,
 			DoseForms.Characteristics.GRANULES,
@@ -242,7 +242,7 @@ public class TestFactory {
 	/**
 	 * Provider which provides all substances and products given in this test factory.
 	 */
-	public static final BaseProvider<String> PRODUCTS_AND_SUBSTANCES_PROVIDER =
+	public static final BaseProvider<String, Matchable> PRODUCTS_AND_SUBSTANCES_PROVIDER =
 			join(PRODUCTS_PROVIDER, SUBSTANCES_PROVIDER);
 
 	public static final SearchQuery SAMPLE_SEARCH_QUERY = new SearchQuery.Builder()
@@ -264,12 +264,12 @@ public class TestFactory {
 	public static final AmountRange SAMPLE_AMOUNT_RANGE = new AmountRange(new BigDecimal("1.4"), new BigDecimal("1.6"), "mg");
 
 	@SafeVarargs
-	private static <T> BaseProvider<T> join(BaseProvider<T>... providers) {
-		Stream<MappedIdentifier<T>> stream = Stream.empty();
-		for (BaseProvider<T> provider: providers) {
+	private static <S, T extends Identifiable> BaseProvider<S, T> join(BaseProvider<S, ? extends T>... providers) {
+		Stream<MappedIdentifier<S, ? extends T>> stream = Stream.empty();
+		for (BaseProvider<S, ? extends T> provider: providers) {
 			stream = Stream.concat(stream, provider.getIdentifiers());
 		}
-		return BaseProvider.ofIdentifiers(stream.toList());
+		return BaseProvider.ofIdentifiers(stream.map(m -> new MappedIdentifier<S, T>(m.trackableIdentifier, m.target)).toList());
 	}
 
 	/**

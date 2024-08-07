@@ -2,8 +2,11 @@ package de.medizininformatikinitiative.medgraph.searchengine.matcher.model;
 
 import de.medizininformatikinitiative.medgraph.searchengine.matcher.IMatcher;
 import de.medizininformatikinitiative.medgraph.searchengine.model.identifier.Identifier;
+import de.medizininformatikinitiative.medgraph.searchengine.model.identifier.TrackableIdentifier;
 import de.medizininformatikinitiative.medgraph.searchengine.provider.MappedIdentifier;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.Objects;
 
 /**
  * Any successful match produced by a {@link IMatcher}.
@@ -12,23 +15,23 @@ import org.jetbrains.annotations.NotNull;
  * @param <T> the type of identifier that was matched against
  * @author Markus Budeus
  */
-public abstract class Match<S, T> {
+public abstract class Match<S extends Identifier<?>, T extends Identifier<?>> {
 
 	@NotNull
-	private final Identifier<S> searchTerm;
+	private final S searchTerm;
 	@NotNull
-	private final MappedIdentifier<T> matchedIdentifier;
+	private final T matchedIdentifier;
 
-	protected Match(@NotNull Identifier<S> searchTerm, @NotNull MappedIdentifier<T> matchedIdentifier) {
+	protected Match(@NotNull S searchTerm, @NotNull T matchedIdentifier) {
 		this.searchTerm = searchTerm;
 		this.matchedIdentifier = matchedIdentifier;
 	}
 
 	/**
-	 * Returns the {@link MappedIdentifier} that was matched.
+	 * Returns the target that was matched.
 	 */
 	@NotNull
-	public MappedIdentifier<T> getMatchedIdentifier() {
+	public T getMatchedIdentifier() {
 		return matchedIdentifier;
 	}
 
@@ -36,7 +39,21 @@ public abstract class Match<S, T> {
 	 * Returns the search term identifier against which the matcher was run.
 	 */
 	@NotNull
-	public Identifier<S> getSearchTerm() {
+	public S getSearchTerm() {
 		return searchTerm;
+	}
+
+	@Override
+	public boolean equals(Object object) {
+		if (this == object) return true;
+		if (object == null || getClass() != object.getClass()) return false;
+		Match<?, ?> match = (Match<?, ?>) object;
+		return Objects.equals(searchTerm, match.searchTerm) && Objects.equals(matchedIdentifier,
+				match.matchedIdentifier);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(searchTerm, matchedIdentifier);
 	}
 }

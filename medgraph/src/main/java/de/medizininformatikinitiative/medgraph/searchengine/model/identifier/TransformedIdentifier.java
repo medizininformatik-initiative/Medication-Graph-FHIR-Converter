@@ -6,31 +6,31 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Objects;
 
 /**
- * An {@link Identifier} that has been transformed by a {@link Transformer}.
+ * An {@link TrackableIdentifier} that has been transformed by a {@link Transformer}.
  *
  * @author Markus Budeus
  */
-public class TransformedIdentifier<S, T> extends Identifier<T> {
+public class TransformedIdentifier<S, T> extends TrackableIdentifier<T> {
 
 	/**
 	 * The original identifier which was transformed into this one.
 	 */
 	@NotNull
-	private final Identifier<S> original;
+	private final TrackableIdentifier<S> original;
 	/**
 	 * The transformer which transformed the given original identifier into this one.
 	 */
 	@NotNull
 	private final Transformer<S, T> transformer;
 
-	public TransformedIdentifier(@NotNull T identifier, @NotNull Identifier<S> original, @NotNull Transformer<S, T> transformer) {
+	public TransformedIdentifier(@NotNull T identifier, @NotNull TrackableIdentifier<S> original, @NotNull Transformer<S, T> transformer) {
 		super(identifier);
 		this.original = original;
 		this.transformer = transformer;
 	}
 
 	@NotNull
-	public Identifier<S> getOriginal() {
+	public TrackableIdentifier<S> getOriginal() {
 		return original;
 	}
 

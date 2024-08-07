@@ -8,7 +8,7 @@ import de.medizininformatikinitiative.medgraph.searchengine.model.SearchQuery;
 import de.medizininformatikinitiative.medgraph.searchengine.model.identifiable.EdqmConcept;
 import de.medizininformatikinitiative.medgraph.searchengine.model.identifiable.EdqmPharmaceuticalDoseForm;
 import de.medizininformatikinitiative.medgraph.searchengine.model.identifiable.Substance;
-import de.medizininformatikinitiative.medgraph.searchengine.model.identifier.Identifier;
+import de.medizininformatikinitiative.medgraph.searchengine.model.identifier.TrackableIdentifier;
 import de.medizininformatikinitiative.medgraph.searchengine.model.identifier.OriginalIdentifier;
 import de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject.Merge;
 import de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject.OriginalMatch;
@@ -23,7 +23,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 public class RefinedQueryTest extends UnitTest {
 
-	private final Identifier<List<String>> SAMPLE_PRODUCT_KEYWORDS = new OriginalIdentifier<>(
+	private final TrackableIdentifier<List<String>> SAMPLE_PRODUCT_KEYWORDS = new OriginalIdentifier<>(
 			List.of("Sodium", "chloride"), OriginalIdentifier.Source.RAW_QUERY);
 
 	@Test

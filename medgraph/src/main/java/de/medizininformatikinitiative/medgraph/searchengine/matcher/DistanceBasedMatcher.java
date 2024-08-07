@@ -1,8 +1,7 @@
 package de.medizininformatikinitiative.medgraph.searchengine.matcher;
 
-import de.medizininformatikinitiative.medgraph.searchengine.matcher.model.DistanceBasedMatch;
-import de.medizininformatikinitiative.medgraph.searchengine.model.identifier.Identifier;
-import de.medizininformatikinitiative.medgraph.searchengine.provider.MappedIdentifier;
+import de.medizininformatikinitiative.medgraph.searchengine.matcher.model.DistanceMatchInfo;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Superclass used by matchers which rank results by calculating a distance between the search term and possible
@@ -11,12 +10,12 @@ import de.medizininformatikinitiative.medgraph.searchengine.provider.MappedIdent
  * @param <S> the type of search term and target objects used
  * @author Markus Budeus
  */
-public abstract class DistanceBasedMatcher<S> extends SimpleMatcher<S, DistanceBasedMatch<S, S>> {
+public abstract class DistanceBasedMatcher<S> extends SimpleMatcher<S, DistanceMatchInfo> {
 
 	@Override
-	protected DistanceBasedMatch<S, S> match(Identifier<S> searchTerm, MappedIdentifier<S> mi) {
-		Integer distance = calculateDistance(searchTerm.getIdentifier(), mi.identifier.getIdentifier());
-		if (distance != null) return new DistanceBasedMatch<>(searchTerm, mi, distance);
+	protected @Nullable DistanceMatchInfo match(S searchTerm, S target) {
+		Integer distance = calculateDistance(searchTerm, target);
+		if (distance != null) return new DistanceMatchInfo(distance);
 		return null;
 	}
 

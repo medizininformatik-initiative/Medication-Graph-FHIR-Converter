@@ -1,11 +1,8 @@
 package de.medizininformatikinitiative.medgraph.searchengine.matcher;
 
-import de.medizininformatikinitiative.medgraph.TestFactory;
 import de.medizininformatikinitiative.medgraph.UnitTest;
 import de.medizininformatikinitiative.medgraph.searchengine.matcher.editdistance.LevenshteinDistanceService;
 import de.medizininformatikinitiative.medgraph.searchengine.matcher.model.EditDistance;
-import de.medizininformatikinitiative.medgraph.searchengine.model.identifier.OriginalIdentifier;
-import de.medizininformatikinitiative.medgraph.searchengine.provider.MappedIdentifier;
 import org.junit.jupiter.api.Test;
 
 import java.util.Collections;
@@ -107,14 +104,11 @@ public class EditDistanceListMatcherTest extends UnitTest {
 			EditDistance expectedEditDistance,
 			Set<Integer> expectedUsedSearchTermTokens
 	) {
-		OriginalIdentifier<List<String>> stIdentifier = new OriginalIdentifier<>(searchTerm, OriginalIdentifier.Source.RAW_QUERY);
-		EditDistanceListMatcher.Match match = sut.match(stIdentifier,
-				new MappedIdentifier<>(identifier, TestFactory.SAMPLE_PRODUCT_1));
+		EditDistanceListMatcher.MatchInfo match = sut.match(searchTerm, identifier);
 		if (expectedEditDistance == null) {
 			assertNull(match);
 		} else {
 			assertNotNull(match);
-			assertSame(stIdentifier, match.getSearchTerm());
 			assertEquals(expectedEditDistance, match.getDistance());
 			assertEquals(expectedUsedSearchTermTokens, match.getUsageStatement().getUsedIndices());
 		}

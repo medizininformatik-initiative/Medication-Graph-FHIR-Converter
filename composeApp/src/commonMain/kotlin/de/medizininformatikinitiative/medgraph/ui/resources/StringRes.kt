@@ -297,6 +297,9 @@ class StringRes {
         val original_identifier = "Original Identifier"
 
         @JvmStatic
+        val generic_identifier = "Unknown Identifier"
+
+        @JvmStatic
         val identifier_source_known_identifier = "Known identifier from the knowledge graph."
 
         @JvmStatic

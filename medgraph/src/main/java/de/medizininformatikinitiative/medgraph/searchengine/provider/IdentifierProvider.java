@@ -1,17 +1,18 @@
 package de.medizininformatikinitiative.medgraph.searchengine.provider;
 
+import de.medizininformatikinitiative.medgraph.searchengine.model.identifiable.Identifiable;
 import de.medizininformatikinitiative.medgraph.searchengine.model.identifiable.Matchable;
+import de.medizininformatikinitiative.medgraph.searchengine.model.identifier.Identifier;
 
 import java.util.stream.Stream;
 
 /**
- * Provides {@link MappedIdentifier}s, which are a term of any type mapped to a
- * {@link Matchable}.
+ * Provides {@link Identifier}s.
  *
- * @param <S> the type of identifier term
+ * @param <S> the type of identifiers provided
  * @author Markus Budeus
  */
-public interface IdentifierProvider<S> {
+public interface IdentifierProvider<S extends Identifier<?>> {
 
 	/**
 	 * Returns the identifiers of this provider as a stream. Note this function generates a new stream
@@ -20,6 +21,6 @@ public interface IdentifierProvider<S> {
 	 *
 	 * @return a newly generated stream of identifiers
 	 */
-	Stream<MappedIdentifier<S>> getIdentifiers();
+	Stream<S> getIdentifiers();
 
 }

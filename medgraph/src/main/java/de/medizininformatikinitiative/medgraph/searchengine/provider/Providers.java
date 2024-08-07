@@ -1,8 +1,6 @@
 package de.medizininformatikinitiative.medgraph.searchengine.provider;
 
-import de.medizininformatikinitiative.medgraph.searchengine.model.identifiable.EdqmConcept;
-import de.medizininformatikinitiative.medgraph.searchengine.model.identifiable.EdqmPharmaceuticalDoseForm;
-import de.medizininformatikinitiative.medgraph.searchengine.model.identifiable.Identifiable;
+import de.medizininformatikinitiative.medgraph.searchengine.model.identifiable.*;
 import org.neo4j.driver.Session;
 
 import java.util.function.Function;
@@ -13,9 +11,9 @@ import java.util.stream.Stream;
  */
 public class Providers {
 
-	private static final LazyProvider PRODUCT_SYNONYMS = new LazyProvider(DatabaseProviders::getProductSynonyms);
-	private static final LazyProvider SUBSTANCE_SYNONYMS = new LazyProvider(DatabaseProviders::getSubstanceSynonyms);
-	private static final LazyProvider EDQM_CONCEPT_IDENTIFIERS = new LazyProvider(
+	private static final LazyProvider<Product> PRODUCT_SYNONYMES = new LazyProvider<>(DatabaseProviders::getProductSynonyms);
+	private static final LazyProvider<Substance> SUBSTANCE_SYNONYMES = new LazyProvider<>(DatabaseProviders::getSubstanceSynonyms);
+	private static final LazyProvider<EdqmConcept> EDQM_CONCEPT_IDENTIFIERS = new LazyProvider<>(
 			DatabaseProviders::getEdqmConceptIdentifiers);
 
 	/**
@@ -25,8 +23,8 @@ public class Providers {
 	 * @param session the session to access the data
 	 * @return the provider for product names
 	 */
-	public static BaseProvider<String> getProductSynonyms(Session session) {
-		return PRODUCT_SYNONYMS.get(session);
+	public static BaseProvider<String, Product> getProductSynonyms(Session session) {
+		return PRODUCT_SYNONYMES.get(session);
 	}
 
 	/**
@@ -36,8 +34,8 @@ public class Providers {
 	 * @param session the session to access the data
 	 * @return the provider for substance names
 	 */
-	public static BaseProvider<String> getSubstanceSynonyms(Session session) {
-		return SUBSTANCE_SYNONYMS.get(session);
+	public static BaseProvider<String, Substance> getSubstanceSynonyms(Session session) {
+		return SUBSTANCE_SYNONYMES.get(session);
 	}
 
 	/**
@@ -49,20 +47,20 @@ public class Providers {
 	 * {@link EdqmPharmaceuticalDoseForm
 	 * PharmaceuticalDoseForms}.
 	 */
-	public static BaseProvider<String> getEdqmConceptIdentifiers(Session session) {
+	public static BaseProvider<String, EdqmConcept> getEdqmConceptIdentifiers(Session session) {
 		return EDQM_CONCEPT_IDENTIFIERS.get(session);
 	}
 
-	public static class LazyProvider {
+	public static class LazyProvider<T extends Identifiable> {
 
-		private final Function<Session, Stream<MappedIdentifier<String>>> instantiator;
-		private volatile BaseProvider<String> instance;
+		private final Function<Session, Stream<MappedIdentifier<String, T>>> instantiator;
+		private volatile BaseProvider<String, T> instance;
 
-		public LazyProvider(Function<Session, Stream<MappedIdentifier<String>>> instantiator) {
+		public LazyProvider(Function<Session, Stream<MappedIdentifier<String, T>>> instantiator) {
 			this.instantiator = instantiator;
 		}
 
-		public BaseProvider<String> get(Session session) {
+		public BaseProvider<String, T> get(Session session) {
 			if (instance == null) {
 				synchronized (Providers.class) {
 					if (instance == null) {

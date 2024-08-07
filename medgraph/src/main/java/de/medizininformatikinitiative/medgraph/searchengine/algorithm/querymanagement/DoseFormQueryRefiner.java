@@ -2,15 +2,17 @@ package de.medizininformatikinitiative.medgraph.searchengine.algorithm.querymana
 
 import de.medizininformatikinitiative.medgraph.searchengine.matcher.EditDistanceListMatcher;
 import de.medizininformatikinitiative.medgraph.searchengine.matcher.editdistance.FlexibleLevenshteinDistanceService;
+import de.medizininformatikinitiative.medgraph.searchengine.matcher.model.DetailedMatch;
 import de.medizininformatikinitiative.medgraph.searchengine.model.identifiable.EdqmConcept;
 import de.medizininformatikinitiative.medgraph.searchengine.model.identifiable.EdqmPharmaceuticalDoseForm;
-import de.medizininformatikinitiative.medgraph.searchengine.model.identifier.Identifier;
+import de.medizininformatikinitiative.medgraph.searchengine.model.identifier.TrackableIdentifier;
 import de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject.MatchOrigin;
 import de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject.MatchingObject;
 import de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject.Origin;
 import de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject.OriginalMatch;
 import de.medizininformatikinitiative.medgraph.searchengine.provider.BaseProvider;
-import de.medizininformatikinitiative.medgraph.searchengine.provider.IdentifierProvider;
+import de.medizininformatikinitiative.medgraph.searchengine.provider.MappedIdentifier;
+import de.medizininformatikinitiative.medgraph.searchengine.provider.MappedIdentifierStream;
 import de.medizininformatikinitiative.medgraph.searchengine.stringtransformer.RemoveBlankStrings;
 import de.medizininformatikinitiative.medgraph.searchengine.stringtransformer.ToLowerCase;
 import de.medizininformatikinitiative.medgraph.searchengine.stringtransformer.TraceableTransformer;
@@ -47,9 +49,9 @@ public class DoseFormQueryRefiner implements PartialQueryRefiner<DoseFormQueryRe
 			new ToLowerCase()
 					.andTraceable(new WhitespaceTokenizer(false))
 					.andTraceable(new RemoveBlankStrings());
-	private final IdentifierProvider<List<String>> edqmConceptsProvider;
+	private final MappedIdentifierStream<List<String>, EdqmConcept> edqmConceptsProvider;
 
-	public DoseFormQueryRefiner(BaseProvider<String> edqmConceptsProvider) {
+	public DoseFormQueryRefiner(BaseProvider<String, EdqmConcept> edqmConceptsProvider) {
 		this.edqmConceptsProvider = edqmConceptsProvider
 				.parallel()
 				.withTransformation(transformer);
@@ -62,19 +64,20 @@ public class DoseFormQueryRefiner implements PartialQueryRefiner<DoseFormQueryRe
 	 * @return a {@link Result}-object providing the detected dose forms and dose form characteristics as well as
 	 * information on where in the query string they were found
 	 */
-	public Result parse(Identifier<String> query) {
-		Identifier<List<String>> transformedQuery = transformer.apply(query);
+	public Result parse(TrackableIdentifier<String> query) {
+		TrackableIdentifier<List<String>> transformedQuery = transformer.apply(query);
 
-		List<EditDistanceListMatcher.Match> matches = editDistanceListMatcher.match(transformedQuery,
-				                                                                     edqmConceptsProvider)
-		                                                                     .filter(match -> {
-			                                                                     if (match.getMatchedIdentifier().target instanceof EdqmConcept) {
-				                                                                     return true;
-			                                                                     }
-			                                                                     System.err.println(
-					                                                                     "Warning: The provider provided an Identifiable which is no EdqmConcept! (Got " + match.getMatchedIdentifier().target + ")");
-			                                                                     return false;
-		                                                                     }).collect(Collectors.toList());
+		List<? extends DetailedMatch<TrackableIdentifier<List<String>>, MappedIdentifier<List<String>, EdqmConcept>, EditDistanceListMatcher.MatchInfo>> matches =
+				editDistanceListMatcher.match(transformedQuery,
+						                       edqmConceptsProvider)
+				                       .filter(match -> {
+					                       if (match.getMatchedIdentifier().target instanceof EdqmConcept) {
+						                       return true;
+					                       }
+					                       System.err.println(
+							                       "Warning: The provider provided an Identifiable which is no EdqmConcept! (Got " + match.getMatchedIdentifier().target + ")");
+					                       return false;
+				                       }).collect(Collectors.toList()).reversed();
 
 		SearchEngineTools.removeConflictingOverlaps(matches, this::overlap, this::checkPriorityOnOverlap);
 
@@ -83,15 +86,16 @@ public class DoseFormQueryRefiner implements PartialQueryRefiner<DoseFormQueryRe
 		Set<Integer> usedTokens = new HashSet<>();
 
 		matches.forEach(match -> {
-			EdqmConcept concept = (EdqmConcept) match.getMatchedIdentifier().target;
+			EdqmConcept concept = match.getMatchedIdentifier().target;
 			Origin origin = new MatchOrigin<>(match, editDistanceListMatcher);
-			double score = Util.distanceToScore(match.getDistance().editDistance());
+			EditDistanceListMatcher.MatchInfo matchInfo = match.getMatchInfo();
+			double score = Util.distanceToScore(matchInfo.getDistance().editDistance());
 			if (concept instanceof EdqmPharmaceuticalDoseForm df) {
 				doseForms.add(new OriginalMatch<>(df, score, origin));
 			} else {
 				characteristics.add(new OriginalMatch<>(concept, score, origin));
 			}
-			usedTokens.addAll(match.getUsageStatement().getUsedIndices());
+			usedTokens.addAll(matchInfo.getUsageStatement().getUsedIndices());
 		});
 
 		// Construct a new StringListUsageStatement which covers all used tokens of the search term
@@ -107,10 +111,10 @@ public class DoseFormQueryRefiner implements PartialQueryRefiner<DoseFormQueryRe
 	/**
 	 * Returns how to handle conflicts between two matches.
 	 */
-	private OverlapResolutionStrategy checkPriorityOnOverlap(EditDistanceListMatcher.Match match1,
-	                                                         EditDistanceListMatcher.Match match2) {
-		int editDistance1 = match1.getDistance().editDistance();
-		int editDistance2 = match2.getDistance().editDistance();
+	private OverlapResolutionStrategy checkPriorityOnOverlap(DetailedMatch<?, ?, EditDistanceListMatcher.MatchInfo> match1,
+	                                                         DetailedMatch<?, ?, EditDistanceListMatcher.MatchInfo> match2) {
+		int editDistance1 = match1.getMatchInfo().getDistance().editDistance();
+		int editDistance2 = match2.getMatchInfo().getDistance().editDistance();
 
 		if (editDistance1 > editDistance2) return OverlapResolutionStrategy.KEEP_SECOND;
 		else if (editDistance2 > editDistance1) return OverlapResolutionStrategy.KEEP_FIRST;
@@ -120,9 +124,9 @@ public class DoseFormQueryRefiner implements PartialQueryRefiner<DoseFormQueryRe
 	/**
 	 * Returns whether the source tokens from the two given matches overlap.
 	 */
-	private boolean overlap(EditDistanceListMatcher.Match match1, EditDistanceListMatcher.Match match2) {
-		Set<Integer> set1 = match1.getUsageStatement().getUsedIndices();
-		Set<Integer> set2 = match2.getUsageStatement().getUsedIndices();
+	private boolean overlap(DetailedMatch<?, ?, EditDistanceListMatcher.MatchInfo> match1, DetailedMatch<?, ?, EditDistanceListMatcher.MatchInfo> match2) {
+		Set<Integer> set1 = match1.getMatchInfo().getUsageStatement().getUsedIndices();
+		Set<Integer> set2 = match2.getMatchInfo().getUsageStatement().getUsedIndices();
 		HashSet<Integer> union = new HashSet<>(set1);
 		union.addAll(set2);
 		return union.size() < set1.size() + set2.size();

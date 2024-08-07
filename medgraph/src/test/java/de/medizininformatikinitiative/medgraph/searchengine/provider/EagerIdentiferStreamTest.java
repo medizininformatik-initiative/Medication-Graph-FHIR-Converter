@@ -1,5 +1,7 @@
 package de.medizininformatikinitiative.medgraph.searchengine.provider;
 
+import de.medizininformatikinitiative.medgraph.searchengine.matcher.model.Match;
+import de.medizininformatikinitiative.medgraph.searchengine.model.identifiable.Matchable;
 import org.junit.jupiter.api.Test;
 
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -16,7 +18,7 @@ public class EagerIdentiferStreamTest {
 	@Test
 	public void isActuallyEager() {
 		AtomicBoolean transformerRan = new AtomicBoolean(false);
-		IdentifierStream<String> stream = PRODUCTS_AND_SUBSTANCES_PROVIDER
+		MappedIdentifierStream<String, Matchable> stream = PRODUCTS_AND_SUBSTANCES_PROVIDER
 				.withTransformation(m -> {
 					transformerRan.set(true);
 					return m;

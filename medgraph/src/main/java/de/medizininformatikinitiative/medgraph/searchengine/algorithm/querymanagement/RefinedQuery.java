@@ -7,7 +7,7 @@ import de.medizininformatikinitiative.medgraph.searchengine.model.identifiable.E
 import de.medizininformatikinitiative.medgraph.searchengine.model.identifiable.EdqmPharmaceuticalDoseForm;
 import de.medizininformatikinitiative.medgraph.searchengine.model.identifiable.Matchable;
 import de.medizininformatikinitiative.medgraph.searchengine.model.identifiable.Substance;
-import de.medizininformatikinitiative.medgraph.searchengine.model.identifier.Identifier;
+import de.medizininformatikinitiative.medgraph.searchengine.model.identifier.TrackableIdentifier;
 import de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject.MatchingObject;
 import de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject.Merge;
 import de.medizininformatikinitiative.medgraph.searchengine.tools.SearchEngineTools;
@@ -23,7 +23,7 @@ import java.util.*;
 public class RefinedQuery {
 
 	@NotNull
-	private final Identifier<List<String>> productNameKeywords;
+	private final TrackableIdentifier<List<String>> productNameKeywords;
 
 	@NotNull
 	private final List<MatchingObject<Substance>> substances;
@@ -78,7 +78,7 @@ public class RefinedQuery {
 	private final SubstringUsageStatement substanceGeneralSearchTermUsageStatement;
 
 
-	public RefinedQuery(@NotNull Identifier<List<String>> productNameKeywords,
+	public RefinedQuery(@NotNull TrackableIdentifier<List<String>> productNameKeywords,
 	                    @NotNull List<MatchingObject<Substance>> substances,
 	                    @NotNull List<MatchingObject<Dosage>> dosages,
 	                    @NotNull List<MatchingObject<Amount>> drugAmounts,
@@ -104,7 +104,7 @@ public class RefinedQuery {
 		this.substanceGeneralSearchTermUsageStatement = substanceGeneralSearchTermUsageStatement;
 	}
 
-	public @NotNull Identifier<List<String>> getProductNameKeywords() {
+	public @NotNull TrackableIdentifier<List<String>> getProductNameKeywords() {
 		return productNameKeywords;
 	}
 
@@ -169,7 +169,7 @@ public class RefinedQuery {
 	public static class Builder {
 
 		@Nullable
-		private Identifier<List<String>> productNameKeywords;
+		private TrackableIdentifier<List<String>> productNameKeywords;
 
 		@NotNull
 		private final MatchingObjectStorage<Substance> substances = new MatchingObjectStorage<>();
@@ -230,7 +230,7 @@ public class RefinedQuery {
 		 *
 		 * @return this instance
 		 */
-		public Builder withProductNameKeywords(Identifier<List<String>> productNameKeywords) {
+		public Builder withProductNameKeywords(TrackableIdentifier<List<String>> productNameKeywords) {
 			this.productNameKeywords = productNameKeywords;
 			return this;
 		}
@@ -313,7 +313,7 @@ public class RefinedQuery {
 		 * built.
 		 *
 		 * @throws IllegalStateException if the product name keywords have not been set (or set to null) using
-		 *                               {@link #withProductNameKeywords(Identifier)}
+		 *                               {@link #withProductNameKeywords(TrackableIdentifier)}
 		 */
 		public RefinedQuery build() {
 			if (productNameKeywords == null) throw new IllegalStateException("No product name keywords are set!");

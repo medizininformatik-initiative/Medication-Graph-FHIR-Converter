@@ -2,6 +2,7 @@ package de.medizininformatikinitiative.medgraph.searchengine.algorithm.querymana
 
 import de.medizininformatikinitiative.medgraph.TestFactory;
 import de.medizininformatikinitiative.medgraph.UnitTest;
+import de.medizininformatikinitiative.medgraph.searchengine.matcher.model.DetailedMatch;
 import de.medizininformatikinitiative.medgraph.searchengine.model.identifiable.EdqmPharmaceuticalDoseForm;
 import de.medizininformatikinitiative.medgraph.searchengine.model.identifiable.Matchable;
 import de.medizininformatikinitiative.medgraph.searchengine.model.identifier.OriginalIdentifier;
@@ -165,8 +166,10 @@ public class DoseFormQueryRefinerTest extends UnitTest {
 		Origin origin = ((OriginalMatch<?>) object).getOrigin();
 		assertInstanceOf(MatchOrigin.class, origin);
 		MatchOrigin<?> matchOrigin = (MatchOrigin<?>) origin;
-		assertInstanceOf(InputUsageTraceable.class, matchOrigin.getMatch());
-		StringListUsageStatement listUsageStatement = ((InputUsageTraceable<StringListUsageStatement>) matchOrigin.getMatch()).getUsageStatement();
+		assertInstanceOf(DetailedMatch.class, matchOrigin.getMatch());
+		DetailedMatch<?, ?, ?> match = (DetailedMatch<?, ?, ?>) matchOrigin.getMatch();
+		assertInstanceOf(InputUsageTraceable.class, match.getMatchInfo());
+		StringListUsageStatement listUsageStatement = ((InputUsageTraceable<StringListUsageStatement>) match.getMatchInfo()).getUsageStatement();
 		assertEquals(tokens, listUsageStatement.getUsedIndices());
 	}
 

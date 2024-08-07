@@ -11,15 +11,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import de.medizininformatikinitiative.medgraph.searchengine.model.identifiable.Identifiable
-import de.medizininformatikinitiative.medgraph.searchengine.model.identifiable.Matchable
 import de.medizininformatikinitiative.medgraph.searchengine.model.identifiable.Product
 import de.medizininformatikinitiative.medgraph.searchengine.model.identifier.Identifier
+import de.medizininformatikinitiative.medgraph.searchengine.model.identifier.TrackableIdentifier
 import de.medizininformatikinitiative.medgraph.searchengine.model.identifier.OriginalIdentifier
 import de.medizininformatikinitiative.medgraph.searchengine.model.identifier.OriginalIdentifier.Source.*
 import de.medizininformatikinitiative.medgraph.searchengine.model.identifier.TransformedIdentifier
 import de.medizininformatikinitiative.medgraph.searchengine.provider.MappedIdentifier
 import de.medizininformatikinitiative.medgraph.searchengine.stringtransformer.CollectionToLowerCase
-import de.medizininformatikinitiative.medgraph.searchengine.stringtransformer.CompoundTransformer
 import de.medizininformatikinitiative.medgraph.searchengine.stringtransformer.IdentityTransformer
 import de.medizininformatikinitiative.medgraph.searchengine.stringtransformer.ListToSet
 import de.medizininformatikinitiative.medgraph.searchengine.stringtransformer.MinimumTokenLength
@@ -36,12 +35,11 @@ import de.medizininformatikinitiative.medgraph.ui.theme.localColors
 import de.medizininformatikinitiative.medgraph.ui.theme.templates.ContentCard
 import de.medizininformatikinitiative.medgraph.ui.theme.templates.TextBox
 import de.medizininformatikinitiative.medgraph.ui.theme.templates.TextBoxes
-import kotlin.reflect.KClass
 
 @Composable
 @Preview
 internal fun IdentifierUI() {
-    var identifier: Identifier<String> = OriginalIdentifier("Aspirin HEXAL", OriginalIdentifier.Source.KNOWN_IDENTIFIER)
+    var identifier: TrackableIdentifier<String> = OriginalIdentifier("Aspirin HEXAL", OriginalIdentifier.Source.KNOWN_IDENTIFIER)
     identifier = ToLowerCase().apply(identifier)
     val transformedIdentifier = WhitespaceTokenizer().apply(identifier)
     ApplicationTheme {
@@ -53,13 +51,27 @@ internal fun IdentifierUI() {
     }
 }
 
+/**
+ * Displays the given identifier. If it's a mapped identifier, this includes displaying what it refers to. If it's
+ * trackable, the origin sequence is shown.
+ */
 @Composable
 @NonRestartableComposable
-fun IdentifierUI(identifier: MappedIdentifier<out Any>, modifier: Modifier = Modifier) =
-    IdentifierUI(identifier.identifier, modifier, identifier.target)
+fun IdentifierUI(identifier: Identifier<*>, modifier: Modifier = Modifier) {
+    when (identifier) {
+        is MappedIdentifier<*, *> -> MappedIdentifierUI(identifier, modifier)
+        is TrackableIdentifier<*> -> IdentifierUI(identifier, modifier)
+        else -> GenericIdentifierUI(identifier, modifier)
+    }
+}
 
 @Composable
-fun IdentifierUI(identifier: Identifier<out Any>, modifier: Modifier = Modifier, target: Identifiable? = null) {
+@NonRestartableComposable
+fun MappedIdentifierUI(identifier: MappedIdentifier<*, *>, modifier: Modifier = Modifier) =
+    IdentifierUI(identifier.trackableIdentifier, modifier, identifier.target)
+
+@Composable
+fun IdentifierUI(identifier: TrackableIdentifier<out Any>, modifier: Modifier = Modifier, target: Identifiable? = null) {
     Column(modifier = modifier) {
         val localModifier = Modifier.fillMaxWidth()
         when (identifier) {
@@ -90,6 +102,16 @@ fun TransformedIdentifierUI(identifier: TransformedIdentifier<*, out Any>, modif
     Spacer(modifier = Modifier.height(4.dp))
     ContentCard(
         description = describeTransformerAction(identifier.transformer),
+        modifier = modifier
+    ) {
+        RawIdentifierUI(identifier.identifier)
+    }
+}
+
+@Composable
+fun GenericIdentifierUI(identifier: Identifier<*>, modifier: Modifier) {
+    ContentCard(
+        title = StringRes.generic_identifier,
         modifier = modifier
     ) {
         RawIdentifierUI(identifier.identifier)

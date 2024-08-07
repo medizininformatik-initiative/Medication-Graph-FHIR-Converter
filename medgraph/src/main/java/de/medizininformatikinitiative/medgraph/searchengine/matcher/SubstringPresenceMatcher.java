@@ -1,8 +1,9 @@
 package de.medizininformatikinitiative.medgraph.searchengine.matcher;
 
-import de.medizininformatikinitiative.medgraph.searchengine.matcher.model.ScoreBasedMatch;
-import de.medizininformatikinitiative.medgraph.searchengine.model.identifier.Identifier;
+import de.medizininformatikinitiative.medgraph.searchengine.matcher.model.ScoreMatchInfo;
+import de.medizininformatikinitiative.medgraph.searchengine.model.identifier.TrackableIdentifier;
 import de.medizininformatikinitiative.medgraph.searchengine.provider.MappedIdentifier;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Set;
 
@@ -11,12 +12,12 @@ import java.util.Set;
  *
  * @author Markus Budeus
  */
-public class SubstringPresenceMatcher extends Matcher<Set<String>, String, ScoreBasedMatch<Set<String>, String>> {
+public class SubstringPresenceMatcher extends ExtendedMatcher<Set<String>, String, ScoreMatchInfo> {
 
 	@Override
-	protected ScoreBasedMatch<Set<String>, String> match(Identifier<Set<String>> searchTerm, MappedIdentifier<String> mi) {
-		double score = getScore(searchTerm.getIdentifier(), mi.identifier.getIdentifier());
-		if (score > 0) return new ScoreBasedMatch<>(searchTerm, mi, score);
+	protected @Nullable ScoreMatchInfo match(Set<String> searchTerm, String target) {
+		double score = getScore(searchTerm, target);
+		if (score > 0) return new ScoreMatchInfo(score);
 		return null;
 	}
 

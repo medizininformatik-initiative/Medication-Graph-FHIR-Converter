@@ -1,6 +1,7 @@
 package de.medizininformatikinitiative.medgraph.searchengine.algorithm.querymanagement;
 
 import de.medizininformatikinitiative.medgraph.UnitTest;
+import de.medizininformatikinitiative.medgraph.searchengine.matcher.model.DetailedMatch;
 import de.medizininformatikinitiative.medgraph.searchengine.model.identifiable.Matchable;
 import de.medizininformatikinitiative.medgraph.searchengine.model.identifiable.Substance;
 import de.medizininformatikinitiative.medgraph.searchengine.model.identifier.OriginalIdentifier;
@@ -153,8 +154,10 @@ public class SubstanceQueryRefinerTest extends UnitTest {
 		Origin origin = ((OriginalMatch<?>) object).getOrigin();
 		assertInstanceOf(MatchOrigin.class, origin);
 		MatchOrigin<?> matchOrigin = (MatchOrigin<?>) origin;
-		assertInstanceOf(InputUsageTraceable.class, matchOrigin.getMatch());
-		StringSetUsageStatement listUsageStatement = ((InputUsageTraceable<StringSetUsageStatement>) matchOrigin.getMatch()).getUsageStatement();
+		assertInstanceOf(DetailedMatch.class, matchOrigin.getMatch());
+		DetailedMatch<?, ?, ?> match = (DetailedMatch<?, ?, ?>) matchOrigin.getMatch();
+		assertInstanceOf(InputUsageTraceable.class, match.getMatchInfo());
+		StringSetUsageStatement listUsageStatement = ((InputUsageTraceable<StringSetUsageStatement>) match.getMatchInfo()).getUsageStatement();
 		assertEquals(tokens, listUsageStatement.getUsedParts());
 	}
 

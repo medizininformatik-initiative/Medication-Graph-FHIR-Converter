@@ -1,6 +1,6 @@
 package de.medizininformatikinitiative.medgraph.searchengine.stringtransformer;
 
-import de.medizininformatikinitiative.medgraph.searchengine.model.identifier.Identifier;
+import de.medizininformatikinitiative.medgraph.searchengine.model.identifier.TrackableIdentifier;
 import de.medizininformatikinitiative.medgraph.searchengine.tracing.InputUsageStatement;
 
 /**
@@ -40,7 +40,7 @@ public interface TraceableTransformer<S, T, U extends InputUsageStatement<S>, V 
 	 * Like {@link #reverseTransformUsageStatement(Object, InputUsageStatement)}, but extracts the actual identifier
 	 * from the given wrapper first.
 	 */
-	default U reverseTransformUsageStatement(Identifier<S> input, V usageStatement) {
+	default U reverseTransformUsageStatement(TrackableIdentifier<S> input, V usageStatement) {
 		return reverseTransformUsageStatement(input.getIdentifier(), usageStatement);
 	}
 

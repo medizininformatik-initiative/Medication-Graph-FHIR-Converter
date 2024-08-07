@@ -8,7 +8,7 @@ import static org.junit.jupiter.api.Assertions.*;
 /**
  * @author Markus Budeus
  */
-public class ParallelIdentifierStreamTest {
+public class ParallelMappedIdentifierStreamTest {
 
 	@Test
 	public void introducesParallelism() {
