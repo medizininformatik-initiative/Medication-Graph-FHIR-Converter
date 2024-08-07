@@ -4,20 +4,13 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.NonRestartableComposable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.dp
-import de.medizininformatikinitiative.medgraph.searchengine.matcher.EditDistanceSetMatcher
-import de.medizininformatikinitiative.medgraph.searchengine.model.identifiable.Identifiable
-import de.medizininformatikinitiative.medgraph.searchengine.model.identifier.Identifier
 import de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject.DosageDetectorOrigin
 import de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject.MatchOrigin
 import de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject.Origin
 import de.medizininformatikinitiative.medgraph.ui.resources.StringRes
-import de.medizininformatikinitiative.medgraph.ui.searchengine.pipeline.identifier.IdentifierUI
 import de.medizininformatikinitiative.medgraph.ui.theme.templates.clipToBox
 
 

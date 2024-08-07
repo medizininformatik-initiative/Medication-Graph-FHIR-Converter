@@ -20,7 +20,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import de.medizininformatikinitiative.medgraph.searchengine.model.identifiable.Identifiable
-import de.medizininformatikinitiative.medgraph.searchengine.model.identifier.Identifier
+import de.medizininformatikinitiative.medgraph.searchengine.model.identifier.TrackableIdentifier
 import de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject.MatchingObject
 import de.medizininformatikinitiative.medgraph.searchengine.provider.MappedIdentifier
 import de.medizininformatikinitiative.medgraph.ui.resources.StringRes
@@ -29,12 +29,12 @@ import de.medizininformatikinitiative.medgraph.ui.searchengine.pipeline.matching
 
 @Composable
 @NonRestartableComposable
-fun PipelineInfoDialog(identifier: MappedIdentifier<*>, onDismissRequest: () -> Unit) {
+fun PipelineInfoDialog(identifier: MappedIdentifier<TrackableIdentifier<*>, *>, onDismissRequest: () -> Unit) {
     PipelineInfoDialog(identifier.identifier, onDismissRequest, identifier.target)
 }
 
 @Composable
-fun PipelineInfoDialog(identifier: Identifier<*>, onDismissRequest: () -> Unit, identifierTarget: Identifiable? = null) {
+fun PipelineInfoDialog(identifier: TrackableIdentifier<*>, onDismissRequest: () -> Unit, identifierTarget: Identifiable? = null) {
     PipelineInfoDialog(onDismissRequest) {
         IdentifierUI(identifier, modifier = Modifier.fillMaxWidth(), identifierTarget)
     }

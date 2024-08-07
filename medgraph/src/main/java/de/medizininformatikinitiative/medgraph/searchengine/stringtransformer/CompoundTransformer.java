@@ -1,6 +1,6 @@
 package de.medizininformatikinitiative.medgraph.searchengine.stringtransformer;
 
-import de.medizininformatikinitiative.medgraph.searchengine.model.identifier.Identifier;
+import de.medizininformatikinitiative.medgraph.searchengine.model.identifier.TrackableIdentifier;
 import de.medizininformatikinitiative.medgraph.searchengine.model.identifier.TransformedIdentifier;
 
 /**
@@ -22,7 +22,7 @@ public class CompoundTransformer<S,V,T> implements Transformer<S,T> {
 	}
 
 	@Override
-	public TransformedIdentifier<?, T> apply(Identifier<S> identifier) {
+	public TransformedIdentifier<?, T> apply(TrackableIdentifier<S> identifier) {
 		return transformer2.apply(transformer1.apply(identifier));
 	}
 

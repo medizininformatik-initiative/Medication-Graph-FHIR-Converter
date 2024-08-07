@@ -12,6 +12,7 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import de.medizininformatikinitiative.medgraph.searchengine.model.ScoreIncorporationStrategy
 import de.medizininformatikinitiative.medgraph.searchengine.model.identifiable.Product
 import de.medizininformatikinitiative.medgraph.searchengine.model.identifiable.Substance
 import de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject.*
@@ -41,8 +42,16 @@ private fun MatchingObjectSourcePipelineDisplay() {
                 ), obj
             )
         )
-        obj.addJudgement(ScoredJudgement("Judgement 1", "Assigns a score of 0.5", 0.5, 1.0))
-        obj.addJudgement(ScoredJudgement("Judgement 2", "Assigns a score of 1.5", 1.5, 1.0))
+        obj = JudgedObject(
+            obj,
+            ScoredJudgement("Judgement 1", "Assigns a score of 0.5", 0.5, 1.0),
+            ScoreIncorporationStrategy.ADD
+        )
+        obj = JudgedObject(
+            obj,
+            ScoredJudgement("Judgement 2", "Assigns a score of 1.5", 1.5, 1.0),
+            ScoreIncorporationStrategy.ADD
+        )
 
         val product =
             Product(
@@ -62,7 +71,11 @@ private fun MatchingObjectSourcePipelineDisplay() {
         )
         obj = TransformedObject(product, obj, transformation)
 
-        obj.addJudgement(ScoredJudgement("Wrath of god", "Barely made it out alive", 1.0, 1.0))
+        obj = JudgedObject(
+            obj,
+            ScoredJudgement("Wrath of god", "Barely made it out alive", 1.0, 1.0),
+            ScoreIncorporationStrategy.ADD
+        )
 
         MatchingObjectPipelineDisplay(obj, Modifier.padding(4.dp))
     }
@@ -87,13 +100,8 @@ private fun MatchingObjectDisplay(obj: MatchingObject<*>, scrollState: ScrollSta
         is OriginalMatch -> OriginalMatchDisplay(obj)
         is Merge -> MergedObjectsDisplay(obj, scrollState)
         is TransformedObject<*, *> -> TransformedObjectDisplay(obj, scrollState)
+        is JudgedObject -> JudgedObjectDisplay(obj, scrollState)
         else -> Text("Unknown object type encountered!")
-    }
-    obj.appliedJudgements.forEach {
-        JudgementDisplay(
-            it, modifier = Modifier.fillMaxWidth()
-                .padding(horizontal = 4.dp)
-        )
     }
 }
 
@@ -104,12 +112,20 @@ private fun OriginalMatchDisplay(obj: OriginalMatch<*>) {
 }
 
 @Composable
+private fun JudgedObjectDisplay(obj: JudgedObject<*>, scrollState: ScrollState) {
+    MatchingObjectDisplay(obj.source, scrollState)
+    JudgementDisplay(obj.judgement, modifier = Modifier.fillMaxWidth().padding(horizontal = 4.dp))
+}
+
+@Composable
 private fun MergedObjectsDisplay(obj: Merge<*>, scrollState: ScrollState) {
     var currentSelectionIndex by remember { mutableStateOf(0) }
     currentSelectionIndex = Math.max(0, Math.min(obj.sourceObjects.size - 1, currentSelectionIndex))
     MatchingObjectDisplay(obj.sourceObjects[currentSelectionIndex], scrollState)
-    MergeDisplay(obj, currentSelectionIndex, onSelectSourcePath = { pathIndex -> currentSelectionIndex = pathIndex },
-        pipelineScrollState = scrollState)
+    MergeDisplay(
+        obj, currentSelectionIndex, onSelectSourcePath = { pathIndex -> currentSelectionIndex = pathIndex },
+        pipelineScrollState = scrollState
+    )
 }
 
 @Composable

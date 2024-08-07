@@ -14,18 +14,20 @@ import java.util.stream.Stream;
  *
  * @param <S> the type of search term the matcher uses
  * @param <T> the type of identifiers the matcher is capable of matching against
- * @param <R> the type of match results produced
  * @author Markus Budeus
  */
-public interface IMatcher<S, T, R extends Match<S, T>> {
+public interface IMatcher<S, T> {
 
 	/**
 	 * Matches the identifiers from the given {@link IdentifierProvider} against the search term.
 	 *
+	 * @param <I>        the search term identifier type
+	 * @param <O>        the target term identifier type
 	 * @param searchTerm the search term to match against the identifiers
 	 * @param provider   the provider from which to take identifiers to match the search term against
 	 * @return a stream of matches found by the matcher
 	 */
-	Stream<R> match(Identifier<S> searchTerm, IdentifierProvider<T> provider);
+	<I extends Identifier<S>, O extends Identifier<T>> Stream<? extends Match<I, O>> match(I searchTerm,
+	                                                                                       IdentifierProvider<O> provider);
 
 }
