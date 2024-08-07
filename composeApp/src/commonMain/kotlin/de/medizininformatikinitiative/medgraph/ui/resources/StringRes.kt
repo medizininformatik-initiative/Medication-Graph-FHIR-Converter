@@ -145,6 +145,9 @@ class StringRes {
         val judgement_failed = "Failed ❌"
 
         @JvmStatic
+        val judgement_weight = "Weight: {0}"
+
+        @JvmStatic
         val judgement_score_with_passing_score = "Score: {0}/{1}"
 
         @JvmStatic
