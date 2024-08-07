@@ -34,13 +34,13 @@ class SearchEngineViewModelTest : UnitTest() {
     @Mock
     lateinit var queryRefiner: QueryRefiner
     @Mock
-    lateinit var queryExecutor: QueryExecutor
+    lateinit var queryExecutor: QueryExecutor<Product>
     @Mock
     lateinit var refinedQuery: RefinedQuery
     @Mock
     lateinit var sampleQuery: SearchQuery
 
-    val sampleSearchResult: List<MatchingObject<*>> = listOf(OriginalMatch(
+    val sampleSearchResult: List<MatchingObject<Product>> = listOf(OriginalMatch(
         Product(
             1,
             "Aspirin"
@@ -137,7 +137,7 @@ class SearchEngineViewModelTest : UnitTest() {
 
     @Test
     fun tooManyResults() {
-        val resultList = ArrayList<MatchingObject<*>>()
+        val resultList = ArrayList<MatchingObject<Product>>()
         repeat(SearchResultsListViewModel.MAX_RESULT_SIZE + 5) {
             resultList.add(OriginalMatch(
                 Product(
