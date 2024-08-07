@@ -31,6 +31,19 @@ public class MatchingPipelineService {
 	}
 
 	/**
+	 * Sorts the current matches using the given {@link ScoreJudge}. Uses the default score judge configuration.
+	 *
+	 * @param objects       the objects to apply the judge to
+	 * @param judge         the judge to use
+	 * @see #applyScoreJudge(List, ScoreJudge, ScoreJudgeConfiguration)
+	 */
+	public <S extends T, T extends Matchable> List<MatchingObject<S>> applyScoreJudge(List<MatchingObject<S>> objects,
+	                                                                                  ScoreJudge<T> judge
+	) {
+		return applyScoreJudge(objects, judge, new ScoreJudgeConfiguration());
+	}
+
+	/**
 	 * Sorts the current matches using the given {@link ScoreJudge}. Non-passing matches are eliminated from the
 	 * matching process.
 	 *
@@ -83,9 +96,10 @@ public class MatchingPipelineService {
 	 *                       filter
 	 * @return the filtered list of {@link MatchingObject}s
 	 */
-	public <S extends T, T extends Matchable> List<MatchingObject<S>> applyFilter(List<? extends MatchingObject<S>> objects,
-	                                                                              Filter<S> filter,
-	                                                                              boolean ensureSurvival) {
+	public <S extends T, T extends Matchable> List<MatchingObject<S>> applyFilter(
+			List<? extends MatchingObject<S>> objects,
+			Filter<S> filter,
+			boolean ensureSurvival) {
 		List<Boolean> passes = filter.batchPassesFilter(Util.unpack(objects), query);
 
 		int n = objects.size();
@@ -122,7 +136,7 @@ public class MatchingPipelineService {
 			List<? extends MatchingObject<S>> objects,
 			IMatchTransformer<S, T> transformer,
 			ScoreMergingStrategy scoreMergingStrategy) {
-		return mergeDuplicates(transformMatches(objects, transformer), scoreMergingStrategy);
+		return mergeDuplicates(transformMatchesWithoutMergingDuplicates(objects, transformer), scoreMergingStrategy);
 	}
 
 	/**
@@ -136,8 +150,9 @@ public class MatchingPipelineService {
 	 * @param <T>         the type of {@link Matchable}s produced by the transformer
 	 * @return a list {@link TransformedObject} instances
 	 */
-	<S extends Matchable, T extends Matchable> List<TransformedObject<S, T>> transformMatches(List<? extends MatchingObject<S>> objects,
-	                                                                                    IMatchTransformer<S, T> transformer) {
+	<S extends Matchable, T extends Matchable> List<TransformedObject<S, T>> transformMatchesWithoutMergingDuplicates(
+			List<? extends MatchingObject<S>> objects,
+			IMatchTransformer<S, T> transformer) {
 		// Step 1: Run the transformer
 		List<S> matchables = Util.unpack(objects);
 		List<Transformation<T>> transformations = transformer.batchTransform(matchables, query);
@@ -179,8 +194,8 @@ public class MatchingPipelineService {
 	 * @return the input list, with {@link MatchingObject}s which reference the same {@link Matchable} replaced by a
 	 * corresponding {@link Merge}.
 	 */
-	<S extends Matchable> List<MatchingObject<S>> mergeDuplicates(List<? extends MatchingObject<S>> objects,
-	                                                              ScoreMergingStrategy scoreMergingStrategy) {
+	public <S extends Matchable> List<MatchingObject<S>> mergeDuplicates(List<? extends MatchingObject<S>> objects,
+	                                                                     ScoreMergingStrategy scoreMergingStrategy) {
 		// Group carrier objects by Matchable
 		// Use LinkedHashMap to ensure order to objects in transformation output is preserved.
 		Map<Matchable, LinkedList<MatchingObject<S>>> objectsByMatchable = new LinkedHashMap<>();
@@ -198,7 +213,7 @@ public class MatchingPipelineService {
 			} else if (group.size() == 1) {
 				outList.add(group.getFirst());
 			} else {
-				outList.add(new Merge<>(outList, scoreMergingStrategy));
+				outList.add(new Merge<>(group, scoreMergingStrategy));
 			}
 		}
 

@@ -5,6 +5,7 @@ import de.medizininformatikinitiative.medgraph.searchengine.QueryExecutor;
 import de.medizininformatikinitiative.medgraph.searchengine.algorithm.querymanagement.QueryRefiner;
 import de.medizininformatikinitiative.medgraph.searchengine.algorithm.querymanagement.RefinedQuery;
 import de.medizininformatikinitiative.medgraph.searchengine.model.RawQuery;
+import de.medizininformatikinitiative.medgraph.searchengine.model.identifiable.Matchable;
 import de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject.MatchingObject;
 import org.neo4j.driver.Session;
 
@@ -17,14 +18,14 @@ import java.util.function.Function;
  *
  * @author Markus Budeus
  */
-public class PerSessionQueryManager implements QueryExecutor, QueryRefiner {
+public class PerSessionQueryManager<T extends Matchable> implements QueryExecutor<T>, QueryRefiner {
 
 	private final Function<Session, QueryRefiner> queryRefinerFactory;
-	private final Function<Session, QueryExecutor> queryExecutorFactory;
+	private final Function<Session, QueryExecutor<T>> queryExecutorFactory;
 	private final DatabaseConnection connection;
 
 	public PerSessionQueryManager(Function<Session, QueryRefiner> queryRefinerFactory,
-	                              Function<Session, QueryExecutor> queryExecutorFactory,
+	                              Function<Session, QueryExecutor<T>> queryExecutorFactory,
 	                              DatabaseConnection connection) {
 		this.queryExecutorFactory = queryExecutorFactory;
 		this.queryRefinerFactory = queryRefinerFactory;
@@ -32,7 +33,7 @@ public class PerSessionQueryManager implements QueryExecutor, QueryRefiner {
 	}
 
 	@Override
-	public List<MatchingObject<?>> executeQuery(RefinedQuery query) {
+	public List<MatchingObject<T>> executeQuery(RefinedQuery query) {
 		try (Session session = connection.createSession()) {
 			return queryExecutorFactory.apply(session).executeQuery(query);
 		}
