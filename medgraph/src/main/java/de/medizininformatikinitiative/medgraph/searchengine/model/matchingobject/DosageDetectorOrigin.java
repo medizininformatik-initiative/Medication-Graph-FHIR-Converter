@@ -1,6 +1,6 @@
 package de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject;
 
-import de.medizininformatikinitiative.medgraph.searchengine.model.identifier.Identifier;
+import de.medizininformatikinitiative.medgraph.searchengine.model.identifier.TrackableIdentifier;
 import de.medizininformatikinitiative.medgraph.searchengine.tools.DosageDetector;
 import org.jetbrains.annotations.NotNull;
 
@@ -12,7 +12,7 @@ import org.jetbrains.annotations.NotNull;
  */
 public record DosageDetectorOrigin(
 		@NotNull DosageDetector.DetectedDosage detectedDosage,
-		@NotNull Identifier<String> identifier
+		@NotNull TrackableIdentifier<String> identifier
 ) implements Origin {
 
 
@@ -30,7 +30,7 @@ public record DosageDetectorOrigin(
 	 */
 	@Override
 	@NotNull
-	public Identifier<String> identifier() {
+	public TrackableIdentifier<String> identifier() {
 		return identifier;
 	}
 

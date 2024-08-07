@@ -47,13 +47,13 @@ private fun JudgementDisplay() {
 @Composable
 fun JudgementDisplay(judgement: Judgement, modifier: Modifier = Modifier) {
 
-    val backgroundColor =
-        if (judgement.passed()) MaterialTheme.localColors.weakSuccess else MaterialTheme.localColors.weakFailure
+//    val backgroundColor =
+//        if (judgement.passed()) MaterialTheme.localColors.weakSuccess else MaterialTheme.localColors.weakFailure
 
     MatchingPipelineStepDisplay(
         judgement,
         modifier,
-        backgroundColor,
+//        backgroundColor,
     ) {
         Row(
             horizontalArrangement = Arrangement.SpaceBetween,
@@ -76,21 +76,12 @@ fun JudgementDisplay(judgement: Judgement, modifier: Modifier = Modifier) {
 
             Row {
                 Text(StringRes.judgement_result, style = MaterialTheme.typography.h6)
-                if (judgement.passed()) {
-                    Text(
-                        StringRes.judgement_passed,
-                        color = MaterialTheme.localColors.strongSuccess,
-                        fontWeight = FontWeight.Bold,
-                        style = MaterialTheme.typography.h6
-                    )
-                } else {
-                    Text(
-                        StringRes.judgement_failed,
-                        color = MaterialTheme.localColors.strongFailure,
-                        fontWeight = FontWeight.Bold,
-                        style = MaterialTheme.typography.h6
-                    )
-                }
+                Text(
+                    StringRes.judgement_failed,
+                    color = MaterialTheme.localColors.strongFailure,
+                    fontWeight = FontWeight.Bold,
+                    style = MaterialTheme.typography.h6
+                )
             }
         }
     }

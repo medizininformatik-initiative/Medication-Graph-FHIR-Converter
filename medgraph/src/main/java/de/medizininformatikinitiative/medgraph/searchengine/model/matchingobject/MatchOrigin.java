@@ -18,9 +18,9 @@ public class MatchOrigin<T extends Match<?, ?>> implements Origin {
 	/**
 	 * The matcher which produced the corresponding match.
 	 */
-	private final IMatcher<?, ?, T> matcher;
+	private final IMatcher<?, ?> matcher;
 
-	public MatchOrigin(T match, IMatcher<?, ?, T> matcher) {
+	public MatchOrigin(T match, IMatcher<?, ?> matcher) {
 		this.match = match;
 		this.matcher = matcher;
 	}
@@ -29,7 +29,7 @@ public class MatchOrigin<T extends Match<?, ?>> implements Origin {
 		return match;
 	}
 
-	public IMatcher<?, ?, T> getMatcher() {
+	public IMatcher<?, ?> getMatcher() {
 		return matcher;
 	}
 }

@@ -1,6 +1,6 @@
 package de.medizininformatikinitiative.medgraph.searchengine.stringtransformer;
 
-import de.medizininformatikinitiative.medgraph.searchengine.model.identifier.Identifier;
+import de.medizininformatikinitiative.medgraph.searchengine.model.identifier.TrackableIdentifier;
 import de.medizininformatikinitiative.medgraph.searchengine.model.identifier.TransformedIdentifier;
 
 import java.util.function.Function;
@@ -14,13 +14,13 @@ import java.util.function.Function;
 public interface Transformer<S, T> extends Function<S, T> {
 
 	/**
-	 * Transforms the given {@link Identifier} into a {@link TransformedIdentifier}.
+	 * Transforms the given {@link TrackableIdentifier} into a {@link TransformedIdentifier}.
 	 *
-	 * @param identifier the {@link Identifier}-instance to transform
+	 * @param identifier the {@link TrackableIdentifier}-instance to transform
 	 * @return a new {@link TransformedIdentifier} holding information about the transformed identifier and the
 	 * transformation that took place
 	 */
-	default TransformedIdentifier<?, T> apply(Identifier<S> identifier) {
+	default TransformedIdentifier<?, T> apply(TrackableIdentifier<S> identifier) {
 		// We don't want to specify input type of the transformed identifier to allow the
 		// CompoundTransformer to chain properly.
 		return new TransformedIdentifier<>(apply(identifier.getIdentifier()), identifier, this);

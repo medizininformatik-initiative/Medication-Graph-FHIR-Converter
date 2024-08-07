@@ -1,49 +1,17 @@
 package de.medizininformatikinitiative.medgraph.searchengine.model.identifier;
 
-import org.jetbrains.annotations.NotNull;
-
-import java.util.Objects;
-
 /**
- * Wraps an identifier (i.e. name) of something. Usually a string that may or may not have been subjected through
- * various transformations. This wrapper can then hold information about where the (actual) identifier came from.
- * Instances of this class are immutable.
+ * This interface represents objects that identify (i.e. describe) something using any object. The most intuitive type
+ * would be a string identifier, but nothing stops you from describing something using a list of strings.
  *
- * @param <T> the type of this identifier
+ * @param <T> the type of object used to describe something
  * @author Markus Budeus
  */
-public abstract class Identifier<T> {
+public interface Identifier<T> {
 
 	/**
-	 * The actual identifier wrapped by this instance.
+	 * Returns the object that describes whatever is identified by this instance.
 	 */
-	@NotNull
-	private final T identifier;
+	T getIdentifier();
 
-	protected Identifier(@NotNull T identifier) {
-		this.identifier = identifier;
-	}
-
-	@NotNull
-	public T getIdentifier() {
-		return identifier;
-	}
-
-	@Override
-	public boolean equals(Object object) {
-		if (this == object) return true;
-		if (object == null || getClass() != object.getClass()) return false;
-		Identifier<?> that = (Identifier<?>) object;
-		return Objects.equals(identifier, that.identifier);
-	}
-
-	@Override
-	public int hashCode() {
-		return Objects.hashCode(identifier);
-	}
-
-	@Override
-	public String toString() {
-		return identifier.toString();
-	}
 }

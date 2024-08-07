@@ -26,7 +26,7 @@ class DatabaseProviders {
 	 *
 	 * @param session the session to access the database with
 	 */
-	public static Stream<MappedIdentifier<String>> getProductSynonyms(Session session) {
+	public static Stream<MappedIdentifier<String, Product>> getProductSynonyms(Session session) {
 		return downloadMmiObjectSynonyms(session, PRODUCT_LABEL)
 				.map(DatabaseProviders::toProduct);
 	}
@@ -37,7 +37,7 @@ class DatabaseProviders {
 	 *
 	 * @param session the session to access the database with
 	 */
-	public static Stream<MappedIdentifier<String>> getSubstanceSynonyms(Session session) {
+	public static Stream<MappedIdentifier<String, Substance>> getSubstanceSynonyms(Session session) {
 		return downloadMmiObjectSynonyms(session, SUBSTANCE_LABEL)
 				.map(DatabaseProviders::toSubstance);
 	}
@@ -49,10 +49,7 @@ class DatabaseProviders {
 	 *
 	 * @param session the session to access the database with
 	 */
-	public static Stream<MappedIdentifier<String>> getEdqmConceptIdentifiers(Session session) {
-		List<Record> records = downloadEdqmConceptData(session).toList();
-		List<MappedIdentifier<String>> identifiers = downloadEdqmConceptData(session).flatMap(record -> toEdqmConcepts(record).stream()).toList();
-
+	public static Stream<MappedIdentifier<String, EdqmConcept>> getEdqmConceptIdentifiers(Session session) {
 		return downloadEdqmConceptData(session).flatMap(record -> toEdqmConcepts(record).stream());
 	}
 
@@ -84,21 +81,21 @@ class DatabaseProviders {
 		).stream();
 	}
 
-	private static MappedIdentifier<String> toProduct(Record record) {
+	private static MappedIdentifier<String, Product> toProduct(Record record) {
 		return toIdentifiable(record, Product::new);
 	}
 
-	private static MappedIdentifier<String> toSubstance(Record record) {
+	private static MappedIdentifier<String, Substance> toSubstance(Record record) {
 		return toIdentifiable(record, Substance::new);
 	}
 
-	private static List<MappedIdentifier<String>> toEdqmConcepts(Record record) {
+	private static List<MappedIdentifier<String, EdqmConcept>> toEdqmConcepts(Record record) {
 		EdqmConcept concept = toEdqmConcept(record);
 		List<String> identifiers = record.get("identifiers").asList(Value::asString, Collections.emptyList());
 		if (identifiers.isEmpty()) {
 			System.err.println("Warning: EDQM Concept "+concept.getCode()+" seems to have no identifiers!");
 		}
-		List<MappedIdentifier<String>> result = new ArrayList<>();
+		List<MappedIdentifier<String, EdqmConcept>> result = new ArrayList<>();
 		identifiers.forEach(identifier -> result.add(new MappedIdentifier<>(identifier, concept)));
 		return result;
 	}
@@ -120,11 +117,11 @@ class DatabaseProviders {
 		return new EdqmPharmaceuticalDoseForm(code, name, linkedConcepts);
 	}
 
-	private static MappedIdentifier<String> toIdentifiable(Record record,
-	                                                       BiFunction<Long, String, Identifiable> intantiatorFunction) {
+	private static <T extends Identifiable> MappedIdentifier<String, T> toIdentifiable(Record record,
+	                                                                             BiFunction<Long, String, T> intantiatorFunction) {
 		long mmiId = record.get(1).asLong();
 		String name = record.get(2).asString();
-		Identifiable target = intantiatorFunction.apply(mmiId, name);
+		T target = intantiatorFunction.apply(mmiId, name);
 		return new MappedIdentifier<>(record.get(0).asString(), target);
 	}
 

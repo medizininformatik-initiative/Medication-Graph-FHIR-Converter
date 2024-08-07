@@ -1,7 +1,7 @@
 package de.medizininformatikinitiative.medgraph.searchengine.algorithm.querymanagement;
 
 import de.medizininformatikinitiative.medgraph.searchengine.model.RawQuery;
-import de.medizininformatikinitiative.medgraph.searchengine.model.identifier.Identifier;
+import de.medizininformatikinitiative.medgraph.searchengine.model.identifier.TrackableIdentifier;
 import de.medizininformatikinitiative.medgraph.searchengine.model.identifier.OriginalIdentifier;
 import de.medizininformatikinitiative.medgraph.searchengine.stringtransformer.*;
 import de.medizininformatikinitiative.medgraph.searchengine.tracing.SubstringUsageStatement;
@@ -97,7 +97,7 @@ public class QueryRefinerImpl implements QueryRefiner {
 	}
 
 	/**
-	 * Like {@link #applyPartialQueryRefiner(Identifier, PartialQueryRefiner, RefinedQuery.Builder)}, but takes
+	 * Like {@link #applyPartialQueryRefiner(TrackableIdentifier, PartialQueryRefiner, RefinedQuery.Builder)}, but takes
 	 * the query to use from the generalQueryParser (via
 	 * {@link StepwiseGeneralQueryParser#useRemainingQueryParts(Function)}).
 	 * <p>
@@ -120,7 +120,7 @@ public class QueryRefinerImpl implements QueryRefiner {
 	 * <p>
 	 * If the given query is blank, nothing happens and null is returned.
 	 */
-	private SubstringUsageStatement applyPartialQueryRefiner(Identifier<String> query,
+	private SubstringUsageStatement applyPartialQueryRefiner(TrackableIdentifier<String> query,
 	                                                         PartialQueryRefiner<?> refiner,
 	                                                         RefinedQuery.Builder queryBuilder) {
 		if (query != null && !query.getIdentifier().isBlank()) {

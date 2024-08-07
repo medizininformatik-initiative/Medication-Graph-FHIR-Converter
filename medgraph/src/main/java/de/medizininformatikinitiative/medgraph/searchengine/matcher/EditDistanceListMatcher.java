@@ -2,8 +2,6 @@ package de.medizininformatikinitiative.medgraph.searchengine.matcher;
 
 import de.medizininformatikinitiative.medgraph.searchengine.matcher.editdistance.EditDistanceService;
 import de.medizininformatikinitiative.medgraph.searchengine.matcher.model.EditDistance;
-import de.medizininformatikinitiative.medgraph.searchengine.model.identifier.Identifier;
-import de.medizininformatikinitiative.medgraph.searchengine.provider.MappedIdentifier;
 import de.medizininformatikinitiative.medgraph.searchengine.tracing.InputUsageTraceable;
 import de.medizininformatikinitiative.medgraph.searchengine.tracing.IntRange;
 import de.medizininformatikinitiative.medgraph.searchengine.tracing.StringListUsageStatement;
@@ -19,12 +17,12 @@ import java.util.Set;
  * This matches searches the target identifiers for those who are a sublist (with some edit distance tolerance) of the
  * search term.
  * <p>
- * More precisely, it matches search terms (as string lists) against identifiers in the following way: For the identifier, the
- * amount of tokens is counted (which we refer to as <b>n</b>). If the search term has fewer tokens, the match is
- * considered unsuccessful. Otherwise, each combination of <b>n</b> consecutive terms from the search term is taken and
- * joined usings spaces. Using the given {@link EditDistanceService}, the resulting string is compared against the
- * identifier, whose terms are also joined together using spaces. If the edit distance provides a result, these terms
- * are considered a match.
+ * More precisely, it matches search terms (as string lists) against identifiers in the following way: For the
+ * identifier, the amount of tokens is counted (which we refer to as <b>n</b>). If the search term has fewer tokens, the
+ * match is considered unsuccessful. Otherwise, each combination of <b>n</b> consecutive terms from the search term is
+ * taken and joined usings spaces. Using the given {@link EditDistanceService}, the resulting string is compared against
+ * the identifier, whose terms are also joined together using spaces. If the edit distance provides a result, these
+ * terms are considered a match.
  * <p>
  * Only a single list of consecutive terms is matched. If multiple matches can be found within the search term, the best
  * match (with the lowest Levenshtein distance) is used. If there are multiple equally good matches, the first one is
@@ -32,7 +30,7 @@ import java.util.Set;
  *
  * @author Markus Budeus
  */
-public class EditDistanceListMatcher extends SimpleMatcher<List<String>, EditDistanceListMatcher.Match> {
+public class EditDistanceListMatcher extends SimpleMatcher<List<String>, EditDistanceListMatcher.MatchInfo> {
 
 	private final EditDistanceService editDistanceService;
 
@@ -47,21 +45,21 @@ public class EditDistanceListMatcher extends SimpleMatcher<List<String>, EditDis
 		this.editDistanceService = editDistanceService;
 	}
 
-	@Override
-	protected Match match(Identifier<List<String>> searchTerm, MappedIdentifier<List<String>> mi) {
-		String[] target = mi.identifier.getIdentifier().toArray(new String[0]);
-		int tokens = target.length;
-		List<String> searchTermKeywords = searchTerm.getIdentifier();
 
+
+	@Override
+	protected @Nullable EditDistanceListMatcher.MatchInfo match(List<String> searchTerm, List<String> target) {
+		String[] targetTokens = target.toArray(new String[0]);
+		int tokens = targetTokens.length;
 		if (tokens == 0) return null; // No. I won't match against an empty identifier.
 
 		IntRange bestMatchRange = null;
 		EditDistance bestMatchEditDistance = null;
 		int bestDistance = Integer.MAX_VALUE;
-		for (int start = 0; start <= searchTermKeywords.size() - tokens; start++) {
+		for (int start = 0; start <= searchTerm.size() - tokens; start++) {
 			int end = start + tokens;
-			String[] searchTermTokens = searchTermKeywords.subList(start, end).toArray(new String[0]);
-			EditDistance distance = getDistance(searchTermTokens, target);
+			String[] searchTermTokens = searchTerm.subList(start, end).toArray(new String[0]);
+			EditDistance distance = getDistance(searchTermTokens, targetTokens);
 			if (distance != null && distance.editDistance() < bestDistance) {
 				bestDistance = distance.editDistance();
 				bestMatchRange = new IntRange(start, end);
@@ -72,7 +70,7 @@ public class EditDistanceListMatcher extends SimpleMatcher<List<String>, EditDis
 
 		if (bestMatchRange == null) return null;
 
-		return new Match(searchTerm, mi, bestMatchEditDistance, listIntegers(bestMatchRange));
+		return new MatchInfo(searchTerm, bestMatchEditDistance, listIntegers(bestMatchRange));
 	}
 
 	/**
@@ -107,8 +105,9 @@ public class EditDistanceListMatcher extends SimpleMatcher<List<String>, EditDis
 		return true;
 	}
 
-	public static class Match extends de.medizininformatikinitiative.medgraph.searchengine.matcher.model.Match<List<String>, List<String>>
-			implements InputUsageTraceable<StringListUsageStatement> {
+	public static class MatchInfo implements de.medizininformatikinitiative.medgraph.searchengine.matcher.model.MatchInfo,
+			InputUsageTraceable<StringListUsageStatement>,
+	Comparable<MatchInfo> {
 
 		/**
 		 * The {@link EditDistance}-instance with information about the matched parts' edit distance.
@@ -119,11 +118,10 @@ public class EditDistanceListMatcher extends SimpleMatcher<List<String>, EditDis
 		 */
 		private final StringListUsageStatement usageStatement;
 
-		protected Match(Identifier<List<String>> searchTerm, MappedIdentifier<List<String>> matchedIdentifier, EditDistance distance,
-		                Set<Integer> usedSearchTermIndices) {
-			super(searchTerm, matchedIdentifier);
+		protected MatchInfo(List<String> searchTerm, EditDistance distance,
+		                    Set<Integer> usedSearchTermIndices) {
 			this.distance = distance;
-			this.usageStatement = new StringListUsageStatement(searchTerm.getIdentifier(), usedSearchTermIndices);
+			this.usageStatement = new StringListUsageStatement(searchTerm, usedSearchTermIndices);
 		}
 
 		public EditDistance getDistance() {
@@ -132,6 +130,11 @@ public class EditDistanceListMatcher extends SimpleMatcher<List<String>, EditDis
 
 		public StringListUsageStatement getUsageStatement() {
 			return usageStatement;
+		}
+
+		@Override
+		public int compareTo(@NotNull EditDistanceListMatcher.MatchInfo o) {
+			return Double.compare(distance.editDistance(), o.distance.editDistance());
 		}
 	}
 

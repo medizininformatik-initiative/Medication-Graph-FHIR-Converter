@@ -1,7 +1,7 @@
 package de.medizininformatikinitiative.medgraph.searchengine.algorithm.querymanagement;
 
 import de.medizininformatikinitiative.medgraph.searchengine.model.SearchQuery;
-import de.medizininformatikinitiative.medgraph.searchengine.model.identifier.Identifier;
+import de.medizininformatikinitiative.medgraph.searchengine.model.identifier.TrackableIdentifier;
 import de.medizininformatikinitiative.medgraph.searchengine.tracing.InputUsageTraceable;
 import de.medizininformatikinitiative.medgraph.searchengine.tracing.SubstringUsageStatement;
 
@@ -18,7 +18,7 @@ public interface PartialQueryRefiner<T extends PartialQueryRefiner.Result> {
 	/**
 	 * Parses the given string identifier query and returns a corresponding result.
 	 */
-	T parse(Identifier<String> query);
+	T parse(TrackableIdentifier<String> query);
 
 	/**
 	 * The result of a partial query refinement. Specifies which part of the passed query was relevant to the resolved

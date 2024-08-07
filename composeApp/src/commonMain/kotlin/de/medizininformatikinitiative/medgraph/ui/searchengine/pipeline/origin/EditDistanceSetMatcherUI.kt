@@ -10,8 +10,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import de.medizininformatikinitiative.medgraph.searchengine.matcher.EditDistanceSetMatcher
 import de.medizininformatikinitiative.medgraph.searchengine.matcher.editdistance.LevenshteinDistanceService
+import de.medizininformatikinitiative.medgraph.searchengine.matcher.model.DetailedMatch
 import de.medizininformatikinitiative.medgraph.searchengine.matcher.model.EditDistance
 import de.medizininformatikinitiative.medgraph.searchengine.model.identifiable.Product
+import de.medizininformatikinitiative.medgraph.searchengine.model.identifier.Identifier
 import de.medizininformatikinitiative.medgraph.searchengine.model.identifier.OriginalIdentifier
 import de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject.MatchOrigin
 import de.medizininformatikinitiative.medgraph.searchengine.provider.BaseProvider
@@ -48,14 +50,16 @@ internal fun EditDistanceSetMatcherUI() {
     }
 }
 
+typealias EditDistanceSetMatcherOrigin =  MatchOrigin<out DetailedMatch<out Identifier<Set<String>>, out Identifier<Set<String>>, EditDistanceSetMatcher.MatchInfo>>
+
 @Composable
-fun EditDistanceSetMatcherUI(origin: MatchOrigin<out EditDistanceSetMatcher.Match>, modifier: Modifier = Modifier) {
+fun EditDistanceSetMatcherUI(origin: EditDistanceSetMatcherOrigin, modifier: Modifier = Modifier) {
     GenericMatchOriginUI(origin, modifier) {
         val match = origin.match
         EditDistancesUI(
-            match.editDistances,
+            match.matchInfo.editDistances,
             match.searchTerm.identifier,
-            match.matchedIdentifier.identifier.identifier,
+            match.matchedIdentifier.identifier,
         )
     }
 }

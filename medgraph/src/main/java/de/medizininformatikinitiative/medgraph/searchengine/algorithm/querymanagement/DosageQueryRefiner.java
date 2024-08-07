@@ -2,7 +2,7 @@ package de.medizininformatikinitiative.medgraph.searchengine.algorithm.querymana
 
 import de.medizininformatikinitiative.medgraph.searchengine.model.Amount;
 import de.medizininformatikinitiative.medgraph.searchengine.model.Dosage;
-import de.medizininformatikinitiative.medgraph.searchengine.model.identifier.Identifier;
+import de.medizininformatikinitiative.medgraph.searchengine.model.identifier.TrackableIdentifier;
 import de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject.DosageDetectorOrigin;
 import de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject.Origin;
 import de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject.OriginalMatch;
@@ -30,7 +30,7 @@ public class DosageQueryRefiner implements PartialQueryRefiner<DosageQueryRefine
 	 * @return a {@link Result}-object providing the detected dosages and amounts as well as information on where in the
 	 * query string it was found
 	 */
-	public Result parse(Identifier<String> query) {
+	public Result parse(TrackableIdentifier<String> query) {
 		List<DosageDetector.DetectedDosage> detectedDosages = DosageDetector.detectDosages(query.getIdentifier());
 
 		List<OriginalMatch<Dosage>> searchDosages = new ArrayList<>();

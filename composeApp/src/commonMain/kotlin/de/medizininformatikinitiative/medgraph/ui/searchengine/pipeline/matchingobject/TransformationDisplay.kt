@@ -60,7 +60,7 @@ private fun TransformationDisplay() {
  */
 @Composable
 fun TransformationDisplay(
-    transformation: Transformation,
+    transformation: Transformation<*>,
     highlightedOutputIndex: Int? = null,
     modifier: Modifier = Modifier
 ) {

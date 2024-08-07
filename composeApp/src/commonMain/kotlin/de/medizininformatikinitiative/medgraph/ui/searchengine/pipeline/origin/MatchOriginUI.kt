@@ -10,9 +10,13 @@ import de.medizininformatikinitiative.medgraph.searchengine.matcher.EditDistance
 import de.medizininformatikinitiative.medgraph.searchengine.matcher.EditDistanceSetMatcher
 import de.medizininformatikinitiative.medgraph.searchengine.matcher.IMatcher
 import de.medizininformatikinitiative.medgraph.searchengine.matcher.LevenshteinMatcher
+import de.medizininformatikinitiative.medgraph.searchengine.matcher.model.DetailedMatch
+import de.medizininformatikinitiative.medgraph.searchengine.matcher.model.Match
 import de.medizininformatikinitiative.medgraph.searchengine.model.identifiable.Identifiable
 import de.medizininformatikinitiative.medgraph.searchengine.model.identifier.Identifier
+import de.medizininformatikinitiative.medgraph.searchengine.model.identifier.TrackableIdentifier
 import de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject.MatchOrigin
+import de.medizininformatikinitiative.medgraph.searchengine.provider.MappedIdentifier
 import de.medizininformatikinitiative.medgraph.ui.resources.StringRes
 import de.medizininformatikinitiative.medgraph.ui.searchengine.pipeline.identifier.IdentifierUI
 import de.medizininformatikinitiative.medgraph.ui.theme.templates.ContentCard
@@ -27,17 +31,16 @@ fun MatchOriginUI(origin: MatchOrigin<*>, modifier: Modifier = Modifier) {
     ) {
         TwoIdentifierSources(
             origin.match.searchTerm,
-            origin.match.matchedIdentifier.identifier,
-            target2 = origin.match.matchedIdentifier.target
+            origin.match.matchedIdentifier
         )
         when (origin.matcher) {
             is EditDistanceSetMatcher -> EditDistanceSetMatcherUI(
-                origin as MatchOrigin<EditDistanceSetMatcher.Match>,
+                origin as EditDistanceSetMatcherOrigin,
                 Modifier.fillMaxWidth()
             )
 
             is EditDistanceListMatcher -> EditDistanceListMatcherUI(
-                origin as MatchOrigin<out EditDistanceListMatcher.Match>,
+                origin as EditDistanceListMatcherOrigin,
                 Modifier.fillMaxWidth()
             )
 
@@ -73,21 +76,19 @@ fun GenericMatchOriginUI(
 fun TwoIdentifierSources(
     identifier1: Identifier<out Any>,
     identifier2: Identifier<out Any>,
-    modifier: Modifier = Modifier,
-    target1: Identifiable? = null,
-    target2: Identifiable? = null
+    modifier: Modifier = Modifier
 ) {
     Row(
         modifier,
         verticalAlignment = Alignment.Bottom
     ) {
-        IdentifierUI(identifier1, modifier = Modifier.weight(1f), target1)
+        IdentifierUI(identifier1, modifier = Modifier.weight(1f))
         Spacer(modifier = modifier.width(8.dp))
-        IdentifierUI(identifier2, modifier = Modifier.weight(1f), target2)
+        IdentifierUI(identifier2, modifier = Modifier.weight(1f))
     }
 }
 
-fun getDescription(matcher: Class<out IMatcher<*, *, *>>): String {
+fun getDescription(matcher: Class<out IMatcher<*, *>>): String {
     return when (matcher) {
         EditDistanceSetMatcher::class.java -> StringRes.edit_distance_set_matcher_description
         LevenshteinMatcher::class.java -> StringRes.levenshtein_matcher_description

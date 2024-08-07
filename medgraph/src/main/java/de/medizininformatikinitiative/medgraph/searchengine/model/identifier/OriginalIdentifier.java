@@ -10,7 +10,7 @@ import java.util.Objects;
  * @param <T> the type of the identifier this instance wraps
  * @author Markus Budeus
  */
-public class OriginalIdentifier<T> extends Identifier<T> {
+public class OriginalIdentifier<T> extends TrackableIdentifier<T> {
 
 	/**
 	 * Where this identifier originated from.

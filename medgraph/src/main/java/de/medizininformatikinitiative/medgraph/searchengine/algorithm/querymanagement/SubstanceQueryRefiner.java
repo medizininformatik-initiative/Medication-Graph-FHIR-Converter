@@ -2,14 +2,16 @@ package de.medizininformatikinitiative.medgraph.searchengine.algorithm.querymana
 
 import de.medizininformatikinitiative.medgraph.searchengine.matcher.EditDistanceSetMatcher;
 import de.medizininformatikinitiative.medgraph.searchengine.matcher.editdistance.FlexibleLevenshteinDistanceService;
+import de.medizininformatikinitiative.medgraph.searchengine.matcher.model.DetailedMatch;
 import de.medizininformatikinitiative.medgraph.searchengine.model.identifiable.Identifiable;
 import de.medizininformatikinitiative.medgraph.searchengine.model.identifiable.Substance;
-import de.medizininformatikinitiative.medgraph.searchengine.model.identifier.Identifier;
+import de.medizininformatikinitiative.medgraph.searchengine.model.identifier.TrackableIdentifier;
 import de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject.MatchOrigin;
 import de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject.MatchingObject;
 import de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject.Origin;
 import de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject.OriginalMatch;
-import de.medizininformatikinitiative.medgraph.searchengine.provider.IdentifierStream;
+import de.medizininformatikinitiative.medgraph.searchengine.provider.MappedIdentifier;
+import de.medizininformatikinitiative.medgraph.searchengine.provider.MappedIdentifierStream;
 import de.medizininformatikinitiative.medgraph.searchengine.stringtransformer.*;
 import de.medizininformatikinitiative.medgraph.searchengine.tools.SearchEngineTools;
 import de.medizininformatikinitiative.medgraph.searchengine.tools.SearchEngineTools.OverlapResolutionStrategy;
@@ -47,36 +49,39 @@ public class SubstanceQueryRefiner implements PartialQueryRefiner<SubstanceQuery
 			new FlexibleLevenshteinDistanceService(l -> Math.min(3, (l - 1) / 3))
 	);
 
-	private final IdentifierStream<String> substanceProvider;
+	private final MappedIdentifierStream<String, Substance> substanceProvider;
 
-	public SubstanceQueryRefiner(IdentifierStream<String> substanceProvider) {
+	public SubstanceQueryRefiner(MappedIdentifierStream<String, Substance> substanceProvider) {
 		this.substanceProvider = substanceProvider.parallel();
 	}
 
 	@Override
-	public Result parse(Identifier<String> query) {
+	public Result parse(TrackableIdentifier<String> query) {
 		List<MatchingObject<Substance>> substances = new ArrayList<>();
 		Set<String> usedTokens = new HashSet<>();
-		Identifier<Set<String>> transformedQuery = TRANSFORMER.apply(query);
-		List<EditDistanceSetMatcher.Match> matches = editDistanceSetMatcher
-				.match(transformedQuery, substanceProvider.withTransformation(TRANSFORMER))
-				.filter(match -> {
-					Identifiable target = match.getMatchedIdentifier().target;
-					if (target instanceof Substance) {
-						return true;
-					}
-					System.err.println("Warning: The provider passed to the SubstanceQueryRefiner provided an " +
-							"object which is not a substance: " + target);
-					return false;
-				}).collect(Collectors.toList());
+		TrackableIdentifier<Set<String>> transformedQuery = TRANSFORMER.apply(query);
+		List<? extends DetailedMatch<TrackableIdentifier<Set<String>>, MappedIdentifier<Set<String>, Substance>, EditDistanceSetMatcher.MatchInfo>> matches =
+				editDistanceSetMatcher
+						.match(transformedQuery, substanceProvider.withTransformation(TRANSFORMER))
+						.filter(match -> {
+							Identifiable target = match.getMatchedIdentifier().target;
+							if (target instanceof Substance) {
+								return true;
+							}
+							System.err.println(
+									"Warning: The provider passed to the SubstanceQueryRefiner provided an " +
+											"object which is not a substance: " + target);
+							return false;
+						}).collect(Collectors.toList());
 
 		SearchEngineTools.removeConflictingOverlaps(matches, this::overlap, this::checkPriorityOnOverlap);
 
 		matches.forEach(match -> {
-			Substance substance = (Substance) match.getMatchedIdentifier().target;
+			Substance substance = match.getMatchedIdentifier().target;
 			Origin origin = new MatchOrigin<>(match, editDistanceSetMatcher);
-			substances.add(new OriginalMatch<>(substance,  match.getScore(), origin));
-			usedTokens.addAll(match.getUsageStatement().getUsedTokens());
+			EditDistanceSetMatcher.MatchInfo matchInfo = match.getMatchInfo();
+			substances.add(new OriginalMatch<>(substance, matchInfo.getScore(), origin));
+			usedTokens.addAll(matchInfo.getUsageStatement().getUsedTokens());
 		});
 
 		DistinctMultiSubstringUsageStatement usageStatement =
@@ -89,9 +94,11 @@ public class SubstanceQueryRefiner implements PartialQueryRefiner<SubstanceQuery
 	/**
 	 * Returns how to handle conflicts between two matches.
 	 */
-	private OverlapResolutionStrategy checkPriorityOnOverlap(EditDistanceSetMatcher.Match match1, EditDistanceSetMatcher.Match match2) {
-		double score1 = match1.getScore();
-		double score2 = match2.getScore();
+	private OverlapResolutionStrategy checkPriorityOnOverlap(
+			DetailedMatch<?, ?, EditDistanceSetMatcher.MatchInfo> match1,
+			DetailedMatch<?, ?, EditDistanceSetMatcher.MatchInfo> match2) {
+		double score1 = match1.getMatchInfo().getScore();
+		double score2 = match2.getMatchInfo().getScore();
 
 		if (score1 > score2) return OverlapResolutionStrategy.KEEP_FIRST;
 		else if (score2 > score1) return OverlapResolutionStrategy.KEEP_SECOND;
@@ -101,9 +108,10 @@ public class SubstanceQueryRefiner implements PartialQueryRefiner<SubstanceQuery
 	/**
 	 * Returns whether the source tokens from the two given matches overlap.
 	 */
-	private boolean overlap(EditDistanceSetMatcher.Match match1, EditDistanceSetMatcher.Match match2) {
-		Set<String> set1 = match1.getUsageStatement().getUsedParts();
-		Set<String> set2 = match2.getUsageStatement().getUsedParts();
+	private boolean overlap(DetailedMatch<?, ?, EditDistanceSetMatcher.MatchInfo> match1,
+	                        DetailedMatch<?, ?, EditDistanceSetMatcher.MatchInfo> match2) {
+		Set<String> set1 = match1.getMatchInfo().getUsageStatement().getUsedParts();
+		Set<String> set2 = match2.getMatchInfo().getUsageStatement().getUsedParts();
 		HashSet<String> union = new HashSet<>(set1);
 		union.addAll(set2);
 		return union.size() < set1.size() + set2.size();
