@@ -1,0 +1,60 @@
+package de.medizininformatikinitiative.medgraph.fhirexporter.exporter;
+
+import de.medizininformatikinitiative.medgraph.fhirexporter.fhir.CodeableConcept;
+import de.medizininformatikinitiative.medgraph.fhirexporter.fhir.Coding;
+import de.medizininformatikinitiative.medgraph.fhirexporter.fhir.Identifier;
+import de.medizininformatikinitiative.medgraph.fhirexporter.fhir.medication.Meta;
+import de.medizininformatikinitiative.medgraph.fhirexporter.fhir.substance.Substance;
+import de.medizininformatikinitiative.medgraph.fhirexporter.neo4j.GraphSubstance;
+import de.medizininformatikinitiative.medgraph.fhirexporter.neo4j.GraphUtil;
+import de.medizininformatikinitiative.medgraph.graphdbpopulator.CodingSystem;
+import org.neo4j.driver.Query;
+import org.neo4j.driver.Record;
+import org.neo4j.driver.Result;
+import org.neo4j.driver.Session;
+
+import java.time.LocalDate;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Stream;
+
+import static de.medizininformatikinitiative.medgraph.common.db.DatabaseDefinitions.*;
+
+/**
+ * This class generates {@link GraphSubstance}-objects using the Neo4j knowledge graph.
+ *
+ * @author Markus Budeus
+ */
+public class Neo4jSubstanceExporter extends Neo4jExporter<GraphSubstance> {
+
+	/**
+	 * Instantiates a new exporter.
+	 *
+	 * @param session the database session to use for querying the knowledge graph
+	 */
+	public Neo4jSubstanceExporter(Session session) {
+		super(session);
+	}
+
+	/**
+	 * Reads all substances with their assigned codes and coding systems from the database and returns them as a stream
+	 * of {@link Substance Substances}.
+	 */
+	@Override
+	public Stream<GraphSubstance> exportObjects() {
+		Result result = session.run(new Query(
+				"MATCH (s:" + SUBSTANCE_LABEL + ") " +
+						"OPTIONAL MATCH (cs:" + CODING_SYSTEM_LABEL + ")<-[:" + BELONGS_TO_CODING_SYSTEM_LABEL + "]-(c:" + CODE_LABEL + ")-->(s) " +
+						"WITH s, collect(" + GraphUtil.groupCodingSystem("c", "cs") + ") AS codes" +
+						"RETURN s.name, s.mmiId, codes"
+		));
+
+		return result.stream().map(GraphSubstance::new);
+	}
+
+	@Override
+	protected String createObjectCountQuery() {
+		return "MATCH (s:" + SUBSTANCE_LABEL + ") RETURN COUNT(s)";
+	}
+
+}
