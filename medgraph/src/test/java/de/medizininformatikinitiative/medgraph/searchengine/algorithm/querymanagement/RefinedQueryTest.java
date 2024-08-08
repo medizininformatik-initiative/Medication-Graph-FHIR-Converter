@@ -12,6 +12,7 @@ import de.medizininformatikinitiative.medgraph.searchengine.model.identifier.Tra
 import de.medizininformatikinitiative.medgraph.searchengine.model.identifier.OriginalIdentifier;
 import de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject.Merge;
 import de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject.OriginalMatch;
+import de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject.ScoreMergingStrategy;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -22,6 +23,8 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Markus Budeus
  */
 public class RefinedQueryTest extends UnitTest {
+
+	private final ScoreMergingStrategy SCORE_MERGING_STRAT_USED = ScoreMergingStrategy.MAX;
 
 	private final TrackableIdentifier<List<String>> SAMPLE_PRODUCT_KEYWORDS = new OriginalIdentifier<>(
 			List.of("Sodium", "chloride"), OriginalIdentifier.Source.RAW_QUERY);
@@ -67,7 +70,7 @@ public class RefinedQueryTest extends UnitTest {
 		assertEquals(List.of(drugAmount), refinedQuery.getDrugAmounts());
 		assertEquals(List.of(dosage), refinedQuery.getDosages());
 		assertEquals(List.of(doseForm, doseForm1), refinedQuery.getDoseForms());
-		assertEquals(List.of(new Merge<>(List.of(doseFormCharacteristic, doseFormCharacteristic1))),
+		assertEquals(List.of(new Merge<>(List.of(doseFormCharacteristic, doseFormCharacteristic1), SCORE_MERGING_STRAT_USED)),
 				refinedQuery.getDoseFormCharacteristics());
 		assertEquals(List.of(substance), refinedQuery.getSubstances());
 		assertEquals(SAMPLE_PRODUCT_KEYWORDS, refinedQuery.getProductNameKeywords());
@@ -100,7 +103,7 @@ public class RefinedQueryTest extends UnitTest {
 
 		assertEquals(
 				List.of(
-						new Merge<>(List.of(substance1, substance3)),
+						new Merge<>(List.of(substance1, substance3), SCORE_MERGING_STRAT_USED),
 						substance2,
 						substance4
 				),
@@ -124,7 +127,7 @@ public class RefinedQueryTest extends UnitTest {
 		assertEquals(
 				List.of(
 						dosage1,
-						new Merge<>(List.of(dosage2, dosage3))
+						new Merge<>(List.of(dosage2, dosage3), SCORE_MERGING_STRAT_USED)
 				),
 				refinedQuery.getDosages()
 		);
@@ -146,7 +149,7 @@ public class RefinedQueryTest extends UnitTest {
 		assertEquals(
 				List.of(
 						dosage1,
-						new Merge<>(List.of(dosage2, dosage3))
+						new Merge<>(List.of(dosage2, dosage3), SCORE_MERGING_STRAT_USED)
 				),
 				refinedQuery.getDosages()
 		);
@@ -181,8 +184,8 @@ public class RefinedQueryTest extends UnitTest {
 		assertEquals(
 				List.of(
 						doseForm1,
-						new Merge<>(List.of(doseForm2, doseForm4)),
-						new Merge<>(List.of(doseForm3, doseForm5, doseForm7)),
+						new Merge<>(List.of(doseForm2, doseForm4), SCORE_MERGING_STRAT_USED),
+						new Merge<>(List.of(doseForm3, doseForm5, doseForm7), SCORE_MERGING_STRAT_USED),
 						doseForm6
 				),
 				refinedQuery.getDoseForms()
@@ -212,10 +215,10 @@ public class RefinedQueryTest extends UnitTest {
 
 		assertEquals(
 				List.of(
-						new Merge<>(List.of(doseForm1, doseForm7)),
+						new Merge<>(List.of(doseForm1, doseForm7), SCORE_MERGING_STRAT_USED),
 						doseForm2,
 						doseForm3,
-						new Merge<>(List.of(doseForm4, doseForm5)),
+						new Merge<>(List.of(doseForm4, doseForm5), SCORE_MERGING_STRAT_USED),
 						doseForm6
 				),
 				refinedQuery.getDoseFormCharacteristics()
