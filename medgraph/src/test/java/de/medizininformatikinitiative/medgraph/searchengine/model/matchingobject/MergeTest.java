@@ -13,6 +13,8 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 public class MergeTest {
 
+	// TODO Test merge strategy
+
 	@Test
 	public void createSuccessfully() {
 		new Merge<>(List.of(

@@ -350,6 +350,9 @@ class StringRes {
         @JvmStatic
         val dosage_detector_desc = "Detects dosages in strings."
 
+        @JvmStatic
+        val matching_object_score = "Score:"
+
 
         @JvmStatic
         fun get(template: String, vararg arguments: Any): String {
@@ -361,7 +364,7 @@ class StringRes {
         }
 
         @JvmStatic
-        fun parseDecimal(double: Double): String = decimalFormat.format(double)
+        fun formatDecimal(double: Double): String = decimalFormat.format(double)
     }
 
 }

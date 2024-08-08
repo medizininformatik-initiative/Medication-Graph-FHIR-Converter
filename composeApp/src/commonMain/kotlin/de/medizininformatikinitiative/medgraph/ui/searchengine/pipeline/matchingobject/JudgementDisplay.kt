@@ -18,7 +18,6 @@ import de.medizininformatikinitiative.medgraph.searchengine.pipeline.judge.Score
 import de.medizininformatikinitiative.medgraph.ui.resources.StringRes
 import de.medizininformatikinitiative.medgraph.ui.theme.ApplicationTheme
 import de.medizininformatikinitiative.medgraph.ui.theme.localColors
-import java.util.OptionalDouble
 
 
 @Composable
@@ -89,16 +88,16 @@ fun JudgementDisplay(judgement: Judgement, modifier: Modifier = Modifier) {
                     if (passingScore != null) {
                         text = StringRes.get(
                             StringRes.judgement_score_with_passing_score,
-                            StringRes.parseDecimal(judgement.score),
-                            StringRes.parseDecimal(passingScore)
+                            StringRes.formatDecimal(judgement.score),
+                            StringRes.formatDecimal(passingScore)
                         )
                     } else {
-                        text = StringRes.get(StringRes.judgement_score, StringRes.parseDecimal(judgement.score))
+                        text = StringRes.get(StringRes.judgement_score, StringRes.formatDecimal(judgement.score))
                     }
                     Text(text, style = MaterialTheme.typography.h6)
 
                     Text(
-                        StringRes.get(StringRes.judgement_weight, StringRes.parseDecimal(judgement.configuration.scoreWeight)),
+                        StringRes.get(StringRes.judgement_weight, StringRes.formatDecimal(judgement.configuration.scoreWeight)),
                         style = MaterialTheme.typography.h6
                     )
                 }
