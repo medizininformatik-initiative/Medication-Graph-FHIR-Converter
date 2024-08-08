@@ -62,18 +62,20 @@ private fun JudgementDisplay() {
 }
 
 /**
- * Displays information about a judgement. If it's a [ScoredJudgement], also displays the score and the passing score.
+ * Displays information about a judgement. If it's a [ScoredJudgementStep], also displays the score and the passing score.
  */
 @Composable
 fun JudgementDisplay(judgement: Judgement, modifier: Modifier = Modifier) {
 
-    val backgroundColor =
+    val passingBackgroundColor =
         if (judgement.passed()) MaterialTheme.localColors.weakSuccess else MaterialTheme.localColors.weakFailure
+
+    val hasPassingBorder = !(judgement is ScoredJudgementStep && judgement.configuration.passingScore == null)
 
     MatchingPipelineStepDisplay(
         judgement,
         modifier,
-        backgroundColor,
+        if (hasPassingBorder) passingBackgroundColor else MaterialTheme.localColors.surface,
     ) {
         Row(
             horizontalArrangement = Arrangement.SpaceBetween,
@@ -97,33 +99,43 @@ fun JudgementDisplay(judgement: Judgement, modifier: Modifier = Modifier) {
                     Text(text, style = MaterialTheme.typography.h6)
 
                     Text(
-                        StringRes.get(StringRes.judgement_weight, StringRes.formatDecimal(judgement.configuration.scoreWeight)),
+                        StringRes.get(
+                            StringRes.judgement_weight,
+                            StringRes.formatDecimal(judgement.configuration.scoreWeight)
+                        ),
                         style = MaterialTheme.typography.h6
                     )
                 }
             }
 
-            Row(
-                horizontalArrangement = Arrangement.End,
-                modifier = Modifier.weight(1f)
-            ) {
-                Text(StringRes.judgement_result, style = MaterialTheme.typography.h6)
-                if (judgement.passed()) {
-                    Text(
-                        StringRes.judgement_passed,
-                        color = MaterialTheme.localColors.strongSuccess,
-                        fontWeight = FontWeight.Bold,
-                        style = MaterialTheme.typography.h6
-                    )
-                } else {
-                    Text(
-                        StringRes.judgement_failed,
-                        color = MaterialTheme.localColors.strongFailure,
-                        fontWeight = FontWeight.Bold,
-                        style = MaterialTheme.typography.h6
-                    )
-                }
+            if (hasPassingBorder) {
+                PassedOrFailedText(judgement.passed(), Modifier.weight(1f))
             }
+        }
+    }
+}
+
+@Composable
+fun PassedOrFailedText(passed: Boolean, modifier: Modifier = Modifier) {
+    Row(
+        horizontalArrangement = Arrangement.End,
+        modifier = modifier
+    ) {
+        Text(StringRes.judgement_result, style = MaterialTheme.typography.h6)
+        if (passed) {
+            Text(
+                StringRes.judgement_passed,
+                color = MaterialTheme.localColors.strongSuccess,
+                fontWeight = FontWeight.Bold,
+                style = MaterialTheme.typography.h6
+            )
+        } else {
+            Text(
+                StringRes.judgement_failed,
+                color = MaterialTheme.localColors.strongFailure,
+                fontWeight = FontWeight.Bold,
+                style = MaterialTheme.typography.h6
+            )
         }
     }
 }

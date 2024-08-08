@@ -14,6 +14,7 @@ import de.medizininformatikinitiative.medgraph.searchengine.model.identifiable.S
 import de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject.MatchingObject;
 import de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject.ScoreMergingStrategy;
 import de.medizininformatikinitiative.medgraph.searchengine.pipeline.MatchingPipelineService;
+import de.medizininformatikinitiative.medgraph.searchengine.pipeline.judge.ExcessSubstanceJudge;
 import de.medizininformatikinitiative.medgraph.searchengine.pipeline.judge.ScoreJudgeConfiguration;
 import de.medizininformatikinitiative.medgraph.searchengine.pipeline.judge.dosage.DosageAndAmountInfoMatchJudge;
 import de.medizininformatikinitiative.medgraph.searchengine.pipeline.judge.dosage.DosagesInProductNameJudge;
@@ -46,6 +47,7 @@ public class WeightedScoringBasedQueryExecutor implements QueryExecutor<Detailed
 
 	private final PharmaceuticalDoseFormJudge doseFormJudge;
 	private final DoseFormCharacteristicJudge doseFormCharacteristicJudge;
+	private final ExcessSubstanceJudge excessSubstanceJudge;
 	private final DosagesInProductNameJudge dosagesInProductNameJudge;
 
 	public WeightedScoringBasedQueryExecutor(Session session) {
@@ -57,6 +59,7 @@ public class WeightedScoringBasedQueryExecutor implements QueryExecutor<Detailed
 		productDetailsResolver = new ProductDetailsResolver(new Neo4jCypherDatabase(session));
 		doseFormJudge = new PharmaceuticalDoseFormJudge();
 		doseFormCharacteristicJudge = new DoseFormCharacteristicJudge();
+		excessSubstanceJudge = new ExcessSubstanceJudge();
 		dosagesInProductNameJudge = new DosagesInProductNameJudge();
 	}
 
@@ -88,6 +91,8 @@ public class WeightedScoringBasedQueryExecutor implements QueryExecutor<Detailed
 				new ScoreJudgeConfiguration(0.1, false, 1.5, ScoreIncorporationStrategy.ADD));
 		detailedProducts = service.applyScoreJudge(detailedProducts, doseFormCharacteristicJudge,
 				new ScoreJudgeConfiguration(0.1, false,0.8, ScoreIncorporationStrategy.ADD));
+		detailedProducts = service.applyScoreJudge(detailedProducts, excessSubstanceJudge,
+				new ScoreJudgeConfiguration(0.2, ScoreIncorporationStrategy.ADD));
 		detailedProducts = service.applyScoreJudge(detailedProducts, dosagesInProductNameJudge,
 				new ScoreJudgeConfiguration(0.5, ScoreIncorporationStrategy.ADD));
 
