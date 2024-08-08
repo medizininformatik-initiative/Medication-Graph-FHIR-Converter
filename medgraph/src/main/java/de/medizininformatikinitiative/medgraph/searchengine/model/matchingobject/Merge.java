@@ -41,6 +41,8 @@ public class Merge<T extends Matchable> extends MatchingObjectBase<T> {
 	@NotNull
 	private final List<MatchingObject<? extends T>> sourceObjects;
 
+	private final ScoreMergingStrategy scoreMergingStrategy;
+
 	/**
 	 * Creates a merge of the given objects and calculates a score using the given merging strategy.
 	 *
@@ -49,19 +51,10 @@ public class Merge<T extends Matchable> extends MatchingObjectBase<T> {
 	 *                             the source objects
 	 */
 	public Merge(@NotNull List<? extends MatchingObject<? extends T>> sourceObjects, @NotNull ScoreMergingStrategy scoreMergingStrategy) {
-		this(sourceObjects,
+		super(checkAndResolveMatchable(sourceObjects),
 				scoreMergingStrategy.mergeScores(sourceObjects.stream().mapToDouble(MatchingObject::getScore)));
-	}
-
-	/**
-	 * Creates a merge of the given objects and assigns a custom score.
-	 *
-	 * @param sourceObjects the source objects which are merged
-	 * @param score         the score to assign to the merge
-	 */
-	public Merge(@NotNull List<? extends MatchingObject<? extends T>> sourceObjects, double score) {
-		super(checkAndResolveMatchable(sourceObjects), score);
 		this.sourceObjects = new ArrayList<>(sourceObjects);
+		this.scoreMergingStrategy = scoreMergingStrategy;
 	}
 
 	/**
@@ -70,6 +63,13 @@ public class Merge<T extends Matchable> extends MatchingObjectBase<T> {
 	@NotNull
 	public List<MatchingObject<? extends T>> getSourceObjects() {
 		return sourceObjects;
+	}
+
+	/**
+	 * Returns the {@link ScoreMergingStrategy} that was used to merge the scores.
+	 */
+	public ScoreMergingStrategy getScoreMergingStrategy() {
+		return scoreMergingStrategy;
 	}
 
 	@Override
