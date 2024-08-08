@@ -46,7 +46,11 @@ public class ProvidersTest extends Neo4jTest {
 						new MappedIdentifier<>("Parenteral", Characteristics.PARENTERAL),
 						new MappedIdentifier<>("Granules", GRANULES),
 						new MappedIdentifier<>("Granules", Characteristics.GRANULES),
-						new MappedIdentifier<>("Oral", Characteristics.ORAL)),
+						new MappedIdentifier<>("Oral", Characteristics.ORAL),
+						new MappedIdentifier<>("Tablet", Characteristics.TABLET),
+						new MappedIdentifier<>("Tablet", TABLET),
+						new MappedIdentifier<>("Tbl.", Characteristics.TABLET),
+						new MappedIdentifier<>("Tbl.", TABLET)),
 				Providers.getEdqmConceptIdentifiers(session).getIdentifiers().collect(Collectors.toSet())
 		);
 	}
