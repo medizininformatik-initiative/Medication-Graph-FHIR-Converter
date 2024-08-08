@@ -10,6 +10,7 @@ import de.medizininformatikinitiative.medgraph.searchengine.model.identifiable.S
 import de.medizininformatikinitiative.medgraph.searchengine.model.identifier.TrackableIdentifier;
 import de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject.MatchingObject;
 import de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject.Merge;
+import de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject.ScoreMergingStrategy;
 import de.medizininformatikinitiative.medgraph.searchengine.tools.SearchEngineTools;
 import de.medizininformatikinitiative.medgraph.searchengine.tracing.SubstringUsageStatement;
 import org.jetbrains.annotations.NotNull;
@@ -365,7 +366,7 @@ public class RefinedQuery {
 				if (equalObjects.size() == 1) {
 					outList.add(equalObjects.getFirst());
 				} else {
-					outList.add(new Merge<>(equalObjects));
+					outList.add(new Merge<>(equalObjects, ScoreMergingStrategy.MAX));
 				}
 			}
 			return outList;

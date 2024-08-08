@@ -42,21 +42,13 @@ public class Merge<T extends Matchable> extends MatchingObjectBase<T> {
 	private final List<MatchingObject<? extends T>> sourceObjects;
 
 	/**
-	 * @deprecated use a different constructor
-	 */
-	@Deprecated
-	public Merge(List<? extends MatchingObject<? extends T>> sourceObjects) {
-		this(sourceObjects, 1);
-	}
-
-	/**
 	 * Creates a merge of the given objects and calculates a score using the given merging strategy.
 	 *
 	 * @param sourceObjects        the source objects which are merged
 	 * @param scoreMergingStrategy the strategy to use to calculate the score of the merge object using the scores of
 	 *                             the source objects
 	 */
-	public Merge(List<? extends MatchingObject<? extends T>> sourceObjects, ScoreMergingStrategy scoreMergingStrategy) {
+	public Merge(@NotNull List<? extends MatchingObject<? extends T>> sourceObjects, @NotNull ScoreMergingStrategy scoreMergingStrategy) {
 		this(sourceObjects,
 				scoreMergingStrategy.mergeScores(sourceObjects.stream().mapToDouble(MatchingObject::getScore)));
 	}
@@ -67,7 +59,7 @@ public class Merge<T extends Matchable> extends MatchingObjectBase<T> {
 	 * @param sourceObjects the source objects which are merged
 	 * @param score         the score to assign to the merge
 	 */
-	public Merge(List<? extends MatchingObject<? extends T>> sourceObjects, double score) {
+	public Merge(@NotNull List<? extends MatchingObject<? extends T>> sourceObjects, double score) {
 		super(checkAndResolveMatchable(sourceObjects), score);
 		this.sourceObjects = new ArrayList<>(sourceObjects);
 	}

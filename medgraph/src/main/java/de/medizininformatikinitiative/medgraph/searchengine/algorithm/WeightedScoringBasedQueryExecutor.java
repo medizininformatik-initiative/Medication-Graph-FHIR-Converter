@@ -5,6 +5,7 @@ import de.medizininformatikinitiative.medgraph.searchengine.algorithm.initial.In
 import de.medizininformatikinitiative.medgraph.searchengine.algorithm.initial.LevenshteinSearchMatchFinder;
 import de.medizininformatikinitiative.medgraph.searchengine.algorithm.querymanagement.RefinedQuery;
 import de.medizininformatikinitiative.medgraph.searchengine.db.Neo4jCypherDatabase;
+import de.medizininformatikinitiative.medgraph.searchengine.model.ScoreIncorporationStrategy;
 import de.medizininformatikinitiative.medgraph.searchengine.model.SearchQuery;
 import de.medizininformatikinitiative.medgraph.searchengine.model.identifiable.DetailedProduct;
 import de.medizininformatikinitiative.medgraph.searchengine.model.identifiable.Matchable;
@@ -13,6 +14,7 @@ import de.medizininformatikinitiative.medgraph.searchengine.model.identifiable.S
 import de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject.MatchingObject;
 import de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject.ScoreMergingStrategy;
 import de.medizininformatikinitiative.medgraph.searchengine.pipeline.MatchingPipelineService;
+import de.medizininformatikinitiative.medgraph.searchengine.pipeline.judge.ScoreJudgeConfiguration;
 import de.medizininformatikinitiative.medgraph.searchengine.pipeline.judge.dosage.DosageAndAmountInfoMatchJudge;
 import de.medizininformatikinitiative.medgraph.searchengine.pipeline.judge.dosage.DosagesInProductNameJudge;
 import de.medizininformatikinitiative.medgraph.searchengine.pipeline.judge.doseform.DoseFormCharacteristicJudge;
@@ -52,7 +54,7 @@ public class WeightedScoringBasedQueryExecutor implements QueryExecutor<Detailed
 		);
 		substanceToProductResolver = new SubstanceToProductResolver(session);
 		dosageJudge = new DosageAndAmountInfoMatchJudge();
-		productDetailsResolver = new ProductDetailsResolver(new Neo4jCypherDatabase(session)); // TODO Instantiating the Neo4jCypherDatabase should not be done here...
+		productDetailsResolver = new ProductDetailsResolver(new Neo4jCypherDatabase(session));
 		doseFormJudge = new PharmaceuticalDoseFormJudge();
 		doseFormCharacteristicJudge = new DoseFormCharacteristicJudge();
 		dosagesInProductNameJudge = new DosagesInProductNameJudge();
@@ -80,10 +82,14 @@ public class WeightedScoringBasedQueryExecutor implements QueryExecutor<Detailed
 				productDetailsResolver, ScoreMergingStrategy.MAX);
 
 		// Judge using different metrics
-		detailedProducts = service.applyScoreJudge(detailedProducts, dosageJudge);
-		detailedProducts = service.applyScoreJudge(detailedProducts, doseFormJudge);
-		detailedProducts = service.applyScoreJudge(detailedProducts, doseFormCharacteristicJudge);
-		detailedProducts = service.applyScoreJudge(detailedProducts, dosagesInProductNameJudge);
+		detailedProducts = service.applyScoreJudge(detailedProducts, dosageJudge,
+				new ScoreJudgeConfiguration(DosageAndAmountInfoMatchJudge.NO_DOSAGE_AND_AMOUNT_SCORE, false));
+		detailedProducts = service.applyScoreJudge(detailedProducts, doseFormJudge,
+				new ScoreJudgeConfiguration(0.1, false, 1.5, ScoreIncorporationStrategy.ADD));
+		detailedProducts = service.applyScoreJudge(detailedProducts, doseFormCharacteristicJudge,
+				new ScoreJudgeConfiguration(0.1, false,0.8, ScoreIncorporationStrategy.ADD));
+		detailedProducts = service.applyScoreJudge(detailedProducts, dosagesInProductNameJudge,
+				new ScoreJudgeConfiguration(0.5, ScoreIncorporationStrategy.ADD));
 
 		detailedProducts.sort(Comparator.naturalOrder());
 
