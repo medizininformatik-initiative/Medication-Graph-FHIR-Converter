@@ -34,8 +34,6 @@ import java.util.stream.Collectors;
  */
 public class WeightedScoringBasedQueryExecutor implements QueryExecutor<DetailedProduct> {
 
-	// TODO Better Javadoc
-
 	private final InitialMatchFinder<Product> initialMatchFinder;
 
 	private final SubstanceToProductResolver substanceToProductResolver;
@@ -65,18 +63,23 @@ public class WeightedScoringBasedQueryExecutor implements QueryExecutor<Detailed
 		SearchQuery searchQuery = query.toSearchQuery();
 		MatchingPipelineService service = new MatchingPipelineService(searchQuery);
 
-
+		// Find initial product matches
 		List<MatchingObject<Product>> products = initialMatchFinder.findInitialMatches(searchQuery)
 		                                                           .collect(Collectors.toList());
 		products = service.mergeDuplicates(products, ScoreMergingStrategy.MAX);
+
+		// Resolve products from substances
 		List<MatchingObject<Product>> productsFromSubstances = resolveProductsFromSubstances(query.getSubstances(),
 				service);
+
+		// Merge initial product matches with products resolved from substances
 		products = merge(service, products, productsFromSubstances);
 
 		// Product details are required for the subsequent judges.
 		List<? extends MatchingObject<DetailedProduct>> detailedProducts = service.transformMatches(products,
 				productDetailsResolver, ScoreMergingStrategy.MAX);
 
+		// Judge using different metrics
 		detailedProducts = service.applyScoreJudge(detailedProducts, dosageJudge);
 		detailedProducts = service.applyScoreJudge(detailedProducts, doseFormJudge);
 		detailedProducts = service.applyScoreJudge(detailedProducts, doseFormCharacteristicJudge);

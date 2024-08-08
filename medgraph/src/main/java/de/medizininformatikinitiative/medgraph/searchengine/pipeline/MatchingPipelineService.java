@@ -24,8 +24,6 @@ import java.util.function.Function;
  */
 public class MatchingPipelineService {
 
-	// TODO Test this class!
-
 	private final SearchQuery query;
 
 	public MatchingPipelineService(SearchQuery query) {

@@ -8,7 +8,6 @@ package de.medizininformatikinitiative.medgraph.searchengine.model;
  *
  * @author Markus Budeus
  */
-@FunctionalInterface
 public interface ScoreIncorporationStrategy {
 
 	/**
