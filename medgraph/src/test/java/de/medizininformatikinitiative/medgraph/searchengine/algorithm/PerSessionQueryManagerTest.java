@@ -10,6 +10,7 @@ import de.medizininformatikinitiative.medgraph.searchengine.model.identifiable.P
 import de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject.MatchingObject;
 import de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject.Merge;
 import de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject.OriginalMatch;
+import de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject.ScoreMergingStrategy;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -133,7 +134,7 @@ public class PerSessionQueryManagerTest extends UnitTest {
 	public void correctExecutionResultReturned() {
 		List<MatchingObject<Product>> resultList = List.of(
 				new OriginalMatch<>(SAMPLE_PRODUCT_1),
-				new Merge<>(List.of(new OriginalMatch<>(SAMPLE_PRODUCT_2), new OriginalMatch<>(SAMPLE_PRODUCT_2)), 1)
+				new Merge<>(List.of(new OriginalMatch<>(SAMPLE_PRODUCT_2), new OriginalMatch<>(SAMPLE_PRODUCT_2)), ScoreMergingStrategy.MAX)
 		);
 		when(queryExecutor.executeQuery(query)).thenReturn(resultList);
 

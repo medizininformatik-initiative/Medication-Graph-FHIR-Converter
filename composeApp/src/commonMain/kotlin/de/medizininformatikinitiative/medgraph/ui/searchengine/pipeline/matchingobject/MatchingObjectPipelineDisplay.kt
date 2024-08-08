@@ -25,6 +25,7 @@ import de.medizininformatikinitiative.medgraph.ui.resources.StringRes
 import de.medizininformatikinitiative.medgraph.ui.searchengine.pipeline.origin.OriginUI
 import de.medizininformatikinitiative.medgraph.ui.searchengine.results.DetailedIdentifiableObjectUI
 import de.medizininformatikinitiative.medgraph.ui.theme.ApplicationTheme
+import de.medizininformatikinitiative.medgraph.ui.theme.localColors
 
 @Composable
 @Preview
@@ -91,7 +92,7 @@ private fun MatchingObjectSourcePipelineDisplay() {
                 "Wrath of god",
                 "Barely made it out alive",
                 ScoreJudgementInfo(1.0),
-                ScoreJudgeConfiguration(1.0, true, 42.0, ScoreIncorporationStrategy.ADD)
+                ScoreJudgeConfiguration(1.0, true, 42.0, ScoreIncorporationStrategy.OVERWRITE)
             ),
         )
 
@@ -136,11 +137,16 @@ private fun JudgedObjectDisplay(obj: JudgedObject<*>, scrollState: ScrollState) 
     MatchingObjectDisplay(obj.source, scrollState)
     MatchingObjectWithScoreSplitScreen(
         obj,
-        mainBody = {
-            JudgementDisplay(obj.judgement, modifier = Modifier.fillMaxWidth().padding(horizontal = 4.dp))
+        scoreBody = {
+            val judgement = obj.judgement
+            if (judgement is ScoredJudgementStep) {
+                ScoreIncorporationStrategyDescription(judgement.configuration.scoreIncorporationStrategy)
+            }
         },
         modifier = Modifier.fillMaxWidth()
-    )
+    ) {
+        JudgementDisplay(obj.judgement, modifier = Modifier.fillMaxWidth().padding(horizontal = 4.dp))
+    }
 }
 
 @Composable
@@ -148,7 +154,11 @@ private fun MergedObjectsDisplay(obj: Merge<*>, scrollState: ScrollState) {
     var currentSelectionIndex by remember { mutableStateOf(0) }
     currentSelectionIndex = Math.max(0, Math.min(obj.sourceObjects.size - 1, currentSelectionIndex))
     MatchingObjectDisplay(obj.sourceObjects[currentSelectionIndex], scrollState)
-    MatchingObjectWithScoreSplitScreen(obj) {
+    MatchingObjectWithScoreSplitScreen(obj,
+        scoreBody = {
+            ScoreMergingStrategyDescription(obj.scoreMergingStrategy)
+        }
+    ) {
         MergeDisplay(
             obj, currentSelectionIndex, onSelectSourcePath = { pathIndex -> currentSelectionIndex = pathIndex },
             pipelineScrollState = scrollState
@@ -169,6 +179,7 @@ private fun TransformedObjectDisplay(obj: TransformedObject<*, *>, scrollState: 
 private fun MatchingObjectWithScoreSplitScreen(
     obj: MatchingObject<*>,
     modifier: Modifier = Modifier.fillMaxWidth(),
+    scoreBody: @Composable ColumnScope.() -> Unit = {},
     mainBody: @Composable ColumnScope.() -> Unit = {},
 ) {
     Row(modifier.height(IntrinsicSize.Min)) {
@@ -177,12 +188,39 @@ private fun MatchingObjectWithScoreSplitScreen(
         }
         Spacer(Modifier.width(4.dp))
         Column(
-            modifier = Modifier.width(70.dp).fillMaxHeight(),
+            modifier = Modifier.width(80.dp).fillMaxHeight(),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
+            scoreBody()
             Text(StringRes.matching_object_score, fontWeight = FontWeight.Bold)
             Text(StringRes.formatDecimal(obj.score), fontWeight = FontWeight.Bold, style = MaterialTheme.typography.h5)
         }
     }
+}
+
+@Composable
+private fun ScoreMergingStrategyDescription(strategy: ScoreMergingStrategy, modifier: Modifier = Modifier) {
+    val text = when(strategy) {
+        ScoreMergingStrategy.MAX -> StringRes.score_merging_strategy_max
+        ScoreMergingStrategy.SUM -> StringRes.score_merging_strategy_sum
+        else -> ""
+    }
+    ScoreUpdateStrategyDescription(text, modifier = modifier)
+}
+
+@Composable
+private fun ScoreIncorporationStrategyDescription(strategy: ScoreIncorporationStrategy, modifier: Modifier = Modifier) {
+    val text = when(strategy) {
+        ScoreIncorporationStrategy.MULTIPLY -> StringRes.score_incorporation_strategy_multiply
+        ScoreIncorporationStrategy.ADD -> StringRes.score_incorporation_strategy_add
+        ScoreIncorporationStrategy.OVERWRITE -> StringRes.score_incorporation_strategy_overwrite
+        else -> ""
+    }
+    ScoreUpdateStrategyDescription(text, modifier = modifier)
+}
+
+@Composable
+private fun ScoreUpdateStrategyDescription(description: String, modifier: Modifier) {
+    Text(description, fontWeight = FontWeight.Bold, color = MaterialTheme.localColors.primaryVariant, modifier = modifier)
 }

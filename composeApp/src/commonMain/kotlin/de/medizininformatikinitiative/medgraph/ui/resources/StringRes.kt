@@ -193,18 +193,6 @@ class StringRes {
         val graph_db_populator_wipe_warning = "Warning: Running the import completely overwrites the database you are currently connected to!"
 
         @JvmStatic
-        val graph_db_populator_preparing = "Preparing data import"
-
-        @JvmStatic
-        val graph_db_populator_clearing_db = "Clearing database"
-
-        @JvmStatic
-        val graph_db_populator_running_loader = "Running {0}"
-
-        @JvmStatic
-        val graph_db_populator_cleaning_up = "Cleaning up"
-
-        @JvmStatic
         val graph_db_populator_done = "Done. The database is ready."
 
         @JvmStatic
@@ -353,6 +341,20 @@ class StringRes {
         @JvmStatic
         val matching_object_score = "Score:"
 
+        @JvmStatic
+        val score_merging_strategy_max = "MAX"
+
+        @JvmStatic
+        val score_merging_strategy_sum = "SUM"
+
+        @JvmStatic
+        val score_incorporation_strategy_add = "ADD"
+
+        @JvmStatic
+        val score_incorporation_strategy_multiply = "MULT."
+
+        @JvmStatic
+        val score_incorporation_strategy_overwrite = "OVERW."
 
         @JvmStatic
         fun get(template: String, vararg arguments: Any): String {
