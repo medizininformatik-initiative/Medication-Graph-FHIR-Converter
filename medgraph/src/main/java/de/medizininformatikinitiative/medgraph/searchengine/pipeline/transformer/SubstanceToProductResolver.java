@@ -78,7 +78,7 @@ public class SubstanceToProductResolver extends MatchTransformer<Substance, Prod
 						"OPTIONAL MATCH (ci)<-[:" + INGREDIENT_CORRESPONDS_TO_LABEL + "]-(i:" + MMI_INGREDIENT_LABEL + ")\n" +
 						"WITH s, CASE WHEN i IS NULL THEN ci ELSE i END AS ingredient WHERE ingredient.isActive\n" +
 						"MATCH (ingredient)<-[:" + DRUG_CONTAINS_INGREDIENT_LABEL + "]-(drug:" + DRUG_LABEL + ")<-[:" + PRODUCT_CONTAINS_DRUG_LABEL + "]-(p:Product)\n" +
-						"RETURN s.mmiId, p.mmiId, p.name",
+						"RETURN DISTINCT s.mmiId, p.mmiId, p.name",
 				parameters("mmiIds", substanceMmiIds)
 		));
 	}

@@ -29,6 +29,7 @@ public class TestFactory {
 		public static final Substance PREDNISOLONE = new Substance(6, "Prednisolon");
 		public static final Substance PREDNISOLONE_HYDROGENSUCCINATE = new Substance(7,
 				"Prednisolon 21-hydrogensuccinat, Natriumsalz");
+		public static final Substance PARACETAMOL = new Substance(8, "Paracetamol");
 	}
 
 	public static class Products {
@@ -117,6 +118,44 @@ public class TestFactory {
 									List.of())
 					)
 			);
+
+			/**
+			 * Aspirin/Paracetamol tablets. Contains different tablets for day and night, meaning it has two assigned
+			 * drugs which have very similar ingredients. (In this test scenario, the ingredients are actually the
+			 * same.)
+			 */
+			public static final DetailedProduct DOLOMO = new DetailedProduct(7,
+					"dolomo® TN, Tablette",
+					List.of("00778219"),
+					List.of(
+							new Drug(
+									"Tbl.",
+									DoseForms.TABLET,
+									new Amount(BigDecimal.ONE, null),
+									List.of(new ActiveIngredient(
+													Substances.ACETYLSALICYLIC_ACID.getName(),
+													new Amount(new BigDecimal(250), "mg")
+											),
+											new ActiveIngredient(
+													Substances.PARACETAMOL.getName(),
+													new Amount(new BigDecimal(250), "mg")
+											))
+							),
+							new Drug(
+									"Tbl.",
+									DoseForms.TABLET,
+									new Amount(BigDecimal.ONE, null),
+									List.of(new ActiveIngredient(
+													Substances.ACETYLSALICYLIC_ACID.getName(),
+													new Amount(new BigDecimal(250), "mg")
+											),
+											new ActiveIngredient(
+													Substances.PARACETAMOL.getName(),
+													new Amount(new BigDecimal(250), "mg")
+											))
+							)
+					)
+			);
 		}
 
 		public static final Product ASPIRIN = ofDetailed(Detailed.ASPIRIN);
@@ -125,6 +164,7 @@ public class TestFactory {
 		public static final Product ANAPEN = ofDetailed(Detailed.ANAPEN);
 		public static final Product ASEPTODERM = ofDetailed(Detailed.ASEPTODERM);
 		public static final Product PREDNISOLUT = ofDetailed(Detailed.PREDNISOLUT);
+		public static final Product DOLOMO = ofDetailed(Detailed.DOLOMO);
 
 		private static Product ofDetailed(DetailedProduct product) {
 			return new Product(product.getId(), product.getName());
@@ -158,6 +198,7 @@ public class TestFactory {
 			 */
 			public static final EdqmConcept CONVENTIONAL = new EdqmConcept("0047", "Conventional",
 					RELEASE_CHARACTERISTIC);
+			public static final EdqmConcept TABLET = new EdqmConcept("0069", "Tablet", BASIC_DOSE_FORM);
 		}
 
 		/**
@@ -186,6 +227,10 @@ public class TestFactory {
 		public static final EdqmPharmaceuticalDoseForm POWDER_FOR_SOLUTION_FOR_INJECTION =
 				new EdqmPharmaceuticalDoseForm("11205000", "Powder for solution for injection",
 						Set.of(Characteristics.POWDER, Characteristics.CONVENTIONAL, Characteristics.PARENTERAL));
+
+		public static final EdqmPharmaceuticalDoseForm TABLET =
+				new EdqmPharmaceuticalDoseForm("10219000", "Tablet",
+						Set.of(Characteristics.TABLET, Characteristics.CONVENTIONAL, Characteristics.ORAL));
 	}
 
 
@@ -206,7 +251,8 @@ public class TestFactory {
 					Products.DORMICUM_5,
 					Products.ANAPEN,
 					Products.ASEPTODERM,
-					Products.PREDNISOLUT
+					Products.PREDNISOLUT,
+					Products.DOLOMO
 			));
 
 	/**
@@ -220,7 +266,8 @@ public class TestFactory {
 					Substances.EPINEPHRINE,
 					Substances.WATER,
 					Substances.PREDNISOLONE,
-					Substances.PREDNISOLONE_HYDROGENSUCCINATE
+					Substances.PREDNISOLONE_HYDROGENSUCCINATE,
+					Substances.PARACETAMOL
 			));
 
 	/**
@@ -233,11 +280,13 @@ public class TestFactory {
 			DoseForms.Characteristics.PARENTERAL,
 			DoseForms.Characteristics.ORAL,
 			DoseForms.Characteristics.CONVENTIONAL,
+			DoseForms.Characteristics.TABLET,
 			DoseForms.GRANULES,
 			DoseForms.SOLUTION_FOR_INJECTION_OR_INFUSION,
 			DoseForms.SOLUTION_FOR_INJECTION,
-			DoseForms.POWDER_FOR_SOLUTION_FOR_INJECTION
-	));
+			DoseForms.POWDER_FOR_SOLUTION_FOR_INJECTION,
+			DoseForms.TABLET
+			));
 
 	/**
 	 * Provider which provides all substances and products given in this test factory.
@@ -261,20 +310,23 @@ public class TestFactory {
 	public static final Amount SAMPLE_AMOUNT_3 = new Amount(BigDecimal.ONE, null);
 	public static final Amount SAMPLE_AMOUNT_4 = new Amount(BigDecimal.ONE, "mg");
 	public static final Amount SAMPLE_AMOUNT_5 = new Amount(new BigDecimal(500), "ug");
-	public static final AmountRange SAMPLE_AMOUNT_RANGE = new AmountRange(new BigDecimal("1.4"), new BigDecimal("1.6"), "mg");
+	public static final AmountRange SAMPLE_AMOUNT_RANGE = new AmountRange(new BigDecimal("1.4"), new BigDecimal("1.6"),
+			"mg");
 
 	@SafeVarargs
 	private static <S, T extends Identifiable> BaseProvider<S, T> join(BaseProvider<S, ? extends T>... providers) {
 		Stream<MappedIdentifier<S, ? extends T>> stream = Stream.empty();
-		for (BaseProvider<S, ? extends T> provider: providers) {
+		for (BaseProvider<S, ? extends T> provider : providers) {
 			stream = Stream.concat(stream, provider.getIdentifiers());
 		}
-		return BaseProvider.ofIdentifiers(stream.map(m -> new MappedIdentifier<S, T>(m.trackableIdentifier, m.target)).toList());
+		return BaseProvider.ofIdentifiers(
+				stream.map(m -> new MappedIdentifier<S, T>(m.trackableIdentifier, m.target)).toList());
 	}
 
 	/**
 	 * Builds a {@link DetailedProduct} with default values set for all unspecified fields.
-	 * @param id the id of the product
+	 *
+	 * @param id    the id of the product
 	 * @param drugs the drugs the product consists of
 	 * @return a corresponding {@link DetailedProduct}
 	 */
@@ -284,7 +336,8 @@ public class TestFactory {
 
 	/**
 	 * Builds a drug, with default values used for the dose form.
-	 * @param drugAmount the drug amount
+	 *
+	 * @param drugAmount  the drug amount
 	 * @param ingredients the drug's ingredients
 	 * @return a corresponding {@link Drug}
 	 */

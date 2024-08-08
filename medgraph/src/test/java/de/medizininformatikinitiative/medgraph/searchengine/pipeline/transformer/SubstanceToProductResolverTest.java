@@ -32,8 +32,8 @@ public class SubstanceToProductResolverTest extends Neo4jTest {
 	@ParameterizedTest(name = "batchMode: {0}")
 	@ValueSource(booleans = {false, true})
 	public void resolveSingleProduct(boolean batchMode) {
-		Transformation<Product> t = transform(TestFactory.Substances.ACETYLSALICYLIC_ACID, batchMode);
-		assertEquals(List.of(TestFactory.Products.ASPIRIN), t.result());
+		Transformation<Product> t = transform(TestFactory.Substances.EPINEPHRINE, batchMode);
+		assertEquals(List.of(TestFactory.Products.ANAPEN), t.result());
 	}
 
 	@ParameterizedTest(name = "batchMode: {0}")
@@ -60,6 +60,16 @@ public class SubstanceToProductResolverTest extends Neo4jTest {
 		assertEquals(Collections.emptyList(), t.result());
 	}
 
+	@ParameterizedTest(name = "batchMode: {0}")
+	@ValueSource(booleans = {false, true})
+	public void resolveProductWhereSubstanceIsIncludedTwice(boolean batchMode) {
+		// Dolomo contains two drugs, both of which contain ASS. Despite that, it may only exist once in the result!
+		Transformation<Product> t = transform(TestFactory.Substances.ACETYLSALICYLIC_ACID, batchMode);
+		List<Product> result = t.result();
+		assertEquals(2, result.size());
+		assertEqualsIgnoreOrder(List.of(TestFactory.Products.ASPIRIN, TestFactory.Products.DOLOMO), result);
+	}
+
 	@Test
 	public void batchTransform() {
 		List<Transformation<Product>> transformations = sut.batchTransform(
@@ -69,11 +79,15 @@ public class SubstanceToProductResolverTest extends Neo4jTest {
 
 		assertEquals(Set.of(TestFactory.Products.DORMICUM_5, TestFactory.Products.DORMICUM_15),
 				new HashSet<>(transformations.get(0).result()));
-		assertEquals(Set.of(TestFactory.Products.ASPIRIN),
+		assertEquals(Set.of(TestFactory.Products.ASPIRIN, TestFactory.Products.DOLOMO),
 				new HashSet<>(transformations.get(1).result()));
 	}
 
 	private Transformation<Product> transform(Substance matchable, boolean batchMode) {
+		return transform(sut, matchable, batchMode);
+	}
+
+	static Transformation<Product> transform(SubstanceToProductResolver sut, Substance matchable, boolean batchMode) {
 		if (batchMode) {
 			return sut.batchTransform(List.of(matchable), SAMPLE_SEARCH_QUERY).getFirst();
 		} else {
