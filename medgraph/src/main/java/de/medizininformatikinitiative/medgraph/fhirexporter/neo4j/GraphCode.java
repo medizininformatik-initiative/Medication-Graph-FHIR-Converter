@@ -4,6 +4,7 @@ import org.neo4j.driver.types.MapAccessor;
 import org.neo4j.driver.types.MapAccessorWithDefaultValue;
 
 import java.time.LocalDate;
+import java.util.Objects;
 
 /**
  * @author Markus Budeus
@@ -41,5 +42,20 @@ public class GraphCode {
 
 	public String getSystemVersion() {
 		return systemVersion;
+	}
+
+	@Override
+	public boolean equals(Object object) {
+		if (this == object) return true;
+		if (object == null || getClass() != object.getClass()) return false;
+		GraphCode graphCode = (GraphCode) object;
+		return Objects.equals(code, graphCode.code) && Objects.equals(systemUri,
+				graphCode.systemUri) && Objects.equals(systemDate,
+				graphCode.systemDate) && Objects.equals(systemVersion, graphCode.systemVersion);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(code, systemUri, systemDate, systemVersion);
 	}
 }
