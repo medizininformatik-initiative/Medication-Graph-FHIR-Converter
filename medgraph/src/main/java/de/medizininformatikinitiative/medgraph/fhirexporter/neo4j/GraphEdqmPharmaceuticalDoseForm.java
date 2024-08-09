@@ -4,6 +4,8 @@ import org.jetbrains.annotations.Nullable;
 import org.neo4j.driver.Value;
 import org.neo4j.driver.types.MapAccessorWithDefaultValue;
 
+import java.util.Objects;
+
 /**
  * @author Markus Budeus
  */
@@ -31,5 +33,19 @@ public class GraphEdqmPharmaceuticalDoseForm extends GraphCode {
 
 	public String getName() {
 		return name;
+	}
+
+	@Override
+	public boolean equals(Object object) {
+		if (this == object) return true;
+		if (object == null || getClass() != object.getClass()) return false;
+		if (!super.equals(object)) return false;
+		GraphEdqmPharmaceuticalDoseForm that = (GraphEdqmPharmaceuticalDoseForm) object;
+		return Objects.equals(name, that.name);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(super.hashCode(), name);
 	}
 }
