@@ -20,7 +20,10 @@ import static de.medizininformatikinitiative.medgraph.common.EDQM.*;
  */
 public class TestFactory {
 
-	public static class Substances {
+	/**
+	 * Declares all substances found in the default test database.
+	 */
+	public static class Substances implements Catalogue {
 		public static final Substance ACETYLSALICYLIC_ACID = new Substance(1, "Acetylsalicylsäure");
 		public static final Substance MIDAZOLAM = new Substance(2, "Midazolam");
 		public static final Substance MIDAZOLAM_HYDROCHLORIDE = new Substance(3, "Midazolam hydrochlorid");
@@ -32,9 +35,15 @@ public class TestFactory {
 		public static final Substance PARACETAMOL = new Substance(8, "Paracetamol");
 	}
 
-	public static class Products {
+	/**
+	 * Declares all products found in the default test database.
+	 */
+	public static class Products implements Catalogue {
 
-		public static class Detailed {
+		/**
+		 * Declares all of the products as {@link DetailedProduct}-instances.
+		 */
+		public static class Detailed implements Catalogue {
 
 			/**
 			 * Aspirin oral granlues, containing 500mg of acetylsalicylic acid.
@@ -171,8 +180,15 @@ public class TestFactory {
 		}
 	}
 
-	public static class DoseForms {
-		public static class Characteristics {
+	/**
+	 * Declares all EDQM Standard Terms concepts found in the default test database. Note that direct members of this
+	 * class are only the pharmaceutical dose forms.
+	 */
+	public static class DoseForms implements Catalogue {
+		/**
+		 * Declares the EDQM Standard Terms characteristics found in the default test database.
+		 */
+		public static class Characteristics implements Catalogue {
 			/**
 			 * Powder as a basic dose form.
 			 */
@@ -245,48 +261,22 @@ public class TestFactory {
 	 * Provider which provides all products given in this test factory.
 	 */
 	public static final BaseProvider<String, Product> PRODUCTS_PROVIDER = BaseProvider.ofIdentifiableNames(
-			Set.of(
-					Products.ASPIRIN,
-					Products.DORMICUM_15,
-					Products.DORMICUM_5,
-					Products.ANAPEN,
-					Products.ASEPTODERM,
-					Products.PREDNISOLUT,
-					Products.DOLOMO
-			));
+			Catalogue.getAllFields(Products.class, false)
+	);
 
 	/**
 	 * Provider which provides all substances given in this test factory.
 	 */
 	public static final BaseProvider<String, Substance> SUBSTANCES_PROVIDER = BaseProvider.ofIdentifiableNames(
-			Set.of(
-					Substances.ACETYLSALICYLIC_ACID,
-					Substances.MIDAZOLAM,
-					Substances.MIDAZOLAM_HYDROCHLORIDE,
-					Substances.EPINEPHRINE,
-					Substances.WATER,
-					Substances.PREDNISOLONE,
-					Substances.PREDNISOLONE_HYDROGENSUCCINATE,
-					Substances.PARACETAMOL
-			));
+			Catalogue.getAllFields(Substances.class, false)
+	);
 
 	/**
 	 * Provider which provides all EDQM dose forms and characteristics given in this test factory.
 	 */
-	public static final BaseProvider<String, EdqmConcept> EDQM_PROVIDER = BaseProvider.ofIdentifiableNames(Set.of(
-			DoseForms.Characteristics.POWDER,
-			DoseForms.Characteristics.SOLUTION,
-			DoseForms.Characteristics.GRANULES,
-			DoseForms.Characteristics.PARENTERAL,
-			DoseForms.Characteristics.ORAL,
-			DoseForms.Characteristics.CONVENTIONAL,
-			DoseForms.Characteristics.TABLET,
-			DoseForms.GRANULES,
-			DoseForms.SOLUTION_FOR_INJECTION_OR_INFUSION,
-			DoseForms.SOLUTION_FOR_INJECTION,
-			DoseForms.POWDER_FOR_SOLUTION_FOR_INJECTION,
-			DoseForms.TABLET
-			));
+	public static final BaseProvider<String, EdqmConcept> EDQM_PROVIDER = BaseProvider.ofIdentifiableNames(
+			Catalogue.getAllFields(DoseForms.class, true)
+	);
 
 	/**
 	 * Provider which provides all substances and products given in this test factory.

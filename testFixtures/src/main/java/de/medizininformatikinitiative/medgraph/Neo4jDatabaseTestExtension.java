@@ -158,10 +158,8 @@ public class Neo4jDatabaseTestExtension implements BeforeAllCallback, BeforeEach
 				.stripIndent()
 				.replace("\"true\"", "true") // Arrows.app does not detect booleans...
 				.replace("\"false\"", "false")
-				.replaceAll("code: ([\\d]+)", "code: \"$1\"") // codes are always strings...
 				.replaceAll("mass(From|To): ([\\d]+)", "mass$1: \"$2\"") // massFrom and massTo shall always be strings
-				.replaceAll("amount: ([\\d]+)", "amount: \"$1\"") // Same goes for amount
-				.replaceAll("mmiCode: ([\\d]+)", "mmiCode: \"$1\"") // and mmiCode
+				.replaceAll("(code|amount|mmiCode|streetNumber|postalCode): ([\\d]+)", "$1: \"$2\"") // Same goes for code, amount, mmiCode and more
 				;
 	}
 

@@ -14,6 +14,7 @@ import org.neo4j.driver.Session;
  * <p>
  * Note while the session is not shared between implementations of this class, the connection and the database is!
  * Write access to the test database is therefore highly discouraged, as it may cause other unrelated tests to fail.
+ * Extend {@link ReadWriteNeo4jTest} if you want to write to the database.
  *
  * @author Markus Budeus
  */

@@ -45,8 +45,8 @@ public class Neo4jSubstanceExporter extends Neo4jExporter<GraphSubstance> {
 		Result result = session.run(new Query(
 				"MATCH (s:" + SUBSTANCE_LABEL + ") " +
 						"OPTIONAL MATCH (cs:" + CODING_SYSTEM_LABEL + ")<-[:" + BELONGS_TO_CODING_SYSTEM_LABEL + "]-(c:" + CODE_LABEL + ")-->(s) " +
-						"WITH s, collect(" + GraphUtil.groupCodingSystem("c", "cs") + ") AS codes" +
-						"RETURN s.name, s.mmiId, codes"
+						"WITH s, collect(" + GraphUtil.groupCodingSystem("c", "cs") + ") AS codes " +
+						"RETURN s.mmiId, s.name, codes"
 		));
 
 		return result.stream().map(GraphSubstance::new);
