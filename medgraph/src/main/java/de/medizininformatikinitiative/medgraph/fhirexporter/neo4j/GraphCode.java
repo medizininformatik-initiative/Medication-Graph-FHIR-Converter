@@ -21,6 +21,13 @@ public class GraphCode {
 	private final LocalDate systemDate;
 	private final String systemVersion;
 
+	public GraphCode(String code, String systemUri, LocalDate systemDate, String systemVersion) {
+		this.code = code;
+		this.systemUri = systemUri;
+		this.systemDate = systemDate;
+		this.systemVersion = systemVersion;
+	}
+
 	public GraphCode(MapAccessorWithDefaultValue mapAccessor) {
 		this.code = mapAccessor.get(CODE).asString();
 		this.systemUri = mapAccessor.get(SYSTEM_URI).asString(null);
@@ -57,5 +64,15 @@ public class GraphCode {
 	@Override
 	public int hashCode() {
 		return Objects.hash(code, systemUri, systemDate, systemVersion);
+	}
+
+	@Override
+	public String toString() {
+		return "GraphCode{" +
+				"code='" + code + '\'' +
+				", systemUri='" + systemUri + '\'' +
+				", systemDate=" + systemDate +
+				", systemVersion='" + systemVersion + '\'' +
+				'}';
 	}
 }

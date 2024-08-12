@@ -1,21 +1,12 @@
 package de.medizininformatikinitiative.medgraph.fhirexporter.exporter;
 
-import de.medizininformatikinitiative.medgraph.fhirexporter.fhir.CodeableConcept;
-import de.medizininformatikinitiative.medgraph.fhirexporter.fhir.Coding;
-import de.medizininformatikinitiative.medgraph.fhirexporter.fhir.Identifier;
-import de.medizininformatikinitiative.medgraph.fhirexporter.fhir.medication.Meta;
 import de.medizininformatikinitiative.medgraph.fhirexporter.fhir.substance.Substance;
 import de.medizininformatikinitiative.medgraph.fhirexporter.neo4j.GraphSubstance;
 import de.medizininformatikinitiative.medgraph.fhirexporter.neo4j.GraphUtil;
-import de.medizininformatikinitiative.medgraph.graphdbpopulator.CodingSystem;
 import org.neo4j.driver.Query;
-import org.neo4j.driver.Record;
 import org.neo4j.driver.Result;
 import org.neo4j.driver.Session;
 
-import java.time.LocalDate;
-import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Stream;
 
 import static de.medizininformatikinitiative.medgraph.common.db.DatabaseDefinitions.*;
