@@ -1,8 +1,10 @@
 package de.medizininformatikinitiative.medgraph.fhirexporter.neo4j;
 
+import de.medizininformatikinitiative.medgraph.searchengine.tools.Util;
 import org.neo4j.driver.types.MapAccessorWithDefaultValue;
 
 import java.util.List;
+import java.util.Objects;
 
 /**
  * @author Markus Budeus
@@ -22,7 +24,7 @@ public record GraphProduct(String name, long mmiId, Long companyMmiId, String co
 		this(
 				value.get(PRODUCT_NAME, (String) null),
 				value.get(MMI_ID).asLong(),
-				(Long) value.get(COMPANY_MMI_ID, (Long) 0L),
+				(Long) value.get(COMPANY_MMI_ID, (Long) null),
 				value.get(COMPANY_NAME, (String) null),
 				value.get(PRODUCT_CODES).asList(GraphCode::new),
 				value.get(DRUGS).asList(GraphDrug::new),
@@ -30,4 +32,19 @@ public record GraphProduct(String name, long mmiId, Long companyMmiId, String co
 		);
 	}
 
+	@Override
+	public boolean equals(Object object) {
+		if (this == object) return true;
+		if (object == null || getClass() != object.getClass()) return false;
+		GraphProduct that = (GraphProduct) object;
+		return mmiId == that.mmiId && Objects.equals(name, that.name) && Objects.equals(companyMmiId,
+				that.companyMmiId) && Objects.equals(companyName, that.companyName) && Util.equalsIgnoreOrder(
+				codes, that.codes) && Util.equalsIgnoreOrder(drugs, that.drugs) && Util.equalsIgnoreOrder(packages,
+				that.packages);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(mmiId);
+	}
 }

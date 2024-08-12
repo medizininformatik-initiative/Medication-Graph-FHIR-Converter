@@ -1,9 +1,13 @@
 package de.medizininformatikinitiative.medgraph.fhirexporter.neo4j;
 
+import de.medizininformatikinitiative.medgraph.searchengine.tools.Util;
 import org.neo4j.driver.types.MapAccessorWithDefaultValue;
 
 import java.math.BigDecimal;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
+import java.util.Set;
 
 /**
  * @author Markus Budeus
@@ -31,4 +35,20 @@ public record GraphDrug(List<GraphIngredient> ingredients, List<GraphAtc> atcCod
 	}
 
 
+	@Override
+	public boolean equals(Object object) {
+		if (this == object) return true;
+		if (object == null || getClass() != object.getClass()) return false;
+		GraphDrug graphDrug = (GraphDrug) object;
+		return Objects.equals(unit, graphDrug.unit) && Objects.equals(amount,
+				graphDrug.amount) && Objects.equals(mmiDoseForm,
+				graphDrug.mmiDoseForm) && Util.equalsIgnoreOrder(atcCodes,
+				graphDrug.atcCodes) && Util.equalsIgnoreOrder(ingredients,
+				graphDrug.ingredients) && Objects.equals(edqmDoseForm, graphDrug.edqmDoseForm);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(mmiDoseForm);
+	}
 }
