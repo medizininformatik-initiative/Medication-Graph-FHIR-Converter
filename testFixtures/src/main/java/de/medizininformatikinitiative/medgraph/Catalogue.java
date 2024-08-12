@@ -13,7 +13,7 @@ import java.util.List;
  *
  * @author Markus Budeus
  */
-interface Catalogue {
+public interface Catalogue {
 
 	/**
 	 * Returns all static final fields associated with the given {@link Catalogue}. Note this requires those fields to

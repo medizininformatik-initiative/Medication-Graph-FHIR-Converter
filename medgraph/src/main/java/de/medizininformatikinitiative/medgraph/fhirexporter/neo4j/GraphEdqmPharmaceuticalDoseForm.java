@@ -4,6 +4,7 @@ import org.jetbrains.annotations.Nullable;
 import org.neo4j.driver.Value;
 import org.neo4j.driver.types.MapAccessorWithDefaultValue;
 
+import java.time.LocalDate;
 import java.util.Objects;
 
 /**
@@ -24,6 +25,12 @@ public class GraphEdqmPharmaceuticalDoseForm extends GraphCode {
 	public static GraphEdqmPharmaceuticalDoseForm from(Value value) {
 		if (value.isNull()) return null;
 		return new GraphEdqmPharmaceuticalDoseForm(value);
+	}
+
+	public GraphEdqmPharmaceuticalDoseForm(String code, String systemUri, LocalDate systemDate,
+	                                       String systemVersion, String name) {
+		super(code, systemUri, systemDate, systemVersion);
+		this.name = name;
 	}
 
 	public GraphEdqmPharmaceuticalDoseForm(MapAccessorWithDefaultValue mapAccessor) {

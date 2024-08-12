@@ -1,5 +1,7 @@
 package de.medizininformatikinitiative.medgraph;
 
+import de.medizininformatikinitiative.medgraph.fhirexporter.neo4j.GraphCode;
+import de.medizininformatikinitiative.medgraph.fhirexporter.neo4j.GraphSubstance;
 import de.medizininformatikinitiative.medgraph.searchengine.model.*;
 import de.medizininformatikinitiative.medgraph.searchengine.model.identifiable.*;
 import de.medizininformatikinitiative.medgraph.searchengine.provider.BaseProvider;
