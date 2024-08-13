@@ -38,6 +38,8 @@ public record GraphAddress(String street, String streetNumber, String postalCode
 			}
 		}
 
+		String country = this.country;
+		if (country == null) country = this.countryCode;
 		fhirAddress.setAddress(new String[]{line}, postalCode, city, country);
 		return fhirAddress;
 	}

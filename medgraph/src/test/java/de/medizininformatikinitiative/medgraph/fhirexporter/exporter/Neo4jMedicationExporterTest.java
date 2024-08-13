@@ -25,12 +25,10 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  */
 public class Neo4jMedicationExporterTest extends Neo4jTest {
 
-	private Neo4jProductExporter sut;
-
 	@ParameterizedTest(name = "allowNoIngredients: {0}")
 	@ValueSource(booleans = {false, true})
 	void export(boolean allowNoIngredients) {
-		sut = new Neo4jProductExporter(session, allowNoIngredients);
+		Neo4jProductExporter sut = new Neo4jProductExporter(session, allowNoIngredients);
 		Set<GraphProduct> products = sut.exportObjects().collect(Collectors.toSet());
 
 		List<Product> allProducts = Catalogue.getAllFields(TestFactory.Products.class, false);

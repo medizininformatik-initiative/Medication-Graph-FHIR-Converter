@@ -13,7 +13,6 @@ public class Ingredient {
 
 	// Extension omitted for now
 	public Reference itemReference;
-	public CodeableConcept itemCodeableConcept;
 	public Boolean isActive;
 	public Ratio strength;
 

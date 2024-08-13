@@ -1,5 +1,6 @@
 package de.medizininformatikinitiative.medgraph.fhirexporter.neo4j;
 
+import de.medizininformatikinitiative.medgraph.fhirexporter.fhir.Coding;
 import org.neo4j.driver.types.MapAccessor;
 import org.neo4j.driver.types.MapAccessorWithDefaultValue;
 
@@ -74,5 +75,17 @@ public class GraphCode {
 				", systemDate=" + systemDate +
 				", systemVersion='" + systemVersion + '\'' +
 				'}';
+	}
+
+	public Coding toCoding() {
+		Coding coding = new Coding();
+		coding.system = systemUri;
+		if (systemVersion == null) {
+			coding.version = GraphUtil.toFhirDate(systemDate);
+		} else {
+			coding.version = systemVersion;
+		}
+		coding.code = code;
+		return coding;
 	}
 }

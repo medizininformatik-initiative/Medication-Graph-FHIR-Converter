@@ -59,8 +59,10 @@ public class FhirAddress {
 				textBuilder.append(city);
 				textBuilder.append("\n");
 			}
-			textBuilder.append(country);
-			textBuilder.append("\n");
+			if (country != null) {
+				textBuilder.append(country);
+				textBuilder.append("\n");
+			}
 		}
 		if (!textBuilder.isEmpty()) {
 			textBuilder.delete(textBuilder.length() - 1, textBuilder.length());
@@ -82,4 +84,19 @@ public class FhirAddress {
 		BOTH
 	}
 
+	public String[] getLine() {
+		return line;
+	}
+
+	public String getPostalCode() {
+		return postalCode;
+	}
+
+	public String getCity() {
+		return city;
+	}
+
+	public String getCountry() {
+		return country;
+	}
 }

@@ -2,6 +2,7 @@ package de.medizininformatikinitiative.medgraph.fhirexporter.neo4j;
 
 import org.neo4j.driver.types.MapAccessorWithDefaultValue;
 
+import java.time.LocalDate;
 import java.util.Objects;
 
 /**
@@ -12,6 +13,12 @@ public class GraphAtc extends GraphCode {
 	public static final String DESCRIPTION = "description";
 
 	private final String description;
+
+	public GraphAtc(String code, String systemUri, LocalDate systemDate, String systemVersion,
+	                String description) {
+		super(code, systemUri, systemDate, systemVersion);
+		this.description = description;
+	}
 
 	public GraphAtc(MapAccessorWithDefaultValue mapAccessor) {
 		super(mapAccessor);

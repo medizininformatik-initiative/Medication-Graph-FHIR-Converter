@@ -1,13 +1,12 @@
 package de.medizininformatikinitiative.medgraph.fhirexporter.neo4j;
 
+import de.medizininformatikinitiative.medgraph.fhirexporter.fhir.medication.Medication;
 import de.medizininformatikinitiative.medgraph.searchengine.tools.Util;
 import org.neo4j.driver.types.MapAccessorWithDefaultValue;
 
 import java.math.BigDecimal;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
-import java.util.Set;
 
 /**
  * @author Markus Budeus
@@ -50,5 +49,9 @@ public record GraphDrug(List<GraphIngredient> ingredients, List<GraphAtc> atcCod
 	@Override
 	public int hashCode() {
 		return Objects.hash(mmiDoseForm);
+	}
+
+	public Medication toMedication() {
+		return null; // TODO
 	}
 }
