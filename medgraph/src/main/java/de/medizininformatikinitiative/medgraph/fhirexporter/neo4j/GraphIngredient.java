@@ -1,5 +1,6 @@
 package de.medizininformatikinitiative.medgraph.fhirexporter.neo4j;
 
+import de.medizininformatikinitiative.medgraph.fhirexporter.fhir.medication.Ingredient;
 import org.neo4j.driver.Value;
 import org.neo4j.driver.types.MapAccessorWithDefaultValue;
 
@@ -27,6 +28,10 @@ public record GraphIngredient(long substanceMmiId, String substanceName, boolean
 				GraphUtil.toBigDecimal(value.get(MASS_TO, (String) null)),
 				GraphUnit.from(value.get(UNIT))
 		);
+	}
+
+	public Ingredient toFhirIngredient() {
+		return null; // TODO
 	}
 
 }
