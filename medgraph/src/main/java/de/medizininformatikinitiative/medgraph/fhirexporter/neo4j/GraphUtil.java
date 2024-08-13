@@ -3,6 +3,8 @@ package de.medizininformatikinitiative.medgraph.fhirexporter.neo4j;
 import org.jetbrains.annotations.Contract;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
 /**
  * Provides utility functions for interpreting the graph database export.
@@ -10,6 +12,8 @@ import java.math.BigDecimal;
  * @author Markus Budeus
  */
 public class GraphUtil {
+
+	private static final DateTimeFormatter FHIR_DATE_FORMATTER = DateTimeFormatter.ISO_LOCAL_DATE;
 
 	/**
 	 * Generates a {@link BigDecimal} from the given string, but replaces commas with dots first.
@@ -46,6 +50,14 @@ public class GraphUtil {
 				GraphCode.SYSTEM_DATE + ":" + codingSystemVariableName + ".date," +
 				GraphCode.SYSTEM_VERSION + ":" + codingSystemVariableName + ".version" +
 				"} ELSE NULL END";
+	}
+
+	/**
+	 * Returns the given date as string in FHIR conformant date style. If you pass null, this function returns null.
+	 */
+	public static String toFhirDate(LocalDate date) {
+		if (date == null) return null;
+		return FHIR_DATE_FORMATTER.format(date);
 	}
 
 }
