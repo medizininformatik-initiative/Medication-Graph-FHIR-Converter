@@ -1,5 +1,8 @@
 package de.medizininformatikinitiative.medgraph.fhirexporter.fhir.organization;
 
+import java.util.Arrays;
+import java.util.Objects;
+
 /**
  * Represents an Address, which is part of a FHIR Organization object.
  *
@@ -98,5 +101,21 @@ public class FhirAddress {
 
 	public String getCountry() {
 		return country;
+	}
+
+	@Override
+	public boolean equals(Object object) {
+		if (this == object) return true;
+		if (object == null || getClass() != object.getClass()) return false;
+		FhirAddress that = (FhirAddress) object;
+		return Objects.equals(use, that.use) && Objects.equals(type,
+				that.type) && Objects.equals(text, that.text) && Objects.deepEquals(line,
+				that.line) && Objects.equals(postalCode, that.postalCode) && Objects.equals(city,
+				that.city) && Objects.equals(country, that.country);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(use, type, text, Arrays.hashCode(line), postalCode, city, country);
 	}
 }

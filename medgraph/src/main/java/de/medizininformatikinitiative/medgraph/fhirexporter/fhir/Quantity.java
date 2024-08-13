@@ -11,10 +11,13 @@ import java.util.Objects;
  */
 public class Quantity implements RatioOrQuantity {
 
+	public static final String UCUM_URI = "http://unitsofmeasure.org";
+	public static final String NEUTRAL_UNIT_CODE = "1";
+
 	public static Quantity one() {
 		Quantity quantity = new Quantity();
-		quantity.code = "1";
-		quantity.system = "http://unitsofmeasure.org";
+		quantity.code = NEUTRAL_UNIT_CODE;
+		quantity.system = UCUM_URI;
 		quantity.value = BigDecimal.ONE;
 		return quantity;
 	}

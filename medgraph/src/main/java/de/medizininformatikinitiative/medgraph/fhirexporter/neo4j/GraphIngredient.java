@@ -1,7 +1,6 @@
 package de.medizininformatikinitiative.medgraph.fhirexporter.neo4j;
 
 import de.medizininformatikinitiative.medgraph.fhirexporter.fhir.medication.Ingredient;
-import org.neo4j.driver.Value;
 import org.neo4j.driver.types.MapAccessorWithDefaultValue;
 
 import java.math.BigDecimal;

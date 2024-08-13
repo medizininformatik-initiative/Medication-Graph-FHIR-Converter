@@ -1,5 +1,6 @@
 package de.medizininformatikinitiative.medgraph.fhirexporter.neo4j;
 
+import de.medizininformatikinitiative.medgraph.fhirexporter.fhir.organization.Organization;
 import org.neo4j.driver.types.MapAccessorWithDefaultValue;
 
 import java.util.List;
@@ -21,6 +22,10 @@ public record GraphOrganization(long mmiId, String name, String shortName, List<
 				value.get(SHORT_NAME, (String) null),
 				value.get(ADDRESSES).asList(GraphAddress::new)
 		);
+	}
+
+	public Organization toFhirOrganization() {
+		return null;
 	}
 
 }
