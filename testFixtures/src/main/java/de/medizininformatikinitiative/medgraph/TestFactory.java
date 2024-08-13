@@ -258,6 +258,10 @@ public class TestFactory {
 		 * The unit milligrams, expressed as {@link GraphUnit}.
 		 */
 		public static final GraphUnit MG = new GraphUnit("mg", "MG", "mg", "mg", "MG", "mg");
+		/**
+		 * "FCC-Einheiten", a unit with no known UCUM equivalent.
+		 */
+		public static final GraphUnit FCC_UNITS = new GraphUnit("FCC-Einheiten", "FCC", "FCC-Einheiten", null, null, "FCC-Einheiten");
 	}
 
 
