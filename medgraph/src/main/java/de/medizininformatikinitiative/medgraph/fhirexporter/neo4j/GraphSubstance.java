@@ -1,5 +1,6 @@
 package de.medizininformatikinitiative.medgraph.fhirexporter.neo4j;
 
+import de.medizininformatikinitiative.medgraph.fhirexporter.fhir.substance.Substance;
 import org.neo4j.driver.Record;
 
 import java.util.List;
@@ -15,6 +16,10 @@ public record GraphSubstance(long mmiId, String name, List<GraphCode> codes) {
 				record.get(1).asString(null),
 				record.get(2).asList(GraphCode::new)
 		);
+	}
+
+	public Substance toFhirSubstance() {
+		return null;
 	}
 
 }

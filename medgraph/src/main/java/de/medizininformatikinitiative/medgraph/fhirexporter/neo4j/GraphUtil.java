@@ -1,10 +1,16 @@
 package de.medizininformatikinitiative.medgraph.fhirexporter.neo4j;
 
+import de.medizininformatikinitiative.medgraph.fhirexporter.fhir.CodeableConcept;
+import de.medizininformatikinitiative.medgraph.fhirexporter.fhir.Coding;
+import de.medizininformatikinitiative.medgraph.fhirexporter.fhir.Quantity;
+import de.medizininformatikinitiative.medgraph.fhirexporter.fhir.Ratio;
 import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.Nullable;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 
 /**
  * Provides utility functions for interpreting the graph database export.
@@ -58,6 +64,84 @@ public class GraphUtil {
 	public static String toFhirDate(LocalDate date) {
 		if (date == null) return null;
 		return FHIR_DATE_FORMATTER.format(date);
+	}
+
+	/**
+	 * Converts the given input masses and unit to a FHIR {@link Ratio}, always using 1 as denominator. If you pass only
+	 * nulls, the returned ratio is null. Otherwise, massFrom must be non-null.
+	 *
+	 * @param massFrom the mass to use as value for the returned ratio
+	 * @param massTo   if only a range for the quantity is known, this is the upper limit of the range
+	 * @param unit     the unit of the quantity, may be null
+	 * @return a {@link Ratio} representing the given inputs or null if all inputs are null
+	 * @throws IllegalArgumentException if massFrom is null but any of the other arguments is non-null or if
+	 * massTo is less than massFrom
+	 */
+	@Nullable
+	@Contract("null, null, null -> null; !null, _, _, -> !null; null, !null, _ -> fail; null, null, !null -> fail")
+	public static Ratio toFhirRatio(@Nullable BigDecimal massFrom, @Nullable BigDecimal massTo,
+	                                @Nullable GraphUnit unit) {
+		Quantity quantity = toFhirQuantity(massFrom, massTo, unit);
+		if (quantity == null) return null;
+		return new Ratio(quantity, Quantity.one());
+	}
+
+
+	/**
+	 * Converts the given input masses and unit to a FHIR {@link Quantity}. If you pass only nulls, the returned
+	 * quantity is null. Otherwise, massFrom must be non-null.
+	 *
+	 * @param massFrom the mass to use as value for the returned quantity
+	 * @param massTo   if only a range for the quantity is known, this is the upper limit of the range
+	 * @param unit     the unit of the quantity, may be null
+	 * @return a {@link Quantity} representing the given inputs or null if all inputs are null
+	 * @throws IllegalArgumentException if massFrom is null but any of the other arguments is non-null or if
+	 * massTo is less than massFrom
+	 */
+	@Nullable
+	@Contract("null, null, null -> null; !null, _, _, -> !null; null, !null, _ -> fail; null, null, !null -> fail")
+	public static Quantity toFhirQuantity(@Nullable BigDecimal massFrom, @Nullable BigDecimal massTo,
+	                                      @Nullable GraphUnit unit) {
+		if (massFrom == null) {
+			if (massTo != null || unit != null)
+				throw new IllegalArgumentException("If massTo or unit is not null, massFrom must also be non-null!");
+			return null;
+		}
+
+		Quantity quantity = new Quantity();
+		quantity.value = massFrom;
+		quantity.setComparator(Quantity.Comparator.EXACT);
+		if (massTo != null) {
+			int relative = massFrom.compareTo(massTo);
+			if (relative < 0) {
+				quantity.setComparator(Quantity.Comparator.GREATER_OR_EQUAL);
+			} else if (relative > 0) {
+				throw new IllegalArgumentException("MassFrom ("+massFrom+") is greater than massTo ("+massTo+")!");
+			}
+		}
+
+		if (unit != null) {
+			quantity.unit = unit.print();
+			if (unit.ucumCs() != null) {
+				quantity.code = unit.ucumCs();
+				quantity.system = Quantity.UCUM_URI;
+			}
+		}
+		return quantity;
+	}
+
+	/**
+	 * Returns a new {@link CodeableConcept} which captures all the given codes.
+	 */
+	public static CodeableConcept toCodeableConcept(List<GraphCode> codes) {
+		CodeableConcept concept = new CodeableConcept();
+		concept.coding = new Coding[codes.size()];
+
+		for (int i = 0; i < codes.size(); i++) {
+			concept.coding[i] = codes.get(i).toCoding();
+		}
+
+		return concept;
 	}
 
 }
