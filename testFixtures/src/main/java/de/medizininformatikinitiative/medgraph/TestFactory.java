@@ -1,6 +1,5 @@
 package de.medizininformatikinitiative.medgraph;
 
-import de.medizininformatikinitiative.medgraph.fhirexporter.neo4j.GraphUnit;
 import de.medizininformatikinitiative.medgraph.searchengine.model.*;
 import de.medizininformatikinitiative.medgraph.searchengine.model.identifiable.*;
 import de.medizininformatikinitiative.medgraph.searchengine.provider.BaseProvider;
@@ -248,20 +247,6 @@ public class TestFactory {
 		public static final EdqmPharmaceuticalDoseForm TABLET =
 				new EdqmPharmaceuticalDoseForm("10219000", "Tablet",
 						Set.of(Characteristics.TABLET, Characteristics.CONVENTIONAL, Characteristics.ORAL));
-	}
-
-	/**
-	 * Typical {@link GraphUnit}-instances.
-	 */
-	public static final class GraphUnits implements Catalogue {
-		/**
-		 * The unit milligrams, expressed as {@link GraphUnit}.
-		 */
-		public static final GraphUnit MG = new GraphUnit("mg", "MG", "mg", "mg", "MG", "mg");
-		/**
-		 * "FCC-Einheiten", a unit with no known UCUM equivalent.
-		 */
-		public static final GraphUnit FCC_UNITS = new GraphUnit("FCC-Einheiten", "FCC", "FCC-Einheiten", null, null, "FCC-Einheiten");
 	}
 
 

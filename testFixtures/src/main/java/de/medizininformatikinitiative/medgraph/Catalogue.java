@@ -16,6 +16,13 @@ import java.util.List;
 public interface Catalogue {
 
 	/**
+	 * Equivalent to calling {@link #getAllFields(Class, boolean)} while exluding declared classes.
+	 */
+	static <T> List<T> getAllFields(Class<? extends Catalogue> catalogue) {
+		return getAllFields(catalogue, false);
+	}
+
+	/**
 	 * Returns all static final fields associated with the given {@link Catalogue}. Note this requires those fields to
 	 * have a type which is compatible with the specified generic return type.
 	 *
