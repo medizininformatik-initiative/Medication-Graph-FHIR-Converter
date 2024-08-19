@@ -9,8 +9,8 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 
-import static de.medizininformatikinitiative.medgraph.TestFactory.GraphUnits.FCC_UNITS;
-import static de.medizininformatikinitiative.medgraph.TestFactory.GraphUnits.MG;
+import static de.medizininformatikinitiative.medgraph.FhirExportTestFactory.GraphUnits.FCC_UNITS;
+import static de.medizininformatikinitiative.medgraph.FhirExportTestFactory.GraphUnits.MG;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**

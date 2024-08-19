@@ -613,7 +613,7 @@ public class Neo4jMedicationExporter extends Neo4jExporter<Medication> {
 
 		private boolean isUcumCompliant(Ratio ratio) {
 			if (ratio == null) return true;
-			boolean result = UCUM_SYSTEM.equals(ratio.numerator.system) && UCUM_SYSTEM.equals(ratio.denominator.system);
+			boolean result = UCUM_SYSTEM.equals(ratio.numerator().system) && UCUM_SYSTEM.equals(ratio.denominator().system);
 			if (result) {
 				ucumCompliantRatios.incrementAndGet();
 			} else {
