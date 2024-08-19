@@ -1,5 +1,6 @@
 package de.medizininformatikinitiative.medgraph.fhirexporter.neo4j;
 
+import de.medizininformatikinitiative.medgraph.fhirexporter.fhir.medication.Medication;
 import de.medizininformatikinitiative.medgraph.searchengine.tools.Util;
 import org.neo4j.driver.types.MapAccessorWithDefaultValue;
 
@@ -47,4 +48,9 @@ public record GraphProduct(String name, long mmiId, Long companyMmiId, String co
 	public int hashCode() {
 		return Objects.hash(mmiId);
 	}
+
+	public List<Medication> toFhirMedications() {
+		return null; // TODO
+	}
+
 }

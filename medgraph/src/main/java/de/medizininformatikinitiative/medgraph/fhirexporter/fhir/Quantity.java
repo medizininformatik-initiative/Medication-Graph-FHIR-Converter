@@ -124,4 +124,18 @@ public class Quantity implements RatioOrQuantity {
 		else return Comparator.byValue(comparator);
 	}
 
+	@Override
+	public boolean equals(Object object) {
+		if (this == object) return true;
+		if (object == null || getClass() != object.getClass()) return false;
+		Quantity quantity = (Quantity) object;
+		return Objects.equals(value, quantity.value) && Objects.equals(comparator,
+				quantity.comparator) && Objects.equals(unit, quantity.unit) && Objects.equals(system,
+				quantity.system) && Objects.equals(code, quantity.code);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(value, comparator, unit, system, code);
+	}
 }

@@ -5,17 +5,12 @@ package de.medizininformatikinitiative.medgraph.fhirexporter.fhir;
  *
  * @author Markus Budeus
  */
-public class Ratio implements RatioOrQuantity {
+public record Ratio(Quantity numerator, Quantity denominator) implements RatioOrQuantity {
 
-	public final Quantity numerator;
-	public final Quantity denominator;
-
-	public Ratio(Quantity numerator, Quantity denominator) {
+	public Ratio {
 		if (numerator == null || denominator == null) {
 			throw new NullPointerException("The numerator and denominator may not be null!");
 		}
-		this.numerator = numerator;
-		this.denominator = denominator;
 	}
 
 	@Override
