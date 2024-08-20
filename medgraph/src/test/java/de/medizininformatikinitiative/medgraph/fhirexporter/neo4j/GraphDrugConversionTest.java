@@ -34,10 +34,9 @@ public class GraphDrugConversionTest extends UnitTest {
 		assertEquals(GraphUtil.toFhirRatio(graphDrug.amount(), null, graphDrug.unit()), medication.amount);
 
 		if (graphDrug.edqmDoseForm() != null) {
-			assertEquals(new Coding[] { graphDrug.edqmDoseForm().toCoding() }, medication.form.coding);
+			assertArrayEquals(new Coding[] { graphDrug.edqmDoseForm().toCoding() }, medication.form.coding);
 		} else if (graphDrug.mmiDoseForm() != null) {
-			assertEquals(1, medication.form.coding.length);
-			assertEquals(graphDrug.mmiDoseForm(), medication.form.coding[0].code);
+			assertEquals(graphDrug.mmiDoseForm(), medication.form.text);
 		}
 	}
 
@@ -73,7 +72,7 @@ public class GraphDrugConversionTest extends UnitTest {
 		assertArrayEquals(new Ingredient[] { fhirIngredient1, fhirIngredient2 }, medication.ingredient);
 		assertNull(medication.manufacturer);
 		assertEquals(GraphUtil.toFhirRatio(new BigDecimal("2.5"), null, FhirExportTestFactory.GraphUnits.MG), medication.amount);
-		assertEquals(new Coding[] { doseFormCoding }, medication.form.coding);
+		assertArrayEquals(new Coding[] { doseFormCoding }, medication.form.coding);
 	}
 
 
@@ -105,8 +104,7 @@ public class GraphDrugConversionTest extends UnitTest {
 		assertArrayEquals(new Ingredient[] { fhirIngredient1, fhirIngredient2 }, medication.ingredient);
 		assertNull(medication.manufacturer);
 		assertEquals(GraphUtil.toFhirRatio(new BigDecimal("2.5"), null, FhirExportTestFactory.GraphUnits.MG), medication.amount);
-		assertEquals(1, medication.form.coding.length);
-		assertEquals("Zum Einnehmen", medication.form.coding[0].code);
+		assertEquals("Zum Einnehmen", medication.form.text);
 	}
 
 	static Stream<GraphDrug> factoryGraphDrugs() {

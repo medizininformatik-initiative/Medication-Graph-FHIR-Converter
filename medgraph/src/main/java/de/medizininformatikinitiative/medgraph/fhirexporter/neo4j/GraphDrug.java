@@ -1,5 +1,9 @@
 package de.medizininformatikinitiative.medgraph.fhirexporter.neo4j;
 
+import de.medizininformatikinitiative.medgraph.fhirexporter.fhir.CodeableConcept;
+import de.medizininformatikinitiative.medgraph.fhirexporter.fhir.Coding;
+import de.medizininformatikinitiative.medgraph.fhirexporter.fhir.Status;
+import de.medizininformatikinitiative.medgraph.fhirexporter.fhir.medication.Ingredient;
 import de.medizininformatikinitiative.medgraph.fhirexporter.fhir.medication.Medication;
 import de.medizininformatikinitiative.medgraph.searchengine.tools.Util;
 import org.neo4j.driver.types.MapAccessorWithDefaultValue;
@@ -52,6 +56,21 @@ public record GraphDrug(List<GraphIngredient> ingredients, List<GraphAtc> atcCod
 	}
 
 	public Medication toMedication() {
-		return null; // TODO
+		Medication medication = new Medication();
+
+		if (edqmDoseForm != null) {
+			medication.form = new CodeableConcept();
+			medication.form.coding = new Coding[] { edqmDoseForm.toCoding() };
+			medication.form.text = edqmDoseForm.getName();
+		} else if (mmiDoseForm != null) {
+			medication.form = new CodeableConcept();
+			medication.form.text = mmiDoseForm;
+		}
+
+		medication.ingredient = ingredients.stream().map(GraphIngredient::toFhirIngredient).toList().toArray(new Ingredient[0]);
+		medication.amount = GraphUtil.toFhirRatio(amount, null, unit);
+		medication.code = GraphUtil.toCodeableConcept(atcCodes);
+		medication.setStatus(Status.ACTIVE);
+		return medication;
 	}
 }

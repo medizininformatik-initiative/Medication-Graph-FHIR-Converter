@@ -31,7 +31,7 @@ public class GraphSubstanceConversionTest extends UnitTest {
 		Substance fhirSubstance = graphSubstance.toFhirSubstance();
 
 		assertNotNull(fhirSubstance);
-		assertArrayEquals(new Identifier[] { Identifier.fromSubstanceMmiId(17L) }, fhirSubstance.identifier);
+		assertArrayEquals(new Identifier[] { Identifier.fromSubstanceMmiId(12L) }, fhirSubstance.identifier);
 		assertArrayEquals(GraphUtil.toCodeableConcept(List.of(code1, code2)).coding, fhirSubstance.code.coding);
 		assertEquals("Flumazenil", fhirSubstance.description);
 	}

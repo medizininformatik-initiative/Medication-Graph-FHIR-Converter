@@ -1,5 +1,7 @@
 package de.medizininformatikinitiative.medgraph.fhirexporter.fhir;
 
+import java.util.Objects;
+
 /**
  * This class is an implementation of the "Basismodul Medikation (2023)"'s Identifier, which is part of some other objects.
  *
@@ -81,4 +83,26 @@ public class Identifier {
 		}
 	}
 
+	@Override
+	public boolean equals(Object object) {
+		if (this == object) return true;
+		if (object == null || getClass() != object.getClass()) return false;
+		Identifier that = (Identifier) object;
+		return Objects.equals(use, that.use) && Objects.equals(type,
+				that.type) && Objects.equals(system, that.system) && Objects.equals(value,
+				that.value) && Objects.equals(notice, that.notice);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(system, value);
+	}
+
+	@Override
+	public String toString() {
+		return "Identifier{" +
+				", system='" + system + '\'' +
+				", value='" + value + '\'' +
+				'}';
+	}
 }
