@@ -20,8 +20,8 @@ public class GraphOrganizationConversionTest extends UnitTest {
 		GraphAddress address = new GraphAddress("Street", "1", "0141", "Kingston", null, null);
 		GraphOrganization organization = new GraphOrganization(
 				17L,
-				"John Lennon Inc.",
 				"John J. L. Lennon Inc.",
+				"John Lennon Inc.",
 				List.of(address)
 		);
 

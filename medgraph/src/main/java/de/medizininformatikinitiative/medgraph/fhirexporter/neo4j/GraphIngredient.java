@@ -1,6 +1,7 @@
 package de.medizininformatikinitiative.medgraph.fhirexporter.neo4j;
 
 import de.medizininformatikinitiative.medgraph.fhirexporter.fhir.medication.Ingredient;
+import de.medizininformatikinitiative.medgraph.fhirexporter.fhir.substance.SubstanceReference;
 import org.neo4j.driver.types.MapAccessorWithDefaultValue;
 
 import java.math.BigDecimal;
@@ -30,7 +31,11 @@ public record GraphIngredient(long substanceMmiId, String substanceName, boolean
 	}
 
 	public Ingredient toFhirIngredient() {
-		return null; // TODO
+		Ingredient ingredient = new Ingredient();
+		ingredient.itemReference = new SubstanceReference(substanceMmiId, substanceName);
+		ingredient.strength = GraphUtil.toFhirRatio(massFrom, massTo, unit);
+		ingredient.isActive = isActive;
+		return ingredient;
 	}
 
 }

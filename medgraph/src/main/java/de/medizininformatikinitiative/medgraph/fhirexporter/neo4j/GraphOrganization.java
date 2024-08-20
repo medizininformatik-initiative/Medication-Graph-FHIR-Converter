@@ -1,5 +1,7 @@
 package de.medizininformatikinitiative.medgraph.fhirexporter.neo4j;
 
+import de.medizininformatikinitiative.medgraph.fhirexporter.fhir.Identifier;
+import de.medizininformatikinitiative.medgraph.fhirexporter.fhir.organization.FhirAddress;
 import de.medizininformatikinitiative.medgraph.fhirexporter.fhir.organization.Organization;
 import org.neo4j.driver.types.MapAccessorWithDefaultValue;
 
@@ -25,7 +27,17 @@ public record GraphOrganization(long mmiId, String name, String shortName, List<
 	}
 
 	public Organization toFhirOrganization() {
-		return null;
+		Organization organization = new Organization();
+		organization.active = true;
+		organization.name = name;
+		if (name == null) {
+			organization.name = shortName;
+		} else if (shortName != null) {
+			organization.alias = new String[] { shortName };
+		}
+		organization.identifier = new Identifier[] { Identifier.fromOrganizationMmiId(mmiId) };
+		organization.fhirAddresses = addresses.stream().map(GraphAddress::toFhirAddress).toArray(FhirAddress[]::new);
+		return organization;
 	}
 
 }
