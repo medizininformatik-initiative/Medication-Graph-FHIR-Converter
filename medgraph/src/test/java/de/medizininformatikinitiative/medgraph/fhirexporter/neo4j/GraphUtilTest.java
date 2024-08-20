@@ -123,4 +123,22 @@ public class GraphUtilTest extends UnitTest {
 		assertNull(concept.text);
 	}
 
+	@Test
+	void toCodeableConceptNull() {
+		assertNull(GraphUtil.toCodeableConcept(null));
+	}
+
+	@Test
+	void toCodeableConceptWithOneCode() {
+		GraphAtc code = new GraphAtc("54165", "system1", LocalDate.now(), null, "Alcohol");
+
+		CodeableConcept concept = GraphUtil.toCodeableConcept(List.of(
+				code
+		));
+
+		assertEquals(1, concept.coding.length);
+		assertEquals(code.toCoding(), concept.coding[0]);
+		assertEquals("Alcohol", concept.text);
+	}
+
 }

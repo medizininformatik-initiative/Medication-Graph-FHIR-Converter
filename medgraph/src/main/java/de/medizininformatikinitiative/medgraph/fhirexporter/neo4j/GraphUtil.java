@@ -74,8 +74,8 @@ public class GraphUtil {
 	 * @param massTo   if only a range for the quantity is known, this is the upper limit of the range
 	 * @param unit     the unit of the quantity, may be null
 	 * @return a {@link Ratio} representing the given inputs or null if all inputs are null
-	 * @throws IllegalArgumentException if massFrom is null but any of the other arguments is non-null or if
-	 * massTo is less than massFrom
+	 * @throws IllegalArgumentException if massFrom is null but any of the other arguments is non-null or if massTo is
+	 *                                  less than massFrom
 	 */
 	@Nullable
 	@Contract("null, null, null -> null; !null, _, _, -> !null; null, !null, _ -> fail; null, null, !null -> fail")
@@ -95,8 +95,8 @@ public class GraphUtil {
 	 * @param massTo   if only a range for the quantity is known, this is the upper limit of the range
 	 * @param unit     the unit of the quantity, may be null
 	 * @return a {@link Quantity} representing the given inputs or null if all inputs are null
-	 * @throws IllegalArgumentException if massFrom is null but any of the other arguments is non-null or if
-	 * massTo is less than massFrom
+	 * @throws IllegalArgumentException if massFrom is null but any of the other arguments is non-null or if massTo is
+	 *                                  less than massFrom
 	 */
 	@Nullable
 	@Contract("null, null, null -> null; !null, _, _, -> !null; null, !null, _ -> fail; null, null, !null -> fail")
@@ -116,7 +116,8 @@ public class GraphUtil {
 			if (relative < 0) {
 				quantity.setComparator(Quantity.Comparator.GREATER_OR_EQUAL);
 			} else if (relative > 0) {
-				throw new IllegalArgumentException("MassFrom ("+massFrom+") is greater than massTo ("+massTo+")!");
+				throw new IllegalArgumentException(
+						"MassFrom (" + massFrom + ") is greater than massTo (" + massTo + ")!");
 			}
 		}
 
@@ -131,14 +132,22 @@ public class GraphUtil {
 	}
 
 	/**
-	 * Returns a new {@link CodeableConcept} which captures all the given codes.
+	 * Returns a new {@link CodeableConcept} which captures all the given codes. If the list of codes is null, the
+	 * returned object is null. If the list contains exactly one element, that element's corresponding
+	 * {@link Coding#display} is used as {@link CodeableConcept#text}.
 	 */
-	public static CodeableConcept toCodeableConcept(List<GraphCode> codes) {
+	public static CodeableConcept toCodeableConcept(List<? extends GraphCode> codes) {
+		if (codes == null) return null;
+
 		CodeableConcept concept = new CodeableConcept();
 		concept.coding = new Coding[codes.size()];
 
 		for (int i = 0; i < codes.size(); i++) {
 			concept.coding[i] = codes.get(i).toCoding();
+		}
+
+		if (concept.coding.length == 1) {
+			concept.text = concept.coding[0].display;
 		}
 
 		return concept;

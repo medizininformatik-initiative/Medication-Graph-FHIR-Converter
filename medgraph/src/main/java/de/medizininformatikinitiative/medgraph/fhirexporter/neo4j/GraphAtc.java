@@ -1,5 +1,6 @@
 package de.medizininformatikinitiative.medgraph.fhirexporter.neo4j;
 
+import de.medizininformatikinitiative.medgraph.fhirexporter.fhir.Coding;
 import org.neo4j.driver.types.MapAccessorWithDefaultValue;
 
 import java.time.LocalDate;
@@ -40,5 +41,12 @@ public class GraphAtc extends GraphCode {
 	@Override
 	public int hashCode() {
 		return Objects.hashCode(description);
+	}
+
+	@Override
+	public Coding toCoding() {
+		Coding coding = super.toCoding();
+		coding.display = description;
+		return coding;
 	}
 }
