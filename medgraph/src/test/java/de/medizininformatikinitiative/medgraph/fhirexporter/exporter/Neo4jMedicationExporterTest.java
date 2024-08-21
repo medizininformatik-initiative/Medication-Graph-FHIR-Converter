@@ -56,7 +56,8 @@ public class Neo4jMedicationExporterTest extends Neo4jTest {
 				true,
 				BigDecimal.valueOf(250),
 				null,
-				mg
+				mg,
+				null
 		);
 		GraphIngredient ingredient2 = new GraphIngredient(
 				8,
@@ -64,7 +65,8 @@ public class Neo4jMedicationExporterTest extends Neo4jTest {
 				true,
 				BigDecimal.valueOf(250),
 				null,
-				mg
+				mg,
+				null
 		);
 
 		GraphEdqmPharmaceuticalDoseForm doseForm = new GraphEdqmPharmaceuticalDoseForm(
