@@ -31,7 +31,7 @@ public class GraphOrganizationConversionTest extends UnitTest {
 		assertArrayEquals(new Identifier[] { Identifier.fromOrganizationMmiId(17L) }, fhirOrganization.identifier);
 		assertEquals("John J. L. Lennon Inc.", fhirOrganization.name);
 		assertArrayEquals(new String[] { "John Lennon Inc." }, fhirOrganization.alias);
-		assertArrayEquals(new FhirAddress[] { address.toFhirAddress() }, fhirOrganization.fhirAddresses);
+		assertArrayEquals(new FhirAddress[] { address.toFhirAddress() }, fhirOrganization.address);
 	}
 
 }

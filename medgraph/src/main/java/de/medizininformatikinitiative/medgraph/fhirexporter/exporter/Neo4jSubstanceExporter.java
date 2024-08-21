@@ -43,9 +43,4 @@ public class Neo4jSubstanceExporter extends Neo4jExporter<GraphSubstance> {
 		return result.stream().map(GraphSubstance::new);
 	}
 
-	@Override
-	protected String createObjectCountQuery() {
-		return "MATCH (s:" + SUBSTANCE_LABEL + ") RETURN COUNT(s)";
-	}
-
 }

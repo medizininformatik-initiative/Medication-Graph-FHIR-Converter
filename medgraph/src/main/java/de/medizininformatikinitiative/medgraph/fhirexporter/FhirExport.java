@@ -4,16 +4,18 @@ import de.medizininformatikinitiative.medgraph.common.logging.Level;
 import de.medizininformatikinitiative.medgraph.common.logging.LogManager;
 import de.medizininformatikinitiative.medgraph.common.logging.Logger;
 import de.medizininformatikinitiative.medgraph.common.mvc.NamedProgressableImpl;
-import de.medizininformatikinitiative.medgraph.fhirexporter.json.GsonExporter;
-import de.medizininformatikinitiative.medgraph.fhirexporter.json.JsonExporter;
-import de.medizininformatikinitiative.medgraph.fhirexporter.exporter_old.Neo4jExporter;
-import de.medizininformatikinitiative.medgraph.fhirexporter.exporter_old.Neo4jMedicationExporter;
-import de.medizininformatikinitiative.medgraph.fhirexporter.exporter_old.Neo4jOrganizationExporter;
-import de.medizininformatikinitiative.medgraph.fhirexporter.exporter_old.Neo4jSubstanceExporter;
+import de.medizininformatikinitiative.medgraph.fhirexporter.exporter.GraphFhirExportSource;
+import de.medizininformatikinitiative.medgraph.fhirexporter.exporter.Neo4jOrganizationExporter;
+import de.medizininformatikinitiative.medgraph.fhirexporter.exporter.Neo4jProductExporter;
+import de.medizininformatikinitiative.medgraph.fhirexporter.exporter.Neo4jSubstanceExporter;
 import de.medizininformatikinitiative.medgraph.fhirexporter.fhir.FhirResource;
 import de.medizininformatikinitiative.medgraph.fhirexporter.fhir.medication.Medication;
 import de.medizininformatikinitiative.medgraph.fhirexporter.fhir.organization.Organization;
 import de.medizininformatikinitiative.medgraph.fhirexporter.fhir.substance.Substance;
+import de.medizininformatikinitiative.medgraph.fhirexporter.json.GsonExporter;
+import de.medizininformatikinitiative.medgraph.fhirexporter.json.JsonExporter;
+import de.medizininformatikinitiative.medgraph.fhirexporter.neo4j.GraphOrganization;
+import de.medizininformatikinitiative.medgraph.fhirexporter.neo4j.GraphSubstance;
 import org.neo4j.driver.Session;
 
 import java.io.File;
@@ -21,9 +23,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.Set;
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 
 /**
@@ -36,14 +37,11 @@ public class FhirExport extends NamedProgressableImpl {
 
 	private static final Logger logger = LogManager.getLogger(FhirExport.class);
 
-	private static final int ITERATIONS_PER_PROGRESS_UPDATE = 200;
-
 	public static final String SUBSTANCE_OUT_PATH = "substance";
 	public static final String MEDICATION_OUT_PATH = "medication";
 	public static final String ORGANIZATION_OUT_PATH = "organisation";
 
 	private final Path outPath;
-	private final AtomicInteger atomicProgress = new AtomicInteger();
 
 	/**
 	 * Prepares a new FHIR export.
@@ -59,9 +57,14 @@ public class FhirExport extends NamedProgressableImpl {
 	 * Runs the FHIR export pipeline using the given Neo4j database session.
 	 */
 	public void doExport(Session session) throws IOException {
-		Neo4jOrganizationExporter organizationExporter = new Neo4jOrganizationExporter(session);
-		Neo4jSubstanceExporter substanceExporter = new Neo4jSubstanceExporter(session, false);
-		Neo4jMedicationExporter medicationExporter = new Neo4jMedicationExporter(session, false, false);
+		FhirExportSource<Organization> organizationExporter = new GraphFhirExportSource<>(
+				new Neo4jOrganizationExporter(session),
+				s -> s.map(GraphOrganization::toFhirOrganization));
+		FhirExportSource<Substance> substanceExporter = new GraphFhirExportSource<>(new Neo4jSubstanceExporter(session),
+				s -> s.map(GraphSubstance::toFhirSubstance));
+		FhirExportSource<Medication> medicationExporter = new GraphFhirExportSource<>(
+				new Neo4jProductExporter(session, false),
+				s -> s.flatMap(p -> p.toFhirMedications().stream()));
 
 		doExport(organizationExporter, substanceExporter, medicationExporter);
 	}
@@ -70,54 +73,46 @@ public class FhirExport extends NamedProgressableImpl {
 	 * Runs the FHIR export pipeline using the given exporter instances. External calls into this method should be made
 	 * for testing only.
 	 */
-	void doExport(Neo4jOrganizationExporter organizationExporter,
-	              Neo4jSubstanceExporter substanceExporter,
-	              Neo4jMedicationExporter medicationExporter) throws IOException {
-		setTaskStack("Gathering statistics...");
-		setLocalProgress(0);
-
-		int organizationObjects = organizationExporter.countObjects();
-		int substanceObjects = substanceExporter.countObjects();
-		int medicationObjects = medicationExporter.countObjects();
-
-		setMaxProgress(organizationObjects + substanceObjects + medicationObjects);
+	void doExport(FhirExportSource<Organization> organizationExporter,
+	              FhirExportSource<Substance> substanceExporter,
+	              FhirExportSource<Medication> medicationExporter) throws IOException {
+		setProgress(0);
+		setMaxProgress(3);
 
 		setTaskStack("Exporting Organizations...");
 		exportToJsonFiles(organizationExporter, outPath.resolve(ORGANIZATION_OUT_PATH),
 				this::constructOrganizationFilename);
-		setLocalProgress(organizationObjects);
+		setProgress(1);
 
 		setTaskStack("Exporting Substances...");
 		exportToJsonFiles(substanceExporter, outPath.resolve(SUBSTANCE_OUT_PATH), this::constructSubstanceFilename);
-		setLocalProgress(organizationObjects + substanceObjects);
+		setProgress(2);
 
 		setTaskStack("Exporting Medications...");
 		exportToJsonFiles(medicationExporter, outPath.resolve(MEDICATION_OUT_PATH), this::constructMedicationFilename);
-		setLocalProgress(organizationObjects + substanceObjects + medicationObjects);
+		setProgress(3);
 	}
 
 	/**
-	 * Exports all objects using the specified exporter and writes them into .json-files. Also updates the progress
-	 * every {@link #ITERATIONS_PER_PROGRESS_UPDATE} objects. However, the progress is incremented by one for each
-	 * object.
+	 * Exports all objects using the specified exporter and writes them into .json-files.
 	 *
 	 * @param exporter         the exporter whose objects to convert to json
 	 * @param filenameProvider a function which provides a filename for each exported object - the .json-suffix will be
 	 *                         appended automatically!
 	 */
-	private <T extends FhirResource> void exportToJsonFiles(Neo4jExporter<T> exporter, Path outPath,
+	private <T extends FhirResource> void exportToJsonFiles(FhirExportSource<T> exporter, Path outPath,
 	                                                        Function<T, String> filenameProvider) throws IOException {
 		if (!outPath.toFile().exists())
 			Files.createDirectory(outPath);
 
 		JsonExporter jsonExporter = new GsonExporter(outPath);
-		final Set<String> filenamesUsed = new HashSet<>();
-		AtomicInteger iteration = new AtomicInteger(0);
-		exporter.exportObjects().forEach(object -> {
+		final Set<String> filenamesUsed = ConcurrentHashMap.newKeySet();
+		exporter.export().parallel().forEach(object -> {
 			try {
 				String filename = filenameProvider.apply(object);
 				if (!filenamesUsed.add(filename)) {
-					throw new IllegalArgumentException("A filename was generated twice: " + filename);
+					logger.log(Level.ERROR, "A filename was generated twice: " + filename);
+					return;
 				}
 				filename = filename.replace(File.separatorChar, '-');
 
@@ -125,10 +120,6 @@ public class FhirExport extends NamedProgressableImpl {
 			} catch (IOException e) {
 				logger.log(Level.ERROR, "Failed to export FHIR object \"" + Arrays.toString(object.identifier) + "\"",
 						e);
-			} finally {
-				if (iteration.addAndGet(1) % ITERATIONS_PER_PROGRESS_UPDATE == 0) {
-					addLocalProgress(ITERATIONS_PER_PROGRESS_UPDATE);
-				}
 			}
 		});
 	}
@@ -148,15 +139,6 @@ public class FhirExport extends NamedProgressableImpl {
 		return sb.toString();
 	}
 
-	private void setLocalProgress(int progress) {
-		atomicProgress.set(progress);
-		this.setProgress(progress);
-	}
-
-	private void addLocalProgress(int progress) {
-		this.setProgress(atomicProgress.addAndGet(progress));
-	}
-
 	private String constructOrganizationFilename(Organization organization) {
 		String name;
 		if (organization.alias != null && organization.alias.length > 0) {
@@ -166,7 +148,7 @@ public class FhirExport extends NamedProgressableImpl {
 	}
 
 	private String constructSubstanceFilename(Substance substance) {
-		return combine(substance.identifier[0].value, substance.description);
+		return combine(substance.identifier[0].value, substance.code.text);
 	}
 
 	private String constructMedicationFilename(Medication medication) {

@@ -18,7 +18,7 @@ public class Substance extends FhirResource {
 	 * A code (or set of codes) that identify this substance.
 	 * May not be null.
 	 */
-	public CodeableConcept code;
+	public CodeableConcept code = new CodeableConcept();
 	public String description;
 	// Instance omitted
 	// Ingredient omitted

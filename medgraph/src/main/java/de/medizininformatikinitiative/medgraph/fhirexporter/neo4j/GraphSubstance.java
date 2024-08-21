@@ -22,8 +22,8 @@ public record GraphSubstance(long mmiId, String name, List<GraphCode> codes) {
 	public Substance toFhirSubstance() {
 		Substance substance = new Substance();
 		substance.identifier = new Identifier[] { Identifier.fromSubstanceMmiId(mmiId) };
-		substance.description = name;
 		substance.code = GraphUtil.toCodeableConcept(codes);
+		substance.code.text = name;
 		return substance;
 	}
 

@@ -33,7 +33,7 @@ public class GraphSubstanceConversionTest extends UnitTest {
 		assertNotNull(fhirSubstance);
 		assertArrayEquals(new Identifier[] { Identifier.fromSubstanceMmiId(12L) }, fhirSubstance.identifier);
 		assertArrayEquals(GraphUtil.toCodeableConcept(List.of(code1, code2)).coding, fhirSubstance.code.coding);
-		assertEquals("Flumazenil", fhirSubstance.description);
+		assertEquals("Flumazenil", fhirSubstance.code.text);
 	}
 
 }

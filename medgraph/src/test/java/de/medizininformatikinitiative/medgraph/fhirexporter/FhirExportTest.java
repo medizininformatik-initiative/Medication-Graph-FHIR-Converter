@@ -2,9 +2,6 @@ package de.medizininformatikinitiative.medgraph.fhirexporter;
 
 import de.medizininformatikinitiative.medgraph.TempDirectoryTestExtension;
 import de.medizininformatikinitiative.medgraph.UnitTest;
-import de.medizininformatikinitiative.medgraph.fhirexporter.exporter_old.Neo4jMedicationExporter;
-import de.medizininformatikinitiative.medgraph.fhirexporter.exporter_old.Neo4jOrganizationExporter;
-import de.medizininformatikinitiative.medgraph.fhirexporter.exporter_old.Neo4jSubstanceExporter;
 import de.medizininformatikinitiative.medgraph.fhirexporter.fhir.FhirResource;
 import de.medizininformatikinitiative.medgraph.fhirexporter.fhir.Identifier;
 import de.medizininformatikinitiative.medgraph.fhirexporter.fhir.medication.Medication;
@@ -32,22 +29,19 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class FhirExportTest extends UnitTest {
 
 	@Mock
-	private Neo4jMedicationExporter medicationExporter;
+	private FhirExportSource<Medication> medicationExporter;
 	@Mock
-	private Neo4jSubstanceExporter substanceExporter;
+	private FhirExportSource<Substance> substanceExporter;
 	@Mock
-	private Neo4jOrganizationExporter organizationExporter;
+	private FhirExportSource<Organization> organizationExporter;
 
 	private FhirExport sut;
 
 	@BeforeEach
 	void setUp(Path path) {
-		Mockito.doReturn(10).when(organizationExporter).countObjects();
-		Mockito.doReturn(10).when(substanceExporter).countObjects();
-		Mockito.doReturn(10).when(medicationExporter).countObjects();
-		Mockito.doReturn(toStream(Organization::new, 10)).when(organizationExporter).exportObjects();
-		Mockito.doReturn(toStream(Substance::new, 10)).when(substanceExporter).exportObjects();
-		Mockito.doReturn(toStream(Medication::new, 10)).when(medicationExporter).exportObjects();
+		Mockito.doReturn(toStream(Organization::new, 10)).when(organizationExporter).export();
+		Mockito.doReturn(toStream(Substance::new, 10)).when(substanceExporter).export();
+		Mockito.doReturn(toStream(Medication::new, 10)).when(medicationExporter).export();
 
 		sut = new FhirExport(path);
 	}
@@ -67,22 +61,22 @@ public class FhirExportTest extends UnitTest {
 		Mockito.doAnswer(req -> {
 			exportsBeforeOrganization.set(sut.getProgress());
 			return toStream(Organization::new, 10);
-		}).when(organizationExporter).exportObjects();
+		}).when(organizationExporter).export();
 		Mockito.doAnswer(req -> {
 			exportsBeforeSubstance.set(sut.getProgress());
 			return toStream(Substance::new, 10);
-		}).when(substanceExporter).exportObjects();
+		}).when(substanceExporter).export();
 		Mockito.doAnswer(req -> {
 			exportsBeforeMedication.set(sut.getProgress());
 			return toStream(Medication::new, 10);
-		}).when(medicationExporter).exportObjects();
+		}).when(medicationExporter).export();
 
 		sut.doExport(organizationExporter, substanceExporter, medicationExporter);
 
 		assertEquals(0, exportsBeforeOrganization.get());
-		assertEquals(10, exportsBeforeSubstance.get());
-		assertEquals(20, exportsBeforeMedication.get());
-		assertEquals(30, sut.getProgress());
+		assertEquals(1, exportsBeforeSubstance.get());
+		assertEquals(2, exportsBeforeMedication.get());
+		assertEquals(3, sut.getProgress());
 	}
 
 	private <T extends FhirResource> Stream<T> toStream(Supplier<T> generator, int limit) {
