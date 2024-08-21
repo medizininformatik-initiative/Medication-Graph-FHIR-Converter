@@ -9,6 +9,7 @@ import de.medizininformatikinitiative.medgraph.searchengine.tools.Util;
 import org.neo4j.driver.types.MapAccessorWithDefaultValue;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -67,7 +68,14 @@ public record GraphDrug(List<GraphIngredient> ingredients, List<GraphAtc> atcCod
 			medication.form.text = mmiDoseForm;
 		}
 
-		medication.ingredient = ingredients.stream().map(GraphIngredient::toFhirIngredient).toList().toArray(new Ingredient[0]);
+		int nextIngredientId = 1;
+		List<Ingredient> fhirIngredients = new ArrayList<>(ingredients.size() * 2);
+		for (GraphIngredient gi: ingredients) {
+			List<Ingredient> converted = gi.toFhirIngredientsWithCorrespoindingIngredient(nextIngredientId);
+			nextIngredientId += converted.size();
+			fhirIngredients.addAll(converted);
+		}
+		medication.ingredient = fhirIngredients.toArray(new Ingredient[0]);
 		medication.amount = GraphUtil.toFhirRatio(amount, null, unit);
 		medication.code = GraphUtil.toCodeableConcept(atcCodes);
 		medication.setStatus(Status.ACTIVE);

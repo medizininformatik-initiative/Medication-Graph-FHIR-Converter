@@ -11,10 +11,12 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -29,7 +31,15 @@ public class GraphDrugConversionTest extends UnitTest {
 		Medication medication = graphDrug.toMedication();
 
 		assertNotNull(medication);
-		assertArrayEquals(graphDrug.ingredients().stream().map(GraphIngredient::toFhirIngredient).toArray(), medication.ingredient);
+
+		List<Ingredient> expectedFhirIngredients = new ArrayList<>();
+		int id = 1;
+		for (GraphIngredient gi : graphDrug.ingredients()) {
+			List<Ingredient> converted = gi.toFhirIngredientsWithCorrespoindingIngredient(id);
+			id += converted.size();
+			expectedFhirIngredients.addAll(converted);
+		}
+		assertArrayEquals(expectedFhirIngredients.toArray(), medication.ingredient);
 		assertNull(medication.manufacturer);
 		assertEquals(GraphUtil.toFhirRatio(graphDrug.amount(), null, graphDrug.unit()), medication.amount);
 
@@ -46,8 +56,8 @@ public class GraphDrugConversionTest extends UnitTest {
 		GraphIngredient ingredient2 = mock();
 		Ingredient fhirIngredient1 = mock();
 		Ingredient fhirIngredient2 = mock();
-		when(ingredient1.toFhirIngredient()).thenReturn(fhirIngredient1);
-		when(ingredient2.toFhirIngredient()).thenReturn(fhirIngredient2);
+		when(ingredient1.toFhirIngredientsWithCorrespoindingIngredient(anyInt())).thenReturn(List.of(fhirIngredient1));
+		when(ingredient2.toFhirIngredientsWithCorrespoindingIngredient(anyInt())).thenReturn(List.of(fhirIngredient2));
 
 		GraphAtc graphAtc = mock();
 		Coding coding = mock();
@@ -82,8 +92,8 @@ public class GraphDrugConversionTest extends UnitTest {
 		GraphIngredient ingredient2 = mock();
 		Ingredient fhirIngredient1 = mock();
 		Ingredient fhirIngredient2 = mock();
-		when(ingredient1.toFhirIngredient()).thenReturn(fhirIngredient1);
-		when(ingredient2.toFhirIngredient()).thenReturn(fhirIngredient2);
+		when(ingredient1.toFhirIngredientsWithCorrespoindingIngredient(anyInt())).thenReturn(List.of(fhirIngredient1));
+		when(ingredient2.toFhirIngredientsWithCorrespoindingIngredient(anyInt())).thenReturn(List.of(fhirIngredient2));
 
 		GraphAtc graphAtc = mock();
 		Coding coding = mock();

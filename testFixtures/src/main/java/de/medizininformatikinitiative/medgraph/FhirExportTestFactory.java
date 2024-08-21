@@ -70,7 +70,8 @@ public class FhirExportTestFactory {
 				true,
 				new BigDecimal("100"),
 				null,
-				GraphUnits.MG
+				GraphUnits.MG,
+				null
 		);
 		public static final GraphIngredient PREDNISOLON = new GraphIngredient(
 				17L,
@@ -78,15 +79,32 @@ public class FhirExportTestFactory {
 				true,
 				new BigDecimal("250"),
 				null,
-				GraphUnits.MG
+				GraphUnits.MG,
+				null
 		);
 		public static final GraphIngredient WATER = new GraphIngredient(
-				148L,
+				149L,
 				"Water",
 				false,
 				new BigDecimal("10"),
 				new BigDecimal("20"),
-				GraphUnits.ML
+				GraphUnits.ML,
+				null
+		);
+		public static final GraphIngredient MIDAZOLAM_HYDROCHLORIDE = new GraphIngredient(
+				148L,
+				"Midazolam hydrochlorid",
+				false,
+				new BigDecimal("5.56"),
+				null,
+				GraphUnits.MG,
+				new SimpleGraphIngredient(
+						150L,
+						"Midazolam hydrochlorid",
+						new BigDecimal("5"),
+						null,
+						GraphUnits.MG
+				)
 		);
 	}
 
@@ -132,6 +150,14 @@ public class FhirExportTestFactory {
 				List.of(),
 				"Dil.",
 				null,
+				null,
+				null
+		);
+		public static final GraphDrug DORMICUM = new GraphDrug(
+				List.of(GraphIngredients.MIDAZOLAM_HYDROCHLORIDE),
+				List.of(),
+				"Injektionslösung",
+				GraphEdqmPharmaceuticalDoseForms.INJECTION,
 				null,
 				null
 		);

@@ -138,4 +138,9 @@ public class Quantity implements RatioOrQuantity {
 	public int hashCode() {
 		return Objects.hash(value, comparator, unit, system, code);
 	}
+
+	@Override
+	public String toString() {
+		return value + (unit != null ? " " + unit : "");
+	}
 }

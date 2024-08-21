@@ -88,13 +88,12 @@ public record GraphProduct(String name, long mmiId, Long companyMmiId, String co
 	private List<Medication> createDrugMedicationsAndApplyAsIngredients(Medication to) {
 		List<Medication> drugMedications = drugs.stream().map(GraphDrug::toMedication).toList();
 
-		drugMedications.forEach(this::applyManufacturer);
-
 		to.ingredient = new Ingredient[drugMedications.size()];
 		for (int i = 0; i < drugMedications.size(); i++) {
 			int childNo = i + 1;
 			Medication drugMedication = drugMedications.get(i);
 			applyManufacturer(drugMedication);
+			drugMedication.code.text = null;
 			drugMedication.identifier = new Identifier[] { Identifier.combinedMedicalProductSubproductIdentifier(mmiId, childNo, companyMmiId)};
 			to.ingredient[i] = new Ingredient();
 			to.ingredient[i].itemReference = new MedicationReference(mmiId, childNo, companyMmiId);
