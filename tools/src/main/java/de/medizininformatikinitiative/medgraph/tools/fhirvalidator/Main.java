@@ -19,10 +19,10 @@ import java.util.regex.Pattern;
  */
 public class Main {
 
-	private static final String USERNAME = "youremail"; // Specify your login data here!
+	private static final String USERNAME = "username"; // Specify your login data here!
 	private static final char[] PASSWORD = "password".toCharArray(); // Specify your login data here!
 
-	private static final Path BASE_PATH = Path.of("output"); // Specify the path to the generated FHIR files here!
+	private static final Path BASE_PATH = Path.of("outpath"); // Specify the path to the generated FHIR files here!
 
 	private static final File MEDICATION_DIR = BASE_PATH.resolve(
 			de.medizininformatikinitiative.medgraph.fhirexporter.FhirExport.MEDICATION_OUT_PATH).toFile();
@@ -38,7 +38,7 @@ public class Main {
 		SimplifierClient client = new SimplifierClient();
 		client.login(USERNAME, PASSWORD);
 
-		Random random = new Random(-78512384677349L);
+		Random random = new Random(-78512385677349L);
 		Set<String> compositeIdentifiers = getCompositeFileIdentifiers();
 		RandomOrderFileSet simpleObjects = new RandomOrderFileSet(MEDICATION_DIR,
 				(dir, name) -> !compositeIdentifiers.contains(getProductIdentifierFromFilename(name)), random);

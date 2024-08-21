@@ -15,7 +15,7 @@ public class Organization extends FhirResource {
 	public String name;
 	public String[] alias = new String[0];
 	// telecom omitted
-	public FhirAddress[] fhirAddresses = new FhirAddress[0];
+	public FhirAddress[] address = new FhirAddress[0];
 	// partOf omitted
 	// contact omitted
 	// endpoint omitted

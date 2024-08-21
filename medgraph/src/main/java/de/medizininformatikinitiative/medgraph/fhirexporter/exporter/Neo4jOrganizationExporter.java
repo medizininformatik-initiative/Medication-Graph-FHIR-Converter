@@ -44,9 +44,4 @@ public class Neo4jOrganizationExporter extends Neo4jExporter<GraphOrganization> 
 		return result.stream().map(GraphOrganization::new);
 	}
 
-	@Override
-	protected String createObjectCountQuery() {
-		return "MATCH (o:" + COMPANY_LABEL + ") RETURN COUNT(o)";
-	}
-
 }
