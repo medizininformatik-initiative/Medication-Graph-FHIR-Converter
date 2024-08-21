@@ -51,50 +51,64 @@ public class Neo4jProductExporter extends Neo4jExporter<GraphProduct> {
 						(allowMedicationsWithoutIngredients ? "OPTIONAL " : "") +
 						"MATCH (d)-[:" + DRUG_CONTAINS_INGREDIENT_LABEL + "]->(i:" + MMI_INGREDIENT_LABEL + ")-[:" + INGREDIENT_IS_SUBSTANCE_LABEL + "]->(s:" + SUBSTANCE_LABEL + ") " +
 						"OPTIONAL MATCH (i)-[:" + INGREDIENT_HAS_UNIT_LABEL + "]->(iu:" + UNIT_LABEL + ") " +
+						"OPTIONAL MATCH (i)-[:" + INGREDIENT_CORRESPONDS_TO_LABEL + "]->(ci:" + INGREDIENT_LABEL + ")-[:" + INGREDIENT_IS_SUBSTANCE_LABEL + "]->(cis:" + SUBSTANCE_LABEL + ") " +
+						"OPTIONAL MATCH (ci)-[:" + INGREDIENT_HAS_UNIT_LABEL + "]->(ciu:" + UNIT_LABEL + ") " +
 						"WITH p, d, df," +
-						"CASE WHEN de IS NOT NULL THEN " + GraphUtil.groupCodingSystem("de", "dfcs", GraphEdqmPharmaceuticalDoseForm.NAME+":de.name") +
+						"CASE WHEN de IS NOT NULL THEN " + GraphUtil.groupCodingSystem("de", "dfcs",
+						GraphEdqmPharmaceuticalDoseForm.NAME + ":de.name") +
 						" ELSE null END AS edqmDoseForm, " +
 						"collect(CASE WHEN s IS NOT NULL THEN {" +
-						GraphIngredient.SUBSTANCE_MMI_ID+ ":s.mmiId," +
-						GraphIngredient.SUBSTANCE_NAME+":s.name," +
-						GraphIngredient.IS_ACTIVE+":i.isActive," +
-						GraphIngredient.MASS_FROM+":i.massFrom," +
-						GraphIngredient.MASS_TO+":i.massTo," +
-						GraphIngredient.UNIT+":iu" +
+						SimpleGraphIngredient.SUBSTANCE_MMI_ID + ":s.mmiId," +
+						SimpleGraphIngredient.SUBSTANCE_NAME + ":s.name," +
+						GraphIngredient.IS_ACTIVE + ":i.isActive," +
+						SimpleGraphIngredient.MASS_FROM + ":i.massFrom," +
+						SimpleGraphIngredient.MASS_TO + ":i.massTo," +
+						SimpleGraphIngredient.UNIT + ":iu," +
+						GraphIngredient.CORRESPONDING_INGREDIENT + ":(" +
+						"CASE WHEN ci IS NOT NULL THEN {" +
+						SimpleGraphIngredient.SUBSTANCE_MMI_ID + ":cis.mmiId," +
+						SimpleGraphIngredient.SUBSTANCE_NAME + ":cis.name," +
+						SimpleGraphIngredient.MASS_FROM + ":ci.massFrom," +
+						SimpleGraphIngredient.MASS_TO + ":ci.massTo," +
+						SimpleGraphIngredient.UNIT + ":ciu" +
+						"} ELSE NULL END" +
+						")" +
 						"} ELSE null END) AS ingredients " +
 						"OPTIONAL MATCH (d)-[:" + DRUG_MATCHES_ATC_CODE_LABEL + "]->(a:" + ATC_LABEL + ")-[:" + BELONGS_TO_CODING_SYSTEM_LABEL + "]->(acs:" + CODING_SYSTEM_LABEL + ") " +
 						"WITH p, d, df, ingredients, " +
-						"collect(" + GraphUtil.groupCodingSystem("a", "acs", GraphAtc.DESCRIPTION+":a.description") +
+						"collect(" + GraphUtil.groupCodingSystem("a", "acs", GraphAtc.DESCRIPTION + ":a.description") +
 						") AS atcCodes, edqmDoseForm " +
 						"OPTIONAL MATCH (d)-[:" + DRUG_HAS_UNIT_LABEL + "]->(du:" + UNIT_LABEL + ") " +
 						"WITH p, collect({" +
-						GraphDrug.INGREDIENTS+":ingredients," +
-						GraphDrug.ATC_CODES+":atcCodes," +
-						GraphDrug.MMI_DOSE_FORM+":df.mmiName," +
-						GraphDrug.EDQM_DOSE_FORM+":edqmDoseForm," +
-						GraphDrug.AMOUNT+":d.amount," +
-						GraphDrug.UNIT+":du" +
+						GraphDrug.INGREDIENTS + ":ingredients," +
+						GraphDrug.ATC_CODES + ":atcCodes," +
+						GraphDrug.MMI_DOSE_FORM + ":df.mmiName," +
+						GraphDrug.EDQM_DOSE_FORM + ":edqmDoseForm," +
+						GraphDrug.AMOUNT + ":d.amount," +
+						GraphDrug.UNIT + ":du" +
 						"}) AS drugs " +
 						"OPTIONAL MATCH (p)<-[:" + PACKAGE_BELONGS_TO_PRODUCT_LABEL + "]-(pk:" + PACKAGE_LABEL + ") " +
 						"OPTIONAL MATCH (pkcs:" + CODING_SYSTEM_LABEL + ")<-[:" + BELONGS_TO_CODING_SYSTEM_LABEL + "]-(pkc:" + CODE_LABEL + ")-->(pk) " +
-						"WITH p, drugs, pk, collect(" + GraphUtil.groupCodingSystem("pkc", "pkcs") + ") as packageCodes " +
+						"WITH p, drugs, pk, collect(" + GraphUtil.groupCodingSystem("pkc",
+						"pkcs") + ") as packageCodes " +
 						"WITH p, drugs, collect({" +
-						GraphPackage.NAME+ ":pk.name," +
-						GraphPackage.AMOUNT+":pk.amount," +
-						GraphPackage.ON_MARKET_DATE+":pk.onMarketDate," +
-						GraphPackage.CODES+":packageCodes" +
+						GraphPackage.NAME + ":pk.name," +
+						GraphPackage.AMOUNT + ":pk.amount," +
+						GraphPackage.ON_MARKET_DATE + ":pk.onMarketDate," +
+						GraphPackage.CODES + ":packageCodes" +
 						"}) as packages " +
 						"OPTIONAL MATCH (pcs:" + CODING_SYSTEM_LABEL + ")<-[:" + BELONGS_TO_CODING_SYSTEM_LABEL + "]-(pc:" + CODE_LABEL + ")-->(p) " +
 						"OPTIONAL MATCH (c:" + COMPANY_LABEL + ")-[:" + MANUFACTURES_LABEL + "]->(p) " +
-						"RETURN p.name AS "+GraphProduct.PRODUCT_NAME+"," +
-						"p.mmiId AS "+GraphProduct.MMI_ID+"," +
-						"c.mmiId AS "+GraphProduct.COMPANY_MMI_ID+"," +
-						"c.name AS "+GraphProduct.COMPANY_NAME+"," +
-						"collect(" + GraphUtil.groupCodingSystem("pc", "pcs") + ") AS "+GraphProduct.PRODUCT_CODES+", " +
-						"drugs AS "+GraphProduct.DRUGS+", " +
-						"packages AS "+GraphProduct.PACKAGES;
+						"RETURN p.name AS " + GraphProduct.PRODUCT_NAME + "," +
+						"p.mmiId AS " + GraphProduct.MMI_ID + "," +
+						"c.mmiId AS " + GraphProduct.COMPANY_MMI_ID + "," +
+						"c.name AS " + GraphProduct.COMPANY_NAME + "," +
+						"collect(" + GraphUtil.groupCodingSystem("pc",
+						"pcs") + ") AS " + GraphProduct.PRODUCT_CODES + ", " +
+						"drugs AS " + GraphProduct.DRUGS + ", " +
+						"packages AS " + GraphProduct.PACKAGES;
 
-		logger.log(Level.DEBUG, "Medication Graph DB Query: "+query);
+		logger.log(Level.DEBUG, "Medication Graph DB Query: " + query);
 
 		return session.run(query).stream().map(GraphProduct::new);
 	}
