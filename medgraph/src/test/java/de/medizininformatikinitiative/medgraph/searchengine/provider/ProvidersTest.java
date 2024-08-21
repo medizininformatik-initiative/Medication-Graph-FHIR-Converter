@@ -30,6 +30,7 @@ public class ProvidersTest extends Neo4jTest {
 	@Test
 	void substancesProvider() {
 		assertEquals(Set.of(
+						new MappedIdentifier<>("Paracetamol", PARACETAMOL),
 						new MappedIdentifier<>("Aspirin", ACETYLSALICYLIC_ACID),
 						new MappedIdentifier<>("Midazolam", MIDAZOLAM),
 						new MappedIdentifier<>("Wasser", WATER),

@@ -36,7 +36,7 @@ public record GraphOrganization(long mmiId, String name, String shortName, List<
 			organization.alias = new String[] { shortName };
 		}
 		organization.identifier = new Identifier[] { Identifier.fromOrganizationMmiId(mmiId) };
-		organization.fhirAddresses = addresses.stream().map(GraphAddress::toFhirAddress).toArray(FhirAddress[]::new);
+		organization.address = addresses.stream().map(GraphAddress::toFhirAddress).toArray(FhirAddress[]::new);
 		return organization;
 	}
 

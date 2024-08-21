@@ -88,8 +88,7 @@ public class SimplifierClient {
 	private HttpRequest buildValidationRequest(String content, String verificationToken) {
 		String request =
 				"Scope.Moniker=MedizininformatikInitiative-ModulMedikation%40current" +
-						"&Scope.DisplayName=MII+-+Basismodul+Medikation+%282023%29" +
-						"" +
+						"&Scope.DisplayName=MII+-+Basismodul+Medikation+%282024%29" +
 						"&FhirVersions=R4" +
 						"&Content=" + urlEncode(content) +
 						"&Validate=Validate" +
