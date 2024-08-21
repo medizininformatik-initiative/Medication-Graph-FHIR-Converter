@@ -5,9 +5,9 @@ is in line with MII/DIFUTURE and TUM/MRI regulations.
 
 It is planned to provide the source code under the MIT license, whereas the binaries will likely be restricted to the Apache 2.0 license requirements, as this is required by included dependencies.
 Sadly, a new licensing issue has popped up on August 1st which requires me to investigate this issue AGAIN :(
-I am currently waiting for confirmation from the MRI and hope I can provide a license and a binary by the mid of August.
+I am currently waiting for confirmation from the MRI ~~and hope I can provide a license and a binary by the mid of August~~ that failed, presumably because everyone's on vacation. I will just stop making assumptions by this point -.-
 
-As of: August 1st, 2024
+As of: August 21st, 2024
 
 ---
 
