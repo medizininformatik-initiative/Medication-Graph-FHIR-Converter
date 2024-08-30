@@ -1,5 +1,8 @@
 package de.medizininformatikinitiative.medgraph.graphdbpopulator;
 
+import de.medizininformatikinitiative.medgraph.common.logging.Level;
+import de.medizininformatikinitiative.medgraph.common.logging.LogManager;
+import de.medizininformatikinitiative.medgraph.common.logging.Logger;
 import de.medizininformatikinitiative.medgraph.graphdbpopulator.loaders.AmiceStoffBezLoader;
 
 import java.io.*;
@@ -16,6 +19,8 @@ import java.util.Objects;
  * @author Markus Budeus
  */
 public class GraphDbPopulatorSupport {
+
+	private static final Logger logger = LogManager.getLogger(GraphDbPopulatorSupport.class);
 
 	/**
 	 * If a line in a CSV file starts with this string, it is considered a comment.
@@ -151,7 +156,7 @@ public class GraphDbPopulatorSupport {
 		if (amiceSourceFile != null) {
 			Path targetAmicePath = neo4jImportPath.resolve(AmiceStoffBezLoader.RAW_DATA_FILE_PATH);
 			try (InputStream stream = new FileInputStream(amiceSourceFile)) {
-				copyAmiceFileAndFixBrokenSynonyms(stream, targetAmicePath);
+				copyAmiceFileAndRemoveBrokenSynonyms(stream, targetAmicePath);
 			}
 		}
 
@@ -213,36 +218,72 @@ public class GraphDbPopulatorSupport {
 
 	/**
 	 * Copies the CSV data from the given input stream to the given target path. Assumes the semicolon is the separator
-	 * sign and checks the last entry in each row for misplaced double quotes.
+	 * sign and checks all lines for misplaced double quotes. Such lines are filtered out.
 	 * <p>
 	 * Also, rewrites the file from ISO-8859-1 encoding to UTF-8.
 	 */
-	private static void copyAmiceFileAndFixBrokenSynonyms(InputStream from, Path to) throws IOException {
+	private static void copyAmiceFileAndRemoveBrokenSynonyms(InputStream from, Path to) throws IOException {
 		try (BufferedReader reader = new BufferedReader(new InputStreamReader(from, StandardCharsets.ISO_8859_1));
 		     BufferedWriter writer = new BufferedWriter(new FileWriter(to.toFile(), StandardCharsets.UTF_8))) {
 			String line;
+			int lineNo = 0;
 			while ((line = reader.readLine()) != null) {
-				int lastSplitterIndex = -1;
-				for (int i = line.length() - 2; i >= 2; i--) {
-					if (line.charAt(i) == ';' && line.charAt(i - 1) == '"' && line.charAt(i + 1) == '"') {
-						lastSplitterIndex = i;
-						break;
-					}
-				}
-				if (lastSplitterIndex != -1) {
-					String lastPart = line.substring(lastSplitterIndex + 1);
-					if (lastPart.startsWith("\"") && lastPart.endsWith("\"")) {
-						lastPart = "\"" + lastPart.substring(1, lastPart.length() - 1)
-						                          .replaceAll("\"", "''") + "\"";
-					}
-					writer.write(line.substring(0, lastSplitterIndex + 1));
-					writer.write(lastPart);
-				} else {
+				lineNo++;
+				if (isValidCsvLine(line)) {
 					writer.write(line);
+					writer.write("\n");
+				} else {
+					logger.log(Level.DEBUG, "Removed line " + lineNo + " from the AMIce file due to invalid quoting.");
 				}
-				writer.write("\n");
 			}
 		}
+	}
+
+	/**
+	 * Returns whether this line has correct CSV quoting, i.e. double quotes are only allowed if they span the full
+	 * length of the corresponding column. Column separator is ';'. In other words, values encased in double quotes may
+	 * not contain double quotes themselves.
+	 * <p>
+	 * For example, this is allowed:<br>
+	 * <code>"ABCD";"TEST"</code><br>
+	 * <code>ABCD;TEST</code><br>
+	 * <code>ABCD;"TE;ST"</code> (in this case, the second column value is <code>TE;ST</code>)<br>
+	 * <code>AB"CD;"TE;ST"</code> (in this case, the first column value is <code>AB"CD</code>)<br>
+	 * But this is not:<br>
+	 * <code>ABCD;"T"EST"</code>
+	 */
+	static boolean isValidCsvLine(String line) {
+		final char separator = ';';
+		boolean startOfColumn = true;
+		boolean quoted = false; // Indicates the current column is quoted
+		int lineLength = line.length();
+
+		for (int i = 0; i < lineLength; i++) {
+			switch (line.charAt(i)) {
+				case '"':
+					if (startOfColumn) quoted = true;
+					else if (quoted) {
+						// This is a quoted column value and we encounter a double quote.
+						// This is only valid if the encountered double quote is the "closing" quote,
+						// meaning the separator or the end of line comes next
+						int next = i+1;
+						if (next >= lineLength || line.charAt(next) == separator) {
+							quoted = false;
+						} else {
+							return false; // Invalid quoting!
+						}
+					}
+					break;
+				case separator:
+					if (!quoted) {
+						startOfColumn = true;
+						continue;
+					}
+			}
+			startOfColumn = false;
+		}
+
+		return !quoted; // If quoted=true, then we have an unclosed quoted column!
 	}
 
 }
