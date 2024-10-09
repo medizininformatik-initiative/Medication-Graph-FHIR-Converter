@@ -1,8 +1,13 @@
 package de.medizininformatikinitiative.medgraph.graphdbpopulator.loaders;
 
+import org.apache.commons.lang3.StringUtils;
 import org.neo4j.driver.Session;
 
+import java.io.File;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
+import java.text.MessageFormat;
 
 /**
  * CsvLoaders use the LOAD CSV function of Cypher to load bulk data.
@@ -44,7 +49,15 @@ public abstract class CsvLoader extends Loader {
 	 * Returns the Path to the CSV file in a way which can be passed to Cypher's LOAD CSV function.
 	 */
 	public String getCypherFilePath() {
-		return "file:///" + path.toString();
+		// First, split the path into its individual element using the OS-local path separator
+		String rawPath = path.toString();
+		String[] elements = rawPath.split(MessageFormat.format("\\{0}", File.separator));
+		// Next, URL-Encode all special characters in each element
+		for (int i = 0; i < elements.length; i++) {
+			elements[i] = URLEncoder.encode(elements[i], StandardCharsets.UTF_8);
+		}
+		// Finally, reconstruct the path, always using '/' as path separator, as Neo4j uses this one regardless of the OS
+		return "file:///" + StringUtils.joinWith("/", (Object[]) elements);
 	}
 
 	/**
