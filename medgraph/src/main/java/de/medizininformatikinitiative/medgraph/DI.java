@@ -1,6 +1,7 @@
 package de.medizininformatikinitiative.medgraph;
 
 import de.medizininformatikinitiative.medgraph.common.db.*;
+import de.medizininformatikinitiative.medgraph.fhirexporter.ExportFilenameGenerator;
 import de.medizininformatikinitiative.medgraph.fhirexporter.FhirExport;
 import de.medizininformatikinitiative.medgraph.fhirexporter.FhirExportFactory;
 import de.medizininformatikinitiative.medgraph.graphdbpopulator.GraphDbPopulation;
@@ -56,6 +57,8 @@ public class DI {
 		ApplicationDatabaseConnectionManager conManager = new ApplicationDatabaseConnectionManager(preferences);
 		dependencyMap.put(ConnectionConfigurationService.class, conManager);
 		dependencyMap.put(DatabaseConnectionService.class, conManager);
+
+		dependencyMap.put(ExportFilenameGenerator.class, new ExportFilenameGenerator());
 	}
 
 	/**

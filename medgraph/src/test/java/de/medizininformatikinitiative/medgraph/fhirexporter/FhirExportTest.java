@@ -15,12 +15,15 @@ import org.mockito.Mockito;
 
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.Random;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.notNull;
 
 /**
  * @author Markus Budeus
@@ -34,6 +37,8 @@ public class FhirExportTest extends UnitTest {
 	private FhirExportSource<Substance> substanceExporter;
 	@Mock
 	private FhirExportSource<Organization> organizationExporter;
+	@Mock
+	private ExportFilenameGenerator filenameGenerator;
 
 	private FhirExport sut;
 
@@ -43,11 +48,15 @@ public class FhirExportTest extends UnitTest {
 		Mockito.doReturn(toStream(Substance::new, 10)).when(substanceExporter).export();
 		Mockito.doReturn(toStream(Medication::new, 10)).when(medicationExporter).export();
 
-		sut = new FhirExport(path);
+		Mockito.when(filenameGenerator.constructFilename((Substance) notNull())).thenAnswer(r -> UUID.randomUUID().toString());
+		Mockito.when(filenameGenerator.constructFilename((Organization) notNull())).thenAnswer(r -> UUID.randomUUID().toString());
+		Mockito.when(filenameGenerator.constructFilename((Medication) notNull())).thenAnswer(r -> UUID.randomUUID().toString());
+
+		sut = new FhirExport(path, filenameGenerator);
 	}
 
 	@Test
-	void exportResult(Path path) throws IOException {
+	void exportResult() throws IOException {
 		sut.doExport(organizationExporter, substanceExporter, medicationExporter);
 		assertEquals(sut.getMaxProgress(), sut.getProgress());
 	}
