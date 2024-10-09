@@ -8,7 +8,9 @@ import java.nio.file.Path;
 import java.util.Comparator;
 
 /**
- * Test extension which supplies a temporary directory for each test. The directory is injected as parameter.
+ * Test extension which supplies a temporary directory for each test. By specifying a {@link File} or {@link Path}
+ * parameter on your test, setup, teardown or related methods, you can access this directory, as it will be injected
+ * with this parameter.
  *
  * @author Markus Budeus
  */

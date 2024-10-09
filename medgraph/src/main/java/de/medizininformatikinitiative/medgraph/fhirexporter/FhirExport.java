@@ -1,5 +1,6 @@
 package de.medizininformatikinitiative.medgraph.fhirexporter;
 
+import de.medizininformatikinitiative.medgraph.DI;
 import de.medizininformatikinitiative.medgraph.common.logging.Level;
 import de.medizininformatikinitiative.medgraph.common.logging.LogManager;
 import de.medizininformatikinitiative.medgraph.common.logging.Logger;
@@ -41,6 +42,8 @@ public class FhirExport extends NamedProgressableImpl {
 	public static final String MEDICATION_OUT_PATH = "medication";
 	public static final String ORGANIZATION_OUT_PATH = "organisation";
 
+	private final ExportFilenameGenerator exportFilenameGenerator;
+
 	private final Path outPath;
 
 	/**
@@ -49,7 +52,12 @@ public class FhirExport extends NamedProgressableImpl {
 	 * @param outPath the path into which to write the FHIR objects
 	 */
 	public FhirExport(Path outPath) {
+		this(outPath, DI.get(ExportFilenameGenerator.class));
+	}
+
+	FhirExport(Path outPath, ExportFilenameGenerator filenameGenerator) {
 		super();
+		this.exportFilenameGenerator = filenameGenerator;
 		this.outPath = outPath;
 	}
 
@@ -81,15 +89,17 @@ public class FhirExport extends NamedProgressableImpl {
 
 		setTaskStack("Exporting Organizations...");
 		exportToJsonFiles(organizationExporter, outPath.resolve(ORGANIZATION_OUT_PATH),
-				this::constructOrganizationFilename);
+				exportFilenameGenerator::constructFilename);
 		setProgress(1);
 
 		setTaskStack("Exporting Substances...");
-		exportToJsonFiles(substanceExporter, outPath.resolve(SUBSTANCE_OUT_PATH), this::constructSubstanceFilename);
+		exportToJsonFiles(substanceExporter, outPath.resolve(SUBSTANCE_OUT_PATH),
+				exportFilenameGenerator::constructFilename);
 		setProgress(2);
 
 		setTaskStack("Exporting Medications...");
-		exportToJsonFiles(medicationExporter, outPath.resolve(MEDICATION_OUT_PATH), this::constructMedicationFilename);
+		exportToJsonFiles(medicationExporter, outPath.resolve(MEDICATION_OUT_PATH),
+				exportFilenameGenerator::constructFilename);
 		setProgress(3);
 	}
 
@@ -122,39 +132,6 @@ public class FhirExport extends NamedProgressableImpl {
 						e);
 			}
 		});
-	}
-
-	private static String combine(String... parts) {
-		StringBuilder sb = new StringBuilder();
-		boolean first = true;
-		for (String s : parts) {
-			if (s != null) {
-				if (first)
-					first = false;
-				else
-					sb.append(" ");
-				sb.append(s);
-			}
-		}
-		return sb.toString();
-	}
-
-	private String constructOrganizationFilename(Organization organization) {
-		String name;
-		if (organization.alias != null && organization.alias.length > 0) {
-			name = organization.alias[0];
-		} else name = organization.name;
-		return combine(organization.identifier[0].value, name);
-	}
-
-	private String constructSubstanceFilename(Substance substance) {
-		return combine(substance.identifier[0].value, substance.code.text);
-	}
-
-	private String constructMedicationFilename(Medication medication) {
-		String text = "unnamed";
-		if (medication.code != null) text = medication.code.text;
-		return combine(medication.identifier[0].value, text);
 	}
 
 }
