@@ -8,6 +8,7 @@ import cafe.adriel.voyager.core.model.rememberScreenModel
 import cafe.adriel.voyager.core.screen.Screen
 import de.medizininformatikinitiative.medgraph.DI
 import de.medizininformatikinitiative.medgraph.common.db.DatabaseConnectionService
+import de.medizininformatikinitiative.medgraph.searchengine.algorithm.ApacheLuceneQueryExecutor
 import de.medizininformatikinitiative.medgraph.searchengine.algorithm.PerSessionQueryManager
 import de.medizininformatikinitiative.medgraph.searchengine.algorithm.WeightedScoringBasedQueryExecutor
 import de.medizininformatikinitiative.medgraph.searchengine.algorithm.querymanagement.*
@@ -38,7 +39,7 @@ class SearchEngineScreen : Screen {
                         )
                     )
                 },
-                ::WeightedScoringBasedQueryExecutor,
+                ::ApacheLuceneQueryExecutor,
                 DI.get(DatabaseConnectionService::class.java).createConnection()
             )
     }

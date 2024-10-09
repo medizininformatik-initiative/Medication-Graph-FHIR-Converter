@@ -271,6 +271,8 @@ class StringRes {
 
         val unknown_origin = "(Origin unknown)"
 
+        val apache_lucene_origin = "Resolved via graph database full-text search."
+
         @JvmStatic
         val pipeline_origin_edit_distance = "---[Edit Distance: {0}]-->"
 

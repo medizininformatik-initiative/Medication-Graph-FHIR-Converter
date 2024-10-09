@@ -7,6 +7,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
+import de.medizininformatikinitiative.medgraph.searchengine.algorithm.initial.ApacheLuceneInitialMatchFinder.ApacheLuceneOrigin
 import de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject.DosageDetectorOrigin
 import de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject.MatchOrigin
 import de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject.Origin
@@ -19,14 +20,15 @@ fun OriginUI(origin: Origin, modifier: Modifier = Modifier) {
     when (origin) {
         is MatchOrigin<*> -> MatchOriginUI(origin, modifier)
         is DosageDetectorOrigin -> DosageDetectorOriginUI(origin, modifier)
-        else -> UnknownOriginUI(modifier)
+        is ApacheLuceneOrigin -> TextOnlyOriginUI(StringRes.apache_lucene_origin, modifier)
+        else -> TextOnlyOriginUI(StringRes.unknown_origin, modifier)
     }
 }
 
 @Composable
-fun UnknownOriginUI(modifier: Modifier = Modifier) {
+fun TextOnlyOriginUI(text: String, modifier: Modifier = Modifier) {
     Card(modifier) {
-        Text(StringRes.unknown_origin, textAlign = TextAlign.Center, modifier = Modifier.fillMaxWidth())
+        Text(text, textAlign = TextAlign.Center, modifier = Modifier.fillMaxWidth())
     }
 }
 
