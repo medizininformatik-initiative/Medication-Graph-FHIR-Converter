@@ -74,7 +74,7 @@ public class GraphIngredientConversionTest extends UnitTest {
 	private void assertWirkstoffRelationTo(String targetIdentifier, Ingredient ingredient) {
 		for (Extension e: ingredient.extension) {
 			if (e instanceof ExtensionWirkstoffRelation ex) {
-				assertEquals(targetIdentifier, ex.extension.valueUri);
+				assertEquals(targetIdentifier, ex.extension[0].valueUri);
 				return;
 			}
 		}
