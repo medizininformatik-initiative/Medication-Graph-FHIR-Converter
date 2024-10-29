@@ -11,7 +11,7 @@ import de.medizininformatikinitiative.medgraph.fhirexporter.fhir.Uri;
  */
 public class MedicationReference extends Reference {
 
-	public static final Uri TYPE = new Uri("http://hl7.org/fhir/StructureDefinition/Medication");
+	public static final Uri TYPE = new Uri("Medication");
 
 	public MedicationReference(long parentMmiId, int childNo, Long organizationMmiId) {
 		super(TYPE);

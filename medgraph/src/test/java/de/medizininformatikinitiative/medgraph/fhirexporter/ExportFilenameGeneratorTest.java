@@ -47,8 +47,8 @@ class ExportFilenameGeneratorTest {
 	void generateOrganizationFilename() {
 		Organization organization = new Organization();
 		organization.identifier = new Identifier[] { Identifier.fromOrganizationMmiId(1786L) };
-		organization.name = "Herberts Medikamente Inc.";
-		assertEquals("1786 Herberts Medikamente Inc.", sut.constructFilename(organization));
+		organization.name = "Herberts Medikamänte Inc.";
+		assertEquals("1786 Herberts Medikamaente Inc.", sut.constructFilename(organization));
 	}
 
 	@Test
@@ -75,5 +75,23 @@ class ExportFilenameGeneratorTest {
 		medication.code = new CodeableConcept();
 		medication.code.text = "Illinoi Kopf-/Halsschmerztabletten <10X>";
 		assertEquals("9999 Illinoi Kopf--Halsschmerztabletten -10X-", sut.constructFilename(medication));
+	}
+
+	@Test
+	void generateFilenameWithIllegalCharacters3() {
+		Medication medication = new Medication();
+		medication.identifier = new Identifier[] { Identifier.fromProductAndOrganizationMmiId(123L, null) };
+		medication.code = new CodeableConcept();
+		medication.code.text = "Hypromellose (5 mPa∙s)";
+		assertEquals("123 Hypromellose (5 mPa-s)", sut.constructFilename(medication));
+	}
+
+	@Test
+	void limitFilenameLength() {
+		Medication medication = new Medication();
+		medication.identifier = new Identifier[] { Identifier.fromProductAndOrganizationMmiId(55342L, null) };
+		medication.code = new CodeableConcept();
+		medication.code.text = "Misch-Extrakt aus Apfelfrüchte, Brennnesselblätter, Curcumawurzel, Haferkraut, Hagebuttenschale, Hibiscusblüte, Ingwerwurzel, Lemongras, Pfefferminzblätter, Spinatblätter, Teufelskrallenwurzel und Zitronenverbenenblätter";
+		assertEquals("55342 Misch-Extrakt aus Apfelfruechte, Brennnessel", sut.constructFilename(medication));
 	}
 }
