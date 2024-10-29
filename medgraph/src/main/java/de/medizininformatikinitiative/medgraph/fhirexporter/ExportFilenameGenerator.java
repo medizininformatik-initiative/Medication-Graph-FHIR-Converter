@@ -90,7 +90,7 @@ public class ExportFilenameGenerator {
 	 * Returns whether the given character is allowed in file names.
 	 */
 	private static boolean isAllowedFilenameChar(char c) {
-		if (c > 127) return false; // Nonascii is not allowed
+		if (c > 126) return false; // Nonascii is not allowed
 		if (c < 32) return false; // Invisible characters (except space) and control characters are not allowed
 		for (char illegal : ILLEGAL_CHARACTERS) {
 			if (c == illegal) return false;
