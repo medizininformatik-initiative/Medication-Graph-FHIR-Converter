@@ -91,4 +91,24 @@ public class GraphAddressConversionTest extends UnitTest {
 		assertEquals("Oliverstreet 27a\n12401 New York\nUnited States", fhirAddress.getText());
 	}
 
+	@Test
+	void sample05() {
+		GraphAddress address = new GraphAddress(
+				null,
+				null,
+				"12401",
+				"New York",
+				"United States",
+				"US"
+		);
+
+		FhirAddress fhirAddress = address.toFhirAddress();
+
+		assertNull(fhirAddress.getLine());
+		assertEquals("12401", fhirAddress.getPostalCode());
+		assertEquals("New York", fhirAddress.getCity());
+		assertEquals("United States", fhirAddress.getCountry());
+		assertEquals("12401 New York\nUnited States", fhirAddress.getText());
+	}
+
 }

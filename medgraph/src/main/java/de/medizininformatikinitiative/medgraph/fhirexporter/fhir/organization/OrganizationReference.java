@@ -12,7 +12,7 @@ import de.medizininformatikinitiative.medgraph.fhirexporter.fhir.Uri;
 public class OrganizationReference extends Reference {
 
 	public OrganizationReference(long manufacturerMmiId, String manufacturerName) {
-		super(new Uri("http://hl7.org/fhir/StructureDefinition/Organization"));
+		super(new Uri("Organization"));
 		this.identifier = Identifier.fromOrganizationMmiId(manufacturerMmiId);
 		this.display = manufacturerName;
 	}

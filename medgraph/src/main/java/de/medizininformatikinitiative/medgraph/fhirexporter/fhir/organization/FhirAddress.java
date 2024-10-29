@@ -45,28 +45,29 @@ public class FhirAddress {
 
 	private void reloadText() {
 		StringBuilder textBuilder = new StringBuilder();
-		if (line != null && line.length != 0) {
+		if (line != null) {
 			for (String cLine : line) {
 				textBuilder.append(cLine);
 				textBuilder.append("\n");
 			}
-			if (postalCode != null) {
-				textBuilder.append(postalCode);
-				if (city != null) {
-					textBuilder.append(" ");
-				} else {
-					textBuilder.append("\n");
-				}
-			}
+		}
+		if (postalCode != null) {
+			textBuilder.append(postalCode);
 			if (city != null) {
-				textBuilder.append(city);
-				textBuilder.append("\n");
-			}
-			if (country != null) {
-				textBuilder.append(country);
+				textBuilder.append(" ");
+			} else {
 				textBuilder.append("\n");
 			}
 		}
+		if (city != null) {
+			textBuilder.append(city);
+			textBuilder.append("\n");
+		}
+		if (country != null) {
+			textBuilder.append(country);
+			textBuilder.append("\n");
+		}
+
 		if (!textBuilder.isEmpty()) {
 			textBuilder.delete(textBuilder.length() - 1, textBuilder.length());
 		}
