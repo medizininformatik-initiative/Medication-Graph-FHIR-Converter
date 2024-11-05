@@ -72,6 +72,8 @@ public class FhirAddress {
 			textBuilder.delete(textBuilder.length() - 1, textBuilder.length());
 		}
 		text = textBuilder.toString();
+
+		if (text.isEmpty()) text = null;
 	}
 
 
