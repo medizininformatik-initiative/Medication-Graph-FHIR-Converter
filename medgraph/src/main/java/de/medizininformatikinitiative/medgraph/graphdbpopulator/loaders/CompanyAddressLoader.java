@@ -2,8 +2,6 @@ package de.medizininformatikinitiative.medgraph.graphdbpopulator.loaders;
 
 import org.neo4j.driver.Session;
 
-import java.io.IOException;
-
 import static de.medizininformatikinitiative.medgraph.common.db.DatabaseDefinitions.*;
 
 /**
@@ -49,6 +47,9 @@ public class CompanyAddressLoader extends CsvLoader {
 						"city: " + nullIfBlank(row(CITY)) +
 						"})"
 		));
+
+		startSubtask("Removing empty entries");
+		executeQuery("MATCH (a:Address) WHERE size(keys(a)) = 1 DETACH DELETE a");
 
 		startSubtask("Assigning correct country codes");
 		// Replace MMI country code by values from catalog
