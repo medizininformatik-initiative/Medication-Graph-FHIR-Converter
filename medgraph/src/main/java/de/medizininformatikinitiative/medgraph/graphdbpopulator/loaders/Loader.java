@@ -4,6 +4,7 @@ import de.medizininformatikinitiative.medgraph.common.logging.Level;
 import de.medizininformatikinitiative.medgraph.common.logging.LogManager;
 import de.medizininformatikinitiative.medgraph.common.logging.Logger;
 import org.neo4j.driver.Query;
+import org.neo4j.driver.Result;
 import org.neo4j.driver.Session;
 
 import java.time.LocalDate;
@@ -113,19 +114,20 @@ public abstract class Loader {
 	 * Executes the given query and returns its result.
 	 *
 	 * @param statement the query to execute
+	 * @return the result of the query or null if {@link #DRY_RUN} is active.
 	 */
-	public void executeQuery(String statement, Object... params) {
+	public Result executeQuery(String statement, Object... params) {
 		if (DRY_RUN) {
 			for (int i = 0; i < params.length; i += 2) {
 				statement = statement.replace("$"+params[i], params[i+1].toString());
 			}
 			System.out.println(statement);
-
+			return null;
 		} else {
 			if (params.length == 0) {
-				session.run(new Query(statement));
+				return session.run(new Query(statement));
 			} else {
-				session.run(new Query(statement, parameters(params)));
+				return session.run(new Query(statement, parameters(params)));
 			}
 		}
 	}
