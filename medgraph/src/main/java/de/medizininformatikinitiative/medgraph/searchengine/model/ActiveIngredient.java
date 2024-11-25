@@ -3,7 +3,8 @@ package de.medizininformatikinitiative.medgraph.searchengine.model;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Objects;
+import java.math.BigDecimal;
+import java.util.*;
 
 /**
  * Represents an active ingredient of a drug.
@@ -23,9 +24,23 @@ public class ActiveIngredient {
 	@Nullable
 	private final AmountOrRange amount;
 
+	/**
+	 * Contains active ingredients that this ingredient effectively amounts to. For example, if this instance represents
+	 * midazolam hydrochloride, the correspondences contain midazolam with a lower dosage. If this instance represents
+	 * sodium flouride, the correspondences may contain the respective amounts of sodium and flouride.
+	 */
+	@NotNull
+	private final Set<ActiveIngredient> correspondences;
+
 	public ActiveIngredient(@NotNull String substanceName, @Nullable AmountOrRange amount) {
+		this(substanceName, amount, new HashSet<>());
+	}
+
+	public ActiveIngredient(@NotNull String substanceName, @Nullable AmountOrRange amount,
+	                        @NotNull Set<ActiveIngredient> correspondences) {
 		this.substanceName = substanceName;
 		this.amount = amount;
+		this.correspondences = correspondences;
 	}
 
 	/**
@@ -44,9 +59,34 @@ public class ActiveIngredient {
 		return amount;
 	}
 
+	/**
+	 * Returns what other ingredients this instance effectively corresponds to.
+	 */
+	public @NotNull Set<ActiveIngredient> getCorrespondences() {
+		return new HashSet<>(correspondences);
+	}
+
 	@Override
 	public String toString() {
-		return amount + " " + substanceName;
+		String prefix = amount + " " + substanceName;
+		if (correspondences.isEmpty()) {
+			return prefix;
+		}
+
+		// Best-effort sorting. Corresponding ingredients with higher masses are listed first.
+		List<ActiveIngredient> orderedCorrespondences = new ArrayList<>(correspondences);
+		orderedCorrespondences.sort(Comparator.<ActiveIngredient, BigDecimal>comparing(c -> {
+			AmountOrRange a = c.amount;
+			if (a == null) {
+				return BigDecimal.ZERO;
+			} else if (a instanceof Amount) {
+				return ((Amount) a).getNumber();
+			} else {
+				return ((AmountRange) a).getFrom();
+			}
+		}).reversed());
+
+		return prefix + "(" + Arrays.toString(orderedCorrespondences.toArray()) + ")";
 	}
 
 	@Override
@@ -54,7 +94,9 @@ public class ActiveIngredient {
 		if (this == o) return true;
 		if (o == null || getClass() != o.getClass()) return false;
 		ActiveIngredient that = (ActiveIngredient) o;
-		return Objects.equals(substanceName, that.substanceName) && Objects.equals(amount, that.amount);
+		return Objects.equals(substanceName, that.substanceName)
+				&& Objects.equals(amount, that.amount)
+				&& correspondences.equals(that.correspondences);
 	}
 
 	@Override

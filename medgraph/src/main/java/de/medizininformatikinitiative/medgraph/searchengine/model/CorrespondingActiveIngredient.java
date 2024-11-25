@@ -8,7 +8,9 @@ import org.jetbrains.annotations.Nullable;
  * hydrochloride which correspond to 15mg of midazolam.
  *
  * @author Markus Budeus
+ * @deprecated Use {@link ActiveIngredient} and specify correspondences. This class is subject to removal.
  */
+@Deprecated()
 public class CorrespondingActiveIngredient extends ActiveIngredient {
 
 	/**
