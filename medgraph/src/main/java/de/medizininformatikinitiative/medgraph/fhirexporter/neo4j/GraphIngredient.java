@@ -4,10 +4,12 @@ import de.medizininformatikinitiative.medgraph.fhirexporter.fhir.Extension;
 import de.medizininformatikinitiative.medgraph.fhirexporter.fhir.medication.ExtensionWirkstoffRelation;
 import de.medizininformatikinitiative.medgraph.fhirexporter.fhir.medication.ExtensionWirkstoffTyp;
 import de.medizininformatikinitiative.medgraph.fhirexporter.fhir.medication.Ingredient;
+import org.jetbrains.annotations.NotNull;
 import org.neo4j.driver.Value;
 import org.neo4j.driver.types.MapAccessorWithDefaultValue;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -17,28 +19,34 @@ import java.util.Objects;
 public class GraphIngredient extends SimpleGraphIngredient {
 
 	private final boolean isActive;
-	private final SimpleGraphIngredient correspondingIngredient;
+	@NotNull
+	private final List<SimpleGraphIngredient> correspondingIngredients;
 
 	public static final String IS_ACTIVE = "isActive";
-	public static final String CORRESPONDING_INGREDIENT = "ci";
+	public static final String CORRESPONDING_INGREDIENTS = "ci";
 
 	public GraphIngredient(MapAccessorWithDefaultValue value) {
 		super(value);
 		this.isActive = value.get(IS_ACTIVE).asBoolean();
 
-		Value ci = value.get(CORRESPONDING_INGREDIENT);
+		Value ci = value.get(CORRESPONDING_INGREDIENTS);
 		if (ci.isNull()) {
-			this.correspondingIngredient = null;
+			this.correspondingIngredients = new ArrayList<>();
 		} else {
-			this.correspondingIngredient = new SimpleGraphIngredient(ci);
+			this.correspondingIngredients = ci.asList(SimpleGraphIngredient::new);
 		}
 	}
 
 	public GraphIngredient(long substanceMmiId, String substanceName, boolean isActive, BigDecimal massFrom,
-	                       BigDecimal massTo, GraphUnit unit, SimpleGraphIngredient correspondingIngredient) {
+	                       BigDecimal massTo, GraphUnit unit) {
+		this(substanceMmiId, substanceName, isActive, massFrom, massTo, unit, new ArrayList<>());
+	}
+
+	public GraphIngredient(long substanceMmiId, String substanceName, boolean isActive, BigDecimal massFrom,
+	                       BigDecimal massTo, GraphUnit unit, @NotNull List<SimpleGraphIngredient> correspondingIngredients) {
 		super(substanceMmiId, substanceName, massFrom, massTo, unit);
 		this.isActive = isActive;
-		this.correspondingIngredient = correspondingIngredient;
+		this.correspondingIngredients = correspondingIngredients;
 	}
 
 	public Ingredient toFhirIngredient() {
@@ -49,10 +57,10 @@ public class GraphIngredient extends SimpleGraphIngredient {
 
 	/**
 	 * Returns a list with one or two ingredients. The first ingredient is always representing this instance directly.
-	 * The second ingredient is only present if a corresponding ingredient exists for this ingredient. In that case, the
-	 * second ingredient represents the corresponding ingredient. The extensions wirkstofftyp and wirkstoffrelation are
-	 * only set when using this function and if a second ingredient exists. All ingredients are also assigned an id as
-	 * follows: "#ing_id" where "id" is the idNumber, counting up. (E.g. "#ing_1")
+	 * The other ingredients are only present if corresponding ingredients exists for this ingredient. In that case, the
+	 * additional ingredient represent the corresponding ingredients. The extensions wirkstofftyp and wirkstoffrelation
+	 * are only set when using this function and if corresponding ingredients exist. All ingredients are also assigned
+	 * an id as follows: "#ing_id" where "id" is the idNumber, counting up. (E.g. "#ing_1")
 	 *
 	 * @param idNumber the first number to assign as ingredient number for the id
 	 */
@@ -60,29 +68,37 @@ public class GraphIngredient extends SimpleGraphIngredient {
 		Ingredient self = toFhirIngredient();
 		self.id = "#ing_" + idNumber;
 
-		if (correspondingIngredient == null) {
+		if (correspondingIngredients.isEmpty()) {
 			return List.of(self);
 		}
 
 		self.extension = new Extension[]{ExtensionWirkstoffTyp.preciseIngredient()};
 
-		Ingredient generalizedIngredient = correspondingIngredient.toBasicFhirIngredient();
-		generalizedIngredient.isActive = isActive;
-		generalizedIngredient.id = "#ing_" + (idNumber + 1);
-		generalizedIngredient.extension = new Extension[]{
-				ExtensionWirkstoffTyp.ingredient(),
-				ExtensionWirkstoffRelation.relatesTo(self.id)
-		};
+		List<Ingredient> resultList = new ArrayList<>(correspondingIngredients.size() + 1);
+		resultList.add(self);
 
-		return List.of(self, generalizedIngredient);
+		for (SimpleGraphIngredient generalizedGraphIngredient : correspondingIngredients) {
+			idNumber++;
+			Ingredient generalizedIngredient = generalizedGraphIngredient.toBasicFhirIngredient();
+			generalizedIngredient.isActive = isActive;
+			generalizedIngredient.id = "#ing_" + idNumber;
+			generalizedIngredient.extension = new Extension[]{
+					ExtensionWirkstoffTyp.ingredient(),
+					ExtensionWirkstoffRelation.relatesTo(self.id)
+			};
+			resultList.add(generalizedIngredient);
+		}
+
+		return resultList;
 	}
 
 	public boolean isActive() {
 		return isActive;
 	}
 
-	public SimpleGraphIngredient getCorrespondingIngredient() {
-		return correspondingIngredient;
+	@NotNull
+	public List<SimpleGraphIngredient> getCorrespondingIngredients() {
+		return correspondingIngredients;
 	}
 
 	@Override
@@ -91,11 +107,11 @@ public class GraphIngredient extends SimpleGraphIngredient {
 		if (object == null || getClass() != object.getClass()) return false;
 		if (!super.equals(object)) return false;
 		GraphIngredient that = (GraphIngredient) object;
-		return isActive == that.isActive && Objects.equals(correspondingIngredient, that.correspondingIngredient);
+		return isActive == that.isActive && Objects.equals(correspondingIngredients, that.correspondingIngredients);
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(super.hashCode(), isActive, correspondingIngredient);
+		return Objects.hash(super.hashCode(), isActive, correspondingIngredients);
 	}
 }

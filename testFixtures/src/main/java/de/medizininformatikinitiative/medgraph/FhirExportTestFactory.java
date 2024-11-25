@@ -70,8 +70,7 @@ public class FhirExportTestFactory {
 				true,
 				new BigDecimal("100"),
 				null,
-				GraphUnits.MG,
-				null
+				GraphUnits.MG
 		);
 		public static final GraphIngredient PREDNISOLON = new GraphIngredient(
 				17L,
@@ -79,8 +78,7 @@ public class FhirExportTestFactory {
 				true,
 				new BigDecimal("250"),
 				null,
-				GraphUnits.MG,
-				null
+				GraphUnits.MG
 		);
 		public static final GraphIngredient WATER = new GraphIngredient(
 				149L,
@@ -88,8 +86,7 @@ public class FhirExportTestFactory {
 				false,
 				new BigDecimal("10"),
 				new BigDecimal("20"),
-				GraphUnits.ML,
-				null
+				GraphUnits.ML
 		);
 		public static final GraphIngredient MIDAZOLAM_HYDROCHLORIDE = new GraphIngredient(
 				148L,
@@ -98,13 +95,13 @@ public class FhirExportTestFactory {
 				new BigDecimal("5.56"),
 				null,
 				GraphUnits.MG,
-				new SimpleGraphIngredient(
+				List.of(new SimpleGraphIngredient(
 						150L,
 						"Midazolam hydrochlorid",
 						new BigDecimal("5"),
 						null,
 						GraphUnits.MG
-				)
+				))
 		);
 	}
 
