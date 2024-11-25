@@ -24,6 +24,10 @@ public class ActiveIngredient {
 	@Nullable
 	private final AmountOrRange amount;
 
+	// Ensure that the constructors do not allow the correspondences to recursively contain this instance.
+	// This can be achieved by never providing outside write access to the correspondences set, except during object
+	// creation.
+
 	/**
 	 * Contains active ingredients that this ingredient effectively amounts to. For example, if this instance represents
 	 * midazolam hydrochloride, the correspondences contain midazolam with a lower dosage. If this instance represents
@@ -40,7 +44,7 @@ public class ActiveIngredient {
 	                        @NotNull Set<ActiveIngredient> correspondences) {
 		this.substanceName = substanceName;
 		this.amount = amount;
-		this.correspondences = correspondences;
+		this.correspondences = new HashSet<>(correspondences);
 	}
 
 	/**

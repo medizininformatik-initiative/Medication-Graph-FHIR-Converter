@@ -194,13 +194,20 @@ public class DosageMatchJudge {
 	private static List<AmountOrRange> getActiveIngredientDosages(Drug d) {
 		List<AmountOrRange> list = new ArrayList<>();
 		for (ActiveIngredient ingredient : d.activeIngredients()) {
-			list.add(ingredient.getAmount());
-			if (ingredient instanceof CorrespondingActiveIngredient c) {
-				list.add(c.getCorrespondingSubstanceAmount());
-			}
+			addActiveIngredientDosages(ingredient, list);
 		}
 		list.removeIf(Objects::isNull);
 		return list;
+	}
+
+	/**
+	 * Returns the amounts of this instance as well as dosages of any corresponding ingredients. (Recursively)
+	 */
+	private static void addActiveIngredientDosages(ActiveIngredient ingredient, List<AmountOrRange> list) {
+		list.add(ingredient.getAmount());
+		for (ActiveIngredient correspondingIngredient: ingredient.getCorrespondences()) {
+			addActiveIngredientDosages(correspondingIngredient, list);
+		}
 	}
 
 }
