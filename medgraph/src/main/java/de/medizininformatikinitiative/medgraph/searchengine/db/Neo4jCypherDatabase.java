@@ -60,9 +60,10 @@ public class Neo4jCypherDatabase implements Database {
 						"    WITH d\n" +
 						"    OPTIONAL MATCH (d)-[:"+DRUG_CONTAINS_INGREDIENT_LABEL+"]->(i:"+MMI_INGREDIENT_LABEL+" {isActive: true})-[:"+INGREDIENT_IS_SUBSTANCE_LABEL+"]->(is:"+SUBSTANCE_LABEL+")\n" +
 						"    OPTIONAL MATCH (i)-[:"+INGREDIENT_CORRESPONDS_TO_LABEL+"]->(ci:"+INGREDIENT_LABEL+")-[:"+INGREDIENT_IS_SUBSTANCE_LABEL+"]->(cs:"+SUBSTANCE_LABEL+")\n" +
-						"    OPTIONAL MATCH (i)-[:"+INGREDIENT_HAS_UNIT_LABEL+"]->(iu:"+UNIT_LABEL+")\n" +
 						"    OPTIONAL MATCH (ci)-[:"+INGREDIENT_HAS_UNIT_LABEL+"]->(cu:"+UNIT_LABEL+")\n" +
-						"    RETURN collect(CASE WHEN NOT i IS NULL THEN {iName:is.name,iMassFrom:i.massFrom,iMassTo:i.massTo,iUnit:iu.name,cName:cs.name,cMassFrom:ci.massFrom,cMassTo:ci.massTo,cUnit:cu.name} ELSE NULL END) AS ingredients\n" +
+						"    WITH d, i, is, collect(CASE WHEN NOT ci IS NULL THEN {name:cs.name,massFrom:ci.massFrom,massTo:ci.massTo,unit:cu.name} ELSE NULL END) AS correspondingIngredients" +
+						"    OPTIONAL MATCH (i)-[:"+INGREDIENT_HAS_UNIT_LABEL+"]->(iu:"+UNIT_LABEL+")\n" +
+						"    RETURN collect(CASE WHEN NOT i IS NULL THEN {name:is.name,massFrom:i.massFrom,massTo:i.massTo,unit:iu.name,corresponding:correspondingIngredients} ELSE NULL END) AS ingredients\n" +
 						"}\n" +
 						"OPTIONAL MATCH (d)-[:"+DRUG_HAS_UNIT_LABEL+"]->(du:"+UNIT_LABEL+")\n" +
 						"WITH p, collect(CASE WHEN NOT d IS NULL THEN {mmiDoseForm:df.mmiName, edqmDoseForm:(CASE WHEN ef IS NULL THEN NULL ELSE {name:ef.name,code:ef.code,characteristics:characteristics} END), amount:d.amount, unit:du.name, ingredients:ingredients} ELSE NULL END) AS drugs\n" +
@@ -112,10 +113,10 @@ public class Neo4jCypherDatabase implements Database {
 	}
 
 	private ActiveIngredient parseToActiveIngredient(Value value) {
-		String name = value.get("iName").asString(null);
-		BigDecimal massFrom = toBigDecimal(value.get("iMassFrom").asString(null));
-		BigDecimal massTo = toBigDecimal(value.get("iMassTo").asString(null));
-		String unit = value.get("iUnit").asString(null);
+		String name = value.get("name").asString(null);
+		BigDecimal massFrom = toBigDecimal(value.get("massFrom").asString(null));
+		BigDecimal massTo = toBigDecimal(value.get("massTo").asString(null));
+		String unit = value.get("unit").asString(null);
 		AmountOrRange amount;
 		if (massFrom == null) {
 			amount = null;
@@ -123,23 +124,11 @@ public class Neo4jCypherDatabase implements Database {
 			amount = AmountRange.ofNullableUpperEnd(massFrom, massTo, unit);
 		}
 
-		String correspondingName = value.get("cName").asString(null);
-		if (correspondingName != null) {
-			BigDecimal correspondingMassFrom = toBigDecimal(value.get("cMassFrom").asString(null));
-			AmountOrRange correspondingAmount;
-			if (correspondingMassFrom == null) {
-				correspondingAmount = null;
-			} else {
-				BigDecimal correspondingMassTo = toBigDecimal(value.get("cMassTo").asString(null));
-				String correspondingUnit = value.get("cUnit").asString(null);
-				correspondingAmount = AmountRange.ofNullableUpperEnd(correspondingMassFrom, correspondingMassTo,
-						correspondingUnit);
-			}
+		Value correspondingIngredients = value.get("corresponding");
+		if (correspondingIngredients.isNull()) return new ActiveIngredient(name, amount);
 
-			return new CorrespondingActiveIngredient(name, amount, correspondingName, correspondingAmount);
-		}
-
-		return new ActiveIngredient(name, amount);
+		return new ActiveIngredient(name, amount,
+				new HashSet<>(correspondingIngredients.asList(this::parseToActiveIngredient)));
 	}
 
 	private static BigDecimal toBigDecimal(String germanValue) {

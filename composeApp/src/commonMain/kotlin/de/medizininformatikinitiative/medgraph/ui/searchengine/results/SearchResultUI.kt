@@ -5,7 +5,15 @@ import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.LocalIndication
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Divider
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
@@ -14,11 +22,17 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import de.medizininformatikinitiative.medgraph.searchengine.model.ActiveIngredient
 import de.medizininformatikinitiative.medgraph.searchengine.model.Amount
-import de.medizininformatikinitiative.medgraph.searchengine.model.CorrespondingActiveIngredient
 import de.medizininformatikinitiative.medgraph.searchengine.model.Dosage
 import de.medizininformatikinitiative.medgraph.searchengine.model.Drug
-import de.medizininformatikinitiative.medgraph.searchengine.model.identifiable.*
+import de.medizininformatikinitiative.medgraph.searchengine.model.identifiable.DetailedProduct
+import de.medizininformatikinitiative.medgraph.searchengine.model.identifiable.EdqmConcept
+import de.medizininformatikinitiative.medgraph.searchengine.model.identifiable.EdqmPharmaceuticalDoseForm
+import de.medizininformatikinitiative.medgraph.searchengine.model.identifiable.IdMatchable
+import de.medizininformatikinitiative.medgraph.searchengine.model.identifiable.Identifiable
+import de.medizininformatikinitiative.medgraph.searchengine.model.identifiable.Matchable
+import de.medizininformatikinitiative.medgraph.searchengine.model.identifiable.Product
 import de.medizininformatikinitiative.medgraph.ui.resources.StringRes
 import de.medizininformatikinitiative.medgraph.ui.theme.ApplicationTheme
 import de.medizininformatikinitiative.medgraph.ui.theme.CorporateDesign
@@ -37,7 +51,8 @@ private fun IdentifiableObjectUI() {
                 Product(
                     1,
                     "Furorese 100mg"
-                ), modifier = Modifier.fillMaxWidth().padding(4.dp))
+                ), modifier = Modifier.fillMaxWidth().padding(4.dp)
+            )
             Divider(modifier = Modifier.fillMaxWidth().padding(horizontal = 4.dp), thickness = 1.dp)
             DetailedIdentifiableObjectUI(
                 DetailedProduct(
@@ -54,11 +69,15 @@ private fun IdentifiableObjectUI() {
                             ),
                             Amount(BigDecimal.ONE, null),
                             listOf(
-                                CorrespondingActiveIngredient(
+                                ActiveIngredient(
                                     "Prednisolon 21-hydrogensuccinat, Natriumsalz",
                                     Amount(BigDecimal("10.48"), "mg"),
-                                    "Prednisolon",
-                                    Amount(BigDecimal("7.83"), "mg")
+                                    setOf(
+                                        ActiveIngredient(
+                                            "Prednisolon",
+                                            Amount(BigDecimal("7.83"), "mg")
+                                        )
+                                    )
                                 )
                             )
                         ),
@@ -89,14 +108,15 @@ fun ExpandableMatchableObjectUI(
     modifier: Modifier = Modifier,
     bottomSlot: @Composable ColumnScope.() -> Unit = {},
 ) {
-    Box(modifier = modifier
-        .animateContentSize()
-        .clickable(
-            interactionSource = remember { MutableInteractionSource() },
-            indication = LocalIndication.current
-        ) {
-            onSwitchExpand(!expanded)
-        }
+    Box(
+        modifier = modifier
+            .animateContentSize()
+            .clickable(
+                interactionSource = remember { MutableInteractionSource() },
+                indication = LocalIndication.current
+            ) {
+                onSwitchExpand(!expanded)
+            }
     ) {
         if (expanded) {
             DetailedIdentifiableObjectUI(result, modifier = Modifier.fillMaxWidth(), bottomSlot = bottomSlot)
@@ -129,8 +149,20 @@ fun DetailedIdentifiableObjectUI(
     when (identifiable) {
         is DetailedProduct -> DetailedProductResultUI(identifiable, modifier, backgroundColor, bottomSlot)
         is IdMatchable -> GenericIdMatchableObjectUI(identifiable, modifier, backgroundColor, bottomSlot)
-        is EdqmConcept -> IdentifiableObjectUI(identifiable, modifier, backgroundColor, MaterialTheme.localColors.highlightDoseForm)
-        is Dosage, is Amount -> IdentifiableObjectUI(identifiable, modifier, backgroundColor, MaterialTheme.localColors.highlightDosage)
+        is EdqmConcept -> IdentifiableObjectUI(
+            identifiable,
+            modifier,
+            backgroundColor,
+            MaterialTheme.localColors.highlightDoseForm
+        )
+
+        is Dosage, is Amount -> IdentifiableObjectUI(
+            identifiable,
+            modifier,
+            backgroundColor,
+            MaterialTheme.localColors.highlightDosage
+        )
+
         else -> IdentifiableObjectUI(identifiable, modifier, backgroundColor)
     }
 }
