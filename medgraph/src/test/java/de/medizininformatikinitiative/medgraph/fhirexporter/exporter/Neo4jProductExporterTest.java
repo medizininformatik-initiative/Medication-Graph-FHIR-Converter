@@ -23,7 +23,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 /**
  * @author Markus Budeus
  */
-public class Neo4jMedicationExporterTest extends Neo4jTest {
+public class Neo4jProductExporterTest extends Neo4jTest {
 
 	@ParameterizedTest(name = "allowNoIngredients: {0}")
 	@ValueSource(booleans = {false, true})
