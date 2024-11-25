@@ -151,13 +151,14 @@ public class Neo4jDatabaseTestExtension implements BeforeAllCallback, BeforeEach
 				(:Synonym {name: "Granules"})-[:REFERENCES]->(n5)-[:BELONGS_TO]->(n119)<-[:BELONGS_TO]-(n85),
 				(n96:MmiDoseForm {mmiCode: 001, mmiName: "Zum Einnehmen", mmiDesc: "Tbl."})<-[:HAS_DOSE_FORM]-(n95:Drug {amount: 1, mmiId: 8})<-[:CONTAINS]-(n93:Product {name: "dolomo® TN, Tablette", mmiId: 7})-[:CONTAINS]->(n94:Drug {amount: 1, mmiId: 7})-[:HAS_DOSE_FORM]->(n96)-[:CORRESPONDS_TO]->(n97)<-[:REFERENCES]-(:Synonym {name: "Tablet"})-[:REFERENCES]->(n100)<-[:REFERENCES]-(n99:Synonym {name: "Tbl."}),
 				(n99)-[:REFERENCES]->(n97)-[:HAS_CHARACTERISTIC]->(n100),
-				(n6)<-[:HAS_UNIT]-(n102:MmiIngredient:Ingredient {isActive: "true", massFrom: 250, mmiId: 10})<-[:CONTAINS]-(n94)-[:CONTAINS]->(n101)<-[:CONTAINS]-(n95)-[:CONTAINS]->(n102)-[:IS_SUBSTANCE]->(n103:Substance {name: "Paracetamol", mmiId: 8})<-[:REFERENCES]-(:Synonym {name: "Paracetamol"}),
+				(n76)-[:CORRESPONDS_TO]->(n121:Ingredient {massFrom: 1})-[:HAS_UNIT]->(n6)<-[:HAS_UNIT]-(n102:MmiIngredient:Ingredient {isActive: "true", massFrom: 250, mmiId: 10})<-[:CONTAINS]-(n94)-[:CONTAINS]->(n101)<-[:CONTAINS]-(n95)-[:CONTAINS]->(n102)-[:IS_SUBSTANCE]->(n103:Substance {name: "Paracetamol", mmiId: 8})<-[:REFERENCES]-(:Synonym {name: "Paracetamol"}),
 				(n101)-[:IS_SUBSTANCE]->(n2)<-[:REFERENCES]-(:UNII:Code {code: "R16CO5Y76E", gsrsName: "ASPIRIN", gsrsUuid: "a05ec20c-8fe2-4e02-ba7f-df69e5e30248"})-[:BELONGS_TO]->(:CodingSystem {date: "2023-11-30", name: "Unique Ingredient Identifier", uri: "http://fdasis.nlm.nih.gov"}),
 				(n106)-[:_RELATED]->(:Package {amount: 10, `amountFactor1`: 1, `amountFactor2`: 1, amountText: "10 st", mmiId: 8, name: "dolomo® TN 10 Tbl. N1", onMarketDate: "2004-01-01"})-[:BELONGS_TO]->(n93)<-[:MANUFACTURES]-(n3),
 				(n110:CAS:Code {code: "50-78-2"})-[:REFERENCES {primary: "true"}]->(n2)<-[:REFERENCES {primary: "false"}]-(:CAS:Code {code: "2349-94-2"})-[:BELONGS_TO]->(:CodingSystem {date: "2023-01-17", name: "Chemical Abstracts Service Registry Number®", uri: "https://www.cas.org/cas-data/cas-registry"})<-[:BELONGS_TO]-(n110),
 				(n117:CodingSystem {date: "2024-08-08", name: "Arzneistoffkatalog", uri: "http://fhir.de/CodeSystem/ask"})<-[:BELONGS_TO]-(:ASK:Code {code: 00002})-[:REFERENCES]->(n2),
 				(n117)<-[:BELONGS_TO]-(:ASK:Code {code: 01212})-[:REFERENCES]->(n103),
-				(n26)-[:BELONGS_TO]->(n119)<-[:BELONGS_TO]-(n75)
+				(n26)-[:BELONGS_TO]->(n119)<-[:BELONGS_TO]-(n75),
+				(n121)-[:IS_SUBSTANCE]->(:Substance {name: "Natrium", mmiId: 9})
 				"""
 				.stripIndent()
 				.replace("\"true\"", "true") // Arrows.app does not detect booleans...

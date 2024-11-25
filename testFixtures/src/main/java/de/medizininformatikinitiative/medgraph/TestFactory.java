@@ -33,6 +33,7 @@ public class TestFactory {
 		public static final Substance PREDNISOLONE_HYDROGENSUCCINATE = new Substance(7,
 				"Prednisolon 21-hydrogensuccinat, Natriumsalz");
 		public static final Substance PARACETAMOL = new Substance(8, "Paracetamol");
+		public static final Substance SODIUM = new Substance(9, "Natrium");
 	}
 
 	/**
@@ -49,8 +50,7 @@ public class TestFactory {
 			 * Aspirin oral granlues, containing 500mg of acetylsalicylic acid.
 			 */
 			public static final DetailedProduct ASPIRIN = new DetailedProduct(1,
-					"Aspirin Complex Granulat-Sticks 500 mg/30 mg Granulat",
-					List.of("10000001"),
+					"Aspirin Complex Granulat-Sticks 500 mg/30 mg Granulat", List.of("10000001"),
 					List.of(new Drug("Gran. zum Einnehmen", DoseForms.GRANULES, new Amount(BigDecimal.ONE, null),
 							List.of(new ActiveIngredient(Substances.ACETYLSALICYLIC_ACID.getName(),
 									new Amount(new BigDecimal(500), "mg"))))));
@@ -60,36 +60,35 @@ public class TestFactory {
 			 * midazolam.
 			 */
 			public static final DetailedProduct DORMICUM_15 = new DetailedProduct(2,
-					"Dormicum® 15 mg/3 ml Injektionslösung",
-					List.of("10000002"),
+					"Dormicum® 15 mg/3 ml Injektionslösung", List.of("10000002"),
 					List.of(new Drug("Injektions-/Infusionslsg.", DoseForms.SOLUTION_FOR_INJECTION_OR_INFUSION,
 							new Amount(new BigDecimal(3), "ml"),
-							List.of(new CorrespondingActiveIngredient(Substances.MIDAZOLAM_HYDROCHLORIDE.getName(),
+							List.of(new ActiveIngredient(Substances.MIDAZOLAM_HYDROCHLORIDE.getName(),
 									new Amount(new BigDecimal("16.68"), "mg"),
-									Substances.MIDAZOLAM.getName(),
-									new Amount(new BigDecimal(15), "mg"))))));
+									Set.of(new ActiveIngredient(
+											Substances.MIDAZOLAM.getName(), new Amount(new BigDecimal(15), "mg")
+									)))))));
 
 			/**
 			 * Dormicum, 5ml of fluid in an ampoule, containing 5.5-5.7mg of midazolam hydrochloride, respectively 5mg
 			 * of midazolam.
 			 */
 			public static final DetailedProduct DORMICUM_5 = new DetailedProduct(3,
-					"Dormicum® V 5 mg/5 ml Injektionslösung",
-					List.of("10000003"),
+					"Dormicum® V 5 mg/5 ml Injektionslösung", List.of("10000003"),
 					List.of(new Drug("Injektions-/Infusionslsg.", DoseForms.SOLUTION_FOR_INJECTION_OR_INFUSION,
 							new Amount(new BigDecimal(5), "ml"),
-							List.of(new CorrespondingActiveIngredient(Substances.MIDAZOLAM_HYDROCHLORIDE.getName(),
+							List.of(new ActiveIngredient(Substances.MIDAZOLAM_HYDROCHLORIDE.getName(),
 									new AmountRange(new BigDecimal("5.5"), new BigDecimal("5.7"), "mg"),
-									Substances.MIDAZOLAM.getName(),
-									new Amount(new BigDecimal(5), "mg"))))));
+									Set.of(new ActiveIngredient(
+											Substances.MIDAZOLAM.getName(), new Amount(new BigDecimal(5), "mg")
+									)))))));
 
 
 			/**
 			 * An EpiPen containing 300ug of Epinephrine.
 			 */
 			public static final DetailedProduct ANAPEN = new DetailedProduct(4,
-					"Anapen 300 µg kohlpharma Injektionslösung",
-					List.of("10000004", "10000005"),
+					"Anapen 300 µg kohlpharma Injektionslösung", List.of("10000004", "10000005"),
 					List.of(new Drug("Injektionslsg.", DoseForms.SOLUTION_FOR_INJECTION,
 							new Amount(new BigDecimal("0.3"), "ml"),
 							List.of(new ActiveIngredient(Substances.EPINEPHRINE.getName(),
@@ -98,9 +97,7 @@ public class TestFactory {
 			/**
 			 * Aseptoderm, which is a disinfectant. Has no assigned drugs.
 			 */
-			public static final DetailedProduct ASEPTODERM = new DetailedProduct(5,
-					"Aseptoderm",
-					List.of("10000006"),
+			public static final DetailedProduct ASEPTODERM = new DetailedProduct(5, "Aseptoderm", List.of("10000006"),
 					List.of());
 
 			/**
@@ -113,58 +110,38 @@ public class TestFactory {
 			public static final DetailedProduct PREDNISOLUT = new DetailedProduct(6,
 					"Prednisolut® 10 mg L, Pulver und Lösungsmittel zur Herstellung einer Injektionslösung",
 					List.of("01343446"),
-					List.of(
-							new Drug("Pulver zur Herst. e. Inj.-Lsg.", DoseForms.POWDER_FOR_SOLUTION_FOR_INJECTION,
+					List.of(new Drug("Pulver zur Herst. e. Inj.-Lsg.", DoseForms.POWDER_FOR_SOLUTION_FOR_INJECTION,
 									new Amount(BigDecimal.ONE, null),
-									List.of(new CorrespondingActiveIngredient(
+									List.of(new ActiveIngredient(
 											Substances.PREDNISOLONE_HYDROGENSUCCINATE.getName(),
 											new Amount(new BigDecimal("10.48"), "mg"),
-											Substances.PREDNISOLONE.getName(),
-											new Amount(new BigDecimal("7.83"), "mg")
-									))),
-							new Drug("Lösungsmittel", null,
-									new Amount(new BigDecimal(2), "ml"),
-									List.of())
-					)
-			);
+											Set.of(
+													new ActiveIngredient(
+															Substances.PREDNISOLONE.getName(),
+															new Amount(new BigDecimal("7.83"), "mg")),
+													new ActiveIngredient(
+															Substances.SODIUM.getName(),
+															new Amount(new BigDecimal("1"), "mg")
+													)
+											)))),
+							new Drug("Lösungsmittel", null, new Amount(new BigDecimal(2), "ml"), List.of())));
 
 			/**
 			 * Aspirin/Paracetamol tablets. Contains different tablets for day and night, meaning it has two assigned
 			 * drugs which have very similar ingredients. (In this test scenario, the ingredients are actually the
 			 * same.)
 			 */
-			public static final DetailedProduct DOLOMO = new DetailedProduct(7,
-					"dolomo® TN, Tablette",
-					List.of("00778219"),
-					List.of(
-							new Drug(
-									"Tbl.",
-									DoseForms.TABLET,
-									new Amount(BigDecimal.ONE, null),
-									List.of(new ActiveIngredient(
-													Substances.ACETYLSALICYLIC_ACID.getName(),
-													new Amount(new BigDecimal(250), "mg")
-											),
-											new ActiveIngredient(
-													Substances.PARACETAMOL.getName(),
-													new Amount(new BigDecimal(250), "mg")
-											))
-							),
-							new Drug(
-									"Tbl.",
-									DoseForms.TABLET,
-									new Amount(BigDecimal.ONE, null),
-									List.of(new ActiveIngredient(
-													Substances.ACETYLSALICYLIC_ACID.getName(),
-													new Amount(new BigDecimal(250), "mg")
-											),
-											new ActiveIngredient(
-													Substances.PARACETAMOL.getName(),
-													new Amount(new BigDecimal(250), "mg")
-											))
-							)
-					)
-			);
+			public static final DetailedProduct DOLOMO = new DetailedProduct(7, "dolomo® TN, Tablette",
+					List.of("00778219"), List.of(new Drug("Tbl.", DoseForms.TABLET, new Amount(BigDecimal.ONE, null),
+							List.of(new ActiveIngredient(Substances.ACETYLSALICYLIC_ACID.getName(),
+											new Amount(new BigDecimal(250), "mg")),
+									new ActiveIngredient(Substances.PARACETAMOL.getName(),
+											new Amount(new BigDecimal(250), "mg")))),
+					new Drug("Tbl.", DoseForms.TABLET, new Amount(BigDecimal.ONE, null),
+							List.of(new ActiveIngredient(Substances.ACETYLSALICYLIC_ACID.getName(),
+											new Amount(new BigDecimal(250), "mg")),
+									new ActiveIngredient(Substances.PARACETAMOL.getName(),
+											new Amount(new BigDecimal(250), "mg"))))));
 		}
 
 		public static final Product ASPIRIN = ofDetailed(Detailed.ASPIRIN);
@@ -226,27 +203,26 @@ public class TestFactory {
 		/**
 		 * A solution which can be injected or infused into a patient.
 		 */
-		public static final EdqmPharmaceuticalDoseForm SOLUTION_FOR_INJECTION_OR_INFUSION =
-				new EdqmPharmaceuticalDoseForm("50060000", "Solution for injection/infusion",
-						Set.of(Characteristics.SOLUTION, Characteristics.CONVENTIONAL, Characteristics.PARENTERAL));
+		public static final EdqmPharmaceuticalDoseForm SOLUTION_FOR_INJECTION_OR_INFUSION = new EdqmPharmaceuticalDoseForm(
+				"50060000", "Solution for injection/infusion",
+				Set.of(Characteristics.SOLUTION, Characteristics.CONVENTIONAL, Characteristics.PARENTERAL));
 
 		/**
 		 * A solution which can be injected into a patient.
 		 */
-		public static final EdqmPharmaceuticalDoseForm SOLUTION_FOR_INJECTION =
-				new EdqmPharmaceuticalDoseForm("11201000", "Solution for injection",
-						Set.of(Characteristics.SOLUTION, Characteristics.CONVENTIONAL, Characteristics.PARENTERAL));
+		public static final EdqmPharmaceuticalDoseForm SOLUTION_FOR_INJECTION = new EdqmPharmaceuticalDoseForm(
+				"11201000", "Solution for injection",
+				Set.of(Characteristics.SOLUTION, Characteristics.CONVENTIONAL, Characteristics.PARENTERAL));
 
 		/**
 		 * A powder meant to be dissolved to form a solution to be injected into a patient.
 		 */
-		public static final EdqmPharmaceuticalDoseForm POWDER_FOR_SOLUTION_FOR_INJECTION =
-				new EdqmPharmaceuticalDoseForm("11205000", "Powder for solution for injection",
-						Set.of(Characteristics.POWDER, Characteristics.CONVENTIONAL, Characteristics.PARENTERAL));
+		public static final EdqmPharmaceuticalDoseForm POWDER_FOR_SOLUTION_FOR_INJECTION = new EdqmPharmaceuticalDoseForm(
+				"11205000", "Powder for solution for injection",
+				Set.of(Characteristics.POWDER, Characteristics.CONVENTIONAL, Characteristics.PARENTERAL));
 
-		public static final EdqmPharmaceuticalDoseForm TABLET =
-				new EdqmPharmaceuticalDoseForm("10219000", "Tablet",
-						Set.of(Characteristics.TABLET, Characteristics.CONVENTIONAL, Characteristics.ORAL));
+		public static final EdqmPharmaceuticalDoseForm TABLET = new EdqmPharmaceuticalDoseForm("10219000", "Tablet",
+				Set.of(Characteristics.TABLET, Characteristics.CONVENTIONAL, Characteristics.ORAL));
 	}
 
 
@@ -261,35 +237,29 @@ public class TestFactory {
 	 * Provider which provides all products given in this test factory.
 	 */
 	public static final BaseProvider<String, Product> PRODUCTS_PROVIDER = BaseProvider.ofIdentifiableNames(
-			Catalogue.getAllFields(Products.class, false)
-	);
+			Catalogue.getAllFields(Products.class, false));
 
 	/**
 	 * Provider which provides all substances given in this test factory.
 	 */
 	public static final BaseProvider<String, Substance> SUBSTANCES_PROVIDER = BaseProvider.ofIdentifiableNames(
-			Catalogue.getAllFields(Substances.class, false)
-	);
+			Catalogue.getAllFields(Substances.class, false));
 
 	/**
 	 * Provider which provides all EDQM dose forms and characteristics given in this test factory.
 	 */
 	public static final BaseProvider<String, EdqmConcept> EDQM_PROVIDER = BaseProvider.ofIdentifiableNames(
-			Catalogue.getAllFields(DoseForms.class, true)
-	);
+			Catalogue.getAllFields(DoseForms.class, true));
 
 	/**
 	 * Provider which provides all substances and products given in this test factory.
 	 */
-	public static final BaseProvider<String, Matchable> PRODUCTS_AND_SUBSTANCES_PROVIDER =
-			join(PRODUCTS_PROVIDER, SUBSTANCES_PROVIDER);
+	public static final BaseProvider<String, Matchable> PRODUCTS_AND_SUBSTANCES_PROVIDER = join(PRODUCTS_PROVIDER,
+			SUBSTANCES_PROVIDER);
 
-	public static final SearchQuery SAMPLE_SEARCH_QUERY = new SearchQuery.Builder()
-			.withProductNameKeywords(List.of("Aspirin"))
-			.withSubstances(List.of(SAMPLE_SUBSTANCE_1))
-			.withActiveIngredientDosages(List.of(Dosage.of(10, "mg")))
-			.withDrugAmounts(List.of(new Amount(BigDecimal.ONE, "ml")))
-			.build();
+	public static final SearchQuery SAMPLE_SEARCH_QUERY = new SearchQuery.Builder().withProductNameKeywords(
+			List.of("Aspirin")).withSubstances(List.of(SAMPLE_SUBSTANCE_1)).withActiveIngredientDosages(
+			List.of(Dosage.of(10, "mg"))).withDrugAmounts(List.of(new Amount(BigDecimal.ONE, "ml"))).build();
 
 
 	public static final Dosage SAMPLE_DOSAGE_1 = Dosage.of(10, "mg", 1, "ml");

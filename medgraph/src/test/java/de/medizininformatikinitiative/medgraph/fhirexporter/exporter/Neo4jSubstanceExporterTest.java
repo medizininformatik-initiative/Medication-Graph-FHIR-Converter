@@ -25,36 +25,45 @@ import static org.junit.jupiter.api.Assertions.*;
 public class Neo4jSubstanceExporterTest extends Neo4jTest {
 
 	private Neo4jSubstanceExporter sut;
+	private Set<GraphSubstance> substances;
+	private Map<String, GraphSubstance> substanceByName;
 
 	@BeforeEach
 	void setUp() {
 		sut = new Neo4jSubstanceExporter(session);
+		substances = sut.exportObjects().collect(Collectors.toSet());
+		substanceByName = substances.stream().collect(Collectors.toMap(GraphSubstance::name, s -> s));
 	}
 
 	@Test
-	void export() {
-		Set<GraphSubstance> substances = sut.exportObjects().collect(Collectors.toSet());
-
+	void exportComplete() {
 		List<Substance> allSubstances = Catalogue.getAllFields(TestFactory.Substances.class, false);
 		List<String> allSubstanceNames = allSubstances.stream().map(IdMatchable::getName).toList();
 		List<String> receivedSubstanceNames = substances.stream().map(GraphSubstance::name).toList();
 		assertEqualsIgnoreOrder(allSubstanceNames, receivedSubstanceNames);
+	}
 
-
-		Map<String, GraphSubstance> substanceByName = substances.stream().collect(
-				Collectors.toMap(GraphSubstance::name, s -> s));
-
-
+	@Test
+	void ass() {
 		GraphSubstance ass = substanceByName.get(TestFactory.Substances.ACETYLSALICYLIC_ACID.getName());
 		assertNotNull(ass);
 		assertContainsCode(ass, CodingSystem.ASK, "00002");
 		assertContainsCode(ass, CodingSystem.CAS, "2349-94-2");
 		assertContainsCode(ass, CodingSystem.CAS, "50-78-2");
 		assertContainsCode(ass, CodingSystem.UNII, "R16CO5Y76E");
+	}
 
+	@Test
+	void paracetamol() {
 		GraphSubstance paracetamol = substanceByName.get(TestFactory.Substances.PARACETAMOL.getName());
 		assertNotNull(paracetamol);
 		assertContainsCode(paracetamol, CodingSystem.ASK, "01212");
+	}
+
+	@Test
+	void prednisolone() {
+		GraphSubstance prednisolone = substanceByName.get(TestFactory.Substances.PREDNISOLONE.getName());
+		assertNotNull(prednisolone);
 	}
 
 	private static void assertContainsCode(GraphSubstance substance, CodingSystem codingSystem, String code) {
