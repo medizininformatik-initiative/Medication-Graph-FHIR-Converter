@@ -27,7 +27,7 @@ public sealed interface AmountOrRange permits Amount, AmountRange {
 
 	/**
 	 * If this is a range, returns whether the given amount lies within the range <b>and</b> the units match. In this
-	 * case, the delta is ignored. If this is a plain value, returns whether the given amount is is numerically at
+	 * case, the delta is ignored. If this is a plain value, returns whether the given amount is numerically at
 	 * most delta away from to this value <b>and</b> the units match.
 	 */
 	boolean containsOrEquals(Amount amount, BigDecimal delta);
