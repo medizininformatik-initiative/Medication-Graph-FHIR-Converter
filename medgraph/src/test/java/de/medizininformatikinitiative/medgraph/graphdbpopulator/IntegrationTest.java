@@ -62,7 +62,7 @@ public class IntegrationTest {
 	}
 
 	@AfterAll
-	public void cleanup() throws IOException {
+	public void cleanup() {
 		session.close();
 		connection.close();
 	}

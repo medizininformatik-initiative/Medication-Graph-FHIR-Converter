@@ -42,6 +42,7 @@ public class Util {
 	 * with the same cardinalities.
 	 */
 	public static <S> boolean equalsIgnoreOrder(List<S> list1, List<S> list2) {
+		if (list1 == null || list2 == null) return list1 == null && list2 == null;
 		return list1.size() == list2.size() && toCardinalityMap(list1).equals(toCardinalityMap(list2));
 	}
 

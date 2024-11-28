@@ -80,6 +80,18 @@ public class FhirExportTestFactory {
 				null,
 				GraphUnits.MG
 		);
+		public static final GraphIngredient PREDNISOLONE_HYDROGENSUCCINATE = new GraphIngredient(
+				42L,
+				"Prednisolon 21-hydrogensuccinat, Natriumsalz",
+				true,
+				new BigDecimal("10.48"),
+				null,
+				GraphUnits.MG,
+				List.of(
+						new SimpleGraphIngredient(17L, "Prednisolon", new BigDecimal("7.83"), null, GraphUnits.MG),
+						new SimpleGraphIngredient(142L, "Natrium", new BigDecimal("1"), null, GraphUnits.MG)
+				)
+		);
 		public static final GraphIngredient WATER = new GraphIngredient(
 				149L,
 				"Water",
@@ -118,10 +130,13 @@ public class FhirExportTestFactory {
 
 	public static final class GraphEdqmPharmaceuticalDoseForms implements Catalogue {
 		public static final GraphEdqmPharmaceuticalDoseForm TABLET = new GraphEdqmPharmaceuticalDoseForm(
-				"10219000", CodingSystem.EDQM.uri, LocalDate.of(2024, 8, 1), null, "Tablet"
+				"PDF-10219000", CodingSystem.EDQM.uri, LocalDate.of(2024, 5, 29), null, "Tablet"
 		);
 		public static final GraphEdqmPharmaceuticalDoseForm INJECTION = new GraphEdqmPharmaceuticalDoseForm(
-				"11201000", CodingSystem.EDQM.uri, LocalDate.of(2024, 8, 1), "v187", "Solution for injection"
+				"PDF-11201000", CodingSystem.EDQM.uri, LocalDate.of(2024, 5, 29), null, "Solution for injection"
+		);
+		public static final GraphEdqmPharmaceuticalDoseForm POWDER_FOR_SOLUTION_FOR_INJECTION = new GraphEdqmPharmaceuticalDoseForm(
+				"PDF-11205000", CodingSystem.EDQM.uri, LocalDate.of(2024, 5, 29), null, "Powder for solution for injection"
 		);
 	}
 

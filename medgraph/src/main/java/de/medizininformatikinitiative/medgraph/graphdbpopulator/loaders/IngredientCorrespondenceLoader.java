@@ -42,7 +42,7 @@ public class IngredientCorrespondenceLoader extends CsvLoader {
 		executeQuery(
 				"MATCH (i:" + CORRESPONDING_INGREDIENT_LABEL + ") " +
 						"MATCH (p:" + MMI_INGREDIENT_LABEL + " {mmiId: i.parentId}) " +
-						withRowLimit("WITH i, p, s, u " +
+						withRowLimit("WITH i, p " +
 								"CREATE (p)-[:" + INGREDIENT_CORRESPONDS_TO_LABEL + "]->(i) " +
 								"REMOVE i.parentId ")
 		);
@@ -57,7 +57,7 @@ public class IngredientCorrespondenceLoader extends CsvLoader {
 				"MATCH (i:" + CORRESPONDING_INGREDIENT_LABEL + ") " +
 						"MATCH (s:" + SUBSTANCE_LABEL + " {mmiId: i.moleculeId}) " +
 						"MATCH (u:" + UNIT_LABEL + " {mmiCode: i.unitCode}) " +
-						withRowLimit("WITH i, p, s, u " +
+						withRowLimit("WITH i, s, u " +
 								"CREATE (i)-[:" + INGREDIENT_IS_SUBSTANCE_LABEL + "]->(s) " +
 								"CREATE (i)-[:" + INGREDIENT_HAS_UNIT_LABEL + "]->(u) " +
 								"REMOVE i.moleculeId " +
