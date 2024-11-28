@@ -10,12 +10,14 @@ import de.medizininformatikinitiative.medgraph.fhirexporter.fhir.medication.Exte
 import de.medizininformatikinitiative.medgraph.fhirexporter.fhir.medication.Ingredient;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
 import java.util.List;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Named.named;
 
 /**
  * @author Markus Budeus
@@ -38,17 +40,19 @@ public class GraphIngredientConversionTest extends UnitTest {
 
 		Ingredient precise = fhirIngredients.getFirst();
 		assertBasicsMatch(ingredient, precise);
-		if (ingredient.getCorrespondingIngredient() == null) {
+		if (ingredient.getCorrespondingIngredients().isEmpty()) {
 			assertEquals(1, fhirIngredients.size());
 		} else {
 			assertEquals("#ing_1", precise.id);
 			assertWirkstoffTyp("PIN", precise);
-			assertEquals(2, fhirIngredients.size());
-			Ingredient ci = fhirIngredients.getLast();
-			assertEquals("#ing_2", ci.id);
-			assertBasicsMatch(ingredient.getCorrespondingIngredient(), ci);
-			assertWirkstoffTyp("IN", ci);
-			assertWirkstoffRelationTo(precise.id, ci);
+
+			for (int i = 1; i < fhirIngredients.size(); i++) {
+				Ingredient ci = fhirIngredients.get(i);
+				assertEquals("#ing_"+(i + 1), ci.id);
+				assertWirkstoffTyp("IN", ci);
+				assertWirkstoffRelationTo(precise.id, ci);
+			}
+
 		}
 	}
 
@@ -92,8 +96,10 @@ public class GraphIngredientConversionTest extends UnitTest {
 				fhirIngredient.itemReference.identifier);
 	}
 
-	static Stream<GraphIngredient> ingredients() {
-		return Catalogue.<GraphIngredient>getAllFields(FhirExportTestFactory.GraphIngredients.class, false).stream();
+	static Stream<Arguments> ingredients() {
+		return Catalogue.<GraphIngredient>getAllFields(FhirExportTestFactory.GraphIngredients.class, false)
+		                .stream()
+				.map(i -> Arguments.arguments(named(i.substanceName, i)));
 	}
 
 }

@@ -46,17 +46,25 @@ public class Neo4jProductExporter extends Neo4jExporter<GraphProduct> {
 		// This is a complicated query. Sorry about that. :(
 		String query =
 				"MATCH (p:" + PRODUCT_LABEL + ")-[:" + PRODUCT_CONTAINS_DRUG_LABEL + "]->(d:" + DRUG_LABEL + ") " +
-						"OPTIONAL MATCH (d)-[:" + DRUG_HAS_DOSE_FORM_LABEL + "]->(df:" + MMI_DOSE_FORM_LABEL + ") " +
-						"OPTIONAL MATCH (df)-[:" + DOSE_FORM_IS_EDQM + "]->(de:" + EDQM_LABEL + ")-[:" + BELONGS_TO_CODING_SYSTEM_LABEL + "]->(dfcs:" + CODING_SYSTEM_LABEL + ") " +
 						(allowMedicationsWithoutIngredients ? "OPTIONAL " : "") +
 						"MATCH (d)-[:" + DRUG_CONTAINS_INGREDIENT_LABEL + "]->(i:" + MMI_INGREDIENT_LABEL + ")-[:" + INGREDIENT_IS_SUBSTANCE_LABEL + "]->(s:" + SUBSTANCE_LABEL + ") " +
-						"OPTIONAL MATCH (i)-[:" + INGREDIENT_HAS_UNIT_LABEL + "]->(iu:" + UNIT_LABEL + ") " +
 						"OPTIONAL MATCH (i)-[:" + INGREDIENT_CORRESPONDS_TO_LABEL + "]->(ci:" + INGREDIENT_LABEL + ")-[:" + INGREDIENT_IS_SUBSTANCE_LABEL + "]->(cis:" + SUBSTANCE_LABEL + ") " +
 						"OPTIONAL MATCH (ci)-[:" + INGREDIENT_HAS_UNIT_LABEL + "]->(ciu:" + UNIT_LABEL + ") " +
+						"WITH p, d, i, s, "+
+						"collect(CASE WHEN ci IS NOT NULL THEN {" +
+						SimpleGraphIngredient.SUBSTANCE_MMI_ID + ":cis.mmiId," +
+						SimpleGraphIngredient.SUBSTANCE_NAME + ":cis.name," +
+						SimpleGraphIngredient.MASS_FROM + ":ci.massFrom," +
+						SimpleGraphIngredient.MASS_TO + ":ci.massTo," +
+						SimpleGraphIngredient.UNIT + ":ciu" +
+						"} ELSE null END) AS corresponding "+
+						"OPTIONAL MATCH (i)-[:" + INGREDIENT_HAS_UNIT_LABEL + "]->(iu:" + UNIT_LABEL + ") " +
+						"OPTIONAL MATCH (d)-[:" + DRUG_HAS_DOSE_FORM_LABEL + "]->(df:" + MMI_DOSE_FORM_LABEL + ") " +
+						"OPTIONAL MATCH (df)-[:" + DOSE_FORM_IS_EDQM + "]->(de:" + EDQM_LABEL + ")-[:" + BELONGS_TO_CODING_SYSTEM_LABEL + "]->(dfcs:" + CODING_SYSTEM_LABEL + ") " +
 						"WITH p, d, df, " +
-						"CASE WHEN de IS NOT NULL THEN " + GraphUtil.groupCodingSystem("de", "dfcs",
+						GraphUtil.groupCodingSystem("de", "dfcs",
 						GraphEdqmPharmaceuticalDoseForm.NAME + ":de.name") +
-						" ELSE null END AS edqmDoseForm, " +
+						" AS edqmDoseForm, " +
 						"collect(CASE WHEN s IS NOT NULL THEN {" +
 						SimpleGraphIngredient.SUBSTANCE_MMI_ID + ":s.mmiId," +
 						SimpleGraphIngredient.SUBSTANCE_NAME + ":s.name," +
@@ -64,15 +72,7 @@ public class Neo4jProductExporter extends Neo4jExporter<GraphProduct> {
 						SimpleGraphIngredient.MASS_FROM + ":i.massFrom," +
 						SimpleGraphIngredient.MASS_TO + ":i.massTo," +
 						SimpleGraphIngredient.UNIT + ":iu," +
-						GraphIngredient.CORRESPONDING_INGREDIENTS + ":(" +
-						"CASE WHEN ci IS NOT NULL THEN collect({" +
-						SimpleGraphIngredient.SUBSTANCE_MMI_ID + ":cis.mmiId," +
-						SimpleGraphIngredient.SUBSTANCE_NAME + ":cis.name," +
-						SimpleGraphIngredient.MASS_FROM + ":ci.massFrom," +
-						SimpleGraphIngredient.MASS_TO + ":ci.massTo," +
-						SimpleGraphIngredient.UNIT + ":ciu" +
-						"}) ELSE NULL END" +
-						")" +
+						GraphIngredient.CORRESPONDING_INGREDIENTS + ":corresponding" +
 						"} ELSE null END) AS ingredients " +
 						"OPTIONAL MATCH (d)-[:" + DRUG_MATCHES_ATC_CODE_LABEL + "]->(a:" + ATC_LABEL + ")-[:" + BELONGS_TO_CODING_SYSTEM_LABEL + "]->(acs:" + CODING_SYSTEM_LABEL + ") " +
 						"WITH p, d, df, ingredients, " +

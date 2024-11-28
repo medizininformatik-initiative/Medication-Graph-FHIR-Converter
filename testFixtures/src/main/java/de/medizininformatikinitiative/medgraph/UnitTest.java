@@ -90,7 +90,8 @@ public class UnitTest {
 	}
 
 	/**
-	 * Asserts the contents of the two lists are equal when ignoring the order of elements.
+	 * Asserts the contents of the two lists are equal when ignoring the order of elements. Unlike a set comparison
+	 * however, this method does require that equal elements are present in the same multiplicity in both lists.
 	 */
 	protected void assertEqualsIgnoreOrder(List<?> expected, List<?> actual) {
 		if (expected == null && actual == null) return;
