@@ -40,10 +40,10 @@ public class DosageQueryRefiner implements PartialQueryRefiner<DosageQueryRefine
 		for (DosageDetector.DetectedDosage dd : detectedDosages) {
 			Dosage dosage = dd.getDosage();
 			Origin origin = new DosageDetectorOrigin(dd, query);
-			searchDosages.add(new OriginalMatch<>(dosage, origin));
+			searchDosages.add(new OriginalMatch<>(dosage, 1, origin));
 			usedRanges.add(new IntRange(dd.getStartIndex(), dd.getStartIndex() + dd.getLength()));
 			if (dosage.amountDenominator == null)
-				searchAmounts.add(new OriginalMatch<>(dosage.amountNominator, origin));
+				searchAmounts.add(new OriginalMatch<>(dosage.amountNominator, 1, origin));
 		}
 
 		return new Result(searchDosages, searchAmounts,
