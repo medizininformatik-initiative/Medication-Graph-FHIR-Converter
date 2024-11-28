@@ -49,6 +49,7 @@ public class GraphIngredientConversionTest extends UnitTest {
 			for (int i = 1; i < fhirIngredients.size(); i++) {
 				Ingredient ci = fhirIngredients.get(i);
 				assertEquals("#ing_"+(i + 1), ci.id);
+				assertNull(ci.isActive);
 				assertWirkstoffTyp("IN", ci);
 				assertWirkstoffRelationTo(precise.id, ci);
 			}

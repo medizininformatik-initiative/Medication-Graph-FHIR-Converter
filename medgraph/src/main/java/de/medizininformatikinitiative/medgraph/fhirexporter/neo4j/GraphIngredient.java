@@ -79,7 +79,7 @@ public class GraphIngredient extends SimpleGraphIngredient {
 		for (SimpleGraphIngredient generalizedGraphIngredient : correspondingIngredients) {
 			idNumber++;
 			Ingredient generalizedIngredient = generalizedGraphIngredient.toBasicFhirIngredient();
-			generalizedIngredient.isActive = isActive;
+			generalizedIngredient.isActive = null;
 			generalizedIngredient.id = "#ing_" + idNumber;
 			generalizedIngredient.extension = new Extension[]{
 					ExtensionWirkstoffTyp.ingredient(),
