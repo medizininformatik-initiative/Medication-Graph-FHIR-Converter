@@ -90,7 +90,7 @@ public class ActiveIngredient {
 			}
 		}).reversed());
 
-		return prefix + "(" + Arrays.toString(orderedCorrespondences.toArray()) + ")";
+		return prefix + " " + Arrays.toString(orderedCorrespondences.toArray());
 	}
 
 	@Override
