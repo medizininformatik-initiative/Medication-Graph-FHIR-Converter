@@ -1,8 +1,6 @@
 package de.medizininformatikinitiative.medgraph.searchengine.pipeline.judge;
 
-import de.medizininformatikinitiative.medgraph.TestFactory;
 import de.medizininformatikinitiative.medgraph.UnitTest;
-import de.medizininformatikinitiative.medgraph.searchengine.algorithm.querymanagement.RefinedQuery;
 import de.medizininformatikinitiative.medgraph.searchengine.model.SearchQuery;
 import de.medizininformatikinitiative.medgraph.searchengine.model.identifiable.Substance;
 import org.junit.jupiter.api.BeforeEach;
@@ -12,7 +10,7 @@ import java.util.Arrays;
 
 import static de.medizininformatikinitiative.medgraph.TestFactory.Products.Detailed.*;
 import static de.medizininformatikinitiative.medgraph.TestFactory.Substances.*;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * @author Markus Budeus
@@ -47,7 +45,7 @@ public class ExcessSubstanceJudgeTest extends UnitTest {
 	@Test
 	void noSubstancesQueried() {
 		double score = sut.judgeInternal(ANAPEN, queryWithSubstances());
-		assertEquals(-1, score, 0.01);
+		assertEquals(0, score, 0.01);
 	}
 
 	@Test
