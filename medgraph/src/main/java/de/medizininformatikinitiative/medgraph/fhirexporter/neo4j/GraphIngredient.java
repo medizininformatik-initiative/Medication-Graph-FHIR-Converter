@@ -4,14 +4,13 @@ import de.medizininformatikinitiative.medgraph.fhirexporter.fhir.Extension;
 import de.medizininformatikinitiative.medgraph.fhirexporter.fhir.medication.ExtensionWirkstoffRelation;
 import de.medizininformatikinitiative.medgraph.fhirexporter.fhir.medication.ExtensionWirkstoffTyp;
 import de.medizininformatikinitiative.medgraph.fhirexporter.fhir.medication.Ingredient;
+import de.medizininformatikinitiative.medgraph.searchengine.tools.Util;
 import org.jetbrains.annotations.NotNull;
 import org.neo4j.driver.Value;
 import org.neo4j.driver.types.MapAccessorWithDefaultValue;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 /**
  * @author Markus Budeus
@@ -107,11 +106,25 @@ public class GraphIngredient extends SimpleGraphIngredient {
 		if (object == null || getClass() != object.getClass()) return false;
 		if (!super.equals(object)) return false;
 		GraphIngredient that = (GraphIngredient) object;
-		return isActive == that.isActive && Objects.equals(correspondingIngredients, that.correspondingIngredients);
+		return isActive == that.isActive && Util.equalsIgnoreOrder(correspondingIngredients,
+				that.correspondingIngredients);
 	}
 
 	@Override
 	public int hashCode() {
 		return Objects.hash(super.hashCode(), isActive, correspondingIngredients);
+	}
+
+	@Override
+	public String toString() {
+		return "GraphIngredient{" +
+				"unit=" + unit +
+				", massTo=" + massTo +
+				", massFrom=" + massFrom +
+				", substanceName='" + substanceName + '\'' +
+				", substanceMmiId=" + substanceMmiId +
+				", correspondingIngredients=" + correspondingIngredients +
+				", isActive=" + isActive +
+				'}';
 	}
 }

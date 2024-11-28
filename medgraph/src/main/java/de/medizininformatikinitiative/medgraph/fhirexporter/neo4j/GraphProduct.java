@@ -39,22 +39,6 @@ public record GraphProduct(String name, long mmiId, Long companyMmiId, String co
 		);
 	}
 
-	@Override
-	public boolean equals(Object object) {
-		if (this == object) return true;
-		if (object == null || getClass() != object.getClass()) return false;
-		GraphProduct that = (GraphProduct) object;
-		return mmiId == that.mmiId && Objects.equals(name, that.name) && Objects.equals(companyMmiId,
-				that.companyMmiId) && Objects.equals(companyName, that.companyName) && Util.equalsIgnoreOrder(
-				codes, that.codes) && Util.equalsIgnoreOrder(drugs, that.drugs) && Util.equalsIgnoreOrder(packages,
-				that.packages);
-	}
-
-	@Override
-	public int hashCode() {
-		return Objects.hash(mmiId);
-	}
-
 	public List<Medication> toFhirMedications() {
 		Medication primary;
 		if (drugs.size() == 1) {
@@ -140,4 +124,19 @@ public record GraphProduct(String name, long mmiId, Long companyMmiId, String co
 		return out;
 	}
 
+	@Override
+	public boolean equals(Object object) {
+		if (this == object) return true;
+		if (object == null || getClass() != object.getClass()) return false;
+		GraphProduct product = (GraphProduct) object;
+		return mmiId == product.mmiId && Objects.equals(name, product.name) && Objects.equals(
+				companyMmiId, product.companyMmiId) && Objects.equals(companyName,
+				product.companyName) && Util.equalsIgnoreOrder(codes, product.codes) && Util.equalsIgnoreOrder(drugs,
+				product.drugs) && Util.equalsIgnoreOrder(packages, product.packages);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(name, mmiId, companyMmiId, companyName, codes, drugs, packages);
+	}
 }
