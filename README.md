@@ -31,6 +31,6 @@ As of: September 9th, 2024
 This project was created as part of the efforts of the [DIFUTURE](https://difuture.de/en/home-2/) consortium and funded by the BMBF as part of the [Medical Informatics Initiative](https://www.medizininformatik-initiative.de/en/start). (Förderkennzeichen: **01ZZ2304A**)
 
 
-<img src="https://difuture.de/wp-content/uploads/2024/06/cropped-DIFUTURE.png" width="450">&emsp;&emsp;&emsp;
+<img src="https://www.difuture.de/wp-content/uploads/2024/06/cropped-DIFUTURE.png" width="450">&emsp;&emsp;&emsp;
 <img src="https://www.medizininformatik-initiative.de/themes/custom/mii/assets/img/Logo_MII_270px_Hoehe_en.png" width="220">&emsp;&emsp;&emsp;
 <img src="https://github.com/user-attachments/assets/7b7339f0-6f6d-4978-9a60-98ab86c1a310" width="180">
