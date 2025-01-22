@@ -61,7 +61,7 @@ public class GsrsExtractor {
 
 		} catch (DatabaseConnectionException e) {
 			throw new UnsupportedOperationException(
-					"Failed to connect to Neo4j database. You probalby have no locally saved configuration. " +
+					"Failed to connect to Neo4j database. You probably have no locally saved configuration. " +
 							"Please initialize the DatabaseConnection() object manually.", e);
 		}
 	}
