@@ -20,9 +20,9 @@ class LicenseProvider {
         license = License(
             Application.NAME,
             "https://github.com/medizininformatik-initiative/Medication-Graph-FHIR-Converter",
-            "License is still being evaluated. All rights reserved.",
-            "Markus Budeus, Chair of Medical Informatics, TUM",
-            "2023-2024"
+            DefaultLicense.MIT,
+            "Chair of Medical Informatics, TUM University Hospital",
+            "2023-2025"
         )
         dependencyLicenses = listOf(
             License(
