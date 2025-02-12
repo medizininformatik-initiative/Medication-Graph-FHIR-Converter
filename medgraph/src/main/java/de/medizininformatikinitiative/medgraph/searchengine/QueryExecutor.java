@@ -1,6 +1,7 @@
 package de.medizininformatikinitiative.medgraph.searchengine;
 
 import de.medizininformatikinitiative.medgraph.searchengine.algorithm.querymanagement.RefinedQuery;
+import de.medizininformatikinitiative.medgraph.searchengine.model.SearchQuery;
 import de.medizininformatikinitiative.medgraph.searchengine.model.identifiable.Matchable;
 import de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject.MatchingObject;
 

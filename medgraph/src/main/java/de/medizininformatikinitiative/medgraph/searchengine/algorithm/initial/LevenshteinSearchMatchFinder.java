@@ -67,5 +67,9 @@ public class LevenshteinSearchMatchFinder implements InitialMatchFinder<Product>
 				                     new MatchOrigin<>(match, levenshteinSetMatcher)
 		                     ));
 	}
+	@Override
+	public void close() {
+		// Leere Implementierung, da keine Ressourcenfreigabe
+	}
 
 }

@@ -42,7 +42,7 @@ kotlin {
             // Screen Model
             implementation("cafe.adriel.voyager:voyager-screenmodel:$voyagerVersion")
             // Required by Voyager
-            implementation("org.jetbrains.kotlinx:kotlinx-coroutines-swing")
+            implementation(libs.kotlinx.coroutines.swing)
         }
         commonTest.dependencies {
             val junit_version = "5.10.2"

@@ -10,6 +10,7 @@ repositories {
 }
 
 dependencies {
+    // Existing dependencies
     implementation("org.jetbrains:annotations:24.0.0")
     implementation("org.neo4j.driver:neo4j-java-driver:5.19.0")
     implementation("org.apache.commons:commons-text:1.12.0")
@@ -17,6 +18,12 @@ dependencies {
     implementation("com.google.code.gson:gson:2.10.1") // JSON Library
     implementation("commons-cli:commons-cli:1.3.1") // Command Line Parser
 
+    // Lucene dependencies for full-text search
+    implementation("org.apache.lucene:lucene-core:8.11.0") // Core Lucene functionality
+    implementation("org.apache.lucene:lucene-analyzers-common:8.11.0") // Analyzers like StandardAnalyzer
+    implementation("org.apache.lucene:lucene-queryparser:8.11.0") // Query parser for handling user input
+
+    // Test dependencies
     testImplementation(project(":testFixtures")) // Reference to test fixtures
     testImplementation(platform("org.junit:junit-bom:5.10.0")) // JUnit 5
     testImplementation("org.junit.jupiter:junit-jupiter") // JUnit 5

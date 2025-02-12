@@ -6,6 +6,7 @@ import de.medizininformatikinitiative.medgraph.searchengine.model.identifiable.I
 import de.medizininformatikinitiative.medgraph.searchengine.model.identifiable.Matchable;
 import de.medizininformatikinitiative.medgraph.searchengine.model.matchingobject.OriginalMatch;
 
+import java.io.IOException;
 import java.util.stream.Stream;
 
 /**
@@ -27,4 +28,5 @@ public interface InitialMatchFinder<T extends Matchable> {
 	 */
 	Stream<OriginalMatch<T>> findInitialMatches(SearchQuery query);
 
+    void close() throws IOException;
 }
