@@ -20,4 +20,4 @@ This project was created as part of the efforts of the [DIFUTURE](https://difutu
 
 <img src="https://www.difuture.de/wp-content/uploads/2024/06/cropped-DIFUTURE.png" width="450">&emsp;&emsp;&emsp;
 <img src="https://www.medizininformatik-initiative.de/themes/custom/mii/assets/img/Logo_MII_270px_Hoehe_en.png" width="220">&emsp;&emsp;&emsp;
-<img src="https://github.com/user-attachments/assets/7b7339f0-6f6d-4978-9a60-98ab86c1a310" width="180">
+<img src="https://github.com/user-attachments/assets/8b2f8b7a-ee2e-42c5-8968-016ebfaa6cd8" width="180">
