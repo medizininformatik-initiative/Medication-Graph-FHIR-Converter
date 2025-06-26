@@ -15,7 +15,7 @@ This project was originially created as part of the Master's thesis of Markus Bu
 
 ---
 
-This project was created as part of the efforts of the [DIFUTURE](https://difuture.de/en/home-2/) consortium and funded by the BMBF as part of the [Medical Informatics Initiative](https://www.medizininformatik-initiative.de/en/start). (Förderkennzeichen: **01ZZ2304A**)
+This project was created as part of the efforts of the [DIFUTURE](https://difuture.de/en/home-2/) consortium and funded by the BMFTR as part of the [Medical Informatics Initiative](https://www.medizininformatik-initiative.de/en/start). (Förderkennzeichen: **01ZZ2304A**)
 
 
 <img src="https://www.difuture.de/wp-content/uploads/2024/06/cropped-DIFUTURE.png" width="450">&emsp;&emsp;&emsp;
