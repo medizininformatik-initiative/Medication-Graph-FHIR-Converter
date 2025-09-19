@@ -56,7 +56,7 @@ public class FhirExportTest extends UnitTest {
 
 	@Test
 	void exportResult() throws IOException {
-		sut.doExport(organizationExporter, substanceExporter, medicationExporter);
+		sut.doExport(new FhirExportSources(organizationExporter, substanceExporter, medicationExporter));
 		assertEquals(sut.getMaxProgress(), sut.getProgress());
 	}
 
@@ -79,7 +79,7 @@ public class FhirExportTest extends UnitTest {
 			return toStream(Medication::new, 10);
 		}).when(medicationExporter).export();
 
-		sut.doExport(organizationExporter, substanceExporter, medicationExporter);
+		sut.doExport(new FhirExportSources(organizationExporter, substanceExporter, medicationExporter));
 
 		assertEquals(0, exportsBeforeOrganization.get());
 		assertEquals(1, exportsBeforeSubstance.get());
