@@ -3,7 +3,7 @@ package de.medizininformatikinitiative.medgraph.fhirexporter;
 import java.nio.file.Path;
 
 /**
- * Factory for {@link FhirExport}-objects.
+ * Factory for {@link FileFhirExportSink}-objects.
  *
  * @author Markus Budeus
  */
@@ -11,10 +11,10 @@ import java.nio.file.Path;
 public interface FhirExportFactory {
 
 	/**
-	 * Prepares a {@link FhirExport} instance which can be used to orchestrate a single FHIR export.
+	 * Prepares a {@link FileFhirExportSink} instance which can be used to orchestrate a single FHIR export.
 	 * @param outPath the path to which to export using the returned instance
-	 * @return a ready-for-use {@link FhirExport}-instance
+	 * @return a ready-for-use {@link FileFhirExportSink}-instance
 	 */
-	FhirExport prepareExport(Path outPath);
+	FileFhirExportSink prepareExport(Path outPath);
 
 }

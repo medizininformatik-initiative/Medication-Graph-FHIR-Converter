@@ -3,7 +3,7 @@ package de.medizininformatikinitiative.medgraph.ui.desktop.fhirexporter
 import de.medizininformatikinitiative.medgraph.TempDirectoryTestExtension
 import de.medizininformatikinitiative.medgraph.UnitTest
 import de.medizininformatikinitiative.medgraph.common.mvc.Progressable
-import de.medizininformatikinitiative.medgraph.fhirexporter.FhirExport
+import de.medizininformatikinitiative.medgraph.fhirexporter.FileFhirExportSink
 import de.medizininformatikinitiative.medgraph.fhirexporter.FhirExportFactory
 import de.medizininformatikinitiative.medgraph.ui.resources.StringRes
 import kotlinx.coroutines.runBlocking
@@ -28,7 +28,7 @@ class FhirExporterScreenModelTest : UnitTest() {
     lateinit var fhirExporter: FhirExportFactory
 
     @Mock
-    lateinit var fhirExport: FhirExport
+    lateinit var fhirExport: FileFhirExportSink
 
     lateinit var sut: FhirExporterScreenModel
 
@@ -116,13 +116,13 @@ class FhirExporterScreenModelTest : UnitTest() {
 
     @Test
     fun invalidFileInOutputDirectory(directory: Path) {
-        Files.createFile(directory.resolve(FhirExport.MEDICATION_OUT_PATH)) // Occupy file name used for medication export dir
+        Files.createFile(directory.resolve(FileFhirExportSink.MEDICATION_OUT_PATH)) // Occupy file name used for medication export dir
         sut.exportPath = directory.toAbsolutePath().toString()
 
         runExportSync()
 
         assertEquals(
-            StringRes.get(StringRes.fhir_exporter_output_dir_occupied, FhirExport.MEDICATION_OUT_PATH),
+            StringRes.get(StringRes.fhir_exporter_output_dir_occupied, FileFhirExportSink.MEDICATION_OUT_PATH),
             sut.errorText
         )
     }

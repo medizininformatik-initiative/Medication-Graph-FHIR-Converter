@@ -14,7 +14,7 @@ public interface FhirExportSource<T extends FhirResource> {
 	/**
 	 * Runs the export.
 	 *
-	 * @return a {@link Stream} providing the exported objects one after another
+	 * @return a {@link Stream} providing the exported objects one after another.
 	 */
 	Stream<T> export();
 

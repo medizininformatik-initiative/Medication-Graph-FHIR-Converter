@@ -18,6 +18,12 @@ public interface Progressable {
 	int getMaxProgress();
 
 	/**
+	 * Returns the reason for failure of this task. Returns null if the task is still underway or has concluded
+	 * successfully.
+	 */
+	Exception getFailureCause();
+
+	/**
 	 * Registers a {@link Listener} on this instance.
 	 *
 	 * @param listener the listener to send callbacks to from now on
@@ -38,10 +44,16 @@ public interface Progressable {
 		/**
 		 * Invoked when the progress has changed.
 		 *
-		 * @param progress the current progress
-		 * @param maxProgress the maximum progress
+		 * @param progress the current progress.
+		 * @param maxProgress the maximum progress.
 		 */
 		void onProgressChanged(int progress, int maxProgress);
+
+		/**
+		 * Invoked when the task fails.
+		 * @param exception The exception that caused the task to fail.
+		 */
+		void onFailure(Exception exception);
 	}
 
 }

@@ -4,7 +4,7 @@ import de.medizininformatikinitiative.medgraph.UnitTest;
 import de.medizininformatikinitiative.medgraph.common.db.ConnectionFailureReason;
 import de.medizininformatikinitiative.medgraph.common.db.DatabaseConnectionException;
 import de.medizininformatikinitiative.medgraph.common.db.DatabaseConnectionService;
-import de.medizininformatikinitiative.medgraph.fhirexporter.FhirExport;
+import de.medizininformatikinitiative.medgraph.fhirexporter.FileFhirExportSink;
 import de.medizininformatikinitiative.medgraph.fhirexporter.FhirExportFactory;
 import org.apache.commons.cli.CommandLine;
 import org.junit.jupiter.api.BeforeEach;
@@ -30,7 +30,7 @@ public class HeadlessFhirExporterTest extends UnitTest {
 	@Mock
 	private FhirExportFactory fhirExportFactory;
 	@Mock
-	private FhirExport fhirExport;
+	private FileFhirExportSink fhirExport;
 	@Mock
 	private CommandLine commandLine;
 	private DatabaseConnectionService databaseConnectionService;

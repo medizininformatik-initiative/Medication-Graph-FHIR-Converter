@@ -15,7 +15,6 @@ import org.mockito.Mockito;
 
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.Random;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Supplier;
@@ -40,7 +39,7 @@ public class FhirExportTest extends UnitTest {
 	@Mock
 	private ExportFilenameGenerator filenameGenerator;
 
-	private FhirExport sut;
+	private FileFhirExportSink sut;
 
 	@BeforeEach
 	void setUp(Path path) {
@@ -52,7 +51,7 @@ public class FhirExportTest extends UnitTest {
 		Mockito.when(filenameGenerator.constructFilename((Organization) notNull())).thenAnswer(r -> UUID.randomUUID().toString());
 		Mockito.when(filenameGenerator.constructFilename((Medication) notNull())).thenAnswer(r -> UUID.randomUUID().toString());
 
-		sut = new FhirExport(path, filenameGenerator);
+		sut = new FileFhirExportSink(path, filenameGenerator);
 	}
 
 	@Test
