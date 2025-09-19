@@ -1,5 +1,6 @@
 plugins {
     id("java")
+    kotlin("jvm")
 }
 
 group = "de.medizininformatikinitiative.medgraph"
@@ -21,8 +22,12 @@ dependencies {
     testImplementation(platform("org.junit:junit-bom:5.10.0")) // JUnit 5
     testImplementation("org.junit.jupiter:junit-jupiter") // JUnit 5
     testImplementation("org.mockito:mockito-core:5.12.0") // Mocking
+    implementation(kotlin("stdlib-jdk8"))
 }
 
 tasks.test {
     useJUnitPlatform()
+}
+kotlin {
+    jvmToolchain(21)
 }

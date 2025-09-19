@@ -1,7 +1,8 @@
 package de.medizininformatikinitiative.medgraph.commandline;
 
 import de.medizininformatikinitiative.medgraph.DI;
-import de.medizininformatikinitiative.medgraph.fhirexporter.FhirExport;
+import de.medizininformatikinitiative.medgraph.fhirexporter.FhirExportSources;
+import de.medizininformatikinitiative.medgraph.fhirexporter.FileFhirExportSink;
 import de.medizininformatikinitiative.medgraph.fhirexporter.FhirExportFactory;
 import org.apache.commons.cli.CommandLine;
 import org.jetbrains.annotations.NotNull;
@@ -14,7 +15,7 @@ import java.nio.file.Path;
 import java.util.List;
 
 /**
- * Command line utility that can be used to invoke the {@link FhirExport}.
+ * Command line utility that can be used to invoke the {@link FileFhirExportSink}.
  *
  * @author Markus Budeus
  */
@@ -39,8 +40,8 @@ public class HeadlessFhirExporter extends CommandLineUtility {
 
 		return withDatabaseConnection(con -> {
 			try (Session session = con.createSession()) {
-				FhirExport export = fhirExportFactory.prepareExport(exportPath);
-				export.doExport(session);
+				FileFhirExportSink export = fhirExportFactory.prepareExport(exportPath);
+				export.doExport(FhirExportSources.forNeo4jSession(session));
 				return ExitStatus.SUCCESS;
 			} catch (AccessDeniedException e) {
 				return ExitStatus.accessDenied(e);

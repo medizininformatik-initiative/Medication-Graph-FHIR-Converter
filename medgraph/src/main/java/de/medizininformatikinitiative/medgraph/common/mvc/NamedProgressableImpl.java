@@ -11,6 +11,7 @@ public class NamedProgressableImpl extends Dispatcher<Progressable.Listener> imp
 
 	private int progress = 0;
 	private int maxProgress = 1;
+	private Exception exception;
 	@NotNull
 	private String[] taskStack = new String[0];
 
@@ -46,6 +47,11 @@ public class NamedProgressableImpl extends Dispatcher<Progressable.Listener> imp
 		dispatchProgressChanged();
 	}
 
+	protected void fail(Exception e) {
+		this.exception = e;
+		dispatchEvent(listener -> listener.onFailure(exception));
+	}
+
 	protected void incrementProgress() {
 		this.setProgress(progress + 1);
 	}
@@ -53,6 +59,11 @@ public class NamedProgressableImpl extends Dispatcher<Progressable.Listener> imp
 	@Override
 	public int getMaxProgress() {
 		return maxProgress;
+	}
+
+	@Override
+	public Exception getFailureCause() {
+		return exception;
 	}
 
 	/**
