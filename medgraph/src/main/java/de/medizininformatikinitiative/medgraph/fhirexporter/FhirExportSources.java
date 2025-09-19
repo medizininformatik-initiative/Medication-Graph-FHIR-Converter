@@ -47,7 +47,7 @@ public class FhirExportSources {
 	public static FhirExportSources forNeo4jSession(Session session) {
 		FhirExportSource<Organization> organizationExporter = new GraphFhirExportSource<>(
 				new Neo4jOrganizationExporter(session),
-				s -> s.map(GraphOrganization::toFhirOrganization));
+				s -> s.map(GraphOrganization::toLegacyFhirOrganization));
 		FhirExportSource<Substance> substanceExporter = new GraphFhirExportSource<>(new Neo4jSubstanceExporter(session),
 				s -> s.map(GraphSubstance::toFhirSubstance));
 		FhirExportSource<Medication> medicationExporter = new GraphFhirExportSource<>(

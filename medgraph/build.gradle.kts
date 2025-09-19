@@ -11,6 +11,11 @@ repositories {
 }
 
 dependencies {
+
+    val hapiVersion = "8.0.0"
+    implementation("ca.uhn.hapi.fhir:hapi-fhir-base:${hapiVersion}")
+    implementation("ca.uhn.hapi.fhir:hapi-fhir-structures-r4:${hapiVersion}")
+
     implementation("org.jetbrains:annotations:24.0.0")
     implementation("org.neo4j.driver:neo4j-java-driver:5.19.0")
     implementation("org.apache.commons:commons-text:1.12.0")

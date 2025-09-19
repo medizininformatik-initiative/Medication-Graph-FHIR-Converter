@@ -25,7 +25,7 @@ public class GraphOrganizationConversionTest extends UnitTest {
 				List.of(address)
 		);
 
-		Organization fhirOrganization = organization.toFhirOrganization();
+		Organization fhirOrganization = organization.toLegacyFhirOrganization();
 
 		assertNotNull(fhirOrganization);
 		assertArrayEquals(new Identifier[] { Identifier.fromOrganizationMmiId(17L) }, fhirOrganization.identifier);
