@@ -61,7 +61,7 @@ public record GraphDrug(List<GraphIngredient> ingredients, List<GraphAtc> atcCod
 
 		if (edqmDoseForm != null) {
 			medication.form = new CodeableConcept();
-			medication.form.coding = new Coding[] { edqmDoseForm.toCoding() };
+			medication.form.coding = new Coding[] { edqmDoseForm.toLegacyCoding() };
 			medication.form.text = edqmDoseForm.getName();
 		} else if (mmiDoseForm != null) {
 			medication.form = new CodeableConcept();
@@ -77,7 +77,7 @@ public record GraphDrug(List<GraphIngredient> ingredients, List<GraphAtc> atcCod
 		}
 		medication.ingredient = fhirIngredients.toArray(new Ingredient[0]);
 		medication.amount = GraphUtil.toFhirRatio(amount, null, unit);
-		medication.code = GraphUtil.toCodeableConcept(atcCodes);
+		medication.code = GraphUtil.toLegacyCodeableConcept(atcCodes);
 		medication.setStatus(Status.ACTIVE);
 		return medication;
 	}

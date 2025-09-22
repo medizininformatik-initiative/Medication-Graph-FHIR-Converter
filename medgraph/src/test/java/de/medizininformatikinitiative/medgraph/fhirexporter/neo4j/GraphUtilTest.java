@@ -1,8 +1,8 @@
 package de.medizininformatikinitiative.medgraph.fhirexporter.neo4j;
 
 import de.medizininformatikinitiative.medgraph.UnitTest;
-import de.medizininformatikinitiative.medgraph.fhirexporter.fhir.CodeableConcept;
 import de.medizininformatikinitiative.medgraph.fhirexporter.fhir.Quantity;
+import org.hl7.fhir.r4.model.CodeableConcept;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
@@ -111,16 +111,16 @@ public class GraphUtilTest extends UnitTest {
 				code1, code2
 		));
 
-		assertEquals(2, concept.coding.length);
-		assertEquals(code1.toCoding(), concept.coding[0]);
-		assertEquals(code2.toCoding(), concept.coding[1]);
+		assertEquals(2, concept.getCoding().size());
+		assertTrue(code1.toCoding().equalsDeep(concept.getCoding().get(0)));
+		assertTrue(code2.toCoding().equalsDeep(concept.getCoding().get(1)));
 	}
 
 	@Test
 	void toCodeableConceptWithoutCodes() {
 		CodeableConcept concept = GraphUtil.toCodeableConcept(List.of());
-		assertEquals(0, concept.coding.length);
-		assertNull(concept.text);
+		assertEquals(0, concept.getCoding().size());
+		assertNull(concept.getText());
 	}
 
 	@Test
@@ -136,9 +136,9 @@ public class GraphUtilTest extends UnitTest {
 				code
 		));
 
-		assertEquals(1, concept.coding.length);
-		assertEquals(code.toCoding(), concept.coding[0]);
-		assertEquals("Alcohol", concept.text);
+		assertEquals(1, concept.getCoding().size());
+		assertTrue(code.toCoding().equalsDeep(concept.getCoding().getFirst()));
+		assertEquals("Alcohol", concept.getText());
 	}
 
 }

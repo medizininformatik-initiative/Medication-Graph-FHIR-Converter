@@ -1,7 +1,7 @@
 package de.medizininformatikinitiative.medgraph.fhirexporter.neo4j;
 
 import de.medizininformatikinitiative.medgraph.UnitTest;
-import de.medizininformatikinitiative.medgraph.fhirexporter.fhir.Coding;
+import org.hl7.fhir.r4.model.Coding;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
@@ -24,11 +24,11 @@ public class GraphCodeConversionTest extends UnitTest {
 
 		Coding coding = graphCode.toCoding();
 
-		assertEquals("014584", coding.code);
-		assertEquals("http://samplecodesystem.tv/", coding.system);
-		assertNull(coding.display);
-		assertEquals("2024-08-13", coding.version);
-		assertFalse(coding.userSelected);
+		assertEquals("014584", coding.getCode());
+		assertEquals("http://samplecodesystem.tv/", coding.getSystem());
+		assertNull(coding.getDisplay());
+		assertEquals("2024-08-13", coding.getVersion());
+		assertFalse(coding.getUserSelected());
 	}
 
 	@Test
@@ -42,11 +42,11 @@ public class GraphCodeConversionTest extends UnitTest {
 
 		Coding coding = graphCode.toCoding();
 
-		assertEquals("111111", coding.code);
-		assertEquals("http://samplecodesystem.tv/", coding.system);
-		assertNull(coding.display);
-		assertEquals("v1.7", coding.version);
-		assertFalse(coding.userSelected);
+		assertEquals("111111", coding.getCode());
+		assertEquals("http://samplecodesystem.tv/", coding.getSystem());
+		assertNull(coding.getDisplay());
+		assertEquals("v1.7", coding.getVersion());
+		assertFalse(coding.getUserSelected());
 	}
 
 }

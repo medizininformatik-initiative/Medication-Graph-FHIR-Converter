@@ -3,7 +3,7 @@ package de.medizininformatikinitiative.medgraph.fhirexporter.neo4j;
 import de.medizininformatikinitiative.medgraph.Catalogue;
 import de.medizininformatikinitiative.medgraph.FhirExportTestFactory;
 import de.medizininformatikinitiative.medgraph.UnitTest;
-import de.medizininformatikinitiative.medgraph.fhirexporter.fhir.Coding;
+import org.hl7.fhir.r4.model.Coding;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
@@ -22,15 +22,15 @@ public class GraphAtcConversionTest extends UnitTest {
 	void convert(GraphAtc graphAtc) {
 		Coding coding = graphAtc.toCoding();
 
-		assertEquals(graphAtc.getCode(), coding.code);
-		assertEquals(graphAtc.getSystemUri(), coding.system);
-		assertEquals(graphAtc.getDescription(), coding.display);
+		assertEquals(graphAtc.getCode(), coding.getCode());
+		assertEquals(graphAtc.getSystemUri(), coding.getSystem());
+		assertEquals(graphAtc.getDescription(), coding.getDisplay());
 		if (graphAtc.getSystemVersion() != null) {
-			assertEquals(graphAtc.getSystemVersion(), coding.version);
+			assertEquals(graphAtc.getSystemVersion(), coding.getVersion());
 		} else {
-			assertEquals(GraphUtil.toFhirDate(graphAtc.getSystemDate()), coding.version);
+			assertEquals(GraphUtil.toFhirDate(graphAtc.getSystemDate()), coding.getVersion());
 		}
-		assertFalse(coding.userSelected);
+		assertFalse(coding.getUserSelected());
 	}
 
 	static Stream<GraphAtc> graphAtcCodes() {

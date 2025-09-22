@@ -1,9 +1,9 @@
 package de.medizininformatikinitiative.medgraph.fhirexporter.neo4j;
 
-import de.medizininformatikinitiative.medgraph.fhirexporter.fhir.CodeableConcept;
 import de.medizininformatikinitiative.medgraph.fhirexporter.fhir.Coding;
 import de.medizininformatikinitiative.medgraph.fhirexporter.fhir.Quantity;
 import de.medizininformatikinitiative.medgraph.fhirexporter.fhir.Ratio;
+import org.hl7.fhir.r4.model.CodeableConcept;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.Nullable;
 
@@ -132,22 +132,43 @@ public class GraphUtil {
 	}
 
 	/**
-	 * Returns a new {@link CodeableConcept} which captures all the given codes. If the list of codes is null, the
+	 * Returns a new {@link  de.medizininformatikinitiative.medgraph.fhirexporter.fhir.CodeableConcept} which captures all the given codes. If the list of codes is null, the
 	 * returned object is null. If the list contains exactly one element, that element's corresponding
-	 * {@link Coding#display} is used as {@link CodeableConcept#text}.
+	 * {@link Coding#display} is used as {@link  de.medizininformatikinitiative.medgraph.fhirexporter.fhir.CodeableConcept#text}.
 	 */
-	public static CodeableConcept toCodeableConcept(List<? extends GraphCode> codes) {
+	public static de.medizininformatikinitiative.medgraph.fhirexporter.fhir.CodeableConcept toLegacyCodeableConcept(
+			List<? extends GraphCode> codes) {
 		if (codes == null) return null;
-
-		CodeableConcept concept = new CodeableConcept();
+		de.medizininformatikinitiative.medgraph.fhirexporter.fhir.CodeableConcept concept =
+				new de.medizininformatikinitiative.medgraph.fhirexporter.fhir.CodeableConcept();
 		concept.coding = new Coding[codes.size()];
 
 		for (int i = 0; i < codes.size(); i++) {
-			concept.coding[i] = codes.get(i).toCoding();
+			concept.coding[i] = codes.get(i).toLegacyCoding();
 		}
 
 		if (concept.coding.length == 1) {
 			concept.text = concept.coding[0].display;
+		}
+
+		return concept;
+	}
+
+	/**
+	 * Returns a new {@link CodeableConcept} which captures all the given codes. If the list of codes is null, the
+	 * returned object is null. If the list contains exactly one element, that element's corresponding
+	 * {@link Coding#display} is used as text.
+	 */
+	public static CodeableConcept toCodeableConcept(List<? extends GraphCode> codes) {
+		if (codes == null) return null;
+		CodeableConcept concept = new CodeableConcept();
+
+		for (GraphCode code : codes) {
+			concept.addCoding(code.toCoding());
+		}
+
+		if (concept.getCoding().size() == 1) {
+			concept.setText(concept.getCoding().getFirst().getDisplay());
 		}
 
 		return concept;

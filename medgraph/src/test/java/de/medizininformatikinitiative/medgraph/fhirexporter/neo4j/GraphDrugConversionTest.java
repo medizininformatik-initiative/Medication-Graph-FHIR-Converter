@@ -44,7 +44,7 @@ public class GraphDrugConversionTest extends UnitTest {
 		assertEquals(GraphUtil.toFhirRatio(graphDrug.amount(), null, graphDrug.unit()), medication.amount);
 
 		if (graphDrug.edqmDoseForm() != null) {
-			assertArrayEquals(new Coding[] { graphDrug.edqmDoseForm().toCoding() }, medication.form.coding);
+			assertArrayEquals(new Coding[] { graphDrug.edqmDoseForm().toLegacyCoding() }, medication.form.coding);
 		} else if (graphDrug.mmiDoseForm() != null) {
 			assertEquals(graphDrug.mmiDoseForm(), medication.form.text);
 		}
@@ -61,11 +61,11 @@ public class GraphDrugConversionTest extends UnitTest {
 
 		GraphAtc graphAtc = mock();
 		Coding coding = mock();
-		when(graphAtc.toCoding()).thenReturn(coding);
+		when(graphAtc.toLegacyCoding()).thenReturn(coding);
 
 		GraphEdqmPharmaceuticalDoseForm pdf = mock();
 		Coding doseFormCoding = mock();
-		when(pdf.toCoding()).thenReturn(doseFormCoding);
+		when(pdf.toLegacyCoding()).thenReturn(doseFormCoding);
 
 		GraphDrug drug = new GraphDrug(
 				List.of(ingredient1, ingredient2),
@@ -97,7 +97,7 @@ public class GraphDrugConversionTest extends UnitTest {
 
 		GraphAtc graphAtc = mock();
 		Coding coding = mock();
-		when(graphAtc.toCoding()).thenReturn(coding);
+		when(graphAtc.toLegacyCoding()).thenReturn(coding);
 
 		GraphDrug drug = new GraphDrug(
 				List.of(ingredient1, ingredient2),

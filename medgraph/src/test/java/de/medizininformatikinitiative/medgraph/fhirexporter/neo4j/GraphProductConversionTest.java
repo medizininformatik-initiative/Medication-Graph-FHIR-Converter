@@ -45,10 +45,10 @@ public class GraphProductConversionTest {
 
 		List<Coding> codings = Arrays.asList(medication.code.coding);
 		// Assert all product codings are present
-		assertTrue(codings.containsAll(graphProduct.codes().stream().map(GraphCode::toCoding).toList()));
+		assertTrue(codings.containsAll(graphProduct.codes().stream().map(GraphCode::toLegacyCoding).toList()));
 		// Assert all package codings are present
 		for (GraphPackage graphPackage: graphProduct.packages()) {
-			assertTrue(codings.containsAll(graphPackage.codes().stream().map(GraphCode::toCoding).toList()));
+			assertTrue(codings.containsAll(graphPackage.codes().stream().map(GraphCode::toLegacyCoding).toList()));
 		}
 
 		if (graphProduct.drugs().size() == 1) {

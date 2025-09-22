@@ -1,6 +1,6 @@
 package de.medizininformatikinitiative.medgraph.fhirexporter.neo4j;
 
-import de.medizininformatikinitiative.medgraph.fhirexporter.fhir.Coding;
+import org.hl7.fhir.r4.model.Coding;
 import org.jetbrains.annotations.Nullable;
 import org.neo4j.driver.Value;
 import org.neo4j.driver.types.MapAccessorWithDefaultValue;
@@ -58,11 +58,20 @@ public class GraphEdqmPharmaceuticalDoseForm extends GraphCode {
 	}
 
 	@Override
-	public Coding toCoding() {
-		Coding coding = super.toCoding();
+	public de.medizininformatikinitiative.medgraph.fhirexporter.fhir.Coding toLegacyCoding() {
+		de.medizininformatikinitiative.medgraph.fhirexporter.fhir.Coding coding = super.toLegacyCoding();
 		if (coding.code != null && coding.code.length() > 3 && coding.code.charAt(3) == '-')
 			coding.code = coding.code.substring(4); // Remove prefix "PDF-", "BDF-", "ISI-" or whatever...
 		coding.display = name;
+		return coding;
+	}
+
+	@Override
+	public Coding toCoding() {
+		Coding coding = super.toCoding();
+		if (coding.getCode() != null && coding.getCode().length() > 3 && coding.getCode().charAt(3) == '-')
+			coding.setCode(coding.getCode().substring(4)); // Remove prefix "PDF-", "BDF-", "ISI-" or whatever...
+		coding.setDisplay(name);
 		return coding;
 	}
 }
