@@ -1,7 +1,7 @@
 package de.medizininformatikinitiative.medgraph.fhirexporter.neo4j;
 
 import de.medizininformatikinitiative.medgraph.UnitTest;
-import de.medizininformatikinitiative.medgraph.fhirexporter.fhir.Coding;
+import org.hl7.fhir.r4.model.Coding;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
@@ -25,11 +25,11 @@ public class GraphEdqmPharmaceuticalDoseFormConversionTest extends UnitTest {
 
 		Coding coding = graphCode.toCoding();
 
-		assertEquals("00010001", coding.code); // Prefix removed!
-		assertEquals("http://standardterms.edqm.eu", coding.system);
-		assertEquals("Tablet", coding.display);
-		assertEquals("17.1", coding.version);
-		assertFalse(coding.userSelected);
+		assertEquals("00010001", coding.getCode()); // Prefix removed!
+		assertEquals("http://standardterms.edqm.eu", coding.getSystem());
+		assertEquals("Tablet", coding.getDisplay());
+		assertEquals("17.1", coding.getVersion());
+		assertFalse(coding.getUserSelected());
 	}
 
 }

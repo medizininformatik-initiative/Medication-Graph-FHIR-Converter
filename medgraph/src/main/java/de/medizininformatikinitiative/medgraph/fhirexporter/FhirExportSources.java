@@ -49,7 +49,7 @@ public class FhirExportSources {
 				new Neo4jOrganizationExporter(session),
 				s -> s.map(GraphOrganization::toLegacyFhirOrganization));
 		FhirExportSource<Substance> substanceExporter = new GraphFhirExportSource<>(new Neo4jSubstanceExporter(session),
-				s -> s.map(GraphSubstance::toFhirSubstance));
+				s -> s.map(GraphSubstance::toLegacyFhirSubstance));
 		FhirExportSource<Medication> medicationExporter = new GraphFhirExportSource<>(
 				new Neo4jProductExporter(session, false),
 				s -> s.flatMap(p -> p.toFhirMedications().stream()));

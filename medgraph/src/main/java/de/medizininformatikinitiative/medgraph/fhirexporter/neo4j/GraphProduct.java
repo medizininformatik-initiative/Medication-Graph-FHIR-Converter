@@ -92,12 +92,12 @@ public record GraphProduct(String name, long mmiId, Long companyMmiId, String co
 	private void applyProductAndPackageCodes(Medication to) {
 		Set<Coding> primaryCodings = new LinkedHashSet<>();
 		if (codes != null) {
-			primaryCodings.addAll(codes.stream().map(GraphCode::toCoding).toList());
+			primaryCodings.addAll(codes.stream().map(GraphCode::toLegacyCoding).toList());
 		}
 		if (packages != null) {
 			for (GraphPackage graphPackage: packages) {
 				if (graphPackage.codes() != null) {
-					primaryCodings.addAll(graphPackage.codes().stream().map(GraphCode::toCoding).toList());
+					primaryCodings.addAll(graphPackage.codes().stream().map(GraphCode::toLegacyCoding).toList());
 				}
 			}
 		}

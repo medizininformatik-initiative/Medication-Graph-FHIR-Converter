@@ -1,7 +1,6 @@
 package de.medizininformatikinitiative.medgraph.fhirexporter.neo4j;
 
-import de.medizininformatikinitiative.medgraph.fhirexporter.fhir.Coding;
-import org.neo4j.driver.types.MapAccessor;
+import org.hl7.fhir.r4.model.Coding;
 import org.neo4j.driver.types.MapAccessorWithDefaultValue;
 
 import java.time.LocalDate;
@@ -77,8 +76,9 @@ public class GraphCode {
 				'}';
 	}
 
-	public Coding toCoding() {
-		Coding coding = new Coding();
+	public de.medizininformatikinitiative.medgraph.fhirexporter.fhir.Coding toLegacyCoding() {
+		de.medizininformatikinitiative.medgraph.fhirexporter.fhir.Coding coding =
+				new de.medizininformatikinitiative.medgraph.fhirexporter.fhir.Coding();
 		coding.system = systemUri;
 		if (systemVersion == null) {
 			coding.version = GraphUtil.toFhirDate(systemDate);
@@ -86,6 +86,18 @@ public class GraphCode {
 			coding.version = systemVersion;
 		}
 		coding.code = code;
+		return coding;
+	}
+
+	public Coding toCoding() {
+		Coding coding = new Coding();
+		coding.setSystem(systemUri);
+		if (systemVersion == null) {
+			coding.setVersion(GraphUtil.toFhirDate(systemDate));
+		} else {
+			coding.setVersion(systemVersion);
+		}
+		coding.setCode(code);
 		return coding;
 	}
 }

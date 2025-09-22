@@ -1,9 +1,9 @@
 package de.medizininformatikinitiative.medgraph.fhirexporter.neo4j;
 
 import de.medizininformatikinitiative.medgraph.UnitTest;
-import de.medizininformatikinitiative.medgraph.fhirexporter.fhir.Identifier;
-import de.medizininformatikinitiative.medgraph.fhirexporter.fhir.substance.Substance;
 import de.medizininformatikinitiative.medgraph.graphdbpopulator.CodingSystem;
+import org.hl7.fhir.r4.model.Coding;
+import org.hl7.fhir.r4.model.Substance;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
@@ -31,9 +31,18 @@ public class GraphSubstanceConversionTest extends UnitTest {
 		Substance fhirSubstance = graphSubstance.toFhirSubstance();
 
 		assertNotNull(fhirSubstance);
-		assertArrayEquals(new Identifier[] { Identifier.fromSubstanceMmiId(12L) }, fhirSubstance.identifier);
-		assertArrayEquals(GraphUtil.toCodeableConcept(List.of(code1, code2)).coding, fhirSubstance.code.coding);
-		assertEquals("Flumazenil", fhirSubstance.code.text);
+		assertEquals(IdProvider.fromSubstanceMmiId(12L), fhirSubstance.getIdPart());
+
+
+		List<Coding> codings1 = GraphUtil.toCodeableConcept(List.of(code1, code2)).getCoding();
+		List<Coding> codings2 = fhirSubstance.getCode().getCoding();
+
+		assertEquals(codings1.size(), codings2.size());
+		for (int i = 0; i < codings1.size(); i++) {
+			assertTrue(codings1.get(i).equalsDeep(codings2.get(i)));
+		}
+
+		assertEquals("Flumazenil", fhirSubstance.getCode().getText());
 	}
 
 }
