@@ -1,14 +1,15 @@
 package de.medizininformatikinitiative.medgraph.fhirexporter.neo4j;
 
 import de.medizininformatikinitiative.medgraph.UnitTest;
-import de.medizininformatikinitiative.medgraph.fhirexporter.fhir.Identifier;
-import de.medizininformatikinitiative.medgraph.fhirexporter.fhir.organization.FhirAddress;
-import de.medizininformatikinitiative.medgraph.fhirexporter.fhir.organization.Organization;
+import org.hl7.fhir.r4.model.Address;
+import org.hl7.fhir.r4.model.Organization;
+import org.hl7.fhir.r4.model.PrimitiveType;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  * @author Markus Budeus
@@ -25,13 +26,21 @@ public class GraphOrganizationConversionTest extends UnitTest {
 				List.of(address)
 		);
 
-		Organization fhirOrganization = organization.toLegacyFhirOrganization();
+		Organization fhirOrganization = organization.toFhirOrganizaition();
 
 		assertNotNull(fhirOrganization);
-		assertArrayEquals(new Identifier[] { Identifier.fromOrganizationMmiId(17L) }, fhirOrganization.identifier);
-		assertEquals("John J. L. Lennon Inc.", fhirOrganization.name);
-		assertArrayEquals(new String[] { "John Lennon Inc." }, fhirOrganization.alias);
-		assertArrayEquals(new FhirAddress[] { address.toFhirAddress() }, fhirOrganization.address);
+		assertEquals(IdProvider.fromOrganizationMmiId(17L), fhirOrganization.getIdPart());
+		assertEquals("John J. L. Lennon Inc.", fhirOrganization.getName());
+		assertEquals(
+				List.of("John Lennon Inc."),
+				fhirOrganization.getAlias().stream().map(PrimitiveType::getValueAsString).toList());
+
+		assertEquals(1, fhirOrganization.getAddress().size());
+		Address fa = fhirOrganization.getAddress().getFirst();
+
+		assertEquals("Street 1\n0141 Kingston", fa.getText());
+		assertEquals("0141", fa.getPostalCode());
+		assertEquals("Kingston", fa.getCity());
 	}
 
 }

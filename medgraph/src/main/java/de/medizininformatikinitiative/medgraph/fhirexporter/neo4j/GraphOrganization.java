@@ -38,7 +38,7 @@ public record GraphOrganization(long mmiId, String name, String shortName, List<
 			organization.alias = new String[]{shortName};
 		}
 		organization.identifier = new Identifier[]{Identifier.fromOrganizationMmiId(mmiId)};
-		organization.address = addresses.stream().map(GraphAddress::toFhirAddress).toArray(FhirAddress[]::new);
+		organization.address = addresses.stream().map(GraphAddress::toLegacyFhirAddress).toArray(FhirAddress[]::new);
 		return organization;
 	}
 
@@ -51,9 +51,10 @@ public record GraphOrganization(long mmiId, String name, String shortName, List<
 		} else if (shortName != null) {
 			organization.addAlias(shortName);
 		}
-		organization.setId("mmi-"+ mmiId);// TODO Put this in a more general place
-//		organization.address = addresses.stream().map(GraphAddress::toFhirAddress).toArray(FhirAddress[]::new);
-		// TODO add address
+		organization.setId(IdProvider.fromOrganizationMmiId(mmiId));
+		addresses.forEach(address -> {
+			organization.addAddress(address.toFhirAddress());
+		});
 		return organization;
 
 	}

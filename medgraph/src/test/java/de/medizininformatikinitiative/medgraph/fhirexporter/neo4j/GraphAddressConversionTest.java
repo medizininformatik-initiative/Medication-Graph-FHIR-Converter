@@ -1,10 +1,14 @@
 package de.medizininformatikinitiative.medgraph.fhirexporter.neo4j;
 
 import de.medizininformatikinitiative.medgraph.UnitTest;
-import de.medizininformatikinitiative.medgraph.fhirexporter.fhir.organization.FhirAddress;
+import org.hl7.fhir.r4.model.Address;
+import org.hl7.fhir.r4.model.PrimitiveType;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 /**
  * @author Markus Budeus
@@ -22,9 +26,9 @@ public class GraphAddressConversionTest extends UnitTest {
 				"DE"
 		);
 
-		FhirAddress fhirAddress = address.toFhirAddress();
+		Address fhirAddress = address.toFhirAddress();
 
-		assertArrayEquals(new String[]{"Buchenstraße 12"}, fhirAddress.getLine());
+		assertEquals(List.of("Buchenstraße 12"), fhirAddress.getLine().stream().map(PrimitiveType::getValueAsString).toList());
 		assertEquals("81104", fhirAddress.getPostalCode());
 		assertEquals("Karlsruhe", fhirAddress.getCity());
 		assertEquals("Deutschland", fhirAddress.getCountry());
@@ -42,9 +46,9 @@ public class GraphAddressConversionTest extends UnitTest {
 				null
 		);
 
-		FhirAddress fhirAddress = address.toFhirAddress();
+		Address fhirAddress = address.toFhirAddress();
 
-		assertArrayEquals(new String[]{"Gärtnerplatz 1"}, fhirAddress.getLine());
+		assertEquals(List.of("Gärtnerplatz 1"), fhirAddress.getLine().stream().map(PrimitiveType::getValueAsString).toList());
 		assertEquals("80469", fhirAddress.getPostalCode());
 		assertEquals("München", fhirAddress.getCity());
 		assertNull(fhirAddress.getCountry());
@@ -62,9 +66,9 @@ public class GraphAddressConversionTest extends UnitTest {
 				"DE"
 		);
 
-		FhirAddress fhirAddress = address.toFhirAddress();
+		Address fhirAddress = address.toFhirAddress();
 
-		assertArrayEquals(new String[]{"Gärtnerplatz 1"}, fhirAddress.getLine());
+		assertEquals(List.of("Gärtnerplatz 1"), fhirAddress.getLine().stream().map(PrimitiveType::getValueAsString).toList());
 		assertEquals("80469", fhirAddress.getPostalCode());
 		assertEquals("München", fhirAddress.getCity());
 		assertEquals("DE", fhirAddress.getCountry());
@@ -82,9 +86,9 @@ public class GraphAddressConversionTest extends UnitTest {
 				"US"
 		);
 
-		FhirAddress fhirAddress = address.toFhirAddress();
+		Address fhirAddress = address.toFhirAddress();
 
-		assertArrayEquals(new String[]{"Oliverstreet 27a"}, fhirAddress.getLine());
+		assertEquals(List.of("Oliverstreet 27a"), fhirAddress.getLine().stream().map(PrimitiveType::getValueAsString).toList());
 		assertEquals("12401", fhirAddress.getPostalCode());
 		assertEquals("New York", fhirAddress.getCity());
 		assertEquals("United States", fhirAddress.getCountry());
@@ -92,7 +96,7 @@ public class GraphAddressConversionTest extends UnitTest {
 	}
 
 	@Test
-	void sample05() {
+	void sample5() {
 		GraphAddress address = new GraphAddress(
 				null,
 				null,
@@ -102,9 +106,9 @@ public class GraphAddressConversionTest extends UnitTest {
 				"US"
 		);
 
-		FhirAddress fhirAddress = address.toFhirAddress();
+		Address fhirAddress = address.toFhirAddress();
 
-		assertNull(fhirAddress.getLine());
+		assertEquals(0, fhirAddress.getLine().size());
 		assertEquals("12401", fhirAddress.getPostalCode());
 		assertEquals("New York", fhirAddress.getCity());
 		assertEquals("United States", fhirAddress.getCountry());
