@@ -1,16 +1,16 @@
 package de.medizininformatikinitiative.medgraph.fhirexporter.neo4j;
 
 import de.medizininformatikinitiative.medgraph.UnitTest;
-import de.medizininformatikinitiative.medgraph.fhirexporter.fhir.Quantity;
 import org.hl7.fhir.r4.model.CodeableConcept;
+import org.hl7.fhir.r4.model.Quantity;
+import org.hl7.fhir.r4.model.Ratio;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 
-import static de.medizininformatikinitiative.medgraph.FhirExportTestFactory.GraphUnits.FCC_UNITS;
-import static de.medizininformatikinitiative.medgraph.FhirExportTestFactory.GraphUnits.MG;
+import static de.medizininformatikinitiative.medgraph.FhirExportTestFactory.GraphUnits.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -52,10 +52,10 @@ public class GraphUtilTest extends UnitTest {
 		Quantity quantity = GraphUtil.toFhirQuantity(new BigDecimal("10"), null, MG);
 
 		assertNull(quantity.getComparator());
-		assertEquals(new BigDecimal(10), quantity.value);
-		assertEquals(Quantity.UCUM_URI, quantity.system);
-		assertEquals(MG.name(), quantity.code);
-		assertEquals(MG.print(), quantity.unit);
+		assertEquals(new BigDecimal(10), quantity.getValue());
+		assertEquals("http://unitsofmeasure.org", quantity.getSystem());
+		assertEquals(MG.name(), quantity.getCode());
+		assertEquals(MG.print(), quantity.getUnit());
 	}
 
 	@Test
@@ -63,8 +63,8 @@ public class GraphUtilTest extends UnitTest {
 		GraphUnit unit = new GraphUnit("yes", "no", "no", "yes", "no", "no");
 		Quantity quantity = GraphUtil.toFhirQuantity(new BigDecimal("10.78"), null, unit);
 
-		assertEquals(new BigDecimal("10.78"), quantity.value);
-		assertEquals("yes", quantity.code);
+		assertEquals(new BigDecimal("10.78"), quantity.getValue());
+		assertEquals("yes", quantity.getCode());
 	}
 
 	@Test
@@ -72,22 +72,22 @@ public class GraphUtilTest extends UnitTest {
 		Quantity quantity = GraphUtil.toFhirQuantity(new BigDecimal("123.45"), new BigDecimal(125), null);
 
 
-		assertEquals(new BigDecimal("123.45"), quantity.value);
-		assertEquals(">=", quantity.getComparator());
-		assertNull(quantity.code);
-		assertNull(quantity.system);
-		assertNull(quantity.unit);
+		assertEquals(new BigDecimal("123.45"), quantity.getValue());
+		assertEquals(Quantity.QuantityComparator.GREATER_OR_EQUAL, quantity.getComparator());
+		assertNull(quantity.getCode());
+		assertNull(quantity.getSystem());
+		assertNull(quantity.getUnit());
 	}
 
 	@Test
 	void toFhirQuantityRemovedUnitSystemIfNotUcumUnit() {
 		Quantity quantity = GraphUtil.toFhirQuantity(new BigDecimal("123.45"), new BigDecimal(125), FCC_UNITS);
 
-		assertEquals(new BigDecimal("123.45"), quantity.value);
-		assertEquals(">=", quantity.getComparator());
-		assertNull(quantity.code);
-		assertNull(quantity.system);
-		assertEquals(FCC_UNITS.print(), quantity.unit);
+		assertEquals(new BigDecimal("123.45"), quantity.getValue());
+		assertEquals(Quantity.QuantityComparator.GREATER_OR_EQUAL, quantity.getComparator());
+		assertNull(quantity.getCode());
+		assertNull(quantity.getSystem());
+		assertEquals(FCC_UNITS.print(), quantity.getUnit());
 	}
 
 	@Test
@@ -100,6 +100,25 @@ public class GraphUtilTest extends UnitTest {
 	void toFhirQuantityWithMassToLess() {
 		assertThrows(IllegalArgumentException.class,
 				() -> GraphUtil.toFhirQuantity(new BigDecimal("127.1"), new BigDecimal("126.1"), null));
+	}
+
+	@Test
+	void toFhirRatio() {
+		Ratio ratio = GraphUtil.toFhirRatio(new BigDecimal("123.7"), null, ML);
+
+		assertTrue(new Quantity(null, 123.7D, "http://unitsofmeasure.org", "ml", "ml").equalsDeep(ratio.getNumerator()));
+		assertTrue(new Quantity(1).equalsDeep(ratio.getDenominator()));
+		assertEquals("ml", ratio.getNumerator().getUnit());
+	}
+
+	@Test
+	void toFhirRatioWithComparator() {
+		Ratio ratio = GraphUtil.toFhirRatio(new BigDecimal("123.7"), new BigDecimal("123.8"), ML);
+
+		assertTrue(new Quantity(
+				Quantity.QuantityComparator.GREATER_OR_EQUAL, 123.7D, "http://unitsofmeasure.org", "ml", "ml").equalsDeep(ratio.getNumerator()));
+		assertTrue(new Quantity(1).equalsDeep(ratio.getDenominator()));
+		assertEquals("ml", ratio.getNumerator().getUnit());
 	}
 
 	@Test

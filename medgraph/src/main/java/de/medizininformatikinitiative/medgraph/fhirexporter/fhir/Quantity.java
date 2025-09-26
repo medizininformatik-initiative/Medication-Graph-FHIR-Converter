@@ -9,6 +9,7 @@ import java.util.Objects;
  *
  * @author Markus Budeus
  */
+@Deprecated
 public class Quantity implements RatioOrQuantity {
 
 	public static final String UCUM_URI = "http://unitsofmeasure.org";

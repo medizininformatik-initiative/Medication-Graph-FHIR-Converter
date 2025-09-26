@@ -71,12 +71,12 @@ public record GraphDrug(List<GraphIngredient> ingredients, List<GraphAtc> atcCod
 		int nextIngredientId = 1;
 		List<Ingredient> fhirIngredients = new ArrayList<>(ingredients.size() * 2);
 		for (GraphIngredient gi: ingredients) {
-			List<Ingredient> converted = gi.toFhirIngredientsWithCorrespoindingIngredient(nextIngredientId);
+			List<Ingredient> converted = gi.toLegacyFhirIngredientsWithCorrespoindingIngredient(nextIngredientId);
 			nextIngredientId += converted.size();
 			fhirIngredients.addAll(converted);
 		}
 		medication.ingredient = fhirIngredients.toArray(new Ingredient[0]);
-		medication.amount = GraphUtil.toFhirRatio(amount, null, unit);
+		medication.amount = GraphUtil.toLegacyFhirRatio(amount, null, unit);
 		medication.code = GraphUtil.toLegacyCodeableConcept(atcCodes);
 		medication.setStatus(Status.ACTIVE);
 		return medication;
