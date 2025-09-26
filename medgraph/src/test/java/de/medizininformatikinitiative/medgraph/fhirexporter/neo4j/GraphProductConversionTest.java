@@ -61,7 +61,7 @@ public class GraphProductConversionTest {
 
 	private void verifySingleDrugConversion(GraphProduct product, Medication medication) {
 		GraphDrug drug = product.drugs().getFirst();
-		Medication drugMedication = drug.toMedication();
+		Medication drugMedication = drug.toLegacyMedication();
 		assertNotNull(drugMedication);
 
 		// Asserts all drug codings are present
@@ -93,7 +93,7 @@ public class GraphProductConversionTest {
 			Medication drugMedication = medicationList.get(i + 1);
 			// Ensure the identifier matches whatever identifier is referenced by the parent (i.e. primary) medication
 			assertEquals(ingredientIdentifiers.get(i), drugMedication.identifier[0].value);
-			assertEquals(Objects.requireNonNull(product.drugs().get(i).toMedication()).amount, drugMedication.amount);
+			assertEquals(Objects.requireNonNull(product.drugs().get(i).toLegacyMedication()).amount, drugMedication.amount);
 		}
 	}
 
