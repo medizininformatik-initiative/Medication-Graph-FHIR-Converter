@@ -5,8 +5,8 @@ import de.medizininformatikinitiative.medgraph.fhirexporter.fhir.Coding;
 import de.medizininformatikinitiative.medgraph.fhirexporter.fhir.Identifier;
 import de.medizininformatikinitiative.medgraph.fhirexporter.fhir.medication.Ingredient;
 import de.medizininformatikinitiative.medgraph.fhirexporter.fhir.medication.Medication;
-import de.medizininformatikinitiative.medgraph.fhirexporter.fhir.medication.MedicationReference;
-import de.medizininformatikinitiative.medgraph.fhirexporter.fhir.organization.OrganizationReference;
+import de.medizininformatikinitiative.medgraph.fhirexporter.fhir.medication.LegacyMedicationReference;
+import de.medizininformatikinitiative.medgraph.fhirexporter.fhir.organization.LegacyOrganizationReference;
 import de.medizininformatikinitiative.medgraph.searchengine.tools.Util;
 import org.neo4j.driver.types.MapAccessorWithDefaultValue;
 
@@ -80,7 +80,7 @@ public record GraphProduct(String name, long mmiId, Long companyMmiId, String co
 			drugMedication.code.text = null;
 			drugMedication.identifier = new Identifier[] { Identifier.combinedMedicalProductSubproductIdentifier(mmiId, childNo, companyMmiId)};
 			to.ingredient[i] = new Ingredient();
-			to.ingredient[i].itemReference = new MedicationReference(mmiId, childNo, companyMmiId);
+			to.ingredient[i].itemReference = new LegacyMedicationReference(mmiId, childNo, companyMmiId);
 		}
 
 		List<Medication> outList = new ArrayList<>(drugMedications.size() + 1);
@@ -112,7 +112,7 @@ public record GraphProduct(String name, long mmiId, Long companyMmiId, String co
 
 	private void applyManufacturer(Medication to) {
 		if (companyMmiId != null) {
-			to.manufacturer = new OrganizationReference(companyMmiId, companyName);
+			to.manufacturer = new LegacyOrganizationReference(companyMmiId, companyName);
 		}
 	}
 

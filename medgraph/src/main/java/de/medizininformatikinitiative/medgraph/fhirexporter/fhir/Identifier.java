@@ -7,6 +7,7 @@ import java.util.Objects;
  *
  * @author Markus Budeus
  */
+@Deprecated
 public class Identifier {
 
 	public static Identifier temporaryId(String id) {

@@ -8,6 +8,7 @@ import java.util.Objects;
  *
  * @author Markus Budeus
  */
+@Deprecated
 public class FhirAddress {
 
 	private String use;

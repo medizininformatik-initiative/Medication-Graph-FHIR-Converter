@@ -7,6 +7,7 @@ import de.medizininformatikinitiative.medgraph.fhirexporter.fhir.*;
  *
  * @author Markus Budeus
  */
+@Deprecated
 public class Medication extends FhirResource {
 
 	// id omitted

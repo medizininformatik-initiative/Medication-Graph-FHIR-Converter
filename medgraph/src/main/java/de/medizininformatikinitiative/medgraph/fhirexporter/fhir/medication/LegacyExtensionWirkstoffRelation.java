@@ -7,6 +7,7 @@ import java.util.Objects;
 /**
  * @author Markus Budeus
  */
+@Deprecated
 public class LegacyExtensionWirkstoffRelation implements Extension {
 
 	public final String url = "https://www.medizininformatik-initiative.de/fhir/core/modul-medikation/StructureDefinition/wirkstoffrelation";

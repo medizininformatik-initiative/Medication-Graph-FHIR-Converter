@@ -1,4 +1,4 @@
-package de.medizininformatikinitiative.medgraph.fhirexporter.fhir.medication;
+package de.medizininformatikinitiative.medgraph.fhirexporter.fhir;
 
 import org.hl7.fhir.r4.model.Extension;
 import org.hl7.fhir.r4.model.UriType;

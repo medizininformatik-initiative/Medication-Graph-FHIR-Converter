@@ -7,6 +7,7 @@ import de.medizininformatikinitiative.medgraph.fhirexporter.fhir.FhirResource;
  *
  * @author Markus Budeus
  */
+@Deprecated
 public class Organization extends FhirResource {
 
 	public final String resourceType = "Organization";

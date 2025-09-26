@@ -5,6 +5,7 @@ package de.medizininformatikinitiative.medgraph.fhirexporter.fhir;
  *
  * @author Markus Budeus
  */
+@Deprecated
 public record Ratio(Quantity numerator, Quantity denominator) implements RatioOrQuantity {
 
 	public Ratio {

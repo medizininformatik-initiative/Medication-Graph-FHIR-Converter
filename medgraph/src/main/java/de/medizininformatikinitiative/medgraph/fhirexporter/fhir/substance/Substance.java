@@ -9,6 +9,7 @@ import de.medizininformatikinitiative.medgraph.fhirexporter.fhir.Status;
  *
  * @author Markus Budeus
  */
+@Deprecated
 public class Substance extends FhirResource {
 
 	public final String resourceType = "Substance";
