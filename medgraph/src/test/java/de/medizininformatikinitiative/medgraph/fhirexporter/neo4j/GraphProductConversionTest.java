@@ -2,16 +2,14 @@ package de.medizininformatikinitiative.medgraph.fhirexporter.neo4j;
 
 import de.medizininformatikinitiative.medgraph.Catalogue;
 import de.medizininformatikinitiative.medgraph.FhirExportTestFactory;
-import de.medizininformatikinitiative.medgraph.fhirexporter.fhir.Coding;
-import de.medizininformatikinitiative.medgraph.fhirexporter.fhir.Identifier;
-import de.medizininformatikinitiative.medgraph.fhirexporter.fhir.medication.Medication;
+import org.hl7.fhir.r4.model.Coding;
+import org.hl7.fhir.r4.model.Medication;
+import org.hl7.fhir.r4.model.Ratio;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
-import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -32,23 +30,23 @@ public class GraphProductConversionTest {
 		assertNotNull(medication);
 
 		if (graphProduct.companyMmiId() == null) {
-			assertNull(medication.manufacturer);
+			assertFalse(medication.hasManufacturer());
 		} else {
-			assertEquals(Identifier.fromOrganizationMmiId(graphProduct.companyMmiId()),
-					medication.manufacturer.identifier);
-			assertEquals(graphProduct.companyName(), medication.manufacturer.display);
+			assertEquals(IdProvider.fromOrganizationMmiId(graphProduct.companyMmiId()), medication.getManufacturer().getReferenceElement().getIdPart());
+			assertEquals(graphProduct.companyName(), medication.getManufacturer().getDisplay());
 		}
 
 		if (graphProduct.name() != null) {
-			assertEquals(graphProduct.name(), medication.code.text);
+			assertEquals(graphProduct.name(), medication.getCode().getText());
 		}
 
-		List<Coding> codings = Arrays.asList(medication.code.coding);
+		List<Coding> codings = medication.getCode().getCoding();
+
 		// Assert all product codings are present
-		assertTrue(codings.containsAll(graphProduct.codes().stream().map(GraphCode::toLegacyCoding).toList()));
+		assertContainsAllCodings(codings, graphProduct.codes().stream().map(GraphCode::toCoding).toList());
 		// Assert all package codings are present
 		for (GraphPackage graphPackage: graphProduct.packages()) {
-			assertTrue(codings.containsAll(graphPackage.codes().stream().map(GraphCode::toLegacyCoding).toList()));
+			assertContainsAllCodings(codings, graphPackage.codes().stream().map(GraphCode::toCoding).toList());
 		}
 
 		if (graphProduct.drugs().size() == 1) {
@@ -61,18 +59,20 @@ public class GraphProductConversionTest {
 
 	private void verifySingleDrugConversion(GraphProduct product, Medication medication) {
 		GraphDrug drug = product.drugs().getFirst();
-		Medication drugMedication = drug.toLegacyMedication();
+		Medication drugMedication = drug.toFhirMedication();
 		assertNotNull(drugMedication);
 
 		// Asserts all drug codings are present
-		List<Coding> codings = Arrays.asList(medication.code.coding);
-		if (drugMedication.code != null) {
-			assertTrue(codings.containsAll(Arrays.asList(drugMedication.code.coding)));
-		}
+		List<Coding> codings = medication.getCode().getCoding();
+		assertContainsAllCodings(codings, drugMedication.getCode().getCoding());
 
-		assertEquals(drugMedication.amount, medication.amount);
-		for (int i = 0; i < medication.ingredient.length; i++) {
-			assertTrue(medication.ingredient[i].itemReference.type.endsWith("Substance"));
+		if (drugMedication.hasAmount()) {
+			assertTrue(drugMedication.getAmount().equalsDeep(medication.getAmount()));
+		} else {
+			assertFalse(medication.hasAmount());
+		}
+		for (int i = 0; i < medication.getIngredient().size(); i++) {
+			assertEquals("Substance", medication.getIngredient().get(i).getItemReference().getType());
 		}
 	}
 
@@ -83,21 +83,29 @@ public class GraphProductConversionTest {
 
 		// Make sure ingredients are Medication objects which reference the drugs
 		List<String> ingredientIdentifiers = new LinkedList<>();
-		for (int i = 0; i < primary.ingredient.length; i++) {
-			assertTrue(primary.ingredient[i].itemReference.type.endsWith("Medication"));
-			ingredientIdentifiers.add(primary.ingredient[i].itemReference.identifier.value);
+		for (int i = 0; i < primary.getIngredient().size(); i++) {
+			assertEquals("Medication", primary.getIngredient().get(i).getItemReference().getType());
+			ingredientIdentifiers.add(primary.getIngredient().get(i).getItemReference().getReferenceElement().getIdPart());
 		}
 
 		// Check each drug medication object
 		for (int i = 0; i < product.drugs().size(); i++) {
 			Medication drugMedication = medicationList.get(i + 1);
 			// Ensure the identifier matches whatever identifier is referenced by the parent (i.e. primary) medication
-			assertEquals(ingredientIdentifiers.get(i), drugMedication.identifier[0].value);
-			assertEquals(Objects.requireNonNull(product.drugs().get(i).toLegacyMedication()).amount, drugMedication.amount);
+			assertEquals(ingredientIdentifiers.get(i), drugMedication.getIdPart());
+
+			Ratio amount = product.drugs().get(i).toFhirMedication().getAmount();
+			assertTrue(amount.equalsDeep(drugMedication.getAmount()));
 		}
 	}
 
 	static Stream<GraphProduct> factoryProducts() {
 		return Catalogue.<GraphProduct>getAllFields(FhirExportTestFactory.GraphProducts.class).stream();
+	}
+
+	private void assertContainsAllCodings(List<Coding> list, List<Coding> mustContain) {
+		mustContain.forEach(coding -> {
+			assertTrue(list.stream().anyMatch(c -> c.equalsDeep(coding)));
+		});
 	}
 }

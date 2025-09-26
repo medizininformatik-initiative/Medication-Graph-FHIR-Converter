@@ -1,13 +1,10 @@
 package de.medizininformatikinitiative.medgraph.fhirexporter.neo4j;
 
-import de.medizininformatikinitiative.medgraph.fhirexporter.fhir.CodeableConcept;
-import de.medizininformatikinitiative.medgraph.fhirexporter.fhir.Coding;
-import de.medizininformatikinitiative.medgraph.fhirexporter.fhir.Identifier;
-import de.medizininformatikinitiative.medgraph.fhirexporter.fhir.medication.Ingredient;
-import de.medizininformatikinitiative.medgraph.fhirexporter.fhir.medication.Medication;
-import de.medizininformatikinitiative.medgraph.fhirexporter.fhir.medication.LegacyMedicationReference;
-import de.medizininformatikinitiative.medgraph.fhirexporter.fhir.organization.LegacyOrganizationReference;
+import de.medizininformatikinitiative.medgraph.fhirexporter.exporter.OrganizationReference;
+import de.medizininformatikinitiative.medgraph.fhirexporter.fhir.MedicationReference;
 import de.medizininformatikinitiative.medgraph.searchengine.tools.Util;
+import org.hl7.fhir.r4.model.CodeableConcept;
+import org.hl7.fhir.r4.model.Medication;
 import org.neo4j.driver.types.MapAccessorWithDefaultValue;
 
 import java.lang.reflect.Array;
@@ -39,22 +36,99 @@ public record GraphProduct(String name, long mmiId, Long companyMmiId, String co
 		);
 	}
 
+	@Deprecated
+	public List<de.medizininformatikinitiative.medgraph.fhirexporter.fhir.medication.Medication> toLegacyFhirMedications() {
+		de.medizininformatikinitiative.medgraph.fhirexporter.fhir.medication.Medication primary;
+		if (drugs.size() == 1) {
+			primary = drugs.getFirst().toLegacyMedication();
+		} else {
+			primary = new de.medizininformatikinitiative.medgraph.fhirexporter.fhir.medication.Medication();
+		}
+
+		legacyApplyManufacturer(primary);
+
+		if (primary.code == null) {
+			primary.code = new de.medizininformatikinitiative.medgraph.fhirexporter.fhir.CodeableConcept();
+		}
+		legacyApplyProductAndPackageCodes(primary);
+		primary.identifier = new de.medizininformatikinitiative.medgraph.fhirexporter.fhir.Identifier[] { de.medizininformatikinitiative.medgraph.fhirexporter.fhir.Identifier.fromProductAndOrganizationMmiId(mmiId, companyMmiId) };
+		primary.code.text = name;
+
+		if (drugs.size() > 1) {
+			return createLegacyDrugMedicationsAndApplyAsIngredients(primary);
+		}
+
+		return List.of(primary);
+	}
+
+	/**
+	 * Creates {@link de.medizininformatikinitiative.medgraph.fhirexporter.fhir.medication.Medication} objects from all drugs and returns a list of all those objects, including the passed
+	 * primary object, which is always the first list entry. Furthermore, the ingredients of the passed object are set
+	 * as referenced to the drug medication objects. Also, the drug medication objects have their manufacturer
+	 * set accordingly.
+	 */
+	@Deprecated
+	private List<de.medizininformatikinitiative.medgraph.fhirexporter.fhir.medication.Medication> createLegacyDrugMedicationsAndApplyAsIngredients(de.medizininformatikinitiative.medgraph.fhirexporter.fhir.medication.Medication to) {
+		List<de.medizininformatikinitiative.medgraph.fhirexporter.fhir.medication.Medication> drugMedications = drugs.stream().map(GraphDrug::toLegacyMedication).toList();
+
+		to.ingredient = new de.medizininformatikinitiative.medgraph.fhirexporter.fhir.medication.Ingredient[drugMedications.size()];
+		for (int i = 0; i < drugMedications.size(); i++) {
+			int childNo = i + 1;
+			de.medizininformatikinitiative.medgraph.fhirexporter.fhir.medication.Medication drugMedication = drugMedications.get(i);
+			legacyApplyManufacturer(drugMedication);
+			drugMedication.code.text = null;
+			drugMedication.identifier = new de.medizininformatikinitiative.medgraph.fhirexporter.fhir.Identifier[] { de.medizininformatikinitiative.medgraph.fhirexporter.fhir.Identifier.combinedMedicalProductSubproductIdentifier(mmiId, childNo, companyMmiId)};
+			to.ingredient[i] = new de.medizininformatikinitiative.medgraph.fhirexporter.fhir.medication.Ingredient();
+			to.ingredient[i].itemReference = new de.medizininformatikinitiative.medgraph.fhirexporter.fhir.medication.LegacyMedicationReference(mmiId, childNo, companyMmiId);
+		}
+
+		List<de.medizininformatikinitiative.medgraph.fhirexporter.fhir.medication.Medication> outList = new ArrayList<>(drugMedications.size() + 1);
+		outList.add(to);
+		outList.addAll(drugMedications);
+		return outList;
+	}
+
+	@Deprecated
+	private void legacyApplyProductAndPackageCodes(de.medizininformatikinitiative.medgraph.fhirexporter.fhir.medication.Medication to) {
+		Set<de.medizininformatikinitiative.medgraph.fhirexporter.fhir.Coding> primaryCodings = new LinkedHashSet<>();
+		if (codes != null) {
+			primaryCodings.addAll(codes.stream().map(GraphCode::toLegacyCoding).toList());
+		}
+		if (packages != null) {
+			for (GraphPackage graphPackage: packages) {
+				if (graphPackage.codes() != null) {
+					primaryCodings.addAll(graphPackage.codes().stream().map(GraphCode::toLegacyCoding).toList());
+				}
+			}
+		}
+
+		de.medizininformatikinitiative.medgraph.fhirexporter.fhir.Coding[] out = primaryCodings.toArray(new de.medizininformatikinitiative.medgraph.fhirexporter.fhir.Coding[0]);
+		if (to.code.coding == null) {
+			to.code.coding = out;
+		} else {
+			to.code.coding = concat(out, to.code.coding);
+		}
+	}
+
+	@Deprecated
+	private void legacyApplyManufacturer(de.medizininformatikinitiative.medgraph.fhirexporter.fhir.medication.Medication to) {
+		if (companyMmiId != null) {
+			to.manufacturer = new de.medizininformatikinitiative.medgraph.fhirexporter.fhir.organization.LegacyOrganizationReference(companyMmiId, companyName);
+		}
+	}
+
 	public List<Medication> toFhirMedications() {
 		Medication primary;
 		if (drugs.size() == 1) {
-			primary = drugs.getFirst().toLegacyMedication();
+			primary = drugs.getFirst().toFhirMedication();
 		} else {
 			primary = new Medication();
 		}
 
 		applyManufacturer(primary);
-
-		if (primary.code == null) {
-			primary.code = new CodeableConcept();
-		}
 		applyProductAndPackageCodes(primary);
-		primary.identifier = new Identifier[] { Identifier.fromProductAndOrganizationMmiId(mmiId, companyMmiId) };
-		primary.code.text = name;
+		primary.setId(IdProvider.fromProductMmiId(mmiId));
+		primary.getCode().setText(name);
 
 		if (drugs.size() > 1) {
 			return createDrugMedicationsAndApplyAsIngredients(primary);
@@ -70,17 +144,15 @@ public record GraphProduct(String name, long mmiId, Long companyMmiId, String co
 	 * set accordingly.
 	 */
 	private List<Medication> createDrugMedicationsAndApplyAsIngredients(Medication to) {
-		List<Medication> drugMedications = drugs.stream().map(GraphDrug::toLegacyMedication).toList();
+		List<Medication> drugMedications = drugs.stream().map(GraphDrug::toFhirMedication).toList();
 
-		to.ingredient = new Ingredient[drugMedications.size()];
 		for (int i = 0; i < drugMedications.size(); i++) {
 			int childNo = i + 1;
 			Medication drugMedication = drugMedications.get(i);
 			applyManufacturer(drugMedication);
-			drugMedication.code.text = null;
-			drugMedication.identifier = new Identifier[] { Identifier.combinedMedicalProductSubproductIdentifier(mmiId, childNo, companyMmiId)};
-			to.ingredient[i] = new Ingredient();
-			to.ingredient[i].itemReference = new LegacyMedicationReference(mmiId, childNo, companyMmiId);
+			drugMedication.getCode().setText(null);
+			drugMedication.setId(IdProvider.combinedMedicalProductSubproductIdentifier(mmiId, childNo));
+			to.addIngredient().setItem(new MedicationReference(mmiId, childNo, null));
 		}
 
 		List<Medication> outList = new ArrayList<>(drugMedications.size() + 1);
@@ -90,29 +162,26 @@ public record GraphProduct(String name, long mmiId, Long companyMmiId, String co
 	}
 
 	private void applyProductAndPackageCodes(Medication to) {
-		Set<Coding> primaryCodings = new LinkedHashSet<>();
+		Set<GraphCode> graphCodes = new LinkedHashSet<>();
 		if (codes != null) {
-			primaryCodings.addAll(codes.stream().map(GraphCode::toLegacyCoding).toList());
+			graphCodes.addAll(codes);
 		}
 		if (packages != null) {
 			for (GraphPackage graphPackage: packages) {
-				if (graphPackage.codes() != null) {
-					primaryCodings.addAll(graphPackage.codes().stream().map(GraphCode::toLegacyCoding).toList());
+				List<GraphCode> pkCodes = graphPackage.codes();
+				if (pkCodes != null) {
+					graphCodes.addAll(pkCodes);
 				}
 			}
 		}
 
-		Coding[] out = primaryCodings.toArray(new Coding[0]);
-		if (to.code.coding == null) {
-			to.code.coding = out;
-		} else {
-			to.code.coding = concat(out, to.code.coding);
-		}
+		CodeableConcept toConcept = to.getCode();
+		graphCodes.stream().filter(Objects::nonNull).map(GraphCode::toCoding).forEach(toConcept::addCoding);
 	}
 
 	private void applyManufacturer(Medication to) {
 		if (companyMmiId != null) {
-			to.manufacturer = new LegacyOrganizationReference(companyMmiId, companyName);
+			to.setManufacturer(new OrganizationReference(companyMmiId, companyName));
 		}
 	}
 
