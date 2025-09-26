@@ -1,8 +1,8 @@
 package de.medizininformatikinitiative.medgraph.fhirexporter.neo4j;
 
 import de.medizininformatikinitiative.medgraph.fhirexporter.fhir.Extension;
-import de.medizininformatikinitiative.medgraph.fhirexporter.fhir.medication.ExtensionWirkstoffRelation;
-import de.medizininformatikinitiative.medgraph.fhirexporter.fhir.medication.ExtensionWirkstoffTyp;
+import de.medizininformatikinitiative.medgraph.fhirexporter.fhir.ExtensionWirkstoffRelation;
+import de.medizininformatikinitiative.medgraph.fhirexporter.fhir.ExtensionWirkstoffTyp;
 import de.medizininformatikinitiative.medgraph.fhirexporter.fhir.medication.LegacyExtensionWirkstoffRelation;
 import de.medizininformatikinitiative.medgraph.fhirexporter.fhir.medication.LegacyExtensionWirkstoffTyp;
 import de.medizininformatikinitiative.medgraph.searchengine.tools.Util;

@@ -7,6 +7,7 @@ import de.medizininformatikinitiative.medgraph.fhirexporter.fhir.Coding;
  *
  * @author Markus Budeus
  */
+@Deprecated
 public class Meta {
 
 	// versionId omitted

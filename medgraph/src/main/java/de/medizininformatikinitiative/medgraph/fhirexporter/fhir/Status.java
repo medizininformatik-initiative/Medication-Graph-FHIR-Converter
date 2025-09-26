@@ -5,6 +5,7 @@ package de.medizininformatikinitiative.medgraph.fhirexporter.fhir;
  *
  * @author Markus Budeus
  */
+@Deprecated
 public enum Status {
 	ACTIVE("active"),
 	INACTIVE("inactive"),

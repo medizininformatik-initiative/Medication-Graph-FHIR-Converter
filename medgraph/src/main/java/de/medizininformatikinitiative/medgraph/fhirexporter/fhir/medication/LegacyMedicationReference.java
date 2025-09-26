@@ -9,11 +9,12 @@ import de.medizininformatikinitiative.medgraph.fhirexporter.fhir.Uri;
  *
  * @author Markus Budeus
  */
-public class MedicationReference extends Reference {
+@Deprecated
+public class LegacyMedicationReference extends Reference {
 
 	public static final Uri TYPE = new Uri("Medication");
 
-	public MedicationReference(long parentMmiId, int childNo, Long organizationMmiId) {
+	public LegacyMedicationReference(long parentMmiId, int childNo, Long organizationMmiId) {
 		super(TYPE);
 		this.identifier = Identifier.combinedMedicalProductSubproductIdentifier(parentMmiId, childNo, organizationMmiId);
 	}

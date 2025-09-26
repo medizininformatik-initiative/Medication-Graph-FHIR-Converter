@@ -9,9 +9,10 @@ import de.medizininformatikinitiative.medgraph.fhirexporter.fhir.Uri;
  *
  * @author Markus Budeus
  */
-public class SubstanceReference extends Reference {
+@Deprecated
+public class LegacySubstanceReference extends Reference {
 
-	public SubstanceReference(long substanceMmiId, String substanceName) {
+	public LegacySubstanceReference(long substanceMmiId, String substanceName) {
 		super(new Uri("Substance"));
 		this.identifier = Identifier.fromSubstanceMmiId(substanceMmiId);
 		this.display = substanceName;

@@ -6,6 +6,7 @@ package de.medizininformatikinitiative.medgraph.fhirexporter.fhir;
  * Despite the documentation claiming quantity shall be used instead of ratio where the denominator
  * is known to be 1, examples do not reflect this behavior and it also fails validations.
  */
+@Deprecated
 public interface RatioOrQuantity {
 
 

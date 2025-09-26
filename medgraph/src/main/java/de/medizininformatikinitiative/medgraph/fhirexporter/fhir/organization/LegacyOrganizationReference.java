@@ -9,9 +9,10 @@ import de.medizininformatikinitiative.medgraph.fhirexporter.fhir.Uri;
  *
  * @author Markus Budeus
  */
-public class OrganizationReference extends Reference {
+@Deprecated
+public class LegacyOrganizationReference extends Reference {
 
-	public OrganizationReference(long manufacturerMmiId, String manufacturerName) {
+	public LegacyOrganizationReference(long manufacturerMmiId, String manufacturerName) {
 		super(new Uri("Organization"));
 		this.identifier = Identifier.fromOrganizationMmiId(manufacturerMmiId);
 		this.display = manufacturerName;
