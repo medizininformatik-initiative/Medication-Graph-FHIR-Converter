@@ -3,9 +3,7 @@ package de.medizininformatikinitiative.medgraph.fhirexporter.neo4j;
 import de.medizininformatikinitiative.medgraph.Catalogue;
 import de.medizininformatikinitiative.medgraph.FhirExportTestFactory;
 import de.medizininformatikinitiative.medgraph.UnitTest;
-import de.medizininformatikinitiative.medgraph.fhirexporter.fhir.Coding;
-import de.medizininformatikinitiative.medgraph.fhirexporter.fhir.medication.Ingredient;
-import de.medizininformatikinitiative.medgraph.fhirexporter.fhir.medication.Medication;
+import org.hl7.fhir.r4.model.*;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -28,25 +26,28 @@ public class GraphDrugConversionTest extends UnitTest {
 	@ParameterizedTest
 	@MethodSource("factoryGraphDrugs")
 	void factorySampleConversion(GraphDrug graphDrug) {
-		Medication medication = graphDrug.toMedication();
+		Medication medication = graphDrug.toFhirMedication();
 
 		assertNotNull(medication);
 
-		List<Ingredient> expectedFhirIngredients = new ArrayList<>();
+		List<Medication.MedicationIngredientComponent> expectedFhirIngredients = new ArrayList<>();
 		int id = 1;
 		for (GraphIngredient gi : graphDrug.ingredients()) {
-			List<Ingredient> converted = gi.toLegacyFhirIngredientsWithCorrespoindingIngredient(id);
+			List<Medication.MedicationIngredientComponent> converted = gi.toFhirIngredientsWithCorrespoindingIngredient(
+					id);
 			id += converted.size();
 			expectedFhirIngredients.addAll(converted);
 		}
-		assertArrayEquals(expectedFhirIngredients.toArray(), medication.ingredient);
-		assertNull(medication.manufacturer);
-		assertEquals(GraphUtil.toLegacyFhirRatio(graphDrug.amount(), null, graphDrug.unit()), medication.amount);
+
+		assertFhirEquals(expectedFhirIngredients, medication.getIngredient());
+		assertFalse(medication.hasManufacturer());
+		assertFhirEquals(GraphUtil.toFhirRatio(graphDrug.amount(), null, graphDrug.unit()),
+				medication.hasAmount() ? medication.getAmount() : null);
 
 		if (graphDrug.edqmDoseForm() != null) {
-			assertArrayEquals(new Coding[] { graphDrug.edqmDoseForm().toLegacyCoding() }, medication.form.coding);
+			assertFhirEquals(List.of(graphDrug.edqmDoseForm().toCoding()), medication.getForm().getCoding());
 		} else if (graphDrug.mmiDoseForm() != null) {
-			assertEquals(graphDrug.mmiDoseForm(), medication.form.text);
+			assertEquals(graphDrug.mmiDoseForm(), medication.getForm().getText());
 		}
 	}
 
@@ -54,18 +55,18 @@ public class GraphDrugConversionTest extends UnitTest {
 	void additionalSample1() {
 		GraphIngredient ingredient1 = mock();
 		GraphIngredient ingredient2 = mock();
-		Ingredient fhirIngredient1 = mock();
-		Ingredient fhirIngredient2 = mock();
-		when(ingredient1.toLegacyFhirIngredientsWithCorrespoindingIngredient(anyInt())).thenReturn(List.of(fhirIngredient1));
-		when(ingredient2.toLegacyFhirIngredientsWithCorrespoindingIngredient(anyInt())).thenReturn(List.of(fhirIngredient2));
+		Medication.MedicationIngredientComponent fhirIngredient1 = mock();
+		Medication.MedicationIngredientComponent fhirIngredient2 = mock();
+		when(ingredient1.toFhirIngredientsWithCorrespoindingIngredient(anyInt())).thenReturn(List.of(fhirIngredient1));
+		when(ingredient2.toFhirIngredientsWithCorrespoindingIngredient(anyInt())).thenReturn(List.of(fhirIngredient2));
 
 		GraphAtc graphAtc = mock();
 		Coding coding = mock();
-		when(graphAtc.toLegacyCoding()).thenReturn(coding);
+		when(graphAtc.toCoding()).thenReturn(coding);
 
 		GraphEdqmPharmaceuticalDoseForm pdf = mock();
 		Coding doseFormCoding = mock();
-		when(pdf.toLegacyCoding()).thenReturn(doseFormCoding);
+		when(pdf.toCoding()).thenReturn(doseFormCoding);
 
 		GraphDrug drug = new GraphDrug(
 				List.of(ingredient1, ingredient2),
@@ -76,13 +77,13 @@ public class GraphDrugConversionTest extends UnitTest {
 				FhirExportTestFactory.GraphUnits.MG
 		);
 
-		Medication medication = drug.toMedication();
+		Medication medication = drug.toFhirMedication();
 
 		assertNotNull(medication);
-		assertArrayEquals(new Ingredient[] { fhirIngredient1, fhirIngredient2 }, medication.ingredient);
-		assertNull(medication.manufacturer);
-		assertEquals(GraphUtil.toLegacyFhirRatio(new BigDecimal("2.5"), null, FhirExportTestFactory.GraphUnits.MG), medication.amount);
-		assertArrayEquals(new Coding[] { doseFormCoding }, medication.form.coding);
+		assertFalse(medication.hasManufacturer());
+		assertFhirEquals(GraphUtil.toFhirRatio(new BigDecimal("2.5"), null, FhirExportTestFactory.GraphUnits.MG)
+				, medication.getAmount());
+		assertEquals(List.of(doseFormCoding), medication.getForm().getCoding());
 	}
 
 
@@ -90,14 +91,14 @@ public class GraphDrugConversionTest extends UnitTest {
 	void additionalSample2() {
 		GraphIngredient ingredient1 = mock();
 		GraphIngredient ingredient2 = mock();
-		Ingredient fhirIngredient1 = mock();
-		Ingredient fhirIngredient2 = mock();
-		when(ingredient1.toLegacyFhirIngredientsWithCorrespoindingIngredient(anyInt())).thenReturn(List.of(fhirIngredient1));
-		when(ingredient2.toLegacyFhirIngredientsWithCorrespoindingIngredient(anyInt())).thenReturn(List.of(fhirIngredient2));
+		Medication.MedicationIngredientComponent fhirIngredient1 = mock();
+		Medication.MedicationIngredientComponent fhirIngredient2 = mock();
+		when(ingredient1.toFhirIngredientsWithCorrespoindingIngredient(anyInt())).thenReturn(List.of(fhirIngredient1));
+		when(ingredient2.toFhirIngredientsWithCorrespoindingIngredient(anyInt())).thenReturn(List.of(fhirIngredient2));
 
 		GraphAtc graphAtc = mock();
 		Coding coding = mock();
-		when(graphAtc.toLegacyCoding()).thenReturn(coding);
+		when(graphAtc.toCoding()).thenReturn(coding);
 
 		GraphDrug drug = new GraphDrug(
 				List.of(ingredient1, ingredient2),
@@ -108,17 +109,32 @@ public class GraphDrugConversionTest extends UnitTest {
 				FhirExportTestFactory.GraphUnits.MG
 		);
 
-		Medication medication = drug.toMedication();
+		Medication medication = drug.toFhirMedication();
 
 		assertNotNull(medication);
-		assertArrayEquals(new Ingredient[] { fhirIngredient1, fhirIngredient2 }, medication.ingredient);
-		assertNull(medication.manufacturer);
-		assertEquals(GraphUtil.toLegacyFhirRatio(new BigDecimal("2.5"), null, FhirExportTestFactory.GraphUnits.MG), medication.amount);
-		assertEquals("Zum Einnehmen", medication.form.text);
+		assertFalse(medication.hasManufacturer());
+		assertFhirEquals(GraphUtil.toFhirRatio(new BigDecimal("2.5"), null, FhirExportTestFactory.GraphUnits.MG),
+				medication.getAmount());
+		assertEquals("Zum Einnehmen", medication.getForm().getText());
 	}
 
 	static Stream<GraphDrug> factoryGraphDrugs() {
 		return Catalogue.<GraphDrug>getAllFields(FhirExportTestFactory.GraphDrugs.class, false).stream();
+	}
+
+	private void assertFhirEquals(Base expected, Base actual) {
+		if (expected == null) {
+			assertNull(actual);
+			return;
+		}
+		assertTrue(expected.equalsDeep(actual));
+	}
+
+	private void assertFhirEquals(List<? extends Base> expected, List<? extends Base> actual) {
+		assertEquals(expected.size(), actual.size());
+		for (int i = 0; i < expected.size(); i++) {
+			assertTrue(expected.get(i).equalsDeep(actual.get(i)));
+		}
 	}
 
 }

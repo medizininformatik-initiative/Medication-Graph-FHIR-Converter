@@ -42,7 +42,7 @@ public record GraphProduct(String name, long mmiId, Long companyMmiId, String co
 	public List<Medication> toFhirMedications() {
 		Medication primary;
 		if (drugs.size() == 1) {
-			primary = drugs.getFirst().toMedication();
+			primary = drugs.getFirst().toLegacyMedication();
 		} else {
 			primary = new Medication();
 		}
@@ -70,7 +70,7 @@ public record GraphProduct(String name, long mmiId, Long companyMmiId, String co
 	 * set accordingly.
 	 */
 	private List<Medication> createDrugMedicationsAndApplyAsIngredients(Medication to) {
-		List<Medication> drugMedications = drugs.stream().map(GraphDrug::toMedication).toList();
+		List<Medication> drugMedications = drugs.stream().map(GraphDrug::toLegacyMedication).toList();
 
 		to.ingredient = new Ingredient[drugMedications.size()];
 		for (int i = 0; i < drugMedications.size(); i++) {

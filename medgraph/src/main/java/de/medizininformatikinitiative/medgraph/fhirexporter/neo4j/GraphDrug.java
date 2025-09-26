@@ -1,11 +1,7 @@
 package de.medizininformatikinitiative.medgraph.fhirexporter.neo4j;
 
-import de.medizininformatikinitiative.medgraph.fhirexporter.fhir.CodeableConcept;
-import de.medizininformatikinitiative.medgraph.fhirexporter.fhir.Coding;
-import de.medizininformatikinitiative.medgraph.fhirexporter.fhir.Status;
-import de.medizininformatikinitiative.medgraph.fhirexporter.fhir.medication.Ingredient;
-import de.medizininformatikinitiative.medgraph.fhirexporter.fhir.medication.Medication;
 import de.medizininformatikinitiative.medgraph.searchengine.tools.Util;
+import org.hl7.fhir.r4.model.Medication;
 import org.neo4j.driver.types.MapAccessorWithDefaultValue;
 
 import java.math.BigDecimal;
@@ -56,29 +52,52 @@ public record GraphDrug(List<GraphIngredient> ingredients, List<GraphAtc> atcCod
 		return Objects.hash(mmiDoseForm);
 	}
 
-	public Medication toMedication() {
-		Medication medication = new Medication();
+	@Deprecated
+	public de.medizininformatikinitiative.medgraph.fhirexporter.fhir.medication.Medication toLegacyMedication() {
+		de.medizininformatikinitiative.medgraph.fhirexporter.fhir.medication.Medication medication = new de.medizininformatikinitiative.medgraph.fhirexporter.fhir.medication.Medication();
 
 		if (edqmDoseForm != null) {
-			medication.form = new CodeableConcept();
-			medication.form.coding = new Coding[] { edqmDoseForm.toLegacyCoding() };
+			medication.form = new de.medizininformatikinitiative.medgraph.fhirexporter.fhir.CodeableConcept();
+			medication.form.coding = new de.medizininformatikinitiative.medgraph.fhirexporter.fhir.Coding[] { edqmDoseForm.toLegacyCoding() };
 			medication.form.text = edqmDoseForm.getName();
 		} else if (mmiDoseForm != null) {
-			medication.form = new CodeableConcept();
+			medication.form = new de.medizininformatikinitiative.medgraph.fhirexporter.fhir.CodeableConcept();
 			medication.form.text = mmiDoseForm;
 		}
 
 		int nextIngredientId = 1;
-		List<Ingredient> fhirIngredients = new ArrayList<>(ingredients.size() * 2);
+		List<de.medizininformatikinitiative.medgraph.fhirexporter.fhir.medication.Ingredient> fhirIngredients = new ArrayList<>(ingredients.size() * 2);
 		for (GraphIngredient gi: ingredients) {
-			List<Ingredient> converted = gi.toLegacyFhirIngredientsWithCorrespoindingIngredient(nextIngredientId);
+			List<de.medizininformatikinitiative.medgraph.fhirexporter.fhir.medication.Ingredient> converted = gi.toLegacyFhirIngredientsWithCorrespoindingIngredient(nextIngredientId);
 			nextIngredientId += converted.size();
 			fhirIngredients.addAll(converted);
 		}
-		medication.ingredient = fhirIngredients.toArray(new Ingredient[0]);
+		medication.ingredient = fhirIngredients.toArray(new de.medizininformatikinitiative.medgraph.fhirexporter.fhir.medication.Ingredient[0]);
 		medication.amount = GraphUtil.toLegacyFhirRatio(amount, null, unit);
 		medication.code = GraphUtil.toLegacyCodeableConcept(atcCodes);
-		medication.setStatus(Status.ACTIVE);
+		medication.setStatus(de.medizininformatikinitiative.medgraph.fhirexporter.fhir.Status.ACTIVE);
+		return medication;
+	}
+
+	public Medication toFhirMedication() {
+		Medication medication = new Medication();
+
+		if (edqmDoseForm != null) {
+			medication.getForm().addCoding(edqmDoseForm.toCoding());
+			medication.getForm().setText(edqmDoseForm.getName());
+		} else if (mmiDoseForm != null) {
+			medication.getForm().setText(mmiDoseForm);
+		}
+
+		int nextIngredientId = 1;
+		for (GraphIngredient gi: ingredients) {
+			List<Medication.MedicationIngredientComponent> converted = gi.toFhirIngredientsWithCorrespoindingIngredient(nextIngredientId);
+			converted.forEach(medication::addIngredient);
+			nextIngredientId += converted.size();
+		}
+		medication.setAmount(GraphUtil.toFhirRatio(amount, null, unit));
+		medication.setCode(GraphUtil.toCodeableConcept(atcCodes));
+		medication.setStatus(Medication.MedicationStatus.ACTIVE);
 		return medication;
 	}
 }
