@@ -1,43 +1,43 @@
 package de.medizininformatikinitiative.medgraph.fhirexporter.fhir.medication;
 
-import de.medizininformatikinitiative.medgraph.fhirexporter.fhir.Extension;
+import org.hl7.fhir.r4.model.Extension;
+import org.hl7.fhir.r4.model.UriType;
 
-import java.util.Objects;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
+ * Implementation of the MII Medication Module "Wirkstoffrelation" Extension.
+ *
  * @author Markus Budeus
  */
-public class ExtensionWirkstoffRelation implements Extension {
+public class ExtensionWirkstoffRelation extends Extension {
 
-	public final String url = "https://www.medizininformatik-initiative.de/fhir/core/modul-medikation/StructureDefinition/wirkstoffrelation";
-	public IngredientUri[] extension = new IngredientUri[] { new IngredientUri() };
+	public final String URL = "https://www.medizininformatik-initiative.de/fhir/core/modul-medikation/StructureDefinition/wirkstoffrelation";
 
-	public static class IngredientUri implements Extension {
-		public final String url = "ingredientUri";
-		public String valueUri;
+	private ExtensionWirkstoffRelation() {
+		this.setUrl(URL);
+	}
+
+	public static class IngredientUri extends Extension {
+		public final String URL = "ingredientUri";
+
+		private IngredientUri(String valueUri) {
+			this.setUrl(URL);
+			this.value = new UriType(valueUri);
+		}
+	}
+
+	public void setRelatesTo(String ingredientId) {
+		List<Extension> list = new ArrayList<>(1);
+		list.add(new IngredientUri(ingredientId));
+		this.setExtension(list);
 	}
 
 	public static ExtensionWirkstoffRelation relatesTo(String ingredientId) {
 		ExtensionWirkstoffRelation extension = new ExtensionWirkstoffRelation();
-		extension.extension[0].valueUri = ingredientId;
+		extension.setRelatesTo(ingredientId);
 		return extension;
 	}
 
-	@Override
-	public boolean equals(Object object) {
-		if (this == object) return true;
-		if (object == null || getClass() != object.getClass()) return false;
-		ExtensionWirkstoffRelation that = (ExtensionWirkstoffRelation) object;
-		return Objects.equals(extension[0].valueUri, that.extension[0].valueUri);
-	}
-
-	@Override
-	public int hashCode() {
-		return Objects.hashCode(extension[0].valueUri);
-	}
-
-	@Override
-	public String toString() {
-		return "ExtensionWirkstoffRelation{" + extension[0].valueUri + '}';
-	}
 }

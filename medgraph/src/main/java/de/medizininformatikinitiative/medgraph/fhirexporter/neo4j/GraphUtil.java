@@ -1,9 +1,9 @@
 package de.medizininformatikinitiative.medgraph.fhirexporter.neo4j;
 
 import de.medizininformatikinitiative.medgraph.fhirexporter.fhir.Coding;
-import de.medizininformatikinitiative.medgraph.fhirexporter.fhir.Quantity;
-import de.medizininformatikinitiative.medgraph.fhirexporter.fhir.Ratio;
 import org.hl7.fhir.r4.model.CodeableConcept;
+import org.hl7.fhir.r4.model.Quantity;
+import org.hl7.fhir.r4.model.Ratio;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.Nullable;
 
@@ -79,13 +79,83 @@ public class GraphUtil {
 	 */
 	@Nullable
 	@Contract("null, null, null -> null; !null, _, _, -> !null; null, !null, _ -> fail; null, null, !null -> fail")
-	public static Ratio toFhirRatio(@Nullable BigDecimal massFrom, @Nullable BigDecimal massTo,
-	                                @Nullable GraphUnit unit) {
-		Quantity quantity = toFhirQuantity(massFrom, massTo, unit);
+	@Deprecated
+	public static de.medizininformatikinitiative.medgraph.fhirexporter.fhir.Ratio toLegacyFhirRatio(
+			@Nullable BigDecimal massFrom, @Nullable BigDecimal massTo,
+			@Nullable GraphUnit unit) {
+		de.medizininformatikinitiative.medgraph.fhirexporter.fhir.Quantity quantity = toLegacyFhirQuantity(massFrom, massTo, unit);
 		if (quantity == null) return null;
-		return new Ratio(quantity, Quantity.one());
+		return new de.medizininformatikinitiative.medgraph.fhirexporter.fhir.Ratio(quantity, de.medizininformatikinitiative.medgraph.fhirexporter.fhir.Quantity.one());
 	}
 
+	/**
+	 * Converts the given input masses and unit to a FHIR {@link Quantity}. If you pass only nulls, the returned
+	 * quantity is null. Otherwise, massFrom must be non-null.
+	 *
+	 * @param massFrom the mass to use as value for the returned quantity
+	 * @param massTo   if only a range for the quantity is known, this is the upper limit of the range
+	 * @param unit     the unit of the quantity, may be null
+	 * @return a {@link Quantity} representing the given inputs or null if all inputs are null
+	 * @throws IllegalArgumentException if massFrom is null but any of the other arguments is non-null or if massTo is
+	 *                                  less than massFrom
+	 */
+	@Nullable
+	@Contract("null, null, null -> null; !null, _, _, -> !null; null, !null, _ -> fail; null, null, !null -> fail")
+	@Deprecated
+	public static de.medizininformatikinitiative.medgraph.fhirexporter.fhir.Quantity toLegacyFhirQuantity(@Nullable BigDecimal massFrom, @Nullable BigDecimal massTo,
+	                                            @Nullable GraphUnit unit) {
+		if (massFrom == null) {
+			if (massTo != null || unit != null)
+				throw new IllegalArgumentException("If massTo or unit is not null, massFrom must also be non-null!");
+			return null;
+		}
+
+		de.medizininformatikinitiative.medgraph.fhirexporter.fhir.Quantity quantity = new de.medizininformatikinitiative.medgraph.fhirexporter.fhir.Quantity();
+		quantity.value = massFrom;
+		quantity.setComparator(de.medizininformatikinitiative.medgraph.fhirexporter.fhir.Quantity.Comparator.EXACT);
+		if (massTo != null) {
+			int relative = massFrom.compareTo(massTo);
+			if (relative < 0) {
+				quantity.setComparator(de.medizininformatikinitiative.medgraph.fhirexporter.fhir.Quantity.Comparator.GREATER_OR_EQUAL);
+			} else if (relative > 0) {
+				throw new IllegalArgumentException(
+						"MassFrom (" + massFrom + ") is greater than massTo (" + massTo + ")!");
+			}
+		}
+
+		if (unit != null) {
+			quantity.unit = unit.print();
+			if (unit.ucumCs() != null) {
+				quantity.code = unit.ucumCs();
+				quantity.system = de.medizininformatikinitiative.medgraph.fhirexporter.fhir.Quantity.UCUM_URI;
+			}
+		}
+		return quantity;
+	}
+
+	/**
+	 * Converts the given input masses and unit to a FHIR {@link Ratio}, always using 1 as denominator. If you pass only
+	 * nulls, the returned ratio is null. Otherwise, massFrom must be non-null.
+	 *
+	 * @param massFrom the mass to use as value for the returned ratio
+	 * @param massTo   if only a range for the quantity is known, this is the upper limit of the range
+	 * @param unit     the unit of the quantity, may be null
+	 * @return a {@link Ratio} representing the given inputs or null if all inputs are null
+	 * @throws IllegalArgumentException if massFrom is null but any of the other arguments is non-null or if massTo is
+	 *                                  less than massFrom
+	 */
+	@Nullable
+	@Contract("null, null, null -> null; !null, _, _, -> !null; null, !null, _ -> fail; null, null, !null -> fail")
+	public static Ratio toFhirRatio(
+			@Nullable BigDecimal massFrom, @Nullable BigDecimal massTo,
+			@Nullable GraphUnit unit) {
+		Quantity quantity = toFhirQuantity(massFrom, massTo, unit);
+		if (quantity == null) return null;
+		Ratio ratio = new Ratio();
+		ratio.setNumerator(quantity);
+		ratio.setDenominator(new Quantity(1));
+		return ratio;
+	}
 
 	/**
 	 * Converts the given input masses and unit to a FHIR {@link Quantity}. If you pass only nulls, the returned
@@ -101,7 +171,7 @@ public class GraphUtil {
 	@Nullable
 	@Contract("null, null, null -> null; !null, _, _, -> !null; null, !null, _ -> fail; null, null, !null -> fail")
 	public static Quantity toFhirQuantity(@Nullable BigDecimal massFrom, @Nullable BigDecimal massTo,
-	                                      @Nullable GraphUnit unit) {
+	                                            @Nullable GraphUnit unit) {
 		if (massFrom == null) {
 			if (massTo != null || unit != null)
 				throw new IllegalArgumentException("If massTo or unit is not null, massFrom must also be non-null!");
@@ -109,12 +179,11 @@ public class GraphUtil {
 		}
 
 		Quantity quantity = new Quantity();
-		quantity.value = massFrom;
-		quantity.setComparator(Quantity.Comparator.EXACT);
+		quantity.setValue(massFrom);
 		if (massTo != null) {
 			int relative = massFrom.compareTo(massTo);
 			if (relative < 0) {
-				quantity.setComparator(Quantity.Comparator.GREATER_OR_EQUAL);
+				quantity.setComparator(Quantity.QuantityComparator.GREATER_OR_EQUAL);
 			} else if (relative > 0) {
 				throw new IllegalArgumentException(
 						"MassFrom (" + massFrom + ") is greater than massTo (" + massTo + ")!");
@@ -122,19 +191,20 @@ public class GraphUtil {
 		}
 
 		if (unit != null) {
-			quantity.unit = unit.print();
+			quantity.setUnit(unit.print());
 			if (unit.ucumCs() != null) {
-				quantity.code = unit.ucumCs();
-				quantity.system = Quantity.UCUM_URI;
+				quantity.setCode(unit.ucumCs());
+				quantity.setSystem("http://unitsofmeasure.org");
 			}
 		}
 		return quantity;
 	}
 
 	/**
-	 * Returns a new {@link  de.medizininformatikinitiative.medgraph.fhirexporter.fhir.CodeableConcept} which captures all the given codes. If the list of codes is null, the
-	 * returned object is null. If the list contains exactly one element, that element's corresponding
-	 * {@link Coding#display} is used as {@link  de.medizininformatikinitiative.medgraph.fhirexporter.fhir.CodeableConcept#text}.
+	 * Returns a new {@link  de.medizininformatikinitiative.medgraph.fhirexporter.fhir.CodeableConcept} which captures
+	 * all the given codes. If the list of codes is null, the returned object is null. If the list contains exactly one
+	 * element, that element's corresponding {@link Coding#display} is used as
+	 * {@link  de.medizininformatikinitiative.medgraph.fhirexporter.fhir.CodeableConcept#text}.
 	 */
 	public static de.medizininformatikinitiative.medgraph.fhirexporter.fhir.CodeableConcept toLegacyCodeableConcept(
 			List<? extends GraphCode> codes) {

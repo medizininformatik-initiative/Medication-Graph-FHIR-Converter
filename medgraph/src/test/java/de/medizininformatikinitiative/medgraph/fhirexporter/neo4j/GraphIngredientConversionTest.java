@@ -3,11 +3,11 @@ package de.medizininformatikinitiative.medgraph.fhirexporter.neo4j;
 import de.medizininformatikinitiative.medgraph.Catalogue;
 import de.medizininformatikinitiative.medgraph.FhirExportTestFactory;
 import de.medizininformatikinitiative.medgraph.UnitTest;
-import de.medizininformatikinitiative.medgraph.fhirexporter.fhir.Extension;
-import de.medizininformatikinitiative.medgraph.fhirexporter.fhir.Identifier;
 import de.medizininformatikinitiative.medgraph.fhirexporter.fhir.medication.ExtensionWirkstoffRelation;
 import de.medizininformatikinitiative.medgraph.fhirexporter.fhir.medication.ExtensionWirkstoffTyp;
-import de.medizininformatikinitiative.medgraph.fhirexporter.fhir.medication.Ingredient;
+import org.hl7.fhir.r4.model.Coding;
+import org.hl7.fhir.r4.model.Extension;
+import org.hl7.fhir.r4.model.Medication;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -27,7 +27,7 @@ public class GraphIngredientConversionTest extends UnitTest {
 	@ParameterizedTest
 	@MethodSource("ingredients")
 	void testConversion(GraphIngredient ingredient) {
-		Ingredient fhirIngredient = ingredient.toFhirIngredient();
+		Medication.MedicationIngredientComponent fhirIngredient = ingredient.toFhirIngredient();
 		assertNotNull(fhirIngredient);
 		assertBasicsMatch(ingredient, fhirIngredient);
 	}
@@ -35,23 +35,24 @@ public class GraphIngredientConversionTest extends UnitTest {
 	@ParameterizedTest
 	@MethodSource("ingredients")
 	void testDetailedConversion(GraphIngredient ingredient) {
-		List<Ingredient> fhirIngredients = ingredient.toFhirIngredientsWithCorrespoindingIngredient(1);
+		List<Medication.MedicationIngredientComponent> fhirIngredients = ingredient.toFhirIngredientsWithCorrespoindingIngredient(
+				1);
 		assertNotNull(fhirIngredients);
 
-		Ingredient precise = fhirIngredients.getFirst();
+		Medication.MedicationIngredientComponent precise = fhirIngredients.getFirst();
 		assertBasicsMatch(ingredient, precise);
 		if (ingredient.getCorrespondingIngredients().isEmpty()) {
 			assertEquals(1, fhirIngredients.size());
 		} else {
-			assertEquals("#ing_1", precise.id);
+			assertEquals("#ing_1", precise.getId());
 			assertWirkstoffTyp("PIN", precise);
 
 			for (int i = 1; i < fhirIngredients.size(); i++) {
-				Ingredient ci = fhirIngredients.get(i);
-				assertEquals("#ing_"+(i + 1), ci.id);
-				assertNull(ci.isActive);
+				Medication.MedicationIngredientComponent ci = fhirIngredients.get(i);
+				assertEquals("#ing_" + (i + 1), ci.getId());
+				assertFalse(ci.hasIsActive());
 				assertWirkstoffTyp("IN", ci);
-				assertWirkstoffRelationTo(precise.id, ci);
+				assertWirkstoffRelationTo(precise.getId(), ci);
 			}
 
 		}
@@ -59,48 +60,50 @@ public class GraphIngredientConversionTest extends UnitTest {
 
 	@Test
 	void testDetailedConversionWithDifferentId() {
-		List<Ingredient> fhirIngredients = FhirExportTestFactory.GraphIngredients.MIDAZOLAM_HYDROCHLORIDE
+		List<Medication.MedicationIngredientComponent> fhirIngredients = FhirExportTestFactory.GraphIngredients.MIDAZOLAM_HYDROCHLORIDE
 				.toFhirIngredientsWithCorrespoindingIngredient(3);
 		assertNotNull(fhirIngredients);
-		assertEquals("#ing_3", fhirIngredients.getFirst().id);
-		assertEquals("#ing_4", fhirIngredients.getLast().id);
+		assertEquals("#ing_3", fhirIngredients.getFirst().getId());
+		assertEquals("#ing_4", fhirIngredients.getLast().getId());
 	}
 
-	private void assertWirkstoffTyp(String wirkstofftyp, Ingredient ingredient) {
-		for (Extension e: ingredient.extension) {
+	private void assertWirkstoffTyp(String wirkstofftyp, Medication.MedicationIngredientComponent ingredient) {
+		for (Extension e : ingredient.getExtension()) {
 			if (e instanceof ExtensionWirkstoffTyp ex) {
-				assertEquals(wirkstofftyp, ex.valueCoding.code);
+				assertEquals(wirkstofftyp, ((Coding) ex.getValue()).getCode());
 				return;
 			}
 		}
 		fail("The extension Wirkstofftyp is not present!");
 	}
 
-	private void assertWirkstoffRelationTo(String targetIdentifier, Ingredient ingredient) {
-		for (Extension e: ingredient.extension) {
+	private void assertWirkstoffRelationTo(String targetIdentifier,
+	                                       Medication.MedicationIngredientComponent ingredient) {
+		for (Extension e : ingredient.getExtension()) {
 			if (e instanceof ExtensionWirkstoffRelation ex) {
-				assertEquals(targetIdentifier, ex.extension[0].valueUri);
+				assertEquals(targetIdentifier, ex.getExtension().getFirst().getValueAsPrimitive().getValue());
 				return;
 			}
 		}
 		fail("The extension Wirkstofftyp is not present!");
 	}
 
-	private void assertBasicsMatch(SimpleGraphIngredient ingredient, Ingredient fhirIngredient) {
+	private void assertBasicsMatch(SimpleGraphIngredient ingredient,
+	                               Medication.MedicationIngredientComponent fhirIngredient) {
 		if (ingredient instanceof GraphIngredient g) {
-			assertEquals(g.isActive(), fhirIngredient.isActive);
+			assertEquals(g.isActive(), fhirIngredient.getIsActive());
 		}
-		assertEquals(GraphUtil.toFhirRatio(ingredient.getMassFrom(), ingredient.getMassTo(), ingredient.getUnit()),
-				fhirIngredient.strength);
-		assertEquals(ingredient.getSubstanceName(), fhirIngredient.itemReference.display);
-		assertEquals(Identifier.fromSubstanceMmiId(ingredient.getSubstanceMmiId()),
-				fhirIngredient.itemReference.identifier);
+		assertTrue(GraphUtil.toFhirRatio(ingredient.getMassFrom(), ingredient.getMassTo(), ingredient.getUnit())
+		                    .equalsDeep(fhirIngredient.getStrength()));
+		assertEquals(ingredient.getSubstanceName(), fhirIngredient.getItemReference().getDisplay());
+		assertEquals(IdProvider.fromSubstanceMmiId(ingredient.getSubstanceMmiId()),
+				fhirIngredient.getItemReference().getReferenceElement().getIdPart());
 	}
 
 	static Stream<Arguments> ingredients() {
 		return Catalogue.<GraphIngredient>getAllFields(FhirExportTestFactory.GraphIngredients.class, false)
 		                .stream()
-				.map(i -> Arguments.arguments(named(i.substanceName, i)));
+		                .map(i -> Arguments.arguments(named(i.substanceName, i)));
 	}
 
 }
