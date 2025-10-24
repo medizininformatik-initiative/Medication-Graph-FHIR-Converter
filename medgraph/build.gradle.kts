@@ -17,10 +17,9 @@ dependencies {
     implementation("ca.uhn.hapi.fhir:hapi-fhir-structures-r4:${hapiVersion}")
 
     implementation("org.jetbrains:annotations:24.0.0")
-    implementation("org.neo4j.driver:neo4j-java-driver:5.19.0")
+    implementation("org.neo4j.driver:neo4j-java-driver:6.0.0")
     implementation("org.apache.commons:commons-text:1.12.0")
     implementation("com.opencsv:opencsv:5.9") // CSV Library
-    implementation("com.google.code.gson:gson:2.10.1") // JSON Library
     implementation("commons-cli:commons-cli:1.3.1") // Command Line Parser
 
     testImplementation(project(":testFixtures")) // Reference to test fixtures

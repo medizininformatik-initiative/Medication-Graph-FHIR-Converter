@@ -1,8 +1,8 @@
 package de.medizininformatikinitiative.medgraph.fhirexporter;
 
-import de.medizininformatikinitiative.medgraph.fhirexporter.fhir.medication.Medication;
-import de.medizininformatikinitiative.medgraph.fhirexporter.fhir.organization.Organization;
-import de.medizininformatikinitiative.medgraph.fhirexporter.fhir.substance.Substance;
+import org.hl7.fhir.r4.model.Medication;
+import org.hl7.fhir.r4.model.Organization;
+import org.hl7.fhir.r4.model.Substance;
 
 /**
  * Generates the file names used for the FHIR export.
@@ -18,20 +18,26 @@ public class ExportFilenameGenerator {
 
 	public String constructFilename(Organization organization) {
 		String name;
-		if (organization.alias != null && organization.alias.length > 0) {
-			name = organization.alias[0];
-		} else name = organization.name;
-		return combineToFilename(organization.identifier[0].value, name);
+		if (organization.hasAlias()) {
+			name = organization.getAlias().getFirst().toString();
+		} else name = organization.getName();
+		return combineToFilename(getMmiId(organization.getId()), name);
 	}
 
 	public String constructFilename(Substance substance) {
-		return combineToFilename(substance.identifier[0].value, substance.code.text);
+		return combineToFilename(getMmiId(substance.getId()), substance.getCode().getText());
 	}
 
 	public String constructFilename(Medication medication) {
 		String text = "unnamed";
-		if (medication.code != null) text = medication.code.text;
-		return combineToFilename(medication.identifier[0].value, text);
+		if (medication.hasCode()) text = medication.getCode().getText();
+		return combineToFilename(getMmiId(medication.getId()), text);
+	}
+
+	public String getMmiId(String id) {
+		int index = id.lastIndexOf('-');
+		if (index == -1 || index == id.length() - 1) return id;
+		return id.substring(index + 1);
 	}
 
 	/**
@@ -61,7 +67,6 @@ public class ExportFilenameGenerator {
 
 	private static String replaceIllegalCharactersAndLimitFilename(String name) {
 		StringBuilder newFilename = new StringBuilder();
-		boolean lastReplaced = false;
 		for (char c : name.toCharArray()) {
 			newFilename.append(replaceFilenameCharIfRequired(c));
 			if (newFilename.length() >= MAX_FILENAME_LENGTH) break;
@@ -70,18 +75,25 @@ public class ExportFilenameGenerator {
 	}
 
 	/**
-	 * If the given character is not supposed to be in a file name, a replacement string is returned. Otherwise,
-	 * the character itself is returned as string.
+	 * If the given character is not supposed to be in a file name, a replacement string is returned. Otherwise, the
+	 * character itself is returned as string.
 	 */
 	private static String replaceFilenameCharIfRequired(char c) {
 		switch (c) {
-			case 'ä': return "ae";
-			case 'ö': return "oe";
-			case 'ü': return "ue";
-			case 'Ä': return "Ae";
-			case 'Ö': return "Oe";
-			case 'Ü': return "Ue";
-			default: if (isAllowedFilenameChar(c)) return "" + c;
+			case 'ä':
+				return "ae";
+			case 'ö':
+				return "oe";
+			case 'ü':
+				return "ue";
+			case 'Ä':
+				return "Ae";
+			case 'Ö':
+				return "Oe";
+			case 'Ü':
+				return "Ue";
+			default:
+				if (isAllowedFilenameChar(c)) return "" + c;
 		}
 		return ILLEGAL_CHAR_REPLACEMENT;
 	}

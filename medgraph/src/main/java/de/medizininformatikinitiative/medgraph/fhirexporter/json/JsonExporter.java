@@ -1,5 +1,7 @@
 package de.medizininformatikinitiative.medgraph.fhirexporter.json;
 
+import org.hl7.fhir.r4.model.Base;
+
 import java.io.IOException;
 
 /**
@@ -9,6 +11,6 @@ import java.io.IOException;
  */
 public interface JsonExporter {
 
-	void writeToJsonFile(String filename, Object object) throws IOException;
+	void writeToJsonFile(String filename, Base object) throws IOException;
 
 }

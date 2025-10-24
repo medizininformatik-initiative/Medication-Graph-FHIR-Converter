@@ -1,6 +1,6 @@
 package de.medizininformatikinitiative.medgraph.fhirexporter;
 
-import de.medizininformatikinitiative.medgraph.fhirexporter.fhir.FhirResource;
+import org.hl7.fhir.r4.model.DomainResource;
 
 import java.util.stream.Stream;
 
@@ -9,7 +9,7 @@ import java.util.stream.Stream;
  *
  * @author Markus Budeus
  */
-public interface FhirExportSource<T extends FhirResource> {
+public interface FhirExportSource<T extends DomainResource> {
 
 	/**
 	 * Runs the export.

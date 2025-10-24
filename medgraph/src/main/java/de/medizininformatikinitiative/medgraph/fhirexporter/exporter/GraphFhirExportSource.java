@@ -1,8 +1,8 @@
 package de.medizininformatikinitiative.medgraph.fhirexporter.exporter;
 
 import de.medizininformatikinitiative.medgraph.fhirexporter.FhirExportSource;
-import de.medizininformatikinitiative.medgraph.fhirexporter.fhir.FhirResource;
-import de.medizininformatikinitiative.medgraph.fhirexporter.fhir.medication.Meta;
+import org.hl7.fhir.r4.model.DomainResource;
+import org.hl7.fhir.r4.model.Meta;
 
 import java.util.function.Function;
 import java.util.stream.Stream;
@@ -12,7 +12,7 @@ import java.util.stream.Stream;
  *
  * @author Markus Budeus
  */
-public class GraphFhirExportSource<S, T extends FhirResource> implements FhirExportSource<T> {
+public class GraphFhirExportSource<S, T extends DomainResource> implements FhirExportSource<T> {
 
 	public static final String META_SOURCE = "https://www.mmi.de/mmi-pharmindex/mmi-pharmindex-daten";
 	private final Neo4jExporter<S> exporter;
@@ -29,9 +29,7 @@ public class GraphFhirExportSource<S, T extends FhirResource> implements FhirExp
 		                               .peek(this::addSource);
 	}
 
-	private void addSource(FhirResource resource) {
-		if (resource.meta == null)
-			resource.meta = new Meta();
-		resource.meta.source = META_SOURCE;
+	private void addSource(DomainResource resource) {
+		resource.getMeta().setSource(META_SOURCE);
 	}
 }

@@ -1,5 +1,6 @@
 package de.medizininformatikinitiative.medgraph;
 
+import ca.uhn.fhir.context.FhirContext;
 import de.medizininformatikinitiative.medgraph.common.db.*;
 import de.medizininformatikinitiative.medgraph.fhirexporter.ExportFilenameGenerator;
 import de.medizininformatikinitiative.medgraph.fhirexporter.FileFhirExportSink;
@@ -48,6 +49,7 @@ public class DI {
 	static void reset() {
 		dependencyMap.clear();
 
+		dependencyMap.put(FhirContext.class, FhirContext.forR4());
 		dependencyMap.put(GraphDbPopulationFactory.class, GraphDbPopulation::new);
 		dependencyMap.put(FhirExportFactory.class, FileFhirExportSink::new);
 		ConnectionPreferences preferences = ApplicationPreferences.getDatabaseConnectionPreferences();

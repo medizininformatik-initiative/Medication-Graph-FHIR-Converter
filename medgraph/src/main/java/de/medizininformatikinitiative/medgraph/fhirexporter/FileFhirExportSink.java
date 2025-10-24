@@ -4,19 +4,14 @@ import de.medizininformatikinitiative.medgraph.DI;
 import de.medizininformatikinitiative.medgraph.common.logging.Level;
 import de.medizininformatikinitiative.medgraph.common.logging.LogManager;
 import de.medizininformatikinitiative.medgraph.common.logging.Logger;
-import de.medizininformatikinitiative.medgraph.fhirexporter.fhir.FhirResource;
-import de.medizininformatikinitiative.medgraph.fhirexporter.fhir.medication.Medication;
-import de.medizininformatikinitiative.medgraph.fhirexporter.fhir.organization.Organization;
-import de.medizininformatikinitiative.medgraph.fhirexporter.fhir.substance.Substance;
-import de.medizininformatikinitiative.medgraph.fhirexporter.json.GsonExporter;
+import de.medizininformatikinitiative.medgraph.fhirexporter.json.HapiJsonExporter;
 import de.medizininformatikinitiative.medgraph.fhirexporter.json.JsonExporter;
-import org.neo4j.driver.Session;
+import org.hl7.fhir.r4.model.DomainResource;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Arrays;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
@@ -81,12 +76,12 @@ public class FileFhirExportSink extends FhirExportSink {
 	 * @param filenameProvider a function which provides a filename for each exported object - the .json-suffix will be
 	 *                         appended automatically!
 	 */
-	private <T extends FhirResource> void exportToJsonFiles(FhirExportSource<T> exporter, Path outPath,
-	                                                        Function<T, String> filenameProvider) throws IOException {
+	private <T extends DomainResource> void exportToJsonFiles(FhirExportSource<T> exporter, Path outPath,
+	                                                          Function<T, String> filenameProvider) throws IOException {
 		if (!outPath.toFile().exists())
 			Files.createDirectory(outPath);
 
-		JsonExporter jsonExporter = new GsonExporter(outPath);
+		JsonExporter jsonExporter = new HapiJsonExporter(outPath);
 		final Set<String> filenamesUsed = ConcurrentHashMap.newKeySet();
 		exporter.export().parallel().forEach(object -> {
 			try {
@@ -99,7 +94,7 @@ public class FileFhirExportSink extends FhirExportSink {
 
 				jsonExporter.writeToJsonFile(filename + ".json", object);
 			} catch (IOException e) {
-				logger.log(Level.ERROR, "Failed to export FHIR object \"" + Arrays.toString(object.identifier) + "\"",
+				logger.log(Level.ERROR, "Failed to export FHIR object \"" + object.getId() + "\"",
 						e);
 			}
 		});
