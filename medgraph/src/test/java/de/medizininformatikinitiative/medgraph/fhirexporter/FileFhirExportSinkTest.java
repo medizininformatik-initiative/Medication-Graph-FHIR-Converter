@@ -1,8 +1,7 @@
 package de.medizininformatikinitiative.medgraph.fhirexporter;
 
+import de.medizininformatikinitiative.medgraph.FhirExportSinkTestBase;
 import de.medizininformatikinitiative.medgraph.TempDirectoryTestExtension;
-import de.medizininformatikinitiative.medgraph.UnitTest;
-import org.hl7.fhir.r4.model.DomainResource;
 import org.hl7.fhir.r4.model.Medication;
 import org.hl7.fhir.r4.model.Organization;
 import org.hl7.fhir.r4.model.Substance;
@@ -16,8 +15,6 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.function.Supplier;
-import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.notNull;
@@ -26,28 +23,21 @@ import static org.mockito.ArgumentMatchers.notNull;
  * @author Markus Budeus
  */
 @ExtendWith(TempDirectoryTestExtension.class)
-public class FhirExportTest extends UnitTest {
+public class FileFhirExportSinkTest extends FhirExportSinkTestBase {
 
-	@Mock
-	private FhirExportSource<Medication> medicationExporter;
-	@Mock
-	private FhirExportSource<Substance> substanceExporter;
-	@Mock
-	private FhirExportSource<Organization> organizationExporter;
 	@Mock
 	private ExportFilenameGenerator filenameGenerator;
 
 	private FileFhirExportSink sut;
 
 	@BeforeEach
-	void setUp(Path path) {
-		Mockito.doReturn(toStream(Organization::new, 10)).when(organizationExporter).export();
-		Mockito.doReturn(toStream(Substance::new, 10)).when(substanceExporter).export();
-		Mockito.doReturn(toStream(Medication::new, 10)).when(medicationExporter).export();
-
-		Mockito.when(filenameGenerator.constructFilename((Substance) notNull())).thenAnswer(r -> UUID.randomUUID().toString());
-		Mockito.when(filenameGenerator.constructFilename((Organization) notNull())).thenAnswer(r -> UUID.randomUUID().toString());
-		Mockito.when(filenameGenerator.constructFilename((Medication) notNull())).thenAnswer(r -> UUID.randomUUID().toString());
+	void setUp2(Path path) {
+		Mockito.when(filenameGenerator.constructFilename((Substance) notNull()))
+		       .thenAnswer(r -> UUID.randomUUID().toString());
+		Mockito.when(filenameGenerator.constructFilename((Organization) notNull()))
+		       .thenAnswer(r -> UUID.randomUUID().toString());
+		Mockito.when(filenameGenerator.constructFilename((Medication) notNull()))
+		       .thenAnswer(r -> UUID.randomUUID().toString());
 
 		sut = new FileFhirExportSink(path, filenameGenerator);
 	}
@@ -83,12 +73,6 @@ public class FhirExportTest extends UnitTest {
 		assertEquals(1, exportsBeforeSubstance.get());
 		assertEquals(2, exportsBeforeMedication.get());
 		assertEquals(3, sut.getProgress());
-	}
-
-	private <T extends DomainResource> Stream<T> toStream(Supplier<T> generator, int limit) {
-		return Stream.generate(generator)
-		             .peek(t -> t.setId(UUID.randomUUID().toString()))
-		             .limit(limit);
 	}
 
 }
