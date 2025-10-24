@@ -1,6 +1,5 @@
 package de.medizininformatikinitiative.medgraph.fhirexporter.neo4j;
 
-import de.medizininformatikinitiative.medgraph.fhirexporter.fhir.substance.LegacySubstanceReference;
 import de.medizininformatikinitiative.medgraph.fhirexporter.fhir.SubstanceReference;
 import org.hl7.fhir.r4.model.Medication;
 import org.neo4j.driver.types.MapAccessorWithDefaultValue;
@@ -40,14 +39,6 @@ public class SimpleGraphIngredient {
 		massFrom = GraphUtil.toBigDecimal(value.get(MASS_FROM, (String) null));
 		massTo = GraphUtil.toBigDecimal(value.get(MASS_TO, (String) null));
 		unit = GraphUnit.from(value.get(UNIT));
-	}
-
-	@Deprecated
-	protected de.medizininformatikinitiative.medgraph.fhirexporter.fhir.medication.Ingredient toLegacyBasicFhirIngredient() {
-		de.medizininformatikinitiative.medgraph.fhirexporter.fhir.medication.Ingredient ingredient = new de.medizininformatikinitiative.medgraph.fhirexporter.fhir.medication.Ingredient();
-		ingredient.itemReference = new LegacySubstanceReference(substanceMmiId, substanceName);
-		ingredient.strength = GraphUtil.toLegacyFhirRatio(massFrom, massTo, unit);
-		return ingredient;
 	}
 
 	protected Medication.MedicationIngredientComponent toBasicFhirIngredient() {

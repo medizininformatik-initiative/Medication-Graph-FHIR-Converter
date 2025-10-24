@@ -1,6 +1,5 @@
 package de.medizininformatikinitiative.medgraph.fhirexporter.neo4j;
 
-import de.medizininformatikinitiative.medgraph.fhirexporter.fhir.organization.FhirAddress;
 import org.hl7.fhir.r4.model.Address;
 import org.hl7.fhir.r4.model.StringType;
 import org.neo4j.driver.types.MapAccessorWithDefaultValue;
@@ -25,28 +24,6 @@ public record GraphAddress(String street, String streetNumber, String postalCode
 				value.get(CITY, (String) null),
 				value.get(COUNTRY, (String) null),
 				value.get(COUNTRY_CODE, (String) null));
-	}
-
-	@Deprecated
-	public FhirAddress toLegacyFhirAddress() {
-		FhirAddress fhirAddress = new FhirAddress();
-		fhirAddress.setUse(FhirAddress.Use.WORK);
-
-		String line = null;
-		if (street != null) {
-			if (streetNumber != null) {
-				line = street + " " + streetNumber;
-			} else {
-				line = street;
-			}
-		}
-
-		String country = this.country;
-		if (country == null) country = this.countryCode;
-
-		String[] effectiveLine = line != null ? new String[]{line} : null;
-		fhirAddress.setAddress(effectiveLine, postalCode, city, country);
-		return fhirAddress;
 	}
 
 	public Address toFhirAddress() {

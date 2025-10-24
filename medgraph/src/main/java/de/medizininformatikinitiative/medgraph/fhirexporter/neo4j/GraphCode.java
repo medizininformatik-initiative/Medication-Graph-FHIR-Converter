@@ -76,19 +76,6 @@ public class GraphCode {
 				'}';
 	}
 
-	public de.medizininformatikinitiative.medgraph.fhirexporter.fhir.Coding toLegacyCoding() {
-		de.medizininformatikinitiative.medgraph.fhirexporter.fhir.Coding coding =
-				new de.medizininformatikinitiative.medgraph.fhirexporter.fhir.Coding();
-		coding.system = systemUri;
-		if (systemVersion == null) {
-			coding.version = GraphUtil.toFhirDate(systemDate);
-		} else {
-			coding.version = systemVersion;
-		}
-		coding.code = code;
-		return coding;
-	}
-
 	public Coding toCoding() {
 		Coding coding = new Coding();
 		coding.setSystem(systemUri);

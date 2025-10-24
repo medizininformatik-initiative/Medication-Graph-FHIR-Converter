@@ -52,33 +52,6 @@ public record GraphDrug(List<GraphIngredient> ingredients, List<GraphAtc> atcCod
 		return Objects.hash(mmiDoseForm);
 	}
 
-	@Deprecated
-	public de.medizininformatikinitiative.medgraph.fhirexporter.fhir.medication.Medication toLegacyMedication() {
-		de.medizininformatikinitiative.medgraph.fhirexporter.fhir.medication.Medication medication = new de.medizininformatikinitiative.medgraph.fhirexporter.fhir.medication.Medication();
-
-		if (edqmDoseForm != null) {
-			medication.form = new de.medizininformatikinitiative.medgraph.fhirexporter.fhir.CodeableConcept();
-			medication.form.coding = new de.medizininformatikinitiative.medgraph.fhirexporter.fhir.Coding[] { edqmDoseForm.toLegacyCoding() };
-			medication.form.text = edqmDoseForm.getName();
-		} else if (mmiDoseForm != null) {
-			medication.form = new de.medizininformatikinitiative.medgraph.fhirexporter.fhir.CodeableConcept();
-			medication.form.text = mmiDoseForm;
-		}
-
-		int nextIngredientId = 1;
-		List<de.medizininformatikinitiative.medgraph.fhirexporter.fhir.medication.Ingredient> fhirIngredients = new ArrayList<>(ingredients.size() * 2);
-		for (GraphIngredient gi: ingredients) {
-			List<de.medizininformatikinitiative.medgraph.fhirexporter.fhir.medication.Ingredient> converted = gi.toLegacyFhirIngredientsWithCorrespoindingIngredient(nextIngredientId);
-			nextIngredientId += converted.size();
-			fhirIngredients.addAll(converted);
-		}
-		medication.ingredient = fhirIngredients.toArray(new de.medizininformatikinitiative.medgraph.fhirexporter.fhir.medication.Ingredient[0]);
-		medication.amount = GraphUtil.toLegacyFhirRatio(amount, null, unit);
-		medication.code = GraphUtil.toLegacyCodeableConcept(atcCodes);
-		medication.setStatus(de.medizininformatikinitiative.medgraph.fhirexporter.fhir.Status.ACTIVE);
-		return medication;
-	}
-
 	public Medication toFhirMedication() {
 		Medication medication = new Medication();
 
