@@ -1,6 +1,5 @@
 package de.medizininformatikinitiative.medgraph.fhirexporter.exporter;
 
-import de.medizininformatikinitiative.medgraph.fhirexporter.fhir.substance.Substance;
 import de.medizininformatikinitiative.medgraph.fhirexporter.neo4j.GraphSubstance;
 import de.medizininformatikinitiative.medgraph.fhirexporter.neo4j.GraphUtil;
 import org.neo4j.driver.Query;
@@ -29,7 +28,7 @@ public class Neo4jSubstanceExporter extends Neo4jExporter<GraphSubstance> {
 
 	/**
 	 * Reads all substances with their assigned codes and coding systems from the database and returns them as a stream
-	 * of {@link Substance Substances}.
+	 * of {@link GraphSubstance Substances}.
 	 */
 	@Override
 	public Stream<GraphSubstance> exportObjects() {

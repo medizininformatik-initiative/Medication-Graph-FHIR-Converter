@@ -2,11 +2,10 @@ package de.medizininformatikinitiative.medgraph.fhirexporter;
 
 import de.medizininformatikinitiative.medgraph.TempDirectoryTestExtension;
 import de.medizininformatikinitiative.medgraph.UnitTest;
-import de.medizininformatikinitiative.medgraph.fhirexporter.fhir.FhirResource;
-import de.medizininformatikinitiative.medgraph.fhirexporter.fhir.Identifier;
-import de.medizininformatikinitiative.medgraph.fhirexporter.fhir.medication.Medication;
-import de.medizininformatikinitiative.medgraph.fhirexporter.fhir.organization.Organization;
-import de.medizininformatikinitiative.medgraph.fhirexporter.fhir.substance.Substance;
+import org.hl7.fhir.r4.model.DomainResource;
+import org.hl7.fhir.r4.model.Medication;
+import org.hl7.fhir.r4.model.Organization;
+import org.hl7.fhir.r4.model.Substance;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -21,7 +20,6 @@ import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.notNull;
 
 /**
@@ -87,9 +85,9 @@ public class FhirExportTest extends UnitTest {
 		assertEquals(3, sut.getProgress());
 	}
 
-	private <T extends FhirResource> Stream<T> toStream(Supplier<T> generator, int limit) {
+	private <T extends DomainResource> Stream<T> toStream(Supplier<T> generator, int limit) {
 		return Stream.generate(generator)
-		             .peek(t -> t.identifier = new Identifier[]{Identifier.temporaryId(UUID.randomUUID().toString())})
+		             .peek(t -> t.setId(UUID.randomUUID().toString()))
 		             .limit(limit);
 	}
 

@@ -4,11 +4,11 @@ import de.medizininformatikinitiative.medgraph.fhirexporter.exporter.GraphFhirEx
 import de.medizininformatikinitiative.medgraph.fhirexporter.exporter.Neo4jOrganizationExporter;
 import de.medizininformatikinitiative.medgraph.fhirexporter.exporter.Neo4jProductExporter;
 import de.medizininformatikinitiative.medgraph.fhirexporter.exporter.Neo4jSubstanceExporter;
-import de.medizininformatikinitiative.medgraph.fhirexporter.fhir.medication.Medication;
-import de.medizininformatikinitiative.medgraph.fhirexporter.fhir.organization.Organization;
-import de.medizininformatikinitiative.medgraph.fhirexporter.fhir.substance.Substance;
 import de.medizininformatikinitiative.medgraph.fhirexporter.neo4j.GraphOrganization;
 import de.medizininformatikinitiative.medgraph.fhirexporter.neo4j.GraphSubstance;
+import org.hl7.fhir.r4.model.Medication;
+import org.hl7.fhir.r4.model.Organization;
+import org.hl7.fhir.r4.model.Substance;
 import org.neo4j.driver.Session;
 
 /**
@@ -47,12 +47,12 @@ public class FhirExportSources {
 	public static FhirExportSources forNeo4jSession(Session session) {
 		FhirExportSource<Organization> organizationExporter = new GraphFhirExportSource<>(
 				new Neo4jOrganizationExporter(session),
-				s -> s.map(GraphOrganization::toLegacyFhirOrganization));
+				s -> s.map(GraphOrganization::toFhirOrganizaition));
 		FhirExportSource<Substance> substanceExporter = new GraphFhirExportSource<>(new Neo4jSubstanceExporter(session),
-				s -> s.map(GraphSubstance::toLegacyFhirSubstance));
+				s -> s.map(GraphSubstance::toFhirSubstance));
 		FhirExportSource<Medication> medicationExporter = new GraphFhirExportSource<>(
 				new Neo4jProductExporter(session, false),
-				s -> s.flatMap(p -> p.toLegacyFhirMedications().stream()));
+				s -> s.flatMap(p -> p.toFhirMedications().stream()));
 
 		return new FhirExportSources(
 				organizationExporter,

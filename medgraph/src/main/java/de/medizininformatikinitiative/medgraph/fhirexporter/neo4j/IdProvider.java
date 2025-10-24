@@ -7,7 +7,7 @@ package de.medizininformatikinitiative.medgraph.fhirexporter.neo4j;
  */
 public class IdProvider {
 
-	private static final String PREFIX = "MII-DIZ-Medication-Conv-MMI-";
+	private static final String PREFIX = "MII-Medgraph-MMI-";
 	private static final String PRODUCT_PREFIX = PREFIX + "P-";
 	private static final String SUBSTANCE_PREFIX = PREFIX + "S-";
 	private static final String ORGANIZATION_PREFIX = PREFIX + "O-";

@@ -1,22 +1,23 @@
 package de.medizininformatikinitiative.medgraph.fhirexporter.json;
 
-import com.google.gson.Gson;
+import ca.uhn.fhir.context.FhirContext;
+import ca.uhn.fhir.parser.IParser;
+import de.medizininformatikinitiative.medgraph.DI;
+import org.hl7.fhir.r4.model.Base;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
 /**
- * A {@link JsonExporter}-implementation using Google Gson.
- *
  * @author Markus Budeus
  */
-public class GsonExporter implements JsonExporter {
+public class HapiJsonExporter implements JsonExporter {
 
-	private final Gson gson = new Gson();
+	private final IParser parser = DI.get(FhirContext.class).newJsonParser();
 	private final Path outPath;
 
-	public GsonExporter(Path outPath) throws IOException {
+	public HapiJsonExporter(Path outPath) throws IOException {
 		this.outPath = outPath;
 		if (!outPath.toFile().exists()) {
 			if (!outPath.toFile().mkdirs()) {
@@ -28,9 +29,8 @@ public class GsonExporter implements JsonExporter {
 	}
 
 	@Override
-	public void writeToJsonFile(String filename, Object object) throws IOException {
+	public void writeToJsonFile(String filename, Base object) throws IOException {
 		Path path = outPath.resolve(filename);
-		Files.writeString(path, gson.toJson(object));
+		Files.writeString(path, parser.encodeToString(object));
 	}
-
 }
