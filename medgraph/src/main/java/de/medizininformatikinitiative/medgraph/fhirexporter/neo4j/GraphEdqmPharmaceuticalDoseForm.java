@@ -58,15 +58,6 @@ public class GraphEdqmPharmaceuticalDoseForm extends GraphCode {
 	}
 
 	@Override
-	public de.medizininformatikinitiative.medgraph.fhirexporter.fhir.Coding toLegacyCoding() {
-		de.medizininformatikinitiative.medgraph.fhirexporter.fhir.Coding coding = super.toLegacyCoding();
-		if (coding.code != null && coding.code.length() > 3 && coding.code.charAt(3) == '-')
-			coding.code = coding.code.substring(4); // Remove prefix "PDF-", "BDF-", "ISI-" or whatever...
-		coding.display = name;
-		return coding;
-	}
-
-	@Override
 	public Coding toCoding() {
 		Coding coding = super.toCoding();
 		if (coding.getCode() != null && coding.getCode().length() > 3 && coding.getCode().charAt(3) == '-')

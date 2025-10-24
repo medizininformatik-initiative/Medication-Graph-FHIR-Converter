@@ -1,6 +1,5 @@
 package de.medizininformatikinitiative.medgraph.fhirexporter.neo4j;
 
-import de.medizininformatikinitiative.medgraph.fhirexporter.fhir.Identifier;
 import org.hl7.fhir.r4.model.Substance;
 import org.neo4j.driver.Record;
 
@@ -17,15 +16,6 @@ public record GraphSubstance(long mmiId, String name, List<GraphCode> codes) {
 				record.get(1).asString(null),
 				record.get(2).asList(GraphCode::new)
 		);
-	}
-
-	public de.medizininformatikinitiative.medgraph.fhirexporter.fhir.substance.Substance toLegacyFhirSubstance() {
-		de.medizininformatikinitiative.medgraph.fhirexporter.fhir.substance.Substance substance =
-				new de.medizininformatikinitiative.medgraph.fhirexporter.fhir.substance.Substance();
-		substance.identifier = new Identifier[] { Identifier.fromSubstanceMmiId(mmiId) };
-		substance.code = GraphUtil.toLegacyCodeableConcept(codes);
-		substance.code.text = name;
-		return substance;
 	}
 
 	public Substance toFhirSubstance() {

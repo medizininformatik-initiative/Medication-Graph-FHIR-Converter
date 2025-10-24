@@ -3,8 +3,6 @@ package de.medizininformatikinitiative.medgraph.fhirexporter.exporter;
 import de.medizininformatikinitiative.medgraph.common.logging.Level;
 import de.medizininformatikinitiative.medgraph.common.logging.LogManager;
 import de.medizininformatikinitiative.medgraph.common.logging.Logger;
-import de.medizininformatikinitiative.medgraph.fhirexporter.fhir.medication.Medication;
-import de.medizininformatikinitiative.medgraph.fhirexporter.fhir.substance.Substance;
 import de.medizininformatikinitiative.medgraph.fhirexporter.neo4j.*;
 import org.neo4j.driver.Session;
 

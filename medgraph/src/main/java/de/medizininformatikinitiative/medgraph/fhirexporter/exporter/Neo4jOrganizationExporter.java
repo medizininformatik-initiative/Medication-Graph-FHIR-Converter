@@ -1,6 +1,5 @@
 package de.medizininformatikinitiative.medgraph.fhirexporter.exporter;
 
-import de.medizininformatikinitiative.medgraph.fhirexporter.fhir.organization.Organization;
 import de.medizininformatikinitiative.medgraph.fhirexporter.neo4j.GraphAddress;
 import de.medizininformatikinitiative.medgraph.fhirexporter.neo4j.GraphOrganization;
 import org.neo4j.driver.Query;
