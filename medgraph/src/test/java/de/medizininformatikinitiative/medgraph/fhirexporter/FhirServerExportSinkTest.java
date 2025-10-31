@@ -23,6 +23,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  */
 public class FhirServerExportSinkTest extends FhirExportSinkTestBase {
 
+	// TODO Test resource interdependencies
+
 	private static final String URL = "http://localhost:8080/fhir";
 	private FhirServerExportSink sut;
 
