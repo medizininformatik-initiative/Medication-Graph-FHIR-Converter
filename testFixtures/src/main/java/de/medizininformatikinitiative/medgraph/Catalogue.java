@@ -1,6 +1,5 @@
 package de.medizininformatikinitiative.medgraph;
 
-import java.lang.reflect.AccessFlag;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -60,8 +59,7 @@ public interface Catalogue {
 	private static List<Field> getAllReflectiveFields(Class<? extends Catalogue> catalogue,
 	                                                  boolean includeDeclaredClasses) {
 		List<Field> fields = new LinkedList<>(Arrays.asList(catalogue.getDeclaredFields()));
-		fields.removeIf(field -> !field.accessFlags().contains(AccessFlag.FINAL) || !field.accessFlags()
-		                                                                                  .contains(AccessFlag.STATIC));
+		fields.removeIf(field -> !java.lang.reflect.Modifier.isFinal(field.getModifiers()) || !java.lang.reflect.Modifier.isStatic(field.getModifiers()));
 
 		if (includeDeclaredClasses)
 			for (Class<?> nestedClass : catalogue.getDeclaredClasses()) {

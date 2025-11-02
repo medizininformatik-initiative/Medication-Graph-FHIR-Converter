@@ -11,7 +11,7 @@ plugins {
 kotlin {
     jvm("desktop") {
         compilations.all {
-            kotlinOptions.jvmTarget = "21"
+            kotlinOptions.jvmTarget = "18"
         }
         registerShadowJar()
     }
@@ -64,7 +64,7 @@ val desktopVersion = "1.0.2"
 
 compose.desktop {
     application {
-        mainClass = "MainKt"
+        mainClass = "de.medizininformatikinitiative.medgraph.ui.desktop.MainKt"
 
         nativeDistributions {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)

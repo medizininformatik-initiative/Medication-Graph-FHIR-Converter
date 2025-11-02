@@ -109,6 +109,8 @@ public class GraphDbPopulation extends NamedProgressableImpl {
 		loaders.add(new DoseFormLoader(session));
 		// Relations between MMI dose forms and EDQM dose forms
 		loaders.add(new MmiEdqmDoseFormConnectionsLoader(session));
+		// EDQM to RxNorm dose form mapping
+		loaders.add(new EdqmRxNormDoseFormMappingLoader(session));
 		// ATC Hierarchy
 		loaders.add(new AtcLoader(session));
 		// Substance nodes, ASK nodes and CAS nodes and their relations

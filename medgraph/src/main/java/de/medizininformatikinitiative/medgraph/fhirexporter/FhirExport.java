@@ -112,12 +112,12 @@ public class FhirExport extends NamedProgressableImpl {
 	 */
 	private <T extends FhirResource> void exportToJsonFiles(FhirExportSource<T> exporter, Path outPath,
 	                                                        Function<T, String> filenameProvider) throws IOException {
-		if (!outPath.toFile().exists())
-			Files.createDirectory(outPath);
+        if (!outPath.toFile().exists())
+            Files.createDirectories(outPath);
 
 		JsonExporter jsonExporter = new GsonExporter(outPath);
 		final Set<String> filenamesUsed = ConcurrentHashMap.newKeySet();
-		exporter.export().parallel().forEach(object -> {
+        exporter.export().forEach(object -> {
 			try {
 				String filename = filenameProvider.apply(object);
 				if (!filenamesUsed.add(filename)) {

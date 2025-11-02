@@ -40,6 +40,11 @@ public class Neo4jCypherDatabase implements Database {
 		this.session = session;
 	}
 
+	
+	public Session getSession() {
+		return session;
+	}
+
 	@Override
 	public Set<DetailedProduct> getDetailedProductInfo(Collection<Long> productIds) {
 		if (productIds.isEmpty()) return Collections.emptySet();

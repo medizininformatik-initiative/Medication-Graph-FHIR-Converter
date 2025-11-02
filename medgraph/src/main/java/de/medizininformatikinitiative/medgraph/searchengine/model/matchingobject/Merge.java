@@ -30,7 +30,7 @@ public class Merge<T extends Matchable> extends MatchingObjectBase<T> {
 			List<? extends MatchingObject<? extends T>> sourceObjects) {
 		if (sourceObjects == null) throw new NullPointerException("The list of source objects may not be null!");
 		if (sourceObjects.isEmpty()) throw new IllegalArgumentException("The list of source objects may not be empty!");
-		T matchable = sourceObjects.getFirst().getObject();
+		T matchable = sourceObjects.get(0).getObject();
 		for (MatchingObject<? extends T> object : sourceObjects) {
 			if (!object.getObject().equals(matchable))
 				throw new IllegalArgumentException("The given source objects do not all reference the same Matchable!");

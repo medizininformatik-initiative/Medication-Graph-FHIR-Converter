@@ -39,10 +39,20 @@ public record GraphProduct(String name, long mmiId, Long companyMmiId, String co
 		);
 	}
 
-	public List<Medication> toFhirMedications() {
+    public List<Medication> toFhirMedications() {
+        System.out.println("\n*** [Product] Converting product: " + name + " (mmiId: " + mmiId + ") with " + drugs.size() + " drug(s) ***");
+        
 		Medication primary;
 		if (drugs.size() == 1) {
-			primary = drugs.getFirst().toMedication();
+			primary = drugs.get(0).toMedication();
+            // Try RxNorm match for the single drug
+            RxNormProductMatcher matcher = RxNormMatcherSetup.getSharedMatcher();
+            if (matcher != null) {
+                RxNormProductMatcher.MatchResult scd = matcher.matchSCD(drugs.get(0));
+                if (scd != null) {
+                    addRxNormCoding(primary, scd);
+                }
+            }
 		} else {
 			primary = new Medication();
 		}
@@ -57,7 +67,18 @@ public record GraphProduct(String name, long mmiId, Long companyMmiId, String co
 		primary.code.text = name;
 
 		if (drugs.size() > 1) {
-			return createDrugMedicationsAndApplyAsIngredients(primary);
+            List<Medication> meds = createDrugMedicationsAndApplyAsIngredients(primary);
+            // Try RxNorm match for each drug medication
+            RxNormProductMatcher matcher = RxNormMatcherSetup.getSharedMatcher();
+            if (matcher != null) {
+                for (int i = 0; i < drugs.size(); i++) {
+                    RxNormProductMatcher.MatchResult scd = matcher.matchSCD(drugs.get(i));
+                    if (scd != null) {
+                        addRxNormCoding(meds.get(i + 1), scd); // first is primary
+                    }
+                }
+            }
+            return meds;
 		}
 
 		return List.of(primary);
@@ -115,6 +136,21 @@ public record GraphProduct(String name, long mmiId, Long companyMmiId, String co
 			to.manufacturer = new OrganizationReference(companyMmiId, companyName);
 		}
 	}
+
+    private void addRxNormCoding(Medication to, RxNormProductMatcher.MatchResult match) {
+        if (to.code == null) {
+            to.code = new CodeableConcept();
+        }
+        Coding rx = new Coding();
+        rx.system = "https://www.nlm.nih.gov/research/umls/rxnorm";
+        rx.code = match.rxcui;
+        rx.display = match.name;
+        if (to.code.coding == null) {
+            to.code.coding = new Coding[] { rx };
+        } else {
+            to.code.coding = concat(new Coding[] { rx }, to.code.coding);
+        }
+    }
 
 	@SuppressWarnings("unchecked")
 	private <T> T[] concat(T[] array1, T[] array2) {

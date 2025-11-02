@@ -17,20 +17,24 @@ public class SimpleGraphIngredient {
 	public static final String MASS_FROM = "massFrom";
 	public static final String MASS_TO = "massTo";
 	public static final String UNIT = "unit";
+    public static final String RXCUI_CODES = "rxcuiCodes";
 
 	protected final long substanceMmiId;
 	protected final String substanceName;
 	protected final BigDecimal massFrom;
 	protected final BigDecimal massTo;
 	protected final GraphUnit unit;
+    // Optional list of RxNorm codes (IN/PIN etc.) attached to the substance of this ingredient
+    protected final java.util.List<String> rxcuiCodes;
 
-	public SimpleGraphIngredient(long substanceMmiId, String substanceName, BigDecimal massFrom, BigDecimal massTo,
-	                             GraphUnit unit) {
+    public SimpleGraphIngredient(long substanceMmiId, String substanceName, BigDecimal massFrom, BigDecimal massTo,
+                                 GraphUnit unit) {
 		this.substanceMmiId = substanceMmiId;
 		this.substanceName = substanceName;
 		this.massFrom = massFrom;
 		this.massTo = massTo;
 		this.unit = unit;
+        this.rxcuiCodes = java.util.Collections.emptyList();
 	}
 
 	public SimpleGraphIngredient(MapAccessorWithDefaultValue value) {
@@ -39,6 +43,12 @@ public class SimpleGraphIngredient {
 		massFrom = GraphUtil.toBigDecimal(value.get(MASS_FROM, (String) null));
 		massTo = GraphUtil.toBigDecimal(value.get(MASS_TO, (String) null));
 		unit = GraphUnit.from(value.get(UNIT));
+        org.neo4j.driver.Value rxVals = value.get(RXCUI_CODES, (org.neo4j.driver.Value) null);
+        if (rxVals == null || rxVals.isNull()) {
+            rxcuiCodes = java.util.Collections.emptyList();
+        } else {
+            rxcuiCodes = rxVals.asList(org.neo4j.driver.Value::asString);
+        }
 	}
 
 	protected Ingredient toBasicFhirIngredient() {
@@ -68,6 +78,10 @@ public class SimpleGraphIngredient {
 		return unit;
 	}
 
+    public java.util.List<String> getRxcuiCodes() {
+        return rxcuiCodes;
+    }
+
 	@Override
 	public boolean equals(Object object) {
 		if (this == object) return true;
@@ -80,6 +94,6 @@ public class SimpleGraphIngredient {
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(substanceMmiId, substanceName, massFrom, massTo, unit);
+        return Objects.hash(substanceMmiId, substanceName, massFrom, massTo, unit, rxcuiCodes);
 	}
 }

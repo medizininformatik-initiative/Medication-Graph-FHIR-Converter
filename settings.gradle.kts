@@ -29,6 +29,6 @@ dependencyResolutionManagement {
 }
 
 include(":composeApp")
-include("medgraph")
-include("tools")
-include("testFixtures")
+include(":medgraph")
+include(":tools")
+include(":testFixtures")

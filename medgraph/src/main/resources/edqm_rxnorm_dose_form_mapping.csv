@@ -1,0 +1,477 @@
+edqm_dose_form,rxnorm_dose_form,has_trac_code,has_trac_term,has_rca_code,has_rca_term,has_amec_code,has_amec_term,has_isic_code,has_isic_term
+ear cream,,42,no transformation                                 ,47,conventional                                      ,5,application,21,auricular
+ear gel,,42,no transformation                                 ,47,conventional                                      ,5,application,21,auricular
+ear ointment,otic ointment,42,no transformation                                 ,47,conventional                                      ,5,application,21,auricular
+ear powder,,42,no transformation                                 ,47,conventional                                      ,5,application,21,auricular
+ear tampon,,42,no transformation                                 ,47,conventional                                      ,12,insertion,21,auricular
+"ear drops, solution",otic solution,42,no transformation                                 ,47,conventional                                      ,13,instillation,21,auricular
+"ear drops, suspension",otic suspension,42,no transformation                                 ,47,conventional                                      ,13,instillation,21,auricular
+"ear drops, emulsion",,42,no transformation                                 ,47,conventional                                      ,13,instillation,21,auricular
+"ear wash, solution",,42,no transformation                                 ,47,conventional                                      ,15,rinsing/washing,21,auricular
+"ear wash, emulsion",,42,no transformation                                 ,47,conventional                                      ,15,rinsing/washing,21,auricular
+"ear spray, solution",,42,no transformation                                 ,47,conventional                                      ,17,spraying,21,auricular
+"ear spray, suspension",,42,no transformation                                 ,47,conventional                                      ,17,spraying,21,auricular
+"ear spray, emulsion",,42,no transformation                                 ,47,conventional                                      ,17,spraying,21,auricular
+ear stick,,42,no transformation                                 ,47,conventional                                      ,5,application/insertion,21,auricular
+"ear drops, powder for suspension",,39,dispersion                                        ,47,conventional                                      ,13,instillation,21,auricular
+"ear/nasal drops, suspension",,42,no transformation                                 ,47,conventional                                      ,13,instillation,21,auricular/nasal 
+"ear/eye/nasal drops, solution",,42,no transformation                                 ,47,conventional                                      ,13,instillation,21,auricular/nasal/ocular
+ear/eye ointment,,42,no transformation                                 ,47,conventional                                      ,5,application,21,auricular/ocular
+"ear/eye drops, solution",,42,no transformation                                 ,47,conventional                                      ,13,instillation,21,auricular/ocular
+"ear/eye drops, suspension",,42,no transformation                                 ,47,conventional                                      ,13,instillation,21,auricular/ocular
+gel,topical gel,42,no transformation                                 ,47,conventional                                      ,5,application,22,cutaneous
+ointment,topical ointment,42,no transformation                                 ,47,conventional                                      ,5,application,22,cutaneous
+,topical cream,,,,,,,,
+,topical lotion,,,,,,,,
+,topical oil,,,,,,,,
+,topical powder,,,,,,,,
+cutaneous paste,,42,no transformation                                 ,47,conventional                                      ,5,application,22,cutaneous
+medicated plaster,,42,no transformation                                 ,47,conventional                                      ,5,application,22,cutaneous
+cutaneous foam,topical foam,42,no transformation                                 ,47,conventional                                      ,5,application,22,cutaneous
+shampoo,medicated shampoo,42,no transformation                                 ,47,conventional                                      ,5,application,22,cutaneous
+cutaneous liquid,,42,no transformation                                 ,47,conventional                                      ,5,application,22,cutaneous
+cutaneous solution,topical solution,42,no transformation                                 ,47,conventional                                      ,5,application,22,cutaneous
+cutaneous suspension,topical suspension,42,no transformation                                 ,47,conventional                                      ,5,application,22,cutaneous
+cutaneous emulsion,,42,no transformation                                 ,47,conventional                                      ,5,application,22,cutaneous
+cutaneous powder,,42,no transformation                                 ,47,conventional                                      ,5,application,22,cutaneous
+cutaneous patch,,42,no transformation                                 ,47,conventional                                      ,5,application,22,cutaneous
+collodion,,42,no transformation                                 ,47,conventional                                      ,5,application,22,cutaneous
+medicated nail lacquer,,42,no transformation                                 ,47,conventional                                      ,5,application,22,cutaneous
+poultice,,42,no transformation                                 ,47,conventional                                      ,5,application,22,cutaneous
+cutaneous stick,,42,no transformation                                 ,47,conventional                                      ,5,application,22,cutaneous
+impregnated dressing,,42,no transformation                                 ,47,conventional                                      ,5,application,22,cutaneous
+"cutaneous spray, solution",,42,no transformation                                 ,47,conventional                                      ,17,spraying,22,cutaneous
+"cutaneous spray, suspension",,42,no transformation                                 ,47,conventional                                      ,17,spraying,22,cutaneous
+"cutaneous spray, powder",powder spray,42,no transformation                                 ,47,conventional                                      ,17,spraying,22,cutaneous
+"cutaneous spray, emulsion",,42,no transformation                                 ,47,conventional                                      ,17,spraying,22,cutaneous/transdermal
+"cutaneous spray, ointment",,42,no transformation                                 ,47,conventional                                      ,17,spraying,22,cutaneous/transdermal
+concentrate for cutaneous solution,,38,dilution                                          ,47,conventional                                      ,5,application,22,cutaneous
+powder for cutaneous solution,,40,dissolution                                       ,47,conventional                                      ,5,application,22,cutaneous
+bath additive,,38,dilution/dispersion/dissolution/mixing            ,47,conventional                                      ,6,bathing,22,cutaneous
+"concentrate for cutaneous spray, emulsion",topical spray,38,dilution                                          ,47,conventional                                      ,17,spraying,22,cutaneous/transdermal
+tablet for cutaneous solution,,40,dissolution                                       ,47,conventional                                      ,5,application,22,cutaneous/transdermal
+gel for gel,,41,mixing                                            ,47,conventional                                      ,5,application,22,cutaneous/transdermal
+powder for gel,,41,mixing                                            ,47,conventional                                      ,5,application,22,cutaneous/transdermal
+,medicated liquid soap,,,,,,,,
+,medicated bar soap,,,,,,,,
+,topical liquefied gas,,,,,,,,
+cream,,42,no transformation                                 ,47,conventional                                      ,5,application,22,cutaneous/transdermal
+medicinal leech,,42,no transformation                                 ,47,conventional                                      ,5,application,22,cutaneous/transdermal
+medicinal larvae,,42,no transformation                                 ,47,conventional                                      ,5,application,22,cutaneous/transdermal
+cutaneous/nasal ointment,,42,no transformation                                 ,47,conventional                                      ,5,application,22,cutaneous/transdermal/nasal
+cutaneous/oromucosal solution,,42,no transformation                                 ,47,conventional                                      ,5,application,22,cutaneous/transdermal/oromucosal
+cutaneous solution/concentrate for oromucosal solution,,38,dilution/no transformation                        ,47,conventional                                      ,5,application,22,cutaneous/transdermal/oromucosal
+solution for skin-prick test,,42,no transformation                                 ,47,conventional                                      ,5,application/injection,22,cutaneous/transdermal/parenteral
+solution for skin-scratch test,,42,no transformation                                 ,47,conventional                                      ,5,application/injection,22,cutaneous/transdermal/parenteral
+plaster for provocation test,,42,no transformation                                 ,47,conventional                                      ,5,application/injection,22,cutaneous/transdermal/parenteral
+solution for injection/skin-prick test,,42,no transformation                                 ,47,conventional                                      ,5,application/injection,22,cutaneous/transdermal/parenteral
+powder for solution for injection/skin-prick test,,40,dissolution                                       ,47,conventional                                      ,5,application/injection,22,cutaneous/transdermal/parenteral
+powder for solution for skin-prick test,,40,dissolution                                       ,47,conventional                                      ,5,application/injection,22,cutaneous/transdermal/parenteral
+periodontal powder,,42,no transformation                                 ,47,conventional                                      ,4,administration,23,dental
+dental powder,,42,no transformation                                 ,47,conventional                                      ,4,administration,23,dental
+dental cement,,42,no transformation                                 ,47,conventional                                      ,5,application,23,dental
+dental gel,,42,no transformation                                 ,47,conventional                                      ,5,application,23,dental
+dental stick,,42,no transformation                                 ,47,conventional                                      ,5,application,23,dental
+dental solution,,42,no transformation                                 ,47,conventional                                      ,5,application,23,dental
+dental suspension,mouthwash,42,no transformation                                 ,47,conventional                                      ,5,application,23,dental
+dental emulsion,,42,no transformation                                 ,47,conventional                                      ,5,application,23,dental
+toothpaste,toothpaste,42,no transformation                                 ,47,conventional                                      ,5,application,23,dental
+periodontal gel,,42,no transformation                                 ,47,conventional                                      ,5,application,23,dental
+dental paste,,42,no transformation                                 ,47,conventional                                      ,5,application,23,dental
+powder for dental solution,,40,dissolution                                       ,47,conventional                                      ,5,application,23,dental
+powder for dental cement,,41,mixing                                            ,47,conventional                                      ,5,application,23,dental
+solution for dental cement,,41,mixing                                            ,47,conventional                                      ,5,application,23,dental
+powder for dental gel,,41,mixing                                            ,47,conventional                                      ,5,application,23,dental
+endocervical gel,,42,no transformation                                 ,47,conventional                                      ,5,application,105,endocervical
+powder for endocervical gel,,41,mixing                                            ,47,conventional                                      ,5,application,105,endocervical
+anticoagulant and preservative solution for blood,,42,no transformation                                 ,47,conventional                                      ,20,not specified,25,extracorporeal
+solution for blood fraction modification,,42,no transformation                                 ,47,conventional                                      ,20,not specified,25,extracorporeal
+solution for organ preservation,,42,no transformation                                 ,47,conventional                                      ,20,not specified,25,extracorporeal
+solution for cardioplegia,,42,no transformation                                 ,47,conventional                                      ,20,not specified,25,extracorporeal
+solution for cardioplegia/organ preservation,,42,no transformation                                 ,47,conventional                                      ,20,not specified,25,extracorporeal
+solution for haemofiltration,,42,no transformation                                 ,47,conventional                                      ,112,dialysis,25,extracorporeal/parenteral
+solution for haemodiafiltration,,42,no transformation                                 ,47,conventional                                      ,112,dialysis,25,extracorporeal/parenteral
+solution for haemodialysis/haemofiltration,,42,no transformation                                 ,47,conventional                                      ,112,dialysis,25,extracorporeal/parenteral
+solution for haemodialysis,,42,no transformation                                 ,47,conventional                                      ,112,dialysis,25,extracorporeal/parenteral
+solution for peritoneal dialysis,,42,no transformation                                 ,47,conventional                                      ,112,dialysis,109,intraperitoneal
+concentrate for solution for haemodialysis,,38,dilution                                          ,47,conventional                                      ,112,dialysis,25,extracorporeal/parenteral
+powder for concentrate for solution for haemodialysis,,38,dilution/dissolution                              ,47,conventional                                      ,112,dialysis,25,extracorporeal/parenteral
+concentrate for solution for peritoneal dialysis,,38,dilution                                          ,47,conventional                                      ,112,dialysis,109,intraperitoneal
+stomach irrigation,,42,no transformation                                 ,47,conventional                                      ,15,rinsing/washing,106,gastric
+gastroenteral solution,,42,no transformation                                 ,47,conventional                                      ,4,administration,107,gastroenteral
+gastroenteral suspension,,42,no transformation                                 ,47,conventional                                      ,4,administration,107,gastroenteral
+gastroenteral emulsion,,42,no transformation                                 ,47,conventional                                      ,4,administration,107,gastroenteral
+intestinal gel,,42,no transformation                                 ,47,conventional                                      ,4,administration,108,intestinal
+intraperitoneal solution,intraperitoneal solution,42,no transformation                                 ,47,conventional                                      ,11,injection,109,intraperitoneal
+intrauterine gel,,42,no transformation                                 ,47,conventional                                      ,5,application,27,intrauterine
+intrauterine delivery system,intrauterine system,42,no transformation                                 ,45,prolonged                                         ,12,insertion,27,intrauterine
+urethral stick,urethral suppository,42,no transformation                                 ,47,conventional                                      ,12,insertion,28,intravesical/urethral
+bladder irrigation,,42,no transformation                                 ,47,conventional                                      ,15,rinsing/washing,28,intravesical/urethral
+intravesical solution,,42,no transformation                                 ,47,conventional                                      ,4,administration,28,intravesical/urethral
+urethral gel,,42,no transformation                                 ,47,conventional                                      ,4,administration,28,intravesical/urethral
+intravesical suspension,,42,no transformation                                 ,47,conventional                                      ,4,administration,28,intravesical/urethral
+urethral emulsion,,42,no transformation                                 ,47,conventional                                      ,4,administration,28,intravesical/urethral
+urethral ointment,,42,no transformation                                 ,47,conventional                                      ,4,administration,28,intravesical/urethral
+intravesical solution/solution for injection,,42,no transformation                                 ,47,conventional                                      ,4,administration/injection,28,intravesical/urethral
+concentrate for intravesical solution,,38,dilution                                          ,47,conventional                                      ,4,administration,28,intravesical/urethral
+powder for intravesical suspension,,39,dispersion                                        ,47,conventional                                      ,4,administration,28,intravesical/urethral
+powder for intravesical solution,,40,dissolution                                       ,47,conventional                                      ,4,administration,28,intravesical/urethral
+powder for bladder irrigation,,40,dissolution                                       ,47,conventional                                      ,15,rinsing/washing,28,intravesical/urethral
+powder for concentrate for intravesical suspension,,38,dilution/dispersion                               ,47,conventional                                      ,4,administration,28,intravesical/urethral
+powder for intravesical solution/solution for injection,,38,dilution/dispersion                               ,47,conventional                                      ,4,administration,28,intravesical/urethral
+eye cream,ophthalmic cream,42,no transformation                                 ,47,conventional                                      ,4,administration,30,ocular
+eye gel,ophthalmic gel,42,no transformation                                 ,47,conventional                                      ,4,administration,30,ocular
+ophthalmic strip,,42,no transformation                                 ,47,conventional                                      ,4,administration,30,ocular
+eye ointment,ophthalmic ointment,42,no transformation                                 ,47,conventional                                      ,4,administration,30,ocular
+,opthalmic solution,,,,,,,,
+,opthalmic suspension,,,,,,,,
+"eye drops, solution",,42,no transformation                                 ,47,conventional                                      ,13,instillation,30,ocular
+"eye drops, emulsion",,42,no transformation                                 ,47,conventional                                      ,13,instillation,30,ocular
+"eye drops, suspension",,42,no transformation                                 ,47,conventional                                      ,13,instillation,30,ocular
+"eye drops, solvent for reconstitution",,41,mixing,47,conventional                                      ,13,instillation,30,ocular
+"eye drops, powder for solution",,40,dissolution                                       ,47,conventional                                      ,13,instillation,30,ocular
+"eye drops, powder for suspension",,39,dispersion,47,conventional                                      ,13,instillation,30,ocular
+eye lotion,,42,no transformation                                 ,47,conventional                                      ,6,bathing/rinsing/washing,30,ocular
+"eye lotion, solvent for reconstitution",,41,mixing,47,conventional                                      ,6,bathing/rinsing/washing,30,ocular
+intraocular instillation solution,ophthalmic irrigation solution,42,no transformation                                 ,47,conventional                                      ,15,rinsing/washing,30,ocular
+solution for intraocular irrigation,,38,dilution,47,conventional                                      ,15,rinsing/washing,30,ocular
+concentrate for solution for intraocular irrigation,,38,dilution,47,conventional                                      ,15,rinsing/washing,30,ocular
+powder for intraocular instillation solution,,40,dissolution                                       ,47,conventional                                      ,15,rinsing/washing,30,ocular
+powder for solution for intraocular irrigation,,40,dissolution                                       ,47,conventional                                      ,15,rinsing/washing,30,ocular
+solvent for solution for intraocular irrigation,,41,mixing,47,conventional                                      ,15,rinsing/washing,30,ocular
+"eye drops, prolonged-release",,42,no transformation                                 ,45,prolonged,13,instillation,,
+ophthalmic insert,,42,no transformation                                 ,45,prolonged,12,insertion,,
+,nasal spray,,,,,,,,
+"nasal spray, solution",,42,no transformation                                 ,47,conventional                                      ,17,spraying,29,nasal
+"nasal spray, suspension",,42,no transformation                                 ,47,conventional                                      ,17,spraying,29,nasal
+"nasal spray, emulsion",,42,no transformation                                 ,47,conventional                                      ,17,spraying,29,nasal
+"nasal/oromucosal spray, solution",,42,no transformation                                 ,47,conventional                                      ,17,spraying,29,nasal
+nasal/oromucosal solution,,42,no transformation                                 ,47,conventional                                      ,5,application,29,nasal
+"nasal spray, solution/oromucosal solution",,42,no transformation                                 ,47,conventional                                      ,5,application/spraying,29,nasal
+"nasal spray, powder for solution",,40,dissolution                                       ,47,conventional                                      ,17,spraying,29,nasal
+,metered dose nasal spray,,,,,,,,
+,nasal inhalant,,,,,,,,
+nasal powder,nasal powder,42,no transformation                                 ,47,conventional                                      ,4,administration,29,nasal
+nasal cream,,42,no transformation                                 ,47,conventional                                      ,5,application,29,nasal
+nasal gel,nasal gel,42,no transformation                                 ,47,conventional                                      ,5,application,29,nasal
+nasal ointment,nasal ointment,42,no transformation                                 ,47,conventional                                      ,5,application,29,nasal
+nasal wash,,42,no transformation                                 ,47,conventional                                      ,15,rinsing/washing,29,nasal
+nasal stick,,42,no transformation                                 ,47,conventional                                      ,5,application/insertion,29,nasal
+"nasal drops, solution",nasal solution,42,no transformation                                 ,47,conventional                                      ,13,instillation,29,nasal
+"nasal drops, suspension",,42,no transformation                                 ,47,conventional                                      ,13,instillation,29,nasal
+"nasal drops, emulsion",,42,no transformation                                 ,47,conventional                                      ,13,instillation,29,nasal
+"nasal drops, powder for solution",powder for nasal solution,40,dissolution                                       ,47,conventional                                      ,13,instillation,29,nasal
+"endosinusial wash, suspension",,42,no transformation                                 ,47,conventional                                      ,15,rinsing/washing,29,nasal
+endosinusial solution,,42,no transformation                                 ,47,conventional                                      ,4,administration,29,nasal
+powder for endosinusial solution,,40,dissolution                                       ,47,conventional                                      ,4,administration,29,nasal
+solution for provocation test,,42,no transformation                                 ,47,conventional                                      ,20,not specified,29,nasal/ocular/pulmonary
+cachet,,42,no transformation                                 ,47,conventional                                      ,19,swallowing,31,oral
+,oral capsule,,,,,,,,
+"capsule, hard",,42,no transformation                                 ,47,conventional                                      ,19,swallowing,31,oral
+"capsule, soft",,42,no transformation                                 ,47,conventional                                      ,19,swallowing,31,oral
+tablet,oral tablet,42,no transformation                                 ,47,conventional                                      ,19,swallowing,31,oral
+coated tablet,,42,no transformation                                 ,47,conventional                                      ,19,swallowing,31,oral
+film-coated tablet,,42,no transformation                                 ,47,conventional                                      ,19,swallowing,31,oral
+coated granules,,42,no transformation                                 ,47,conventional                                      ,19,swallowing,31,oral
+tablet with sensor,,42,no transformation                                 ,47,conventional                                      ,19,swallowing,31,oral
+granules,oral granules,42,no transformation                                 ,47,conventional                                      ,19,chewing/swallowing,31,oral
+"chewable capsule, soft",,42,no transformation                                 ,47,conventional                                      ,19,chewing/swallowing,31,oral
+chewable tablet,chewable tablet,42,no transformation                                 ,47,conventional                                      ,19,chewing/swallowing,31,oral
+"chewable capsule, soft",,42,no transformation                                 ,47,conventional                                      ,19,chewing/swallowing,31,oral
+chewable tablet,,42,no transformation                                 ,47,conventional                                      ,19,chewing/swallowing,31,oral
+pillules,,42,no transformation                                 ,47,conventional                                      ,19,administration/swallowing,31,oral/oromucosal
+,oral pellet,,,,,,,,
+,oral wafer,,,,,,,,
+,oral powder,,,,,,,,
+oral gel,oral gel,42,no transformation                                 ,47,conventional                                      ,19,swallowing,31,oral
+oral paste,oral paste,42,no transformation                                 ,47,conventional                                      ,19,swallowing,31,oral
+oral gum,,42,no transformation                                 ,47,conventional                                      ,19,chewing/swallowing,31,oral
+medicated chewing-gum,chewing gum,42,no transformation                                 ,47,conventional                                      ,19,chewing/swallowing,31,oral/oromucosal
+,oral cream,,,,,,,,
+,oral ointment,,,,,,,,
+"oral drops, solution",,42,no transformation                                 ,47,conventional                                      ,13,instillation/swallowing,31,oral
+"oral drops, suspension",,42,no transformation                                 ,47,conventional                                      ,13,instillation/swallowing,31,oral
+"oral drops, emulsion",,42,no transformation                                 ,47,conventional                                      ,13,instillation/swallowing,31,oral
+"oral drops, liquid",,42,no transformation                                 ,47,conventional                                      ,13,instillation/swallowing,31,oral
+"oral drops, powder for suspension",,39,dispersion                                        ,47,conventional                                      ,13,instillation/swallowing,31,oral
+"oral drops, granules for solution",,40,dissolution                                       ,47,conventional                                      ,13,instillation/swallowing,31,oral
+oral liquid,,42,no transformation                                 ,47,conventional                                      ,19,swallowing,31,oral
+oral solution,oral solution,42,no transformation                                 ,47,conventional                                      ,19,swallowing,31,oral
+oral suspension,oral suspension,42,no transformation                                 ,47,conventional                                      ,19,swallowing,31,oral
+oral emulsion,,42,no transformation                                 ,47,conventional                                      ,19,swallowing,31,oral
+,oral foam,,,,,,,,
+syrup,,42,no transformation                                 ,47,conventional                                      ,19,swallowing,31,oral
+oral solution/concentrate for nebuliser solution,,,,,,,,,
+concentrate for oral suspension,,38,dilution                                          ,47,conventional                                      ,19,swallowing,31,oral
+concentrate for oral solution,,38,dilution                                          ,47,conventional                                      ,19,swallowing,31,oral
+powder for oral suspension,powder for oral suspension,39,dispersion                                        ,47,conventional                                      ,19,swallowing,31,oral
+granules for oral suspension,granules for oral suspension,39,dispersion                                        ,47,conventional                                      ,19,swallowing,31,oral
+powder for oral solution,powder for oral solution,40,dissolution                                       ,47,conventional                                      ,19,swallowing,31,oral
+granules for oral solution,granules for oral solution,40,dissolution                                       ,47,conventional                                      ,19,swallowing,31,oral
+powder for syrup,,40,dissolution                                       ,47,conventional                                      ,19,swallowing,31,oral
+granules for syrup,,40,dissolution                                       ,47,conventional                                      ,19,swallowing,31,oral
+soluble tablet,,40,dissolution                                       ,47,conventional                                      ,19,swallowing,31,oral
+,tablet for oral suspension,,,,,,,,
+,oral flakes,,,,,,,,
+orodispersible tablet,disintegrating oral tablet,42,no transformation                                 ,47,conventional                                      ,14,orodispersion,31,oral
+orodispersible film,oral film,42,no transformation                                 ,47,conventional                                      ,14,orodispersion,31,oral
+oral herbal material,,42,no transformation                                 ,47,conventional                                      ,7,chewing,31,oral
+chewable/dispersible tablet,,39,dispersion/no transformation                      ,47,conventional                                      ,7,chewing/swallowing,31,oral
+oral lyophilisate,,40,dissolution/no transformation                     ,47,conventional                                      ,19,swallowing,31,oral
+oral powder,,39,dispersion/dissolution/no transformation          ,47,conventional                                      ,19,swallowing,31,oral
+dispersible tablet,,39,dispersion                                        ,47,conventional                                      ,19,swallowing,31,oral
+dispersible tablets for dose dispenser,,39,dispersion                                        ,47,conventional                                      ,19,swallowing,31,oral
+effervescent granules for oral suspension,,39,dispersion                                        ,47,conventional                                      ,19,swallowing,31,oral
+effervescent powder,,39,dispersion/dissolution                            ,47,conventional                                      ,19,swallowing,31,oral
+effervescent granules,,39,dispersion/dissolution                            ,47,conventional                                      ,19,swallowing,31,oral
+effervescent tablet,effervescent oral tablet,39,dispersion/dissolution                            ,47,conventional                                      ,19,swallowing,31,oral
+instant herbal tea,,40,dissolution                                       ,47,conventional                                      ,19,swallowing,31,oral
+gastro-resistant granules,,42,no transformation                                 ,44,delayed                                           ,19,swallowing,31,oral
+"gastro-resistant capsule, hard",,42,no transformation                                 ,44,delayed                                           ,19,swallowing,31,oral
+"gastro-resistant capsule, soft",,42,no transformation                                 ,44,delayed                                           ,19,swallowing,31,oral
+gastro-resistant tablet,,42,no transformation                                 ,44,delayed                                           ,19,swallowing,31,oral
+gastro-resistant oral suspension,,42,no transformation                                 ,44,delayed                                           ,19,swallowing,31,oral
+gastro-resistant powder for oral suspension,,39,dispersion                                        ,44,delayed                                           ,19,swallowing,31,oral
+gastro-resistant granules for oral suspension,,39,dispersion                                        ,44,delayed                                           ,19,swallowing,31,oral
+prolonged-release granules,,42,no transformation                                 ,45,prolonged                                         ,19,swallowing,31,oral
+,extended release oral capsule,,,,,,,,
+"prolonged-release capsule, hard",,42,no transformation                                 ,45,prolonged                                         ,19,swallowing,31,oral
+"prolonged-release capsule, soft",,42,no transformation                                 ,45,prolonged                                         ,19,swallowing,31,oral
+prolonged-release tablet,extended release oral tablet,42,no transformation                                 ,45,prolonged                                         ,19,swallowing,31,oral
+prolonged-release oral suspension,extended release suspension,42,no transformation                                 ,45,prolonged                                         ,19,swallowing,31,oral
+prolonged-release granules for oral suspension,,39,dispersion                                        ,45,prolonged                                         ,19,swallowing,31,oral
+,chewable extended release oral tablet,,,,,,,,
+modified-release granules,delayed release oral granules,42,no transformation                                 ,46,modified                                          ,19,swallowing,31,oral
+,delayed release oral capsule,,,,,,,,
+"modified-release capsule, hard",,42,no transformation                                 ,46,modified                                          ,19,swallowing,31,oral
+"modified-release capsule, soft",,42,no transformation                                 ,46,modified                                          ,19,swallowing,31,oral
+modified-release tablet,delayed release oral tablet,42,no transformation                                 ,46,modified                                          ,19,swallowing,31,oral
+modified-release oral suspension,,42,no transformation                                 ,46,modified                                          ,19,swallowing,31,oral
+modified-release granules for oral suspension,,39,dispersion                                        ,46,modified                                          ,19,swallowing,31,oral
+oral/rectal solution,,42,no transformation                                 ,47,conventional                                      ,4,administration/swallowing,99906050,oral/rectal
+oral/rectal suspension,,42,no transformation                                 ,47,conventional                                      ,4,administration/swallowing,99906050,oral/rectal
+concentrate for oral/rectal solution,,38,dilution                                          ,47,conventional                                      ,4,administration/swallowing,99906050,oral/rectal
+granules for oral/rectal suspension,,39,dispersion                                        ,47,conventional                                      ,4,administration/swallowing,99906050,oral/rectal
+powder for oral/rectal suspension,,39,dispersion                                        ,47,conventional                                      ,4,administration/swallowing,99906050,oral/rectal
+,oral spray,,,,,,,,
+"oromucosal spray, emulsion",,42,no transformation                                 ,47,conventional                                      ,17,spraying,32,oromucosal
+"oromucosal spray, solution",,42,no transformation                                 ,47,conventional                                      ,17,spraying,32,oromucosal
+"oromucosal spray, suspension",,42,no transformation                                 ,47,conventional                                      ,17,spraying,32,oromucosal
+"laryngopharyngeal spray, solution",,42,no transformation                                 ,47,conventional                                      ,17,spraying,32,oromucosal
+buccal tablet,buccal tablet,42,no transformation                                 ,47,conventional                                      ,4,administration,32,oromucosal
+lozenge,oral lozenge,42,no transformation                                 ,47,conventional                                      ,18,sucking,32,oromucosal
+compressed lozenge,,42,no transformation                                 ,47,conventional                                      ,18,sucking,32,oromucosal
+pastille,,42,no transformation                                 ,47,conventional                                      ,18,sucking,32,oromucosal
+oromucosal capsule,,42,no transformation                                 ,47,conventional                                      ,7,chewing/sucking,32,oromucosal
+muco-adhesive buccal tablet,sustained release buccal tablet,42,no transformation                                 ,45,prolonged                                         ,5,application,32,oromucosal
+oromucosal patch,,42,no transformation                                 ,45,prolonged                                         ,5,application,32,oromucosal
+laryngopharyngeal solution,,42,no transformation                                 ,47,conventional                                      ,4,administration,32,oromucosal
+laryngopharyngeal solution,,42,no transformation                                 ,47,conventional                                      ,4,administration,32,oromucosal
+oromucosal solution,,42,no transformation                                 ,47,conventional                                      ,5,application,32,oromucosal
+oromucosal suspension,,42,no transformation                                 ,47,conventional                                      ,5,application,32,oromucosal
+gingival solution,,42,no transformation                                 ,47,conventional                                      ,5,application,32,oromucosal
+oromucosal gel,,42,no transformation                                 ,47,conventional                                      ,5,application,32,oromucosal
+oromucosal paste,,42,no transformation                                 ,47,conventional                                      ,5,application,32,oromucosal
+oromucosal ointment,,42,no transformation                                 ,47,conventional                                      ,5,application,32,oromucosal
+oromucosal cream,,42,no transformation                                 ,47,conventional                                      ,5,application,32,oromucosal
+buccal film,buccal film,42,no transformation                                 ,47,conventional                                      ,5,application,32,oromucosal
+gingival gel,,42,no transformation                                 ,47,conventional                                      ,5,application,32,oromucosal
+gingival paste,,42,no transformation                                 ,47,conventional                                      ,5,application,32,oromucosal
+oromucosal drops,,42,no transformation                                 ,47,conventional                                      ,13,instillation,32,oromucosal
+oromucosal/laryngopharyngeal solution,,42,no transformation                                 ,47,conventional                                      ,5,administration/application,32,oromucosal
+"oromucosal/laryngopharyngeal solution/spray, solution",,42,no transformation                                 ,47,conventional                                      ,5,administration/application/spraying ,32,oromucosal
+concentrate for oromucosal solution,,38,dilution                                          ,47,conventional                                      ,5,application,32,oromucosal
+powder for gingival gel,,41,mixing                                            ,47,conventional                                      ,5,application,32,oromucosal
+gargle,,42,no transformation                                 ,47,conventional                                      ,8,gargling,32,oromucosal
+gargle/mouthwash,,42,no transformation                                 ,47,conventional                                      ,8,gargling/rinsing/washing,32,oromucosal
+concentrate for gargle,,38,dilution                                          ,47,conventional                                      ,8,gargling,32,oromucosal
+"gargle, powder for solution",,40,dissolution                                       ,47,conventional                                      ,8,gargling,32,oromucosal
+"gargle, tablet for solution",,40,dissolution                                       ,47,conventional                                      ,8,gargling,32,oromucosal
+"mouthwash, tablet for solution",,40,dissolution                                       ,47,conventional                                      ,15,rinsing/washing,32,oromucosal
+"mouthwash, powder for solution",,40,dissolution                                       ,47,conventional                                      ,15,rinsing/washing,32,oromucosal
+"sublingual spray, emulsion",,42,no transformation                                 ,47,conventional                                      ,17,spraying,32,oromucosal
+"sublingual spray, solution",,42,no transformation                                 ,47,conventional                                      ,17,spraying,32,oromucosal
+"sublingual spray, suspension",,42,no transformation                                 ,47,conventional                                      ,17,spraying,32,oromucosal
+sublingual film,sublingual film,42,no transformation                                 ,47,conventional                                      ,4,administration,32,oromucosal
+sublingual tablet,sublingual tablet,42,no transformation                                 ,47,conventional                                      ,4,administration,32,oromucosal
+sublingual powder,sublingual powder,42,no transformation                                 ,47,conventional                                      ,4,administration,32,oromucosal
+sublingual lyophilisate,,42,no transformation                                 ,47,conventional                                      ,4,administration,32,oromucosal
+implant,drug implant,42,no transformation                                 ,45,prolonged                                         ,113,implantation,33,parenteral
+implantation tablet,,42,no transformation                                 ,45,prolonged                                         ,113,implantation,33,parenteral
+implantation chain,,42,no transformation                                 ,45,prolonged                                         ,113,implantation,33,parenteral
+implantation matrix,,42,no transformation                                 ,45,prolonged                                         ,113,implantation,33,parenteral
+implantation suspension,,42,no transformation                                 ,45,prolonged                                         ,113,implantation,33,parenteral
+implantation paste,,42,no transformation                                 ,45,prolonged                                         ,113,implantation,33,parenteral
+powder for implantation paste,,39,dispersion                                        ,45,prolonged                                         ,113,implantation,33,parenteral
+powder for implantation suspension,,39,dispersion                                        ,45,prolonged                                         ,113,implantation,33,parenteral
+powder for implantation matrix,,40,dissolution                                       ,45,prolonged                                         ,113,implantation,33,parenteral
+matrix for implantation matrix,,41,mixing                                            ,45,prolonged                                         ,113,implantation,33,parenteral
+prolonged-release suspension for injection,,42,no transformation                                 ,45,prolonged                                         ,11,injection,33,parenteral
+prolonged-release solution for injection,,42,no transformation                                 ,45,prolonged                                         ,11,injection,33,parenteral
+prolonged-release dispersion for injection,,42,no transformation                                 ,45,prolonged                                         ,11,injection,33,parenteral
+powder for prolonged-release suspension for injection,,39,dispersion                                        ,45,prolonged                                         ,11,injection,33,parenteral
+,injection,,,,,,,,
+solution for injection,injectable solution,42,no transformation                                 ,47,conventional                                      ,11,injection,33,parenteral
+suspension for injection,injectable suspension,42,no transformation                                 ,47,conventional                                      ,11,injection,33,parenteral
+emulsion for injection,,42,no transformation                                 ,47,conventional                                      ,11,injection,33,parenteral
+gel for injection,,42,no transformation                                 ,47,conventional                                      ,11,injection,33,parenteral
+dispersion for injection,,42,no transformation                                 ,47,conventional                                      ,11,injection,33,parenteral
+,injectable foam,,,,,,,,
+concentrate for solution for injection,,38,dilution                                          ,47,conventional                                      ,11,injection,33,parenteral
+concentrate for suspension for injection,,38,dilution                                          ,47,conventional                                      ,11,injection,33,parenteral
+concentrate for dispersion for injection,,38,dilution                                          ,47,conventional                                      ,11,injection,33,parenteral
+concentrate for solution for injection,,38,dilution                                          ,47,conventional                                      ,11,injection,33,parenteral
+concentrate for suspension for injection,,38,dilution                                          ,47,conventional                                      ,11,injection,33,parenteral
+concentrate for dispersion for injection,,38,dilution                                          ,47,conventional                                      ,11,injection,33,parenteral
+powder for suspension for injection,,39,dispersion                                        ,47,conventional                                      ,11,injection,33,parenteral
+gas for dispersion for injection,,39,dispersion                                        ,47,conventional                                      ,11,injection,33,parenteral
+powder for dispersion for injection,,39,dispersion                                        ,47,conventional                                      ,11,injection,33,parenteral
+granules for suspension for injection,,39,dispersion                                        ,47,conventional                                      ,11,injection,33,parenteral
+emulsion for emulsion for injection,,41,mixing                                            ,47,conventional                                      ,11,injection,33,parenteral
+solution for solution for injection,,41,mixing                                            ,47,conventional                                      ,11,injection,33,parenteral
+suspension for emulsion for injection,,41,mixing                                            ,47,conventional                                      ,11,injection,33,parenteral
+suspension for suspension for injection,,41,mixing                                            ,47,conventional                                      ,11,injection,33,parenteral
+powder for emulsion for injection,,41,mixing                                            ,47,conventional                                      ,11,injection,33,parenteral
+solution for suspension for injection,,41,mixing                                            ,47,conventional                                      ,11,injection,33,parenteral
+emulsion for suspension for injection,,41,mixing                                            ,47,conventional                                      ,11,injection,33,parenteral
+powder for solution for injection,,40,dissolution                                       ,47,conventional                                      ,11,injection,33,parenteral
+,auto-injector,,,,,,,,
+,cartridge,,,,,,,,
+,jet injector,,,,,,,,
+,pen injector,,,,,,,,
+,prefilled syringe,,,,,,,,
+solution for infusion,,42,no transformation                                 ,47,conventional                                      ,9,infusion,33,parenteral
+emulsion for infusion,,42,no transformation                                 ,47,conventional                                      ,9,infusion,33,parenteral
+dispersion for infusion,,42,no transformation                                 ,47,conventional                                      ,9,infusion,33,parenteral
+concentrate for solution for infusion,,38,dilution                                          ,47,conventional                                      ,9,infusion,33,parenteral
+concentrate for concentrate for solution for infusion,,38,dilution                                          ,47,conventional                                      ,9,infusion,33,parenteral
+concentrate for dispersion for infusion,,38,dilution                                          ,47,conventional                                      ,9,infusion,33,parenteral
+concentrate for emulsion for infusion,,38,dilution                                          ,47,conventional                                      ,9,infusion,33,parenteral
+powder for dispersion for infusion,,39,dispersion                                        ,47,conventional                                      ,9,infusion,33,parenteral
+gas for dispersion for infusion,,39,dispersion                                        ,47,conventional                                      ,9,infusion,33,parenteral
+powder for solution for infusion,,40,dissolution                                       ,47,conventional                                      ,9,infusion,33,parenteral
+solution for solution for infusion,,41,mixing                                            ,47,conventional                                      ,9,infusion,33,parenteral
+solvent for solution for infusion,,41,mixing                                            ,47,conventional                                      ,9,infusion,33,parenteral
+powder for concentrate for dispersion for infusion,,38,dilution/dispersion                               ,47,conventional                                      ,9,infusion,33,parenteral
+powder for concentrate for solution for infusion,,38,dilution/dissolution                              ,47,conventional                                      ,9,infusion,33,parenteral
+powder for concentrate for dispersion for infusion,,38,dilution/dispersion                               ,47,conventional                                      ,9,infusion,33,parenteral
+powder for concentrate for solution for infusion,,38,dilution/dissolution                              ,47,conventional                                      ,9,infusion,33,parenteral
+dispersion for injection/infusion,,42,no transformation                                 ,47,conventional                                      ,9,infusion/injection,33,parenteral
+emulsion for injection/infusion,,42,no transformation                                 ,47,conventional                                      ,9,infusion/injection,33,parenteral
+solution for injection/infusion,,42,no transformation                                 ,47,conventional                                      ,9,infusion/injection,33,parenteral
+concentrate for solution for injection/infusion,,38,dilution                                          ,47,conventional                                      ,9,infusion/injection,33,parenteral
+gas for dispersion for injection/infusion,,39,dispersion                                        ,47,conventional                                      ,9,infusion/injection,33,parenteral
+powder for solution for injection/infusion,,40,dissolution                                       ,47,conventional                                      ,9,infusion/injection,33,parenteral
+solvent for parenteral use,,41,mixing                                            ,47,conventional                                      ,9,infusion/injection,33,parenteral
+powder for concentrate for solution for injection/infusion,,38,dilution/dissolution                              ,47,conventional                                      ,9,infusion/injection,33,parenteral
+"inhalation vapour, impregnated pad",,42,no transformation                                 ,47,conventional                                      ,10,inhalation,34,pulmonary
+"inhalation vapour, impregnated plug",,42,no transformation                                 ,47,conventional                                      ,10,inhalation,34,pulmonary
+,inhalation suspension,,,,,,,,
+"inhalation vapour, solution",inhalation solution,41,mixing/no transformation                          ,47,conventional                                      ,10,inhalation,34,pulmonary
+"inhalation vapour, ointment",,41,mixing/no transformation                          ,47,conventional                                      ,10,inhalation,34,pulmonary
+"inhalation vapour, liquid",,41,mixing/no transformation                          ,47,conventional                                      ,10,inhalation,34,pulmonary
+,inhalation spray,,,,,,,,
+"inhalation vapour, emulsion",,41,mixing/no transformation                          ,47,conventional                                      ,10,inhalation,34,pulmonary
+"inhalation vapour, powder",,40,dissolution/mixing/no transformation              ,47,conventional                                      ,10,inhalation,34,pulmonary
+"inhalation vapour, capsule",,40,dissolution/mixing/no transformation              ,47,conventional                                      ,10,inhalation,34,pulmonary
+"inhalation vapour, tablet",,40,dissolution                                       ,47,conventional                                      ,10,inhalation,34,pulmonary
+"inhalation vapour, effervescent tablet",,39,dispersion/dissolution                            ,47,conventional                                      ,10,inhalation,34,pulmonary
+nebuliser solution,,42,no transformation                                 ,47,conventional                                      ,10,inhalation,34,pulmonary
+nebuliser suspension,,42,no transformation                                 ,47,conventional                                      ,10,inhalation,34,pulmonary
+nebuliser emulsion,,42,no transformation                                 ,47,conventional                                      ,10,inhalation,34,pulmonary
+nebuliser dispersion,,42,no transformation                                 ,47,conventional                                      ,10,inhalation,34,pulmonary
+concentrate for nebuliser solution,,38,dilution                                          ,47,conventional                                      ,10,inhalation,34,pulmonary
+powder for nebuliser suspension,,39,dispersion                                        ,47,conventional                                      ,10,inhalation,34,pulmonary
+powder for nebuliser solution,,40,dissolution                                       ,47,conventional                                      ,10,inhalation,34,pulmonary
+,metered dose inhaler,,,,,,,,
+"pressurised inhalation, solution",,42,no transformation                                 ,47,conventional                                      ,10,inhalation,34,pulmonary
+"pressurised inhalation, suspension",,42,no transformation                                 ,47,conventional                                      ,10,inhalation,34,pulmonary
+"pressurised inhalation, emulsion",,42,no transformation                                 ,47,conventional                                      ,10,inhalation,34,pulmonary
+,dry powder inhaler,,,,,,,,
+inhalation powder,inhalation powder,42,no transformation                                 ,47,conventional                                      ,10,inhalation,34,pulmonary
+"inhalation powder, hard capsule",,42,no transformation                                 ,47,conventional                                      ,10,inhalation,34,pulmonary
+"inhalation powder, pre-dispensed",,42,no transformation                                 ,47,conventional                                      ,10,inhalation,34,pulmonary
+"inhalation powder, tablet",,42,no transformation                                 ,47,conventional                                      ,10,inhalation,34,pulmonary
+,gas for inhalation,,,,,,,,
+"medicinal gas, compressed",,42,no transformation                                 ,47,conventional                                      ,10,inhalation,34,pulmonary
+"medicinal gas, cryogenic",,42,no transformation                                 ,47,conventional                                      ,10,inhalation,34,pulmonary
+"medicinal gas, liquefied",,42,no transformation                                 ,47,conventional                                      ,10,inhalation,34,pulmonary
+"endotracheopulmonary instillation, solution",,42,no transformation                                 ,47,conventional                                      ,13,instillation,34,pulmonary
+"endotracheopulmonary instillation, suspension",intratracheal suspension,42,no transformation                                 ,47,conventional                                      ,13,instillation,34,pulmonary
+"endotracheopulmonary instillation, powder for suspension",,39,dispersion                                        ,47,conventional                                      ,13,instillation,34,pulmonary
+"endotracheopulmonary instillation, powder for solution",,40,dissolution                                       ,47,conventional                                      ,13,instillation,34,pulmonary
+suppository,rectal suppository,42,no transformation                                 ,47,conventional                                      ,12,insertion,35,rectal
+rectal capsule,,42,no transformation                                 ,47,conventional                                      ,12,insertion,35,rectal
+rectal foam,rectal foam,42,no transformation                                 ,47,conventional                                      ,4,administration,35,rectal
+rectal solution,rectal solution,42,no transformation                                 ,47,conventional                                      ,4,administration,35,rectal
+rectal suspension,,42,no transformation                                 ,47,conventional                                      ,4,administration,35,rectal
+rectal emulsion,,42,no transformation                                 ,47,conventional                                      ,4,administration,35,rectal
+rectal cream,rectal cream,42,no transformation                                 ,47,conventional                                      ,5,application,35,rectal
+rectal gel,rectal gel,42,no transformation                                 ,47,conventional                                      ,5,application,35,rectal
+rectal ointment,rectal ointment,42,no transformation                                 ,47,conventional                                      ,5,application,35,rectal
+rectal tampon,,42,no transformation                                 ,47,conventional                                      ,12,insertion,35,rectal
+concentrate for rectal solution,,38,dilution                                          ,47,conventional                                      ,4,administration,35,rectal
+powder for rectal suspension,,39,dispersion                                        ,47,conventional                                      ,4,administration,35,rectal
+tablet for rectal suspension,,39,dispersion                                        ,47,conventional                                      ,4,administration,35,rectal
+granules for rectal suspension,,39,dispersion                                        ,47,conventional                                      ,4,administration,35,rectal
+powder for rectal solution,,40,dissolution                                       ,47,conventional                                      ,4,administration,35,rectal
+tablet for rectal solution,,40,dissolution                                       ,47,conventional                                      ,4,administration,35,rectal
+,rectal spray,,,,,,,,
+,enema,,,,,,,,
+transdermal patch,medicated patch,42,no transformation                                 ,45,prolonged                                         ,5,application,99906150,transdermal
+solution for iontophoresis,,42,no transformation                                 ,47,conventional                                      ,5,application,99906150,transdermal
+transdermal gel,,42,no transformation                                 ,47,conventional                                      ,5,application,99906150,transdermal
+transdermal solution,,42,no transformation                                 ,47,conventional                                      ,5,application,99906150,transdermal
+transdermal system,transdermal system,42,no transformation                                 ,47,conventional                                      ,5,application,99906150,transdermal
+transdermal ointment,,42,no transformation                                 ,47,conventional                                      ,5,application,99906150,transdermal
+"transdermal spray, solution",,42,no transformation                                 ,47,conventional                                      ,17,spraying,99906150,transdermal
+powder for solution for iontophoresis,,40,dissolution                                       ,47,conventional                                      ,5,application,99906150,transdermal
+,medicated pad,,,,,,,,
+,medicated tape,,,,,,,,
+vaginal delivery system,vaginal system,42,no transformation                                 ,45,prolonged                                         ,12,insertion,36,vaginal
+"vaginal capsule, hard",,42,no transformation                                 ,47,conventional                                      ,12,insertion,36,vaginal
+"vaginal capsule, soft",,42,no transformation                                 ,47,conventional                                      ,12,insertion,36,vaginal
+vaginal tablet,vaginal insert,42,no transformation                                 ,47,conventional                                      ,12,insertion,36,vaginal
+effervescent vaginal tablet,,42,no transformation                                 ,47,conventional                                      ,12,insertion,36,vaginal
+medicated vaginal tampon,,42,no transformation                                 ,47,conventional                                      ,12,insertion,36,vaginal
+vaginal foam,vaginal foam,42,no transformation                                 ,47,conventional                                      ,4,administration,36,vaginal
+vaginal solution,,42,no transformation                                 ,47,conventional                                      ,4,administration,36,vaginal
+vaginal suspension,,42,no transformation                                 ,47,conventional                                      ,4,administration,36,vaginal
+vaginal emulsion,,42,no transformation                                 ,47,conventional                                      ,4,administration,36,vaginal
+vaginal cream,vaginal cream,42,no transformation                                 ,47,conventional                                      ,5,application,36,vaginal
+vaginal gel,vaginal gel,42,no transformation                                 ,47,conventional                                      ,5,application,36,vaginal
+vaginal ointment,vaginal ointment,42,no transformation                                 ,47,conventional                                      ,5,application,36,vaginal
+tablet for vaginal solution,,40,dissolution                                       ,47,conventional                                      ,4,administration,36,vaginal
+powder for vaginal solution,,40,dissolution                                       ,47,conventional                                      ,4,administration,36,vaginal
+granules for vaginal solution,,,,,,,,,
+,vaginal film,,,,,,,,
+,douche,,,,,,,,
+,vaginal sponge,,,,,,,,
+pessary,,42,no transformation                                 ,47,conventional                                      ,12,insertion,36,vaginal
+"radiopharmaceutical precursor, solution",,42,no transformation                                 ,47,conventional                                      ,20,not specified,37,unknown/miscellaneous
+radiopharmaceutical precursor,,43,unknown                                           ,47,conventional                                      ,20,not specified,37,unknown/miscellaneous
+radionuclide generator,,43,unknown                                           ,47,conventional                                      ,20,not specified,37,unknown/miscellaneous
+kit for radiopharmaceutical preparation,,43,unknown                                           ,47,conventional                                      ,20,not specified,37,unknown/miscellaneous
+prolonged-release wound solution,,42,no transformation                                 ,45,prolonged                                         ,5,application,37,unknown/miscellaneous
+pouch,,42,no transformation                                 ,45,prolonged                                         ,12,insertion,37,unknown/miscellaneous
+epilesional solution,,42,no transformation                                 ,47,conventional                                      ,4,administration,37,unknown/miscellaneous
+denture lacquer,,42,no transformation                                 ,47,conventional                                      ,5,application,37,unknown/miscellaneous
+sealant,,42,no transformation                                 ,47,conventional                                      ,5,application,37,unknown/miscellaneous
+sealant matrix,,42,no transformation                                 ,47,conventional                                      ,5,application,37,unknown/miscellaneous
+sealant powder,,42,no transformation                                 ,47,conventional                                      ,5,application,37,unknown/miscellaneous
+irrigation solution,irrigation solution,42,no transformation                                 ,47,conventional                                      ,15,rinsing/washing,37,unknown/miscellaneous
+wound stick,,42,no transformation                                 ,47,conventional                                      ,5,application/insertion,37,unknown/miscellaneous
+medicated sponge,,42,no transformation                                 ,47,conventional                                      ,5,application/insertion,37,unknown/miscellaneous
+impregnated pad,,42,no transformation                                 ,47,conventional                                      ,20,not specified,37,unknown/miscellaneous
+impregnated plug,,42,no transformation                                 ,47,conventional                                      ,20,not specified,37,unknown/miscellaneous
+medicated thread,,42,no transformation                                 ,47,conventional                                      ,20,not specified,37,unknown/miscellaneous
+powder for epilesional solution,,40,dissolution                                       ,47,conventional                                      ,4,administration,37,unknown/miscellaneous
+powder for sealant,,40,dissolution                                       ,47,conventional                                      ,5,application,37,unknown/miscellaneous
+solution for sealant,,41,mixing                                            ,47,conventional                                      ,5,application,37,unknown/miscellaneous
+solution for spray,,41,mixing                                            ,47,conventional                                      ,17,spraying,37,unknown/miscellaneous
+suspension for spray,,41,mixing                                            ,47,conventional                                      ,17,spraying,37,unknown/miscellaneous
+solvent for...,,41,mixing                                            ,47,conventional                                      ,20,not specified,37,unknown/miscellaneous
+,powder for pyelocalyceal solution,,,,,,,,
+,mucosal spray,,,,,,,,
+,mucous membrane topical solution,,,,,,,,
+,paste,,,,,,,,

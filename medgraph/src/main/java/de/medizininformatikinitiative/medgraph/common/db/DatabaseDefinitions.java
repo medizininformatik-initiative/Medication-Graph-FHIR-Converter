@@ -53,5 +53,9 @@ public class DatabaseDefinitions {
 	public static final String DOSE_FORM_IS_EDQM = "CORRESPONDS_TO";
 	public static final String SYNONYM_LABEL = "Synonym";
 	public static final String SYNONYM_REFERENCES_NODE_LABEL = "REFERENCES";
+	
+	// EDQM to RxNorm Dose Form Mapping
+	public static final String EDQM_RXNORM_MAPPING_LABEL = "EdqmRxNormMapping";
+	public static final String EDQM_HAS_RXNORM_MAPPING = "HAS_RXNORM_MAPPING";
 
 }

@@ -18,6 +18,8 @@ import de.medizininformatikinitiative.medgraph.searchengine.stringtransformer.To
 import de.medizininformatikinitiative.medgraph.searchengine.stringtransformer.TraceableTransformer;
 import de.medizininformatikinitiative.medgraph.searchengine.stringtransformer.WhitespaceTokenizer;
 import de.medizininformatikinitiative.medgraph.searchengine.tools.SearchEngineTools;
+
+import java.util.Collections;
 import de.medizininformatikinitiative.medgraph.searchengine.tools.SearchEngineTools.OverlapResolutionStrategy;
 import de.medizininformatikinitiative.medgraph.searchengine.tools.Util;
 import de.medizininformatikinitiative.medgraph.searchengine.tracing.DistinctMultiSubstringUsageStatement;
@@ -77,7 +79,8 @@ public class DoseFormQueryRefiner implements PartialQueryRefiner<DoseFormQueryRe
 					                       System.err.println(
 							                       "Warning: The provider provided an Identifiable which is no EdqmConcept! (Got " + match.getMatchedIdentifier().target + ")");
 					                       return false;
-				                       }).collect(Collectors.toList()).reversed();
+				                       }).collect(Collectors.toList());
+				        Collections.reverse(matches);
 
 		SearchEngineTools.removeConflictingOverlaps(matches, this::overlap, this::checkPriorityOnOverlap);
 

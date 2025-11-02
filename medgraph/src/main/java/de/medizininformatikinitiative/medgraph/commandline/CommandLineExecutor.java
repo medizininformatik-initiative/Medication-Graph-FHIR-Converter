@@ -35,6 +35,8 @@ public class CommandLineExecutor {
 			"The password to authenticate at the Neo4j service with.");
 	static final Option OPTION_DB_PASSIN = new Option("pi", "database-passin", false,
 			"Reads the Neo4j database password to use from system-in.");
+	static final Option OPTION_LIMIT_PRODUCTS = new Option("lp", "limit-products", true,
+			"Limit the number of products to export (for faster test runs).");
 
 	static final Map<String, CommandLineUtility> DEFAULT_UTILITIES = new HashMap<>();
 
@@ -46,6 +48,7 @@ public class CommandLineExecutor {
 		OPTIONS.addOption(OPTION_DB_USER);
 		OPTIONS.addOption(OPTION_DB_PASSWORD);
 		OPTIONS.addOption(OPTION_DB_PASSIN);
+		OPTIONS.addOption(OPTION_LIMIT_PRODUCTS);
 
 		addUtility(new HeadlessGraphDbPopulator());
 		addUtility(new HeadlessFhirExporter());
@@ -138,6 +141,8 @@ public class CommandLineExecutor {
 		OptionalInt exitCode = applyDbConnectionOptions(commandLine);
 		if (exitCode.isPresent()) return exitCode;
 
+		applyLimitOptions(commandLine);
+
 		if (utility != null) {
 			try {
 				ExitStatus exitStatus = utility.invoke(commandLine,
@@ -188,6 +193,16 @@ public class CommandLineExecutor {
 					ConnectionConfigurationService.SaveOption.DONT_SAVE);
 		}
 		return OptionalInt.empty();
+	}
+
+	/**
+	 * Applies optional limit arguments to control export size.
+	 */
+	private void applyLimitOptions(CommandLine commandLine) {
+		String limitProducts = commandLine.getOptionValue(OPTION_LIMIT_PRODUCTS.getOpt());
+		if (limitProducts != null && !limitProducts.isBlank()) {
+			System.setProperty("medgraph.export.productLimit", limitProducts.trim());
+		}
 	}
 
 	private String readSingleLineFromStdIn() {

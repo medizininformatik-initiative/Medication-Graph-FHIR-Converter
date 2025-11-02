@@ -50,6 +50,7 @@ public class GraphDbPopulatorSupport {
 			"pdf_relations.csv",
 			"edqm_translations.csv",
 			"dose_form_synonyms.csv",
+			"edqm_rxnorm_dose_form_mapping.csv",
 			"NOTICE.txt",
 	};
 	private static final Path[] OPTIONAL_FILES = new Path[]{

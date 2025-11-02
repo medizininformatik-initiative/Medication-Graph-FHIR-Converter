@@ -364,7 +364,7 @@ public class RefinedQuery {
 			for (List<MatchingObject<T>> equalObjects : matchingObjectsByMatchable.values()) {
 				assert !equalObjects.isEmpty();
 				if (equalObjects.size() == 1) {
-					outList.add(equalObjects.getFirst());
+					outList.add(equalObjects.get(0));
 				} else {
 					outList.add(new Merge<>(equalObjects, ScoreMergingStrategy.MAX));
 				}

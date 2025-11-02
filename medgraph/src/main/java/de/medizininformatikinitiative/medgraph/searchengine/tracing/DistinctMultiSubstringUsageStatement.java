@@ -52,7 +52,9 @@ public class DistinctMultiSubstringUsageStatement extends SubstringUsageStatemen
 	@NotNull
 	public String getUnusedParts() {
 		StringBuilder builder = new StringBuilder(getOriginal());
-		for (IntRange range : usedRanges.reversed()) {
+		List<IntRange> reversedRanges = new ArrayList<>(usedRanges);
+		Collections.reverse(reversedRanges);
+		for (IntRange range : reversedRanges) {
 			builder.delete(range.from(), range.to());
 		}
 		return builder.toString();

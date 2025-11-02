@@ -4,6 +4,10 @@ import de.medizininformatikinitiative.medgraph.DI;
 import de.medizininformatikinitiative.medgraph.fhirexporter.FhirExport;
 import de.medizininformatikinitiative.medgraph.fhirexporter.FhirExportFactory;
 import org.apache.commons.cli.CommandLine;
+import de.medizininformatikinitiative.medgraph.fhirexporter.neo4j.DoseFormMapper;
+import de.medizininformatikinitiative.medgraph.fhirexporter.neo4j.RxNormMatcherSetup;
+import de.medizininformatikinitiative.medgraph.fhirexporter.neo4j.RxNormProductMatcher;
+import de.medizininformatikinitiative.medgraph.searchengine.db.Neo4jCypherDatabase;
 import org.jetbrains.annotations.NotNull;
 import org.neo4j.driver.Session;
 
@@ -32,13 +36,17 @@ public class HeadlessFhirExporter extends CommandLineUtility {
 
 		Path exportPath;
 		try {
-			exportPath = Path.of(args.getFirst());
+			exportPath = Path.of(args.get(0));
 		} catch (InvalidPathException e) {
 			return ExitStatus.invalidPath(e);
 		}
 
 		return withDatabaseConnection(con -> {
 			try (Session session = con.createSession()) {
+                // Initialize RxNorm providers (DoseFormMapper + RxNav resolvers/providers)
+                Neo4jCypherDatabase db = new Neo4jCypherDatabase(session);
+                RxNormMatcherSetup.initializeWithApiProviders(db);
+                RxNormProductMatcher matcher = RxNormMatcherSetup.createMatcher();
 				FhirExport export = fhirExportFactory.prepareExport(exportPath);
 				export.doExport(session);
 				return ExitStatus.SUCCESS;
