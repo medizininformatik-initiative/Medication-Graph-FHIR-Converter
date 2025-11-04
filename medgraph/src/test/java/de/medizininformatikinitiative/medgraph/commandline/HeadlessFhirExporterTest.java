@@ -5,7 +5,6 @@ import de.medizininformatikinitiative.medgraph.common.db.ConnectionFailureReason
 import de.medizininformatikinitiative.medgraph.common.db.DatabaseConnectionException;
 import de.medizininformatikinitiative.medgraph.common.db.DatabaseConnectionService;
 import de.medizininformatikinitiative.medgraph.fhirexporter.FileFhirExportSink;
-import de.medizininformatikinitiative.medgraph.fhirexporter.FhirExportFactory;
 import org.apache.commons.cli.CommandLine;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

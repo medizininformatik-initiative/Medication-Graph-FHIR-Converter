@@ -1,9 +1,11 @@
 package de.medizininformatikinitiative.medgraph.ui.theme.templates
 
 import androidx.compose.desktop.ui.tooling.preview.Preview
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.LinearProgressIndicator
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -13,6 +15,7 @@ import de.medizininformatikinitiative.medgraph.common.mvc.NamedProgressable
 import de.medizininformatikinitiative.medgraph.common.mvc.Progressable
 import de.medizininformatikinitiative.medgraph.ui.theme.ApplicationTheme
 import de.medizininformatikinitiative.medgraph.ui.tools.preview.TestOnlyProgressable
+import java.lang.Exception
 
 @Composable
 @Preview
@@ -44,6 +47,10 @@ fun DetailedProgressIndication(
         val minorStep = state.secondaryTaskDescription
         if (minorStep != null)
             Text(minorStep, modifier = Modifier.padding(horizontal = 8.dp))
+        val failureText = state.failureText
+        if (failureText != null) {
+            Text(failureText, color = MaterialTheme.colors.error, modifier = Modifier.padding(horizontal = 8.dp))
+        }
     }
 }
 
@@ -55,10 +62,14 @@ fun LinearProgressIndicaton(
         .padding(vertical = 4.dp)
         .height(12.dp)
 ) {
+    var mod = modifier
+    if (state.failureText != null) {
+        mod = mod.background(MaterialTheme.colors.onError)
+    }
     LinearProgressIndicator(
         progress =
-        state.progress * 1f / state.maxProgress,
-        modifier = modifier
+            state.progress * 1f / state.maxProgress,
+        modifier = mod
     )
 }
 
@@ -68,6 +79,7 @@ class ProgressIndicationViewState : NamedProgressable.Listener {
     var maxProgress by mutableStateOf(1)
     var primaryTaskDescription by mutableStateOf("")
     var secondaryTaskDescription by mutableStateOf<String?>(null)
+    var failureText by mutableStateOf<String?>(null)
 
     /**
      * The [Progressable] currently bound to this instance or null if none is bound.
@@ -107,11 +119,21 @@ class ProgressIndicationViewState : NamedProgressable.Listener {
         maxProgress = 1
         primaryTaskDescription = ""
         secondaryTaskDescription = null
+        failureText = null
     }
 
     override fun onProgressChanged(progress: Int, maxProgress: Int) {
         this.progress = progress
         this.maxProgress = maxProgress
+    }
+
+    override fun onFailure(exception: Exception) {
+        progress = 1
+        maxProgress = 1
+        primaryTaskDescription = ""
+        secondaryTaskDescription = null
+        failureText = exception.message
+        exception.printStackTrace()
     }
 
     override fun onTaskStackChanged(taskStack: Array<out String>) {

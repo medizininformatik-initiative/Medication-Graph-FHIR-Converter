@@ -23,7 +23,7 @@ import javax.swing.JFileChooser
 @Preview
 private fun FhirExporterUI() {
     ApplicationTheme {
-        val viewModel = FhirExporterScreenModel()
+        val viewModel = FileFhirExporterScreenModel()
         viewModel.exportUnderway = true
         viewModel.exportTask.bind(TestOnlyProgressable())
         FhirExporterUI(viewModel, Modifier.fillMaxWidth().padding(8.dp))
@@ -31,7 +31,7 @@ private fun FhirExporterUI() {
 }
 
 @Composable
-fun FhirExporterUI(viewModel: FhirExporterScreenModel, modifier: Modifier = Modifier) {
+fun FhirExporterUI(viewModel: FileFhirExporterScreenModel, modifier: Modifier = Modifier) {
     Column(modifier = modifier) {
         Text(StringRes.fhir_exporter_description)
         PathTextField(

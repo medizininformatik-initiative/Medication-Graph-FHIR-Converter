@@ -3,7 +3,7 @@ package de.medizininformatikinitiative.medgraph.commandline;
 import de.medizininformatikinitiative.medgraph.DI;
 import de.medizininformatikinitiative.medgraph.fhirexporter.FhirExportSources;
 import de.medizininformatikinitiative.medgraph.fhirexporter.FileFhirExportSink;
-import de.medizininformatikinitiative.medgraph.fhirexporter.FhirExportFactory;
+import de.medizininformatikinitiative.medgraph.fhirexporter.FileFhirExportSinkFactory;
 import org.apache.commons.cli.CommandLine;
 import org.jetbrains.annotations.NotNull;
 import org.neo4j.driver.Session;
@@ -21,7 +21,7 @@ import java.util.List;
  */
 public class HeadlessFhirExporter extends CommandLineUtility {
 
-	private final FhirExportFactory fhirExportFactory = DI.get(FhirExportFactory.class);
+	private final FileFhirExportSinkFactory fhirExportFactory = DI.get(FileFhirExportSinkFactory.class);
 
 	@Override
 	@NotNull

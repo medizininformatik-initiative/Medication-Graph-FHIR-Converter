@@ -3,8 +3,8 @@ package de.medizininformatikinitiative.medgraph.ui.desktop.fhirexporter
 import de.medizininformatikinitiative.medgraph.TempDirectoryTestExtension
 import de.medizininformatikinitiative.medgraph.UnitTest
 import de.medizininformatikinitiative.medgraph.common.mvc.Progressable
+import de.medizininformatikinitiative.medgraph.fhirexporter.FileFhirExportSinkFactory
 import de.medizininformatikinitiative.medgraph.fhirexporter.FileFhirExportSink
-import de.medizininformatikinitiative.medgraph.fhirexporter.FhirExportFactory
 import de.medizininformatikinitiative.medgraph.ui.resources.StringRes
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Assertions.*
@@ -22,20 +22,20 @@ import java.util.concurrent.atomic.AtomicReference
  * @author Markus Budeus
  */
 @ExtendWith(TempDirectoryTestExtension::class)
-class FhirExporterScreenModelTest : UnitTest() {
+class FileFhirExporterScreenModelTest : UnitTest() {
 
     @Mock
-    lateinit var fhirExporter: FhirExportFactory
+    lateinit var fhirExporter: FileFhirExportSinkFactory
 
     @Mock
     lateinit var fhirExport: FileFhirExportSink
 
-    lateinit var sut: FhirExporterScreenModel
+    lateinit var sut: FileFhirExporterScreenModel
 
     @BeforeEach
     fun setUp(tempDirectory: Path) {
         insertDatabaseConnectionServiceMock()
-        sut = FhirExporterScreenModel(fhirExporter)
+        sut = FileFhirExporterScreenModel(fhirExporter)
         `when`(fhirExporter.prepareExport(any())).thenReturn(fhirExport)
         `when`(fhirExport.currentTaskStack).thenReturn(arrayOf())
         sut.exportPath = tempDirectory.toAbsolutePath().toString()
