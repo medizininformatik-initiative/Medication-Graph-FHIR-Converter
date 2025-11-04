@@ -69,8 +69,8 @@ public class GraphIngredientConversionTest extends UnitTest {
 
 	private void assertWirkstoffTyp(String wirkstofftyp, Medication.MedicationIngredientComponent ingredient) {
 		for (Extension e : ingredient.getExtension()) {
-			if (e instanceof ExtensionWirkstoffTyp ex) {
-				assertEquals(wirkstofftyp, ((Coding) ex.getValue()).getCode());
+			if (ExtensionWirkstoffTyp.URL.equals(e.getUrl())) {
+				assertEquals(wirkstofftyp, ((Coding) e.getValue()).getCode());
 				return;
 			}
 		}
@@ -80,8 +80,8 @@ public class GraphIngredientConversionTest extends UnitTest {
 	private void assertWirkstoffRelationTo(String targetIdentifier,
 	                                       Medication.MedicationIngredientComponent ingredient) {
 		for (Extension e : ingredient.getExtension()) {
-			if (e instanceof ExtensionWirkstoffRelation ex) {
-				assertEquals(targetIdentifier, ex.getExtension().getFirst().getValueAsPrimitive().getValue());
+			if (ExtensionWirkstoffRelation.URL.equals(e.getUrl())) {
+				assertEquals(targetIdentifier, e.getExtension().getFirst().getValueAsPrimitive().getValue());
 				return;
 			}
 		}

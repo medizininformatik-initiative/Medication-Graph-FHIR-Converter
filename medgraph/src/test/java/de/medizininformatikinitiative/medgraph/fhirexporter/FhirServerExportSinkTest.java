@@ -86,6 +86,25 @@ public class FhirServerExportSinkTest extends FhirExportSinkTestBase {
 		exportResult();
 	}
 
+	@Test
+	void withMedicationInternalInterdependencies() throws IOException {
+		// Parent first
+		medicationList.get(0).addIngredient().setItem(
+				new Reference().setReference("Medication/child1")
+		);
+		medicationList.get(1).setId("child1");
+
+		// Child first
+		medicationList.get(2).setId("child2");
+		medicationList.get(3).addIngredient().setItem(
+				new Reference().setReference("Medication/child2")
+		);
+
+		exportResult();
+	}
+
+	// TODO Large-Scale test with interdependencies and internal dependencies
+
 	@AfterEach
 	void cleanUp() {
 		medicationList.forEach(resource -> client.delete().resourceById("Medication", resource.getIdPart()));
