@@ -48,7 +48,7 @@ public class CommandLineExecutor {
 		OPTIONS.addOption(OPTION_DB_PASSIN);
 
 		addUtility(new HeadlessGraphDbPopulator());
-		addUtility(new HeadlessFhirExporter());
+		addUtility(new HeadlessFileFhirExporter());
 	}
 
 	private static void addUtility(CommandLineUtility utility) {

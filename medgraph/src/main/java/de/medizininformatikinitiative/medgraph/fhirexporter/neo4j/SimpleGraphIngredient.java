@@ -43,7 +43,7 @@ public class SimpleGraphIngredient {
 
 	protected Medication.MedicationIngredientComponent toBasicFhirIngredient() {
 		Medication.MedicationIngredientComponent ingredient = new Medication.MedicationIngredientComponent();
-		ingredient.setItem(new SubstanceReference(substanceMmiId, substanceName));
+		ingredient.setItem(SubstanceReference.build(substanceMmiId, substanceName));
 		ingredient.setStrength(GraphUtil.toFhirRatio(massFrom, massTo, unit));
 		return ingredient;
 	}

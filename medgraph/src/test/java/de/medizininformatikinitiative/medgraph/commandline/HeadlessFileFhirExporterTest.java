@@ -5,6 +5,7 @@ import de.medizininformatikinitiative.medgraph.common.db.ConnectionFailureReason
 import de.medizininformatikinitiative.medgraph.common.db.DatabaseConnectionException;
 import de.medizininformatikinitiative.medgraph.common.db.DatabaseConnectionService;
 import de.medizininformatikinitiative.medgraph.fhirexporter.FileFhirExportSink;
+import de.medizininformatikinitiative.medgraph.fhirexporter.FileFhirExportSinkFactory;
 import org.apache.commons.cli.CommandLine;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -24,24 +25,24 @@ import static org.mockito.Mockito.*;
 /**
  * @author Markus Budeus
  */
-public class HeadlessFhirExporterTest extends UnitTest {
+public class HeadlessFileFhirExporterTest extends UnitTest {
 
 	@Mock
-	private FhirExportFactory fhirExportFactory;
+	private FileFhirExportSinkFactory fhirExportFactory;
 	@Mock
 	private FileFhirExportSink fhirExport;
 	@Mock
 	private CommandLine commandLine;
 	private DatabaseConnectionService databaseConnectionService;
 
-	private HeadlessFhirExporter sut;
+	private HeadlessFileFhirExporter sut;
 
 	@BeforeEach
 	void setUp() {
-		insertMockDependency(FhirExportFactory.class, fhirExportFactory);
+		insertMockDependency(FileFhirExportSinkFactory.class, fhirExportFactory);
 		databaseConnectionService = insertDatabaseConnectionServiceMock();
 		Mockito.when(fhirExportFactory.prepareExport(notNull())).thenReturn(fhirExport);
-		sut = new HeadlessFhirExporter();
+		sut = new HeadlessFileFhirExporter();
 	}
 
 	@Test

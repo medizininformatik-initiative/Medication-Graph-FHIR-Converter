@@ -37,10 +37,10 @@ class FhirServerFhirExporterScreenModelTest : UnitTest() {
         `when`(sinkFactory.prepareExportWithTokenAuth(any(), any())).thenReturn(fhirExport)
         `when`(fhirExport.currentTaskStack).thenReturn(arrayOf())
 
-        sut.fhirBaseUrl = "http://localhost:8080/fhir"
-        sut.username = ""
-        sut.password = ""
-        sut.bearerToken = ""
+        sut.fhirBaseUrl.value = "http://localhost:8080/fhir"
+        sut.username.value = ""
+        sut.password.value = ""
+        sut.bearerToken.value = ""
     }
 
     @Test
@@ -62,7 +62,7 @@ class FhirServerFhirExporterScreenModelTest : UnitTest() {
 
     @Test
     fun alwaysRequiresUrl() {
-        sut.fhirBaseUrl = " "
+        sut.fhirBaseUrl.value = " "
         assertNull(sut.exportNoAuth())
         assertNull(sut.exportBasicAuth())
         assertNull(sut.exportTokenAuth())
@@ -79,13 +79,13 @@ class FhirServerFhirExporterScreenModelTest : UnitTest() {
     fun httpBasicAuthNeedsUserAndPassword() {
         assertNull(sut.exportBasicAuth())
         assertNull(sut.exportTokenAuth())
-        sut.username = "admin"
+        sut.username.value = "admin"
         assertNull(sut.exportBasicAuth())
         assertNull(sut.exportTokenAuth())
-        sut.password = "secure"
+        sut.password.value = "secure"
         assertNotNull(sut.exportBasicAuth())
         assertNull(sut.exportTokenAuth())
-        sut.username = ""
+        sut.username.value = ""
         assertNull(sut.exportBasicAuth())
         assertNull(sut.exportTokenAuth())
     }
@@ -93,7 +93,7 @@ class FhirServerFhirExporterScreenModelTest : UnitTest() {
     @Test
     fun tokenAuthNeedsToken() {
         assertNull(sut.exportTokenAuth())
-        sut.bearerToken = "myToken"
+        sut.bearerToken.value = "myToken"
         assertNotNull(sut.exportTokenAuth())
     }
 

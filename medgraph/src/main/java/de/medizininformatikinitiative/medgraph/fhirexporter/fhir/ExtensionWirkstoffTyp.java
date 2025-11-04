@@ -8,24 +8,21 @@ import org.hl7.fhir.r4.model.Extension;
  *
  * @author Markus Budeus
  */
-public class ExtensionWirkstoffTyp extends Extension {
+public class ExtensionWirkstoffTyp {
 
-	public final String URL = "https://www.medizininformatik-initiative.de/fhir/core/modul-medikation/StructureDefinition/wirkstofftyp";
+	public static final String URL = "https://www.medizininformatik-initiative.de/fhir/core/modul-medikation/StructureDefinition/wirkstofftyp";
 
-	private ExtensionWirkstoffTyp() {
-		this.setUrl(URL);
-	}
-
-	public static ExtensionWirkstoffTyp preciseIngredient() {
+	public static Extension preciseIngredient() {
 		return of("PIN");
 	}
 
-	public static ExtensionWirkstoffTyp ingredient() {
+	public static Extension ingredient() {
 		return of("IN");
 	}
 
-	private static ExtensionWirkstoffTyp of(String value) {
-		ExtensionWirkstoffTyp extension = new ExtensionWirkstoffTyp();
+	private static Extension of(String value) {
+		Extension extension = new Extension();
+		extension.setUrl(URL);
 		extension.setValue(new Coding()
 				.setCode(value)
 				.setSystem("https://www.medizininformatik-initiative.de/fhir/core/modul-medikation/CodeSystem/wirkstofftyp"));

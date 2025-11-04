@@ -21,19 +21,19 @@ import javax.swing.JFileChooser
 
 @Composable
 @Preview
-private fun FhirExporterUI() {
+private fun FileFhirExporterUI() {
     ApplicationTheme {
         val viewModel = FileFhirExporterScreenModel()
         viewModel.exportUnderway = true
         viewModel.exportTask.bind(TestOnlyProgressable())
-        FhirExporterUI(viewModel, Modifier.fillMaxWidth().padding(8.dp))
+        FileFhirExporterUI(viewModel, Modifier.fillMaxWidth().padding(8.dp))
     }
 }
 
 @Composable
-fun FhirExporterUI(viewModel: FileFhirExporterScreenModel, modifier: Modifier = Modifier) {
+fun FileFhirExporterUI(viewModel: FileFhirExporterScreenModel, modifier: Modifier = Modifier) {
     Column(modifier = modifier) {
-        Text(StringRes.fhir_exporter_description)
+        Text(StringRes.file_fhir_exporter_description)
         PathTextField(
             viewModel.exportPath,
             { v -> viewModel.exportPath = v },
@@ -65,14 +65,19 @@ fun FhirExporterUI(viewModel: FileFhirExporterScreenModel, modifier: Modifier = 
 
         Divider(modifier = Modifier.padding(vertical = 4.dp), thickness = 2.dp)
 
-        if (viewModel.exportUnderway) {
-            val exportTask = viewModel.exportTask
-            if (exportTask.progressable != null)
-                DetailedProgressIndication(exportTask)
-        } else {
-            val error = viewModel.errorText
-            if (error != null)
-                Text(error, color = MaterialTheme.localColors.error)
-        }
+        ExportProgressIndication(viewModel)
+    }
+}
+
+@Composable
+fun ExportProgressIndication(viewModel: FhirExporterScreenModel) {
+    if (viewModel.exportUnderway) {
+        val exportTask = viewModel.exportTask
+        if (exportTask.progressable != null)
+            DetailedProgressIndication(exportTask)
+    } else {
+        val error = viewModel.errorText
+        if (error != null)
+            Text(error, color = MaterialTheme.localColors.error)
     }
 }
