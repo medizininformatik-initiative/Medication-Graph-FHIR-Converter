@@ -19,7 +19,7 @@ import java.util.List;
  *
  * @author Markus Budeus
  */
-public class HeadlessFhirExporter extends CommandLineUtility {
+public class HeadlessFileFhirExporter extends CommandLineUtility {
 
 	private final FileFhirExportSinkFactory fhirExportFactory = DI.get(FileFhirExportSinkFactory.class);
 

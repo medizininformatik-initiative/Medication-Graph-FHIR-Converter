@@ -11,32 +11,27 @@ import java.util.List;
  *
  * @author Markus Budeus
  */
-public class ExtensionWirkstoffRelation extends Extension {
+public class ExtensionWirkstoffRelation {
 
-	public final String URL = "https://www.medizininformatik-initiative.de/fhir/core/modul-medikation/StructureDefinition/wirkstoffrelation";
+	public static final String URL = "https://www.medizininformatik-initiative.de/fhir/core/modul-medikation/StructureDefinition/wirkstoffrelation";
 
-	private ExtensionWirkstoffRelation() {
-		this.setUrl(URL);
-	}
+	public static class IngredientUri {
+		public static final String URL = "ingredientUri";
 
-	public static class IngredientUri extends Extension {
-		public final String URL = "ingredientUri";
-
-		private IngredientUri(String valueUri) {
-			this.setUrl(URL);
-			this.value = new UriType(valueUri);
+		private static Extension build(String valueUri) {
+			Extension extension = new Extension();
+			extension.setUrl(URL);
+			extension.setValue(new UriType(valueUri));
+			return extension;
 		}
 	}
 
-	public void setRelatesTo(String ingredientId) {
+	public static Extension relatesTo(String ingredientId) {
+		Extension extension = new Extension();
+		extension.setUrl(URL);
 		List<Extension> list = new ArrayList<>(1);
-		list.add(new IngredientUri(ingredientId));
-		this.setExtension(list);
-	}
-
-	public static ExtensionWirkstoffRelation relatesTo(String ingredientId) {
-		ExtensionWirkstoffRelation extension = new ExtensionWirkstoffRelation();
-		extension.setRelatesTo(ingredientId);
+		list.add(IngredientUri.build(ingredientId));
+		extension.setExtension(list);
 		return extension;
 	}
 

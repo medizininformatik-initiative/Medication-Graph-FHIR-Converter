@@ -1,8 +1,6 @@
 package de.medizininformatikinitiative.medgraph.ui.desktop.fhirexporter
 
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import de.medizininformatikinitiative.medgraph.DI
 import de.medizininformatikinitiative.medgraph.fhirexporter.FhirServerExportSinkFactory
 import kotlinx.coroutines.Job
@@ -16,10 +14,10 @@ class FhirServerFhirExporterScreenModel(
     private val exporterFactory: FhirServerExportSinkFactory = DI.get(FhirServerExportSinkFactory::class.java)
 ) : FhirExporterScreenModel() {
 
-    var fhirBaseUrl by mutableStateOf("")
-    var username by mutableStateOf("")
-    var password by mutableStateOf("")
-    var bearerToken by mutableStateOf("")
+    var fhirBaseUrl = mutableStateOf("http://localhost:8080/fhir")
+    var username = mutableStateOf("")
+    var password = mutableStateOf("")
+    var bearerToken = mutableStateOf("")
 
     fun exportNoAuth(): Job? {
         return checkUrl()?.let { super.doExport(exporterFactory.prepareExportWithoutAuth(it)) }
@@ -43,13 +41,13 @@ class FhirServerFhirExporterScreenModel(
         }
     }
 
-    private fun checkUrl(): String? = getNotBlank(fhirBaseUrl)
+    private fun checkUrl(): String? = getNotBlank(fhirBaseUrl.value)
 
-    private fun checkUsername(): String? = getNotBlank(username)
+    private fun checkUsername(): String? = getNotBlank(username.value)
 
-    private fun checkPassword(): CharArray? = getNotBlank(password)?.toCharArray()
+    private fun checkPassword(): CharArray? = getNotBlank(password.value)?.toCharArray()
 
-    private fun checkToken(): String? = getNotBlank(bearerToken)
+    private fun checkToken(): String? = getNotBlank(bearerToken.value)
 
     private fun getNotBlank(source: String): String? {
         if (!source.isBlank()) return source

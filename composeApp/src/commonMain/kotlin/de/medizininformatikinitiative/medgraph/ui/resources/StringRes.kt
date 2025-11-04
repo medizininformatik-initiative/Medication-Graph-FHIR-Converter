@@ -34,7 +34,10 @@ class StringRes {
         val main_menu_populate_database = "Populate Database"
 
         @JvmStatic
-        val main_menu_fhir_exporter = "Export to MMI CDS FHIR Instances"
+        val main_menu_file_fhir_exporter = "Export to JSON MMI CDS FHIR Resources"
+
+        @JvmStatic
+        val main_menu_fhir_server_exporter = "Upload MMI CDS FHIR Resources to FHIR Server"
 
         @JvmStatic
         val main_menu_search_algorithm = "Search for Medications"
@@ -190,7 +193,8 @@ class StringRes {
         val pipeline_merge_last_path = ">>"
 
         @JvmStatic
-        val graph_db_populator_wipe_warning = "Warning: Running the import completely overwrites the database you are currently connected to!"
+        val graph_db_populator_wipe_warning =
+            "Warning: Running the import completely overwrites the database you are currently connected to!"
 
         @JvmStatic
         val graph_db_populator_done = "Done. The database is ready."
@@ -204,7 +208,7 @@ class StringRes {
         @JvmStatic
         val graph_db_populator_neo4j_import_dir_description_prefix =
             "On most systems, the default Neo4j import directory is at <NEO4J_HOME>/import, with <NEO4J_HOME> being the installation directory of Neo4j.\n" +
-                "On Debian- and RPM-based systems, the default path is "
+                    "On Debian- and RPM-based systems, the default path is "
 
         @JvmStatic
         val graph_db_populator_neo4j_import_dir_path = "/var/lib/neo4j/import"
@@ -216,17 +220,20 @@ class StringRes {
         val graph_db_populator_amice_stoffbez_path = "Path to AMIce \"Stoffbezeichnungen Rohdaten\" file. (optional)"
 
         @JvmStatic
-        val graph_db_populator_amice_stoffbez_description_p1 = "If included, the knowledge graph will include INNs, synonyms for substances and additional CAS numbers from this file. " +
-                "It can be downloaded "
+        val graph_db_populator_amice_stoffbez_description_p1 =
+            "If included, the knowledge graph will include INNs, synonyms for substances and additional CAS numbers from this file. " +
+                    "It can be downloaded "
 
         @JvmStatic
         val graph_db_populator_amice_stoffbez_description_link_text = "here"
 
         @JvmStatic
-        val graph_db_populator_amice_stoffbez_description_link = "https://www.bfarm.de/DE/Arzneimittel/Arzneimittelinformationen/Arzneimittel-recherchieren/Stoffbezeichnungen/_node.html"
+        val graph_db_populator_amice_stoffbez_description_link =
+            "https://www.bfarm.de/DE/Arzneimittel/Arzneimittelinformationen/Arzneimittel-recherchieren/Stoffbezeichnungen/_node.html"
 
         @JvmStatic
-        val graph_db_populator_amice_stoffbez_description_p2 = ". Please note you must only provide the .csv file here, NOT the .zip file which contains it."
+        val graph_db_populator_amice_stoffbez_description_p2 =
+            ". Please note you must only provide the .csv file here, NOT the .zip file which contains it."
 
         @JvmStatic
         val graph_db_populator_access_denied = "Access denied: {0}"
@@ -244,28 +251,72 @@ class StringRes {
         val fhir_exporter_export_path = "Export Output Directory"
 
         @JvmStatic
-        val fhir_exporter_description = "Use this tool to export MII KDS-compliant FHIR Medication, Substance and " +
-            "Organization instances from the Graph Database. Specify a directory into which to export and then run " +
-            "the export."
+        val file_fhir_exporter_description =
+            "Use this tool to export MII KDS-compliant FHIR Medication, Substance and " +
+                    "Organization instances from the Graph Database. Specify a directory into which to export and then run " +
+                    "the export."
+
+        @JvmStatic
+        val fhir_server_exporter_description =
+            "Use this tool to export MII KDS-compliant FHIR Medication, Substance and " +
+                    "Organization instances from the Graph Database. Specify a FHIR server URL and optional authentication" +
+                    "information to start the export."
+
+        @JvmStatic
+        val fhir_server_exporter_fhir_url = "FHIR Server Base URL: "
+
+        @JvmStatic
+        val fhir_server_exporter_description_no_auth = "Without Authentication:"
+
+        @JvmStatic
+        val fhir_server_exporter_description_basic_auth = "With HTTP Basic Authentication:"
+
+        @JvmStatic
+        val fhir_server_exporter_description_token_auth = "With Bearer Token Authentication:"
 
         @JvmStatic
         val fhir_exporter_do_export = "Export"
 
         @JvmStatic
-        val fhir_exporter_missing_permissions = "Failed to write output files. Ensure you have write permissions for the provided output path."
+        val fhir_exporter_export_no_auth = "Export (No Auth)"
 
         @JvmStatic
-        val license_about = "The project itself is licensed under the MIT license. Click the button below for details. " +
-                "Please note that this license does not apply to the whole binary, due to restrictions imposed by " +
-                "included dependencies. The individual dependencies' licenses can be accessed further below."
+        val fhir_exporter_export_http_basic_auth = "Export (HTTP Basic Auth)"
 
         @JvmStatic
-        val dependency_licenses_about = "Below, open source libraries as well as open data sets used in this project are listed, " +
-                "as their producers/developers deserve recognition. Clicking onto a button displays the corresponding " +
-                "license."
+        val fhir_exporter_export_token_auth = "Export (Bearer Token Auth)"
+
+        @JvmStatic
+        val fhir_exporter_fhir_server_url = "FHIR Server Base URL"
+
+        @JvmStatic
+        val fhir_exporter_http_basic_auth_username = "Username"
+
+        @JvmStatic
+        val fhir_exporter_http_basic_auth_password = "Password"
+
+        @JvmStatic
+        val fhir_exporter_bearer_token = "Bearer Token"
+
+        @JvmStatic
+        val fhir_exporter_missing_permissions =
+            "Failed to write output files. Ensure you have write permissions for the provided output path."
+
+        @JvmStatic
+        val license_about =
+            "The project itself is licensed under the MIT license. Click the button below for details. " +
+                    "Please note that this license does not apply to the whole binary, due to restrictions imposed by " +
+                    "included dependencies. The individual dependencies' licenses can be accessed further below."
+
+        @JvmStatic
+        val dependency_licenses_about =
+            "Below, open source libraries as well as open data sets used in this project are listed, " +
+                    "as their producers/developers deserve recognition. Clicking onto a button displays the corresponding " +
+                    "license."
 
         @JvmStatic
         val licenses_license_text = "License"
+
         @JvmStatic
         val licenses_notice_text = "NOTICE.txt"
 

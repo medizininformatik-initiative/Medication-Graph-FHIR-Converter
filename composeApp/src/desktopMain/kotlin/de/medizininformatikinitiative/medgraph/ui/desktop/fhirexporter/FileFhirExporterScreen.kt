@@ -8,14 +8,14 @@ import cafe.adriel.voyager.core.model.rememberScreenModel
 import cafe.adriel.voyager.core.screen.Screen
 
 /**
- * Screen class for the FHIR exporter screen.
+ * Screen class for the file FHIR exporter screen.
  *
  * @author Markus Budeus
  */
-class FhirExporterScreen : Screen {
+class FileFhirExporterScreen : Screen {
 
     @Composable
     override fun Content() {
-        FhirExporterUI(rememberScreenModel { FileFhirExporterScreenModel() }, modifier = Modifier.padding(8.dp))
+        FileFhirExporterUI(rememberScreenModel { FileFhirExporterScreenModel() }, modifier = Modifier.padding(8.dp))
     }
 }

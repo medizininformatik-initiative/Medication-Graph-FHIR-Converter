@@ -71,7 +71,7 @@ public record GraphProduct(String name, long mmiId, Long companyMmiId, String co
 			applyManufacturer(drugMedication);
 			drugMedication.getCode().setText(null);
 			drugMedication.setId(IdProvider.combinedMedicalProductSubproductIdentifier(mmiId, childNo));
-			to.addIngredient().setItem(new MedicationReference(mmiId, childNo, null));
+			to.addIngredient().setItem(MedicationReference.build(mmiId, childNo, null));
 		}
 
 		List<Medication> outList = new ArrayList<>(drugMedications.size() + 1);
@@ -100,7 +100,7 @@ public record GraphProduct(String name, long mmiId, Long companyMmiId, String co
 
 	private void applyManufacturer(Medication to) {
 		if (companyMmiId != null) {
-			to.setManufacturer(new OrganizationReference(companyMmiId, companyName));
+			to.setManufacturer(OrganizationReference.build(companyMmiId, companyName));
 		}
 	}
 
