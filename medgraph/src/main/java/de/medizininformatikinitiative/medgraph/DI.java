@@ -2,9 +2,7 @@ package de.medizininformatikinitiative.medgraph;
 
 import ca.uhn.fhir.context.FhirContext;
 import de.medizininformatikinitiative.medgraph.common.db.*;
-import de.medizininformatikinitiative.medgraph.fhirexporter.ExportFilenameGenerator;
-import de.medizininformatikinitiative.medgraph.fhirexporter.FileFhirExportSink;
-import de.medizininformatikinitiative.medgraph.fhirexporter.FhirExportFactory;
+import de.medizininformatikinitiative.medgraph.fhirexporter.*;
 import de.medizininformatikinitiative.medgraph.graphdbpopulator.GraphDbPopulation;
 import de.medizininformatikinitiative.medgraph.graphdbpopulator.GraphDbPopulationFactory;
 import org.jetbrains.annotations.NotNull;
@@ -51,10 +49,27 @@ public class DI {
 
 		dependencyMap.put(FhirContext.class, FhirContext.forR4());
 		dependencyMap.put(GraphDbPopulationFactory.class, GraphDbPopulation::new);
-		dependencyMap.put(FhirExportFactory.class, FileFhirExportSink::new);
 		ConnectionPreferences preferences = ApplicationPreferences.getDatabaseConnectionPreferences();
 		dependencyMap.put(ConnectionPreferences.class, preferences);
 		dependencyMap.put(ConnectionTestService.class, new ConnectionTestServiceImpl());
+
+		dependencyMap.put(FileFhirExportSinkFactory.class, FileFhirExportSink::new);
+		dependencyMap.put(FhirServerExportSinkFactory.class, new FhirServerExportSinkFactory() {
+			@Override
+			public FhirServerExportSink prepareExportWithoutAuth(String url) {
+				return new FhirServerExportSink(url);
+			}
+
+			@Override
+			public FhirServerExportSink prepareExportWithHttpBasicAuth(String url, String user, char[] password) {
+				return new FhirServerExportSink(url, user, password);
+			}
+
+			@Override
+			public FhirServerExportSink prepareExportWithTokenAuth(String url, String token) {
+				return new FhirServerExportSink(url, token);
+			}
+		});
 
 		ApplicationDatabaseConnectionManager conManager = new ApplicationDatabaseConnectionManager(preferences);
 		dependencyMap.put(ConnectionConfigurationService.class, conManager);

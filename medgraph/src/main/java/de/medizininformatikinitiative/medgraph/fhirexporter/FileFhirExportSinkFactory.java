@@ -8,7 +8,7 @@ import java.nio.file.Path;
  * @author Markus Budeus
  */
 @FunctionalInterface
-public interface FhirExportFactory {
+public interface FileFhirExportSinkFactory {
 
 	/**
 	 * Prepares a {@link FileFhirExportSink} instance which can be used to orchestrate a single FHIR export.

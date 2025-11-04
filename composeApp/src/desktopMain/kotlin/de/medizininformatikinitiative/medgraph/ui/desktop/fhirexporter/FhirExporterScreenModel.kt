@@ -9,8 +9,9 @@ import de.medizininformatikinitiative.medgraph.DI
 import de.medizininformatikinitiative.medgraph.common.db.DatabaseConnectionService
 import de.medizininformatikinitiative.medgraph.common.logging.Level
 import de.medizininformatikinitiative.medgraph.common.logging.LogManager
+import de.medizininformatikinitiative.medgraph.fhirexporter.FhirExportSink
 import de.medizininformatikinitiative.medgraph.fhirexporter.FileFhirExportSink
-import de.medizininformatikinitiative.medgraph.fhirexporter.FhirExportFactory
+import de.medizininformatikinitiative.medgraph.fhirexporter.FhirExportSources
 import de.medizininformatikinitiative.medgraph.ui.resources.StringRes
 import de.medizininformatikinitiative.medgraph.ui.theme.templates.ProgressIndicationViewState
 import kotlinx.coroutines.Dispatchers
@@ -21,20 +22,14 @@ import java.nio.file.Files
 import java.nio.file.Path
 
 /**
- * Screen model for the FHIR export tool UI.
+ * Screen model for the FHIR export tool UI. This is a generic implementation which is independent of the
+ * [FhirExportSink]-implementation used.
  *
  * @author Markus Budeus
  */
-class FhirExporterScreenModel(
-    private val fhirExporter: FhirExportFactory = DI.get(FhirExportFactory::class.java)
-) : ScreenModel {
+abstract class FhirExporterScreenModel : ScreenModel {
 
     private val logger = LogManager.getLogger(FhirExporterScreenModel::class.java)
-
-    /**
-     * The current export path as specified by the user.
-     */
-    var exportPath by mutableStateOf("")
 
     /**
      * Whether an export is currently underway.
@@ -54,22 +49,24 @@ class FhirExporterScreenModel(
     /**
      * Attempts to asynchronously execute the export. Returns a job representing the export or null if the export
      * could not start.
+     *
+     * @param sink The [FhirExportSink] to export into.
      */
-    fun doExport(): Job? {
+    fun doExport(sink: FhirExportSink): Job? {
         if (exportUnderway) return null
-        return screenModelScope.launch(Dispatchers.IO) { doExportSync() }
+        return screenModelScope.launch(Dispatchers.IO) { doExportSync(sink) }
     }
 
     /**
      * Synchronously executes the export.
      */
-    private fun doExportSync() {
+    private fun doExportSync(sink: FhirExportSink) {
         synchronized(this) {
             if (exportUnderway) return
             exportUnderway = true
         }
         try {
-            doExportTaskChain()
+            doExportTaskChain(sink)
         } catch (e: AccessDeniedException) {
             logger.log(Level.WARN, "Missing permissions for export.", e)
             errorText = StringRes.fhir_exporter_missing_permissions
@@ -86,50 +83,14 @@ class FhirExporterScreenModel(
     /**
      * Does the tasks required for the export, however not including exception handling.
      */
-    private fun doExportTaskChain() {
-        val path = Path.of(exportPath)
-        if (!validateAndPrepareExportPath(path)) return
-
-        val export = fhirExporter.prepareExport(path);
-        this.exportTask.bind(export)
+    private fun doExportTaskChain(sink: FhirExportSink) {
+        this.exportTask.bind(sink)
 
         DI.get(DatabaseConnectionService::class.java).createConnection().use {
             it.createSession().use { session ->
-                export.doExport(session)
+                sink.doExport(FhirExportSources.forNeo4jSession(session))
             }
         }
-    }
-
-    /**
-     * Ensures the export path can be used and creates directories if required.
-     * @return true if the export path can be used, false if an issue arised during the check
-     */
-    private fun validateAndPrepareExportPath(path: Path): Boolean {
-        if (Files.exists(path)) {
-            if (!Files.isDirectory(path)) {
-                errorText = StringRes.fhir_exporter_invalid_output_dir
-                return false
-            }
-        } else {
-            Files.createDirectories(path)
-        }
-
-        for (outputDir in setOf(
-            FileFhirExportSink.MEDICATION_OUT_PATH,
-            FileFhirExportSink.SUBSTANCE_OUT_PATH,
-            FileFhirExportSink.ORGANIZATION_OUT_PATH
-        )) {
-            val p = path.resolve(outputDir)
-            if (Files.exists(p)) {
-                if (!Files.isDirectory(p)) {
-                    errorText = StringRes.get(StringRes.fhir_exporter_output_dir_occupied, outputDir)
-                    return false
-                }
-            } else {
-                Files.createDirectory(p)
-            }
-        }
-        return true
     }
 
 }

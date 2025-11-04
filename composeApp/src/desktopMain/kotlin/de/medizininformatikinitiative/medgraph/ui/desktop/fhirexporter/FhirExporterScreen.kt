@@ -16,6 +16,6 @@ class FhirExporterScreen : Screen {
 
     @Composable
     override fun Content() {
-        FhirExporterUI(rememberScreenModel { FhirExporterScreenModel() }, modifier = Modifier.padding(8.dp))
+        FhirExporterUI(rememberScreenModel { FileFhirExporterScreenModel() }, modifier = Modifier.padding(8.dp))
     }
 }
