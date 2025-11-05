@@ -20,8 +20,6 @@ import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-// TODO TODO Add HAPI License!
-
 /**
  * {@link FhirExportSink}-implementation that targets a FHIR server as sink.
  *
