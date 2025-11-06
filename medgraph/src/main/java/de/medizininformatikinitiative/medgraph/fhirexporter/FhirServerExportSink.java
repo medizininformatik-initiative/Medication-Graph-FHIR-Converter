@@ -6,7 +6,6 @@ import ca.uhn.fhir.rest.client.api.ServerValidationModeEnum;
 import ca.uhn.fhir.rest.client.interceptor.BasicAuthInterceptor;
 import ca.uhn.fhir.rest.client.interceptor.BearerTokenAuthInterceptor;
 import de.medizininformatikinitiative.medgraph.DI;
-import org.apache.commons.lang3.function.TriConsumer;
 import org.apache.commons.lang3.function.TriFunction;
 import org.hl7.fhir.instance.model.api.IIdType;
 import org.hl7.fhir.r4.model.*;
@@ -16,9 +15,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * {@link FhirExportSink}-implementation that targets a FHIR server as sink.
@@ -72,30 +69,43 @@ public class FhirServerExportSink extends FhirExportSink {
 
 	@Override
 	public void doExport(FhirExportSources sources) throws IOException {
-		int majorSteps = 6;
+		// Below need to be even numbers
+		int organizationDownloadWeight = 1; // The relative progress indicated by downloading Organizations
+		int organizationUploadWeight = 1; // The relative progress indicated by uploading Organizations
+		int substanceDownloadWeight = 2; // The relative progress indicated by downloading Substances
+		int substanceUploadWeight = 2; // The relative progress indicated by uploading Substances
+		int medicationDownloadWeight = 16; // The relative progress indicated by downloading Medications
+		int medicationUploadWeight = 16; // The relative progress indicated by uploading Medications
+		int targetBatchSize = 1000;
+		int majorSteps = organizationDownloadWeight
+				+ organizationUploadWeight
+				+ substanceDownloadWeight
+				+ substanceUploadWeight
+				+ medicationDownloadWeight
+				+ medicationUploadWeight;
 		setProgress(0, majorSteps);
 		processedMedicationIds.clear();
 
 		setTaskStack("Downloading FHIR Organizations from Neo4j...");
 		List<Organization> organizations = sources.organizationExporter.export().toList();
-		setProgress(1);
+		setProgress(getProgress() + organizationDownloadWeight);
 
 		setTaskStack("Uploading FHIR Organizations to FHIR server...");
-		uploadAllBatches(toBatches(organizations, 1000));
+		uploadAllBatches(toBatches(organizations, targetBatchSize), organizationUploadWeight);
 
 		setTaskStack("Downloading FHIR Substances from Neo4j...");
 		List<Substance> substances = sources.substanceExporter.export().toList();
-		setProgress(3);
+		setProgress(getProgress() + substanceDownloadWeight);
 
 		setTaskStack("Uploading FHIR Substances to FHIR server...");
-		uploadAllBatches(toBatches(substances, 1000));
+		uploadAllBatches(toBatches(substances, targetBatchSize), substanceUploadWeight);
 
 		setTaskStack("Downloading FHIR Medications from Neo4j...");
 		List<Medication> medications = sources.medicationExporter.export().toList();
-		setProgress(5);
+		setProgress(getProgress() + medicationDownloadWeight);
 
 		setTaskStack("Uploading FHIR Medications to FHIR server...");
-		uploadAllBatches(toBatches(medications, 1000, this::pullNextMedicationBatch));
+		uploadAllBatches(toBatches(medications, targetBatchSize, this::pullNextMedicationBatch), medicationUploadWeight);
 		setProgress(majorSteps, majorSteps);
 	}
 
@@ -177,14 +187,16 @@ public class FhirServerExportSink extends FhirExportSink {
 	}
 
 	/**
-	 * Uploads all given batches. Increments the progress for each batch uploaded.  This function assumes that the whole
-	 * batch upload is a single major step and the current maxProgress indicates the number of major steps. When complete,
-	 * this function will have returned the maxProgress to its original state and incremented the progress by one.
-	 * It may however modify the progress and max progress in between for a smoother progress representation.
+	 * Uploads all given batches. Increments the progress for each batch uploaded.  This function assumes that the
+	 * current maxProgress indicates the number of major steps. When complete, this function will have returned the
+	 * maxProgress to its original state and incremented the progress. It may however modify the progress and max
+	 * progress in between for a smoother progress representation.
 	 *
 	 * @param batches    The batches of resources to upload.
+	 * @param majorSteps The number of major steps this batch upload represents. The progress indicator will be
+	 *                   forwarded by this amount during the upload.
 	 */
-	private void uploadAllBatches(List<? extends List<? extends Resource>> batches) throws IOException {
+	private void uploadAllBatches(List<? extends List<? extends Resource>> batches, int majorSteps) throws IOException {
 		int maxSteps = this.getMaxProgress();
 		int majorStepsDone = this.getProgress();
 
@@ -193,9 +205,9 @@ public class FhirServerExportSink extends FhirExportSink {
 
 		for (List<? extends Resource> batch : batches) {
 			this.uploadAll(batch);
-			incrementProgress();
+			setProgress(getProgress() + majorSteps);
 		}
-		setProgress(majorStepsDone + 1, maxSteps);
+		setProgress(majorStepsDone + majorSteps, maxSteps);
 	}
 
 	private void uploadAll(List<? extends Resource> resources) throws IOException {
