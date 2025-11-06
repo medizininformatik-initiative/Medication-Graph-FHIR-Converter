@@ -10,10 +10,12 @@ import org.hl7.fhir.r4.model.Reference;
 import org.hl7.fhir.r4.model.Substance;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 import java.util.UUID;
 
@@ -40,6 +42,9 @@ public class FhirServerExportSinkTest extends FhirExportSinkTestBase {
 
 	@AfterEach
 	void deleteResources() {
+		// Deleting all resources as singular requests is very inefficient. But you know what? This is not productive
+		// code, so I don't care!
+
 		// Delete parents first
 		medicationList.stream()
 		              .filter(m -> m.getMeta().getTag("TESTONLY", "parent") != null)
@@ -118,6 +123,7 @@ public class FhirServerExportSinkTest extends FhirExportSinkTestBase {
 	}
 
 	@Test
+	@Disabled("Test takes very long. Only run on demand.")
 	void largeScaleTest() throws IOException {
 		int medications = 50000;
 		int substances = 1000;
@@ -138,8 +144,11 @@ public class FhirServerExportSinkTest extends FhirExportSinkTestBase {
 				numChildren = 2;
 			} else if (r >= 70) {
 				numChildren = 1;
+			} else {
+				medicationList.add(randomMedication(random));
+				continue;
 			}
-			medicationList.add(randomMedication(numChildren, random));
+			medicationList.addAll(randomMedicationWithChildren(numChildren, random));
 		}
 
 		System.out.println("Starting large scale test.");
@@ -150,33 +159,42 @@ public class FhirServerExportSinkTest extends FhirExportSinkTestBase {
 	}
 
 	/**
-	 * Constructs a sample FHIR Medication.
-	 * @param children The number of child medications to have. If 0, a single substance ingredient is added.
-	 *                 Otherwise, the given number of medication ingredients are added. If the medication has
-	 *                 children, it is also tagged as "TESTONLY/parent".
+	 * Constructs a sample FHIR Medication with child medications. The medication is also tagged as "TESTONLY/parent".
+	 * @param children The number of child medications to have.
 	 * @param random The random instance to use for the randomness.
 	 */
-	private Medication randomMedication(int children, Random random) {
+	private List<Medication> randomMedicationWithChildren(int children, Random random) {
+		if (children < 1) throw new IllegalArgumentException("You must specify a positive number of children!");
+		List<Medication> medications = new ArrayList<>(children + 1);
 		Medication medication = new Medication();
+		medications.add(medication);
 		medication.setId(UUID.randomUUID().toString());
-		if (children > 0) {
 			tagAsParent(medication);
 			for (int i = 0; i < children; i++) {
-				Medication child = randomMedication(0, random);
+				Medication child = randomMedication(random);
 				medication.addIngredient()
 						.setItem(new Reference()
 								.setReference("Medication/"+child.getIdPart())
 								.setType("Medication")
 						);
+				medications.add(child);
 			}
-		} else {
-			String substanceId = substanceList.get(random.nextInt(substanceList.size())).getIdPart();
-			medication.addIngredient().setItem(
-					new Reference()
-							.setReference("Substance/"+substanceId)
-							.setType("Substance")
-			);
-		}
+		return medications;
+	}
+
+	/**
+	 * Creates a random medication with a single substance ingredient.
+	 */
+	private Medication randomMedication(Random random) {
+		Medication medication = new Medication();
+		medication.setId(UUID.randomUUID().toString());
+
+		String substanceId = substanceList.get(random.nextInt(substanceList.size())).getIdPart();
+		medication.addIngredient().setItem(
+				new Reference()
+						.setReference("Substance/"+substanceId)
+						.setType("Substance")
+		);
 		return medication;
 	}
 
