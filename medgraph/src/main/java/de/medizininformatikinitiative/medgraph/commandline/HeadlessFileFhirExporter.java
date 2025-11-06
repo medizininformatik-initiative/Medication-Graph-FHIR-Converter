@@ -53,7 +53,7 @@ public class HeadlessFileFhirExporter extends CommandLineUtility {
 
 	@Override
 	public String getCallArgument() {
-		return "export";
+		return "export-json";
 	}
 
 	@Override

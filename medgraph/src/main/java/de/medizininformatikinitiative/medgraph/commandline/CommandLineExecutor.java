@@ -35,6 +35,10 @@ public class CommandLineExecutor {
 			"The password to authenticate at the Neo4j service with.");
 	static final Option OPTION_DB_PASSIN = new Option("pi", "database-passin", false,
 			"Reads the Neo4j database password to use from system-in.");
+	static final Option OPTION_HTTP_BASIC_AUTH = new Option("b", "http-basic-auth", true,
+			"The user:password to use for HTTP Basic Authentication (if applicable).");
+	static final Option OPTION_TOKEN_AUTH = new Option("t", "auth-token", true,
+			"The bearer token to use for authentication (if applicable).");
 
 	static final Map<String, CommandLineUtility> DEFAULT_UTILITIES = new HashMap<>();
 
@@ -46,9 +50,12 @@ public class CommandLineExecutor {
 		OPTIONS.addOption(OPTION_DB_USER);
 		OPTIONS.addOption(OPTION_DB_PASSWORD);
 		OPTIONS.addOption(OPTION_DB_PASSIN);
+		OPTIONS.addOption(OPTION_HTTP_BASIC_AUTH);
+		OPTIONS.addOption(OPTION_TOKEN_AUTH);
 
 		addUtility(new HeadlessGraphDbPopulator());
 		addUtility(new HeadlessFileFhirExporter());
+		addUtility(new HeadlessFhirServerExporter());
 	}
 
 	private static void addUtility(CommandLineUtility utility) {

@@ -7,8 +7,6 @@ import de.medizininformatikinitiative.medgraph.common.logging.Logger;
 import de.medizininformatikinitiative.medgraph.graphdbpopulator.GraphDbPopulation;
 import de.medizininformatikinitiative.medgraph.graphdbpopulator.GraphDbPopulationFactory;
 import org.apache.commons.cli.CommandLine;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
