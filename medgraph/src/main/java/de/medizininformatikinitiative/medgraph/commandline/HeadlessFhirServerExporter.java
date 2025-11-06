@@ -9,7 +9,6 @@ import org.jetbrains.annotations.NotNull;
 import org.neo4j.driver.Session;
 
 import java.io.IOException;
-import java.nio.file.AccessDeniedException;
 import java.util.List;
 
 import static de.medizininformatikinitiative.medgraph.commandline.CommandLineExecutor.OPTION_HTTP_BASIC_AUTH;
@@ -69,8 +68,6 @@ public class HeadlessFhirServerExporter extends CommandLineUtility {
 				sink.doExport(FhirExportSources.forNeo4jSession(session));
 				System.out.println("Upload successful.");
 				return ExitStatus.SUCCESS;
-			} catch (AccessDeniedException e) {
-				return ExitStatus.accessDenied(e);
 			} catch (IOException e) {
 				return ExitStatus.ioException(e);
 			}
