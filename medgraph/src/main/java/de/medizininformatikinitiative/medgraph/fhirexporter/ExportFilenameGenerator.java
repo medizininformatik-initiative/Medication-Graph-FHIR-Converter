@@ -35,7 +35,11 @@ public class ExportFilenameGenerator {
 	}
 
 	public String getMmiId(String id) {
-		int index = id.lastIndexOf('-');
+		int index = -1;
+		for (int i = 0; i < 4; i++) {
+			index = id.indexOf('-', index + 1);
+		}
+
 		if (index == -1 || index == id.length() - 1) return id;
 		return id.substring(index + 1);
 	}

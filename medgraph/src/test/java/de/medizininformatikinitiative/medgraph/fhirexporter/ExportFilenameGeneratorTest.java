@@ -42,6 +42,14 @@ class ExportFilenameGeneratorTest {
 	}
 
 	@Test
+	void generateMedicationFilename3() {
+		Medication medication = new Medication();
+		medication.setId(IdProvider.combinedMedicalProductSubproductIdentifier(1178L, 3));
+		medication.getCode().setText("Flumazenil");
+		assertEquals("1178-3 Flumazenil", sut.constructFilename(medication));
+	}
+
+	@Test
 	void generateOrganizationFilename() {
 		Organization organization = new Organization();
 		organization.setId(IdProvider.fromOrganizationMmiId(1786L));
