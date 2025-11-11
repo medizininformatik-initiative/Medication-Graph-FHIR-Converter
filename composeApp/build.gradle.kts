@@ -59,7 +59,7 @@ kotlin {
     }
 }
 
-val desktopVersion = "1.0.2"
+val desktopVersion = "1.1"
 
 
 compose.desktop {
