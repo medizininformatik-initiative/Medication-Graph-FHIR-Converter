@@ -56,6 +56,7 @@ public class CommandLineExecutor {
 		addUtility(new HeadlessGraphDbPopulator());
 		addUtility(new HeadlessFileFhirExporter());
 		addUtility(new HeadlessFhirServerExporter());
+		addUtility(new LegacyHeadlessFileFhirExporter());
 	}
 
 	private static void addUtility(CommandLineUtility utility) {
