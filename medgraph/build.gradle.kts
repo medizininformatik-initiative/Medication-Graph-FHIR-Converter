@@ -4,7 +4,7 @@ plugins {
 }
 
 group = "de.medizininformatikinitiative.medgraph"
-version = "1.1"
+version = "1.1.0"
 
 repositories {
     mavenCentral()
