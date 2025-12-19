@@ -64,7 +64,7 @@ public class Neo4jTransactionMemoryLimitTest {
 	 * Checks whether the size limit as given in Neo4j (e.g, "5.3GiB") is considered sufficient. Returns an appropriate
 	 * warning message if the size cannot be interpreted or is too low.
 	 */
-	static Optional<String> checkSizeLimit(String neo4jSizeLimit) {
+	Optional<String> checkSizeLimit(String neo4jSizeLimit) {
 		if (neo4jSizeLimit == null) {
 			return Optional.of(WARNING_UNKNOWN_LIMIT);
 		}
@@ -77,12 +77,12 @@ public class Neo4jTransactionMemoryLimitTest {
 		if (!matcher.matches()) {
 			return Optional.of(WARNING_UNKNOWN_LIMIT);
 		}
-		long bytes = 0;
+		long bytes;
 		try {
 			bytes = getBytes(matcher);
-		} catch (IllegalStateException e) {
+		} catch (IllegalStateException | NumberFormatException e) {
 			logger.log(Level.ERROR, "Failed to parse Neo4j size description: "+neo4jSizeLimit, e);
-			return Optional.empty();
+			return Optional.of(WARNING_UNKNOWN_LIMIT);
 		}
 
 		if (bytes == 0L) {
