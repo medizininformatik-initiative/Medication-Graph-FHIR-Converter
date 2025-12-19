@@ -35,7 +35,7 @@ class FileFhirExporterScreenModelTest : UnitTest() {
     @BeforeEach
     fun setUp(tempDirectory: Path) {
         insertDatabaseConnectionServiceMock()
-        sut = FileFhirExporterScreenModel(fhirExporter)
+        sut = FileFhirExporterScreenModel(fhirExporter, null)
         `when`(fhirExporter.prepareExport(any())).thenReturn(fhirExport)
         `when`(fhirExport.currentTaskStack).thenReturn(arrayOf())
         sut.exportPath = tempDirectory.toAbsolutePath().toString()
