@@ -20,8 +20,6 @@ import java.util.regex.Pattern;
  */
 public class Neo4jTransactionMemoryLimitTest {
 
-	// TODO Test
-
 	private final static Logger logger = LogManager.getLogger("ConnectionTest");
 
 	private static final long BYTE = 1L;
@@ -35,7 +33,7 @@ public class Neo4jTransactionMemoryLimitTest {
 	private static final String WARNING_UNKNOWN_LIMIT = "Could not determine the Neo4j transaction size limit. " +
 			"It might be set either too low (recommended value: " + RECOMMENDED_TRANSACTION_SIZE_MEBIBYTES + " MiB), in which case queries can fail.";
 
-	private static final String WARNING_LIMIT_TOO_LOW = "Your transaction size limit is set to %s, " +
+	private static final String WARNING_LIMIT_TOO_LOW = "Your transaction size limit is set to %d MiB, " +
 			"which is below the recommended limit of "+RECOMMENDED_TRANSACTION_SIZE_MEBIBYTES+" MiB. " +
 			"Please consider increasing it using the neo4j setting '"+TRANSACTION_SIZE_SETTING+"'.";
 
@@ -91,7 +89,7 @@ public class Neo4jTransactionMemoryLimitTest {
 		}
 		long mebibytes = bytes / MiB;
 		if (mebibytes < RECOMMENDED_TRANSACTION_SIZE_MEBIBYTES) {
-			return Optional.of(WARNING_LIMIT_TOO_LOW.formatted(neo4jSizeLimit));
+			return Optional.of(WARNING_LIMIT_TOO_LOW.formatted(mebibytes));
 		}
 		return Optional.empty();
 	}
