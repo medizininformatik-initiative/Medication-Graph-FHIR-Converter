@@ -17,6 +17,7 @@ import de.medizininformatikinitiative.medgraph.ui.theme.templates.Button
 import de.medizininformatikinitiative.medgraph.ui.theme.templates.DetailedProgressIndication
 import de.medizininformatikinitiative.medgraph.ui.tools.preview.TestOnlyProgressable
 import javax.swing.JFileChooser
+import kotlin.system.exitProcess
 
 
 @Composable
@@ -79,5 +80,9 @@ fun ExportProgressIndication(viewModel: FhirExporterScreenModel) {
         val error = viewModel.errorText
         if (error != null)
             Text(error, color = MaterialTheme.localColors.error)
+    }
+    val warning = viewModel.warningText
+    if (warning != null) {
+        Text(warning, color = MaterialTheme.localColors.warning)
     }
 }

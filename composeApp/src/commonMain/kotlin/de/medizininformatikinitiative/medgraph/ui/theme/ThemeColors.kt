@@ -51,6 +51,10 @@ data class ThemeColors(
      * Color to be used to indicate something is a dosage or amount.
      */
     val highlightDosage: Color,
+    /**
+     * Color to be used to indicate warnings.
+     */
+    val warning: Color,
 ) {
     val primary: Color get() = material.primary
     val primaryVariant: Color get() = material.primaryVariant

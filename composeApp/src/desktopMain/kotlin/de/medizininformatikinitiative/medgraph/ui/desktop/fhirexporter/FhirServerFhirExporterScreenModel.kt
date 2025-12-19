@@ -2,6 +2,7 @@ package de.medizininformatikinitiative.medgraph.ui.desktop.fhirexporter
 
 import androidx.compose.runtime.mutableStateOf
 import de.medizininformatikinitiative.medgraph.DI
+import de.medizininformatikinitiative.medgraph.common.db.Neo4jTransactionMemoryLimitTest
 import de.medizininformatikinitiative.medgraph.fhirexporter.FhirServerExportSinkFactory
 import kotlinx.coroutines.Job
 
@@ -11,8 +12,9 @@ import kotlinx.coroutines.Job
  * @author Markus Budeus
  */
 class FhirServerFhirExporterScreenModel(
-    private val exporterFactory: FhirServerExportSinkFactory = DI.get(FhirServerExportSinkFactory::class.java)
-) : FhirExporterScreenModel() {
+    private val exporterFactory: FhirServerExportSinkFactory = DI.get(FhirServerExportSinkFactory::class.java),
+    neo4jTransactionMemoryLimitTest: Neo4jTransactionMemoryLimitTest? = DI.get(Neo4jTransactionMemoryLimitTest::class.java)
+) : FhirExporterScreenModel(neo4jTransactionMemoryLimitTest) {
 
     var fhirBaseUrl = mutableStateOf("http://localhost:8080/fhir")
     var username = mutableStateOf("")

@@ -7,6 +7,7 @@ import cafe.adriel.voyager.core.model.ScreenModel
 import cafe.adriel.voyager.core.model.screenModelScope
 import de.medizininformatikinitiative.medgraph.DI
 import de.medizininformatikinitiative.medgraph.common.db.DatabaseConnectionService
+import de.medizininformatikinitiative.medgraph.common.db.Neo4jTransactionMemoryLimitTest
 import de.medizininformatikinitiative.medgraph.common.logging.Level
 import de.medizininformatikinitiative.medgraph.common.logging.LogManager
 import de.medizininformatikinitiative.medgraph.fhirexporter.FhirExportSink
@@ -25,9 +26,13 @@ import java.nio.file.Path
  * Screen model for the FHIR export tool UI. This is a generic implementation which is independent of the
  * [FhirExportSink]-implementation used.
  *
+ * @param neo4jTransactionMemoryLimitTest The [Neo4jTransactionMemoryLimitTest] instance to use for probing the
+ * Neo4j transaction limits and showing a warning if they are insufficient. If null, no such test is performed.
  * @author Markus Budeus
  */
-abstract class FhirExporterScreenModel : ScreenModel {
+abstract class FhirExporterScreenModel(
+    neo4jTransactionMemoryLimitTest: Neo4jTransactionMemoryLimitTest? = DI.get(Neo4jTransactionMemoryLimitTest::class.java)
+) : ScreenModel {
 
     private val logger = LogManager.getLogger(FhirExporterScreenModel::class.java)
 
@@ -45,6 +50,24 @@ abstract class FhirExporterScreenModel : ScreenModel {
      * In case there was an error, information about the last occurred error. Otherwise, null.
      */
     var errorText by mutableStateOf<String?>(null)
+
+    /**
+     * An optional warning text to display.
+     */
+    var warningText by mutableStateOf<String?>(null)
+
+    init {
+        if (neo4jTransactionMemoryLimitTest != null) {
+            DI.get(DatabaseConnectionService::class.java).createConnection().use {
+                it.createSession().use { session ->
+                    val memoryLimitWarning = neo4jTransactionMemoryLimitTest.probeNeo4jTransactionSizeLimit(session)
+                    if (memoryLimitWarning.isPresent) {
+                        this.warningText = memoryLimitWarning.get()
+                    }
+                }
+            }
+        }
+    }
 
     /**
      * Attempts to asynchronously execute the export. Returns a job representing the export or null if the export

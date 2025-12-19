@@ -76,6 +76,7 @@ public class DI {
 		dependencyMap.put(DatabaseConnectionService.class, conManager);
 
 		dependencyMap.put(ExportFilenameGenerator.class, new ExportFilenameGenerator());
+		dependencyMap.put(Neo4jTransactionMemoryLimitTest.class, new Neo4jTransactionMemoryLimitTest());
 	}
 
 	/**

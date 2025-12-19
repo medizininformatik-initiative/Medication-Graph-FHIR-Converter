@@ -25,6 +25,7 @@ private val LightColorPalette = ThemeColors(
     highlightSubstance = TUMWeb.TumGreenDark,
     highlightDosage = TUMWeb.TumBlueLight,
     highlightDoseForm = TUMWeb.TumRed,
+    warning = TUMWeb.TumOrange,
 )
 
 private val LocalColors = staticCompositionLocalOf { LightColorPalette }

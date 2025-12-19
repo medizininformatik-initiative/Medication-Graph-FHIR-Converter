@@ -4,6 +4,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import de.medizininformatikinitiative.medgraph.DI
+import de.medizininformatikinitiative.medgraph.common.db.Neo4jTransactionMemoryLimitTest
 import de.medizininformatikinitiative.medgraph.fhirexporter.FileFhirExportSinkFactory
 import de.medizininformatikinitiative.medgraph.fhirexporter.FileFhirExportSink
 import de.medizininformatikinitiative.medgraph.ui.resources.StringRes
@@ -17,8 +18,9 @@ import java.nio.file.Path
  * @author Markus Budeus
  */
 class FileFhirExporterScreenModel(
-    private val fhirExporter: FileFhirExportSinkFactory = DI.get(FileFhirExportSinkFactory::class.java)
-) : FhirExporterScreenModel() {
+    private val fhirExporter: FileFhirExportSinkFactory = DI.get(FileFhirExportSinkFactory::class.java),
+    neo4jTransactionMemoryLimitTest: Neo4jTransactionMemoryLimitTest? = DI.get(Neo4jTransactionMemoryLimitTest::class.java)
+) : FhirExporterScreenModel(neo4jTransactionMemoryLimitTest) {
 
     /**
      * The current export path as specified by the user.
