@@ -1,18 +1,9 @@
 package de.medizininformatikinitiative.medgraph.common.db;
 
-import de.medizininformatikinitiative.medgraph.common.logging.Level;
-import de.medizininformatikinitiative.medgraph.common.logging.LogManager;
-import de.medizininformatikinitiative.medgraph.common.logging.Logger;
 import org.jetbrains.annotations.NotNull;
 import org.neo4j.driver.Session;
 import org.neo4j.driver.exceptions.AuthenticationException;
 import org.neo4j.driver.exceptions.Neo4jException;
-
-import java.util.List;
-import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 /**
  * @author Markus Budeus
