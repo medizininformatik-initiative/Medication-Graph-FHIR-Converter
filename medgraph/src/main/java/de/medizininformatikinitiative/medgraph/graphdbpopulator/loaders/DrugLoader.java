@@ -38,7 +38,8 @@ public class DrugLoader extends CsvLoader {
 				"CREATE (d:" + DRUG_LABEL + " {mmiId: " + intRow(ID) + ", " +
 						"amount: " + nullIfBlank(row(AMOUNT)) + ", " +
 						"mmiUnitCode: " + nullIfBlank(row(AMOUNT_UNIT_CODE)) + "," +
-						"mmiDoseFormCode: " + nullIfBlank(row(DOSE_FORM_CODE)) + "})"
+						"mmiDoseFormCode: " + nullIfBlank(row(DOSE_FORM_CODE)) + "," +
+						VIRTUAL_DRUG_ATTR +": false })"
 		));
 
 		startSubtask("Connecting to product nodes");

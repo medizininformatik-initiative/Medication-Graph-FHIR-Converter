@@ -26,7 +26,7 @@ public class ProductLoader extends CsvLoader {
 		);
 		executeQuery(withLoadStatement(
 				"CREATE (d:" + DatabaseDefinitions.PRODUCT_LABEL + " {name: " + row(NAME) + ", mmiId: " + intRow(
-						ID) + "})"
+						ID) + ", "+ARCHIVED_LABEL+": false })"
 		));
 	}
 }
