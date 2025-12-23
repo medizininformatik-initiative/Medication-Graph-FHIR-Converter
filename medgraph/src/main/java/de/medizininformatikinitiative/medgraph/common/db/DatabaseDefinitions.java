@@ -46,6 +46,12 @@ public class DatabaseDefinitions {
 	public static final String UCUM_LABEL = "UCUM";
 	public static final String EDQM_LABEL = "EDQM";
 	public static final String EDQM_HAS_CHARACTERISTIC_LABEL = "HAS_CHARACTERISTIC";
+	public static final String ARCHIVED_ATTR = "archived";
+	/**
+	 * Label assigned to drug nodes to identify them as virtual (created out of necessity from archived product and
+	 * ingredient nodes).
+ 	 */
+	public static final String VIRTUAL_DRUG_ATTR = "virtual";
 	/**
 	 * Label for EDQM Standard Terms Pharmaceutical Dose Forms
 	 */
