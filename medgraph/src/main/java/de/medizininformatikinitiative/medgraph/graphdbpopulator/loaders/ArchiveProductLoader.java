@@ -13,6 +13,8 @@ import static de.medizininformatikinitiative.medgraph.common.db.DatabaseDefiniti
  */
 public class ArchiveProductLoader extends CsvLoader {
 
+	// TODO Test
+
 	private static final String ID = "ID";
 	private static final String NAME = "NAME";
 	private static final String PHARMACEUTICAL_FLAG = "PHARMACEUTICAL_FLAG";
