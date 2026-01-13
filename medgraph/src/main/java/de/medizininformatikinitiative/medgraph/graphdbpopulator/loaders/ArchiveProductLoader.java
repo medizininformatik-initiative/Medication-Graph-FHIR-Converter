@@ -3,7 +3,7 @@ package de.medizininformatikinitiative.medgraph.graphdbpopulator.loaders;
 import de.medizininformatikinitiative.medgraph.common.db.DatabaseDefinitions;
 import org.neo4j.driver.Session;
 
-import static de.medizininformatikinitiative.medgraph.common.db.DatabaseDefinitions.ARCHIVED_ATTR;
+import static de.medizininformatikinitiative.medgraph.common.db.DatabaseDefinitions.*;
 
 /**
  * This class creates the archived product nodes in the database using the ARCHIVE_PRODUCT table from the
@@ -17,6 +17,7 @@ public class ArchiveProductLoader extends CsvLoader {
 
 	private static final String ID = "ID";
 	private static final String NAME = "NAME";
+	private static final String COMPANY_ID = "COMPANYID";
 	private static final String PHARMACEUTICAL_FLAG = "PHARMACEUTICAL_FLAG";
 
 	public ArchiveProductLoader(Session session) {
@@ -26,12 +27,23 @@ public class ArchiveProductLoader extends CsvLoader {
 	@Override
 	protected void executeLoad() {
 		// In case a non-archived product with that same id exists, it wins.
+		startSubtask("Creating product nodes");
 		executeQuery(withLoadStatement(
 				"WITH "+ROW_IDENTIFIER+" WHERE " + row(PHARMACEUTICAL_FLAG) + " = '1'"+
 				" MERGE (d:" + DatabaseDefinitions.PRODUCT_LABEL + " { mmiId: "+intRow(ID)+ " })" +
 						// Add names but remove HTML <sub> and <sup> tags. No other HTML tags seem to exist in the names.
 						" ON CREATE SET name: replace(replace(replace(replace(" + row(NAME) +", '<sub>', ''), '</sub>', ''), '<sup>', ''), '</sup>', '')" +
-						" SET " + ARCHIVED_ATTR + ": true"
+						" SET " + ARCHIVED_ATTR + ": true, companyId: "+row(COMPANY_ID)
 		));
+
+		startSubtask("Connecting to company nodes");
+		executeQuery("MATCH (p:"+PRODUCT_LABEL+" {"+ARCHIVED_ATTR+": true}) " +
+				"MATCH (c:" +COMPANY_LABEL+" {mmiId: p.companyId}) "+
+				withRowLimit("WITH p, c " +
+						"CREATE (c)-["+MANUFACTURES_LABEL+"]->(p)"));
+
+		startSubtask("Cleaning up");
+		executeQuery("MATCH (p:"+PRODUCT_LABEL+" {"+ARCHIVED_ATTR+": true}) " +
+				withRowLimit("WITH p REMOVE p.companyId"));
 	}
 }
