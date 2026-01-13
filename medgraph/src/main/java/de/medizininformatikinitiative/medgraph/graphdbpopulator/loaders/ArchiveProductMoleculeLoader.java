@@ -15,6 +15,7 @@ import static de.medizininformatikinitiative.medgraph.common.db.DatabaseDefiniti
 public class ArchiveProductMoleculeLoader extends CsvLoader {
 
 	// TODO Test
+	// TODO Test case where MMI ID is overloaded
 
 	private static final String PRODUCT_ID = "PRODUCT_ID";
 	private static final String MOLECULE_ID = "MOLECULE_ID";
@@ -75,7 +76,7 @@ public class ArchiveProductMoleculeLoader extends CsvLoader {
 		// clean up the virtual drug nodes if something else does not match.
 		startSubtask("Connecting to product nodes");
 		executeQuery("MATCH (i:" + MMI_INGREDIENT_LABEL + ":Temp) " +
-				"MATCH (p:" + PRODUCT_LABEL + " {" + ARCHIVED_ATTR + ": true }) " +
+				"MATCH (p:" + PRODUCT_LABEL + " {" + ARCHIVED_ATTR + ": true }) " + // Can only connect to archived products.
 				withRowLimit("WITH i, p " +
 						"CREATE (d:" + DRUG_LABEL + ":Temp { "
 						+ VIRTUAL_DRUG_ATTR + ": true, " +
