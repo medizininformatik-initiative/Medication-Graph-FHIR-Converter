@@ -55,7 +55,12 @@ public class GraphDbPopulation extends NamedProgressableImpl {
 		this.amiceFilePath = amiceFilePath;
 	}
 
+	@Deprecated
 	public void executeDatabasePopulation(DatabaseConnection connection) throws IOException {
+		executeDatabasePopulation(connection, true);
+	}
+
+	public void executeDatabasePopulation(DatabaseConnection connection, boolean includeArchive) throws IOException {
 		setTaskStack("Preparing data import");
 		setProgress(0);
 
@@ -64,12 +69,13 @@ public class GraphDbPopulation extends NamedProgressableImpl {
 		graphDbPopulatorSupport.copyKnowledgeGraphSourceDataToNeo4jImportDirectory(
 				mmiPharmindexPath,
 				amiceFilePath,
-				neo4jImportPath
+				neo4jImportPath,
+				includeArchive
 		);
 
 		try (Session session = connection.createSession()) {
 
-			List<Loader> loaders = prepareLoaders(session, amiceFilePath != null);
+			List<Loader> loaders = prepareLoaders(session, amiceFilePath != null, includeArchive);
 			setProgress(1, loaders.size() + 3);
 
 			setTaskStack("Clearing database");
@@ -94,9 +100,10 @@ public class GraphDbPopulation extends NamedProgressableImpl {
 	 * @param session            the session to connect the loaders to
 	 * @param includeAmiceLoader if true, includes the {@link AmiceStoffBezLoader} which requires the corresponding file
 	 *                           be present
+	 * @param includeArchiveLoaders if true, includes the loaders needed for reading MMI archive files
 	 * @return a list of loaders, ready for execution
 	 */
-	private List<Loader> prepareLoaders(Session session, boolean includeAmiceLoader) {
+	private List<Loader> prepareLoaders(Session session, boolean includeAmiceLoader, boolean includeArchiveLoaders) {
 		List<Loader> loaders = new ArrayList<>();
 
 		// Unit nodes
@@ -127,6 +134,15 @@ public class GraphDbPopulation extends NamedProgressableImpl {
 		loaders.add(new CompanyAddressLoader(session));
 		// Relation between Manufacturer nodes and their product nodes
 		loaders.add(new CompanyProductReferenceLoader(session));
+		// Archived companies loader
+		if (includeArchiveLoaders) {
+			// Archived companies
+			loaders.add(new ArchiveCompanyLoader(session));
+			// Archived products, connection to their companies
+			loaders.add(new ArchiveProductLoader(session));
+			// Archived packages, PZNs and their connection to producs
+			loaders.add(new ArchivePackageLoader(session));
+		}
 		// Drug nodes and relations to Product nodes
 		loaders.add(new DrugLoader(session));
 		// Ingredient nodes and relations to Substance nodes
@@ -139,6 +155,10 @@ public class GraphDbPopulation extends NamedProgressableImpl {
 		loaders.add(new UcumLoader(session));
 		// GSRS UNIIs, RXCUIs, etc.
 		loaders.add(new UniiLoader(session));
+		if (includeArchiveLoaders) {
+			// Connections between archived products and ingredients
+			loaders.add(new ArchiveProductMoleculeLoader(session));
+		}
 		// Corresponding ingredients and their amounts
 		loaders.add(new IngredientCorrespondenceLoader(session));
 		// Custom synonyms

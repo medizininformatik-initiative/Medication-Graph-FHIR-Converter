@@ -11,6 +11,8 @@ import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -27,7 +29,7 @@ public class GraphDbPopulatorSupport {
 	 */
 	public static final String CSV_COMMENT_INDICATOR = "#";
 
-	private static final String[] REQUIRED_MMI_FILES = new String[]{
+	private static final List<String> REQUIRED_MMI_FILES = List.of(
 			"CATALOGENTRY.CSV",
 			"COMPANY.CSV",
 			"COMPANYADDRESS.CSV",
@@ -41,8 +43,15 @@ public class GraphDbPopulatorSupport {
 			"PRODUCT.CSV",
 			"PRODUCT_COMPANY.CSV",
 			"PRODUCT_FLAG.CSV"
-	};
-	private static final String[] REQUIRED_RESOURCE_FILES = new String[]{
+	);
+
+	private static final List<String> REQUIRED_MMI_FILES_ARCHIVE_ONLY = List.of(
+			"ARCHIVE_COMPANY.CSV",
+			"ARCHIVE_PACKAGE.CSV",
+			"ARCHIVE_PRODUCT.CSV",
+			"ARCHIVE_PRODUCT_MOLECULE.CSV"
+	);
+	private static final List<String> REQUIRED_RESOURCE_FILES = List.of(
 			"custom_synonyms.csv",
 			"dose_form_mapping.csv",
 			"gsrs_matches.csv",
@@ -50,8 +59,8 @@ public class GraphDbPopulatorSupport {
 			"pdf_relations.csv",
 			"edqm_translations.csv",
 			"dose_form_synonyms.csv",
-			"NOTICE.txt",
-	};
+			"NOTICE.txt"
+	);
 	private static final Path[] OPTIONAL_FILES = new Path[]{
 			AmiceStoffBezLoader.RAW_DATA_FILE_PATH,
 	};
@@ -71,27 +80,68 @@ public class GraphDbPopulatorSupport {
 	 *                                  the mmiPharmindexDirectoryPath, also if the neo4jImportDirectoryPath does not
 	 *                                  point to a directory
 	 */
+	@Deprecated
 	void copyKnowledgeGraphSourceDataToNeo4jImportDirectory(
 			Path mmiPharmindexDirectoryPath,
 			Path amiceDataFilePath,
 			Path neo4jImportDirectoryPath)
 	throws IOException {
+		copyKnowledgeGraphSourceDataToNeo4jImportDirectory(
+				mmiPharmindexDirectoryPath,
+				amiceDataFilePath,
+				neo4jImportDirectoryPath,
+				true
+		);
+	}
+
+	/**
+	 * Attempts to copy the required MMI Pharmindex files from the given path as well as the resource files packaged
+	 * with this application to the Neo4j import directory, as specified by the second argument.
+	 *
+	 * @param mmiPharmindexDirectoryPath the path where the MMI Pharmindex data is stored
+	 * @param amiceDataFilePath          the path where the AMIce Stoffbezeichnungen Rohdaten file is at, may be null
+	 * @param neo4jImportDirectoryPath   the Neo4j import directory path
+	 * @param includeArchive             if true, the MMI Pharmindex archive files are included in the load
+	 * @throws IOException              if a file operation failed
+	 * @throws IllegalArgumentException if no directory exists at the mmiPharmindexDirectoryPath, it points to something
+	 *                                  that is not a directory or not all required MMI Pharmindex files are present in
+	 *                                  the mmiPharmindexDirectoryPath, also if the neo4jImportDirectoryPath does not
+	 *                                  point to a directory
+	 */
+	void copyKnowledgeGraphSourceDataToNeo4jImportDirectory(
+			Path mmiPharmindexDirectoryPath,
+			Path amiceDataFilePath,
+			Path neo4jImportDirectoryPath,
+			boolean includeArchive)
+	throws IOException {
+		List<String> requiredFiles;
+		if (includeArchive) {
+			requiredFiles = new ArrayList<>();
+			requiredFiles.addAll(REQUIRED_MMI_FILES_ARCHIVE_ONLY);
+			requiredFiles.addAll(REQUIRED_MMI_FILES);
+		} else {
+			requiredFiles = REQUIRED_MMI_FILES;
+		}
+
+
 		copyRequiredFilesToImportDir(
-				checkAndGetMmiPharmindexDir(mmiPharmindexDirectoryPath),
+				checkAndGetMmiPharmindexDir(mmiPharmindexDirectoryPath, requiredFiles),
 				checkAmiceFilePath(amiceDataFilePath),
+				requiredFiles,
 				neo4jImportDirectoryPath);
 	}
 
 	/**
 	 * Ensures the given path points to an existing directory and all required MMI Pharmindex files reside in there.
 	 *
-	 * @param path the path to verify
+	 * @param path          the path to verify
+	 * @param requiredFiles the file names whose presence to check
 	 * @return the given path as file
 	 * @throws IllegalArgumentException if no directory exists at the given path, the path points to something that is
 	 *                                  not a directory or not all required MMI Pharmindex files are present in the
 	 *                                  directory
 	 */
-	private File checkAndGetMmiPharmindexDir(Path path) {
+	private File checkAndGetMmiPharmindexDir(Path path, List<String> requiredFiles) {
 		File dir = path.toFile();
 		if (!dir.exists()) {
 			throw new IllegalArgumentException("The given directory with the MMI Pharmindex data does not exist!");
@@ -101,7 +151,7 @@ public class GraphDbPopulatorSupport {
 					"The path given as MMI Pharmindex data directory does not point to a directory!");
 		}
 
-		for (String requiredFile : REQUIRED_MMI_FILES) {
+		for (String requiredFile : requiredFiles) {
 			File target = new File(dir.getAbsolutePath() + File.separator + requiredFile);
 			if (!target.exists()) {
 				throw new IllegalArgumentException(
@@ -126,11 +176,13 @@ public class GraphDbPopulatorSupport {
 	 *
 	 * @param mmiSourceDir    the path where the MMI Pharmindex data is stored
 	 * @param amiceSourceFile the amice data source file or null if it is not to be used
+	 * @param requiredMmiFiles the names of all MMI Pharmindex files that are needed
 	 * @param neo4jImportPath the Neo4j import directory path
 	 * @throws IOException              if a file operation failed
 	 * @throws IllegalArgumentException if the neo4jImportPath does not point to a directory
 	 */
-	private void copyRequiredFilesToImportDir(File mmiSourceDir, File amiceSourceFile, Path neo4jImportPath)
+	private void copyRequiredFilesToImportDir(File mmiSourceDir, File amiceSourceFile,
+	                                          List<String> requiredMmiFiles, Path neo4jImportPath)
 	throws IOException {
 		File targetDir = neo4jImportPath.toFile();
 		if (!targetDir.exists()) {
@@ -146,7 +198,7 @@ public class GraphDbPopulatorSupport {
 
 		// Copy MMI Pharmindex files
 		Path source = mmiSourceDir.toPath();
-		for (String file : REQUIRED_MMI_FILES) {
+		for (String file : requiredMmiFiles) {
 			Path original = source.resolve(file);
 			Path targetFile = mmiTargetDir.resolve(file);
 			Files.copy(original, targetFile, StandardCopyOption.REPLACE_EXISTING);
@@ -182,6 +234,12 @@ public class GraphDbPopulatorSupport {
 
 		for (String filename : REQUIRED_MMI_FILES) {
 			Files.delete(mmiTargetDir.resolve(filename));
+		}
+
+		for (String filename: REQUIRED_MMI_FILES_ARCHIVE_ONLY) {
+			try {
+				Files.delete(mmiTargetDir.resolve(filename));
+			} catch (NoSuchFileException ignored) {}
 		}
 
 		for (String filename : REQUIRED_RESOURCE_FILES) {
@@ -266,7 +324,7 @@ public class GraphDbPopulatorSupport {
 						// This is a quoted column value and we encounter a double quote.
 						// This is only valid if the encountered double quote is the "closing" quote,
 						// meaning the separator or the end of line comes next
-						int next = i+1;
+						int next = i + 1;
 						if (next >= lineLength || line.charAt(next) == separator) {
 							quoted = false;
 						} else {
