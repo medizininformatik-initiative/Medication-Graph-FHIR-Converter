@@ -22,6 +22,8 @@ public class ArchiveProductMoleculeLoader extends CsvLoader {
 	private static final String MASS_FROM = "MASSFROM";
 	private static final String MASS_TO = "MASSTO";
 	private static final String UNIT_CODE = "MOLECULEUNITCODE";
+	private static final String COUNT = "BASECOUNT";
+	private static final String COUNT_UNIT_CODE = "BASEMOLECULEUNITCODE";
 
 	public ArchiveProductMoleculeLoader(Session session) {
 		super("ARCHIVE_PRODUCT_MOLECULE.CSV", session);
@@ -38,6 +40,8 @@ public class ArchiveProductMoleculeLoader extends CsvLoader {
 						", massFrom: " + row(MASS_FROM) +
 						", massTo: " + row(MASS_TO) +
 						", unitCode: " + row(UNIT_CODE) +
+						", baseCount: " + row(COUNT) +
+						", countUnitCode" + row(COUNT_UNIT_CODE) +
 						", " + ARCHIVED_ATTR + ": true })"
 		));
 
@@ -73,7 +77,11 @@ public class ArchiveProductMoleculeLoader extends CsvLoader {
 		executeQuery("MATCH (i:" + MMI_INGREDIENT_LABEL + ":Temp) " +
 				"MATCH (p:" + PRODUCT_LABEL + " {" + ARCHIVED_ATTR + ": true }) " +
 				withRowLimit("WITH i, p " +
-						"CREATE (d:" + DRUG_LABEL + "{ " + VIRTUAL_DRUG_ATTR + ": true }) " +
+						"CREATE (d:" + DRUG_LABEL + ":Temp { "
+						+ VIRTUAL_DRUG_ATTR + ": true, " +
+						"amount: " + row(COUNT) +
+						", amountUnit" + row(COUNT_UNIT_CODE) +
+						" }) " +
 						"CREATE (p)-[:" + PRODUCT_CONTAINS_DRUG_LABEL + "]->(d)-[:" + DRUG_CONTAINS_INGREDIENT_LABEL + "]->(i)"
 				)
 		);
@@ -83,7 +91,15 @@ public class ArchiveProductMoleculeLoader extends CsvLoader {
 				"WHERE NOT EXISTS (:" + DRUG_LABEL + ")-[:" + DRUG_CONTAINS_INGREDIENT_LABEL + "]->(i) " +
 				withRowLimit("WITH i DETACH DELETE (i)"));
 
+		startSubtask("Connecting virtual drug nodes to unit nodes");
+		executeQuery("MATCH (d:" + DRUG_LABEL + ": Temp) " +
+				"MATCH (u:" + UNIT_LABEL + " {mmiCode: i.amountUnit} " +
+				withRowLimit("WITH d, u " +
+						"CREATE (d)-[:" + DRUG_HAS_UNIT_LABEL + "]->(u)"));
+
 		startSubtask("Cleaning up");
+		executeQuery("MATCH (d:" + DRUG_LABEL + ":Temp) " +
+				withRowLimit("WITH d REMOVE d:Temp, d.amontUnit"));
 		executeQuery("MATCH (i:" + MMI_INGREDIENT_LABEL + ":Temp) " +
 				withRowLimit("WITH i REMOVE i:Temp, i.productId, i.substanceId, i.unitCode"));
 	}
