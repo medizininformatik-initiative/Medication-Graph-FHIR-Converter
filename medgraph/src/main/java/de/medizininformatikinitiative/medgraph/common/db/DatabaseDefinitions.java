@@ -51,7 +51,7 @@ public class DatabaseDefinitions {
 	 * Label assigned to drug nodes to identify them as virtual (created out of necessity from archived product and
 	 * ingredient nodes).
  	 */
-	public static final String VIRTUAL_DRUG_ATTR = "virtual";
+	public static final String VIRTUAL_DRUG_ATTR = "archived";
 	/**
 	 * Label for EDQM Standard Terms Pharmaceutical Dose Forms
 	 */
