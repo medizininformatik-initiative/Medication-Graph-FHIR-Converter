@@ -6,6 +6,13 @@ output/
 *.log
 logs/
 
+# RxNorm database files (too large for git)
+data/rxnorm/*.db
+data/rxnorm/*.db-*
+data/rxnorm/*.db.*
+data/rxnorm/RxNorm_full_*/**/*.RRF
+data/rxnorm/RxNorm_full_*/**/*.clean
+
 # User-specific stuff
 .idea/**/workspace.xml
 .idea/**/tasks.xml
