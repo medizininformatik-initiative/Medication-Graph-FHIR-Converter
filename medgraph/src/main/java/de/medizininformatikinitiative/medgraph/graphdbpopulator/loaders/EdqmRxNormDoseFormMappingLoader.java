@@ -11,6 +11,8 @@ import static de.medizininformatikinitiative.medgraph.common.db.DatabaseDefiniti
  * This table includes EDQM dose forms, corresponding RxNorm dose forms, and additional
  * classification information like TRAC, RCA, AMEC, and ISIC codes.
  *
+ * Uses the "edqm_rxnorm_dose_form_mapping.csv" file.
+ *
  * @author Lucy
  */
 public class EdqmRxNormDoseFormMappingLoader extends CsvLoader {
@@ -26,8 +28,27 @@ public class EdqmRxNormDoseFormMappingLoader extends CsvLoader {
     private static final String HAS_ISIC_CODE = "has_isic_code";
     private static final String HAS_ISIC_TERM = "has_isic_term";
 
+    private static final String DEFAULT_MAPPING_FILE = "edqm_rxnorm_dose_form_mapping.csv";
+    private static final String OVERRIDE_PROPERTY = "medgraph.edqmRxNormMappingFile";
+    private static final String OVERRIDE_ENV = "MEDGRAPH_EDQM_RXNORM_MAPPING_FILE";
+
     public EdqmRxNormDoseFormMappingLoader(Session session) {
-        super(Path.of("edqm_rxnorm_dose_form_mapping.csv"), session);
+        super(resolveMappingPath(), session);
+    }
+
+    private static Path resolveMappingPath() {
+        // 1) System property takes precedence
+        String prop = System.getProperty(OVERRIDE_PROPERTY);
+        if (prop != null && !prop.isBlank()) {
+            return Path.of(prop);
+        }
+        // 2) Environment variable
+        String env = System.getenv(OVERRIDE_ENV);
+        if (env != null && !env.isBlank()) {
+            return Path.of(env);
+        }
+        // 3) Fallback to default resource name
+        return Path.of(DEFAULT_MAPPING_FILE);
     }
 
     @Override
@@ -54,16 +75,16 @@ public class EdqmRxNormDoseFormMappingLoader extends CsvLoader {
                 "m.isicCode = " + nullIfBlank(row(HAS_ISIC_CODE)) + ", " +
                 "m.isicTerm = " + nullIfBlank(row(HAS_ISIC_TERM)) + " " +
             "ON MATCH SET " +
-                // Preserve existing values; fill only if previously null/blank
-                "m.rxnormDoseForm = coalesce(m.rxnormDoseForm, " + nullIfBlank(row(RXNORM_DOSE_FORM)) + "), " +
-                "m.tracCode = coalesce(m.tracCode, " + nullIfBlank(row(HAS_TRAC_CODE)) + "), " +
-                "m.tracTerm = coalesce(m.tracTerm, " + nullIfBlank(row(HAS_TRAC_TERM)) + "), " +
-                "m.rcaCode = coalesce(m.rcaCode, " + nullIfBlank(row(HAS_RCA_CODE)) + "), " +
-                "m.rcaTerm = coalesce(m.rcaTerm, " + nullIfBlank(row(HAS_RCA_TERM)) + "), " +
-                "m.amecCode = coalesce(m.amecCode, " + nullIfBlank(row(HAS_AMEC_CODE)) + "), " +
-                "m.amecTerm = coalesce(m.amecTerm, " + nullIfBlank(row(HAS_AMEC_TERM)) + "), " +
-                "m.isicCode = coalesce(m.isicCode, " + nullIfBlank(row(HAS_ISIC_CODE)) + "), " +
-                "m.isicTerm = coalesce(m.isicTerm, " + nullIfBlank(row(HAS_ISIC_TERM)) + ")",
+                // Overwrite with latest mapping values
+                "m.rxnormDoseForm = " + nullIfBlank(row(RXNORM_DOSE_FORM)) + ", " +
+                "m.tracCode = " + nullIfBlank(row(HAS_TRAC_CODE)) + ", " +
+                "m.tracTerm = " + nullIfBlank(row(HAS_TRAC_TERM)) + ", " +
+                "m.rcaCode = " + nullIfBlank(row(HAS_RCA_CODE)) + ", " +
+                "m.rcaTerm = " + nullIfBlank(row(HAS_RCA_TERM)) + ", " +
+                "m.amecCode = " + nullIfBlank(row(HAS_AMEC_CODE)) + ", " +
+                "m.amecTerm = " + nullIfBlank(row(HAS_AMEC_TERM)) + ", " +
+                "m.isicCode = " + nullIfBlank(row(HAS_ISIC_CODE)) + ", " +
+                "m.isicTerm = " + nullIfBlank(row(HAS_ISIC_TERM)) + "",
             ','
         ));
 

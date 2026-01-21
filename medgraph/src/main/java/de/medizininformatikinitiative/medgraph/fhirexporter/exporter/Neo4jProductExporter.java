@@ -48,6 +48,7 @@ public class Neo4jProductExporter extends Neo4jExporter<GraphProduct> {
         final Integer productLimit = parseProductLimit();
         java.util.List<GraphProduct> all = new java.util.ArrayList<>();
         int skip = 0;
+        logger.log(Level.INFO, "[Neo4jProductExporter] Starting export" + (productLimit != null ? " with limit: " + productLimit : " (no limit, processing all products)"));
         while (true) {
             java.util.List<Long> ids = session.run(
                     "MATCH (p:" + PRODUCT_LABEL + ") RETURN p.mmiId AS id ORDER BY p.mmiId SKIP $skip LIMIT $limit",
@@ -134,19 +135,29 @@ public class Neo4jProductExporter extends Neo4jExporter<GraphProduct> {
             logger.log(Level.DEBUG, "Medication Graph DB Query: " + query);
             all.addAll(session.run(query, Values.parameters("ids", ids)).stream().map(GraphProduct::new).toList());
             skip += ids.size();
+            logger.log(Level.INFO, "[Neo4jProductExporter] Total products loaded so far: " + all.size());
             if (productLimit != null && all.size() >= productLimit) {
+                logger.log(Level.INFO, "[Neo4jProductExporter] Reached product limit of " + productLimit + ", stopping export");
                 return all.stream().limit(productLimit);
             }
         }
+        logger.log(Level.INFO, "[Neo4jProductExporter] Export complete. Total products: " + all.size());
         return all.stream();
     }
 
     private Integer parseProductLimit() {
         String prop = System.getProperty("medgraph.export.productLimit");
-        if (prop == null) return null;
+        if (prop == null) {
+            logger.log(Level.INFO, "[Neo4jProductExporter] No product limit set - processing all products");
+            return null;
+        }
         try {
             int val = Integer.parseInt(prop);
-            return val > 0 ? val : null;
+            if (val > 0) {
+                logger.log(Level.INFO, "[Neo4jProductExporter] Product limit set to: " + val);
+                return val;
+            }
+            return null;
         } catch (NumberFormatException ignored) {
             return null;
         }

@@ -241,7 +241,14 @@ public final class RxNavCandidateProvider implements RxNormProductMatcher.RxNorm
                 
                 // For SCD/SBD, fetch ingredients from related IN/PIN and extract dose form/strengths from name
                 List<String> ingredients = fetchIngredientRxcuis(rxcui);
-                Map<String, BigDecimal> strengths = extractStrengths(fullName, ingredients);
+                StrengthExtractionResult strengthData = extractComponentStrengths(rxcui, ingredients);
+                if (strengthData.strengths().isEmpty()) {
+                    // Fallback: parse full SCD name if no component-specific strengths were found
+                    strengthData = extractStrengthsWithDenominators(fullName, ingredients);
+                }
+                Map<String, BigDecimal> strengths = strengthData.strengths();
+                Map<String, String> numeratorUnits = strengthData.numeratorUnits();
+                Map<String, String> denominatorUnits = strengthData.denominatorUnits();
                 
                 // Use structured dose form extraction (SCDF) instead of heuristic parsing
                 String doseForm = extractDoseFormFromSCDF(rxcui);
@@ -251,7 +258,7 @@ public final class RxNavCandidateProvider implements RxNormProductMatcher.RxNorm
                 }
                 
                 return new RxNormProductMatcher.RxNormCandidate(
-                        rxcui, fullName, tty, ingredients, strengths, doseForm);
+                        rxcui, fullName, tty, ingredients, strengths, numeratorUnits, denominatorUnits, doseForm);
             }
             
         } catch (Exception e) {
@@ -276,7 +283,14 @@ public final class RxNavCandidateProvider implements RxNormProductMatcher.RxNorm
             
             // Fetch ingredients via RxNav related (IN/PIN) and try to extract strengths from name
             List<String> ingredients = fetchIngredientRxcuis(rxcui);
-            Map<String, BigDecimal> strengths = extractStrengths(name, ingredients);
+            StrengthExtractionResult strengthData =
+                extractComponentStrengths(rxcui, ingredients);
+            if (strengthData.strengths().isEmpty()) {
+                strengthData = extractStrengthsWithDenominators(name, ingredients);
+            }
+            Map<String, BigDecimal> strengths = strengthData.strengths();
+            Map<String, String> numeratorUnits = strengthData.numeratorUnits();
+            Map<String, String> denominatorUnits = strengthData.denominatorUnits();
             
             // Use structured dose form extraction (SCDF) instead of heuristic parsing
             String doseForm = extractDoseFormFromSCDF(rxcui);
@@ -286,7 +300,7 @@ public final class RxNavCandidateProvider implements RxNormProductMatcher.RxNorm
             }
             
             return new RxNormProductMatcher.RxNormCandidate(
-                    rxcui, name, tty, ingredients, strengths, doseForm);
+                    rxcui, name, tty, ingredients, strengths, numeratorUnits, denominatorUnits, doseForm);
                     
         } catch (Exception e) {
             System.err.println("Error parsing candidate: " + e.getMessage());
@@ -320,46 +334,207 @@ public final class RxNavCandidateProvider implements RxNormProductMatcher.RxNorm
         return new ArrayList<>();
     }
 
+    private record StrengthExtractionResult(Map<String, BigDecimal> strengths,
+                                            Map<String, String> numeratorUnits,
+                                            Map<String, String> denominatorUnits) {}
+
+    /**
+     * Tries to extract component-specific strengths via SCDC concepts for a given SCD RXCUI.
+     * Returns maps per ingredient RXCUI. Falls back to empty maps if no components found.
+     */
+    private StrengthExtractionResult extractComponentStrengths(String scdRxcui, List<String> ingredientRxcuis) {
+        Map<String, BigDecimal> strengths = new HashMap<>();
+        Map<String, String> numeratorUnits = new HashMap<>();
+        Map<String, String> denominatorUnits = new HashMap<>();
+
+        if (scdRxcui == null || ingredientRxcuis == null || ingredientRxcuis.isEmpty()) {
+            return new StrengthExtractionResult(strengths, numeratorUnits, denominatorUnits);
+        }
+
+        Set<String> ingredientSet = new HashSet<>(ingredientRxcuis);
+
+        try {
+            String url = RXNAV_BASE_URL + "/rxcui/" + scdRxcui + "/related?tty=SCDC&format=json";
+            JsonNode response = makeApiCall(url);
+            if (response.has("relatedGroup") && response.get("relatedGroup").has("conceptGroup")) {
+                JsonNode conceptGroups = response.get("relatedGroup").get("conceptGroup");
+                for (JsonNode group : conceptGroups) {
+                    if (!group.has("conceptProperties")) continue;
+                    for (JsonNode component : group.get("conceptProperties")) {
+                        if (!component.has("rxcui") || !component.has("name")) continue;
+                        String componentRxcui = component.get("rxcui").asText();
+                        String componentName = component.get("name").asText();
+
+                        List<String> componentIngredients = fetchIngredientRxcuis(componentRxcui);
+                        if (componentIngredients.isEmpty()) continue;
+
+                        List<String> relevantIngredients = componentIngredients.stream()
+                                .filter(ingredientSet::contains)
+                                .collect(Collectors.toList());
+                        if (relevantIngredients.isEmpty()) continue;
+
+                        StrengthExtractionResult componentStrengths =
+                                extractStrengthsWithDenominators(componentName, relevantIngredients);
+
+                        for (String rxcui : relevantIngredients) {
+                            BigDecimal value = componentStrengths.strengths().get(rxcui);
+                            if (value != null) {
+                                strengths.put(rxcui, value);
+                                String num = componentStrengths.numeratorUnits().get(rxcui);
+                                if (num != null) numeratorUnits.put(rxcui, num);
+                                String den = componentStrengths.denominatorUnits().get(rxcui);
+                                if (den != null) denominatorUnits.put(rxcui, den);
+                            }
+                        }
+                    }
+                }
+            }
+        } catch (Exception e) {
+            System.err.println("[RxNav] Error extracting component strengths for SCD " + scdRxcui + ": " + e.getMessage());
+        }
+
+        return new StrengthExtractionResult(strengths, numeratorUnits, denominatorUnits);
+    }
+
     /**
      * Extracts strengths from a drug name (simplified parsing).
+     * Supports mass units (mg,g,µg) and molar units (mmol,mol,µmol),
+     * including ratio denominators for volume/time/area.
      */
-    private Map<String, BigDecimal> extractStrengths(String name, List<String> ingredientRxcuis) {
+    private StrengthExtractionResult extractStrengthsWithDenominators(
+            String name, List<String> ingredientRxcuis) {
         Map<String, BigDecimal> strengths = new HashMap<>();
-        if (name == null || name.isBlank()) return strengths;
+        Map<String, String> numeratorUnits = new HashMap<>();
+        Map<String, String> denominatorUnits = new HashMap<>();
+        if (name == null || name.isBlank()) {
+            return new StrengthExtractionResult(strengths, numeratorUnits, denominatorUnits);
+        }
         
-        // Very simple parsing: pick first numeric + unit token and normalize to mg when possible
-        // Examples: "Aspirin 500 mg tablet", "Ibuprofen 0.4 g capsule", "X 250 microgram solution"
+        // Enhanced parsing: supports ratio units (mg/mL, mg/h, etc.)
+        // Examples: "Aspirin 500 mg", "X 10 mg/mL", "Y 2 mmol/L", "Z 100 mcg/h"
         String lower = name.toLowerCase(Locale.ROOT);
-        java.util.regex.Pattern p = java.util.regex.Pattern.compile("(\\d+(?:[\\.,]\\d+)?)\\s*(mg|g|µg|mcg|ug|microgram|mcg\\/ml|mg\\/ml|mg\\/mg)");
+        // Capture number + unit, support optional /denominator
+        java.util.regex.Pattern p = java.util.regex.Pattern.compile(
+            "(\\d+(?:[\\.,]\\d+)?)\\s*(" +
+                "(?:mg|g|µg|mcg|ug|microgram|mol|mmol|umol|µmol|μmol|nmol)" +
+                "(?:\\/(?:ml|mL|l|h|hr|hour|d|day|cm2|cm²|24\\.h))?" +
+            ")");
         java.util.regex.Matcher m = p.matcher(lower);
-        if (!m.find()) return strengths;
+        if (!m.find()) {
+            return new StrengthExtractionResult(strengths, numeratorUnits, denominatorUnits);
+        }
         String numStr = m.group(1).replace(',', '.');
         String unit = m.group(2);
         BigDecimal value;
         try {
             value = new BigDecimal(numStr);
         } catch (NumberFormatException e) {
-            return strengths;
+            return new StrengthExtractionResult(strengths, numeratorUnits, denominatorUnits);
         }
-        // Normalize: g→mg, µg/mcg/ug/microgram→mg (divide by 1000), mg stay, per-ml keep raw (will likely fail strict compare)
-        BigDecimal mg = null;
-        if (unit.equals("mg")) {
-            mg = value;
-        } else if (unit.equals("g")) {
-            mg = value.multiply(new BigDecimal("1000"));
-        } else if (unit.equals("µg") || unit.equals("mcg") || unit.equals("ug") || unit.equals("microgram")) {
-            mg = value.divide(new BigDecimal("1000"), java.math.MathContext.DECIMAL64);
-        } else if (unit.equals("mg/ml") || unit.equals("mcg/ml")) {
-            // leave empty; requires per-ml handling; return empty to avoid false matches
-            return strengths;
+        
+        // Check if this is a ratio unit (contains /)
+        String denominatorUnit = null;
+        String numeratorUnit = unit;
+        int slashIdx = unit.indexOf('/');
+        if (slashIdx > 0) {
+            numeratorUnit = unit.substring(0, slashIdx);
+            denominatorUnit = unit.substring(slashIdx + 1);
         }
-        if (mg == null) return strengths;
+        
+        // Normalize numerator: mass → mg, molar → mmol
+        BigDecimal normalizedValue = null;
+        String normalizedNumeratorUnit = null;
+        switch (numeratorUnit) {
+            case "mg" -> {
+                normalizedValue = value;
+                normalizedNumeratorUnit = "mg";
+            }
+            case "g" -> {
+                normalizedValue = value.multiply(new BigDecimal("1000"));
+                normalizedNumeratorUnit = "mg";
+            }
+            case "µg", "mcg", "ug", "microgram" -> {
+                normalizedValue = value.divide(new BigDecimal("1000"), java.math.MathContext.DECIMAL64);
+                normalizedNumeratorUnit = "mg";
+            }
+            case "mmol" -> {
+                normalizedValue = value;
+                normalizedNumeratorUnit = "mmol";
+            }
+            case "mol" -> {
+                normalizedValue = value.multiply(new BigDecimal("1000"));
+                normalizedNumeratorUnit = "mmol";
+            }
+            case "umol", "µmol", "μmol" -> {
+                normalizedValue = value.divide(new BigDecimal("1000"), java.math.MathContext.DECIMAL64);
+                normalizedNumeratorUnit = "mmol";
+            }
+            case "nmol" -> {
+                normalizedValue = value.divide(new BigDecimal("1000000"), java.math.MathContext.DECIMAL64);
+                normalizedNumeratorUnit = "mmol";
+            }
+        }
+
+        if (normalizedValue == null || normalizedNumeratorUnit == null) {
+            return new StrengthExtractionResult(strengths, numeratorUnits, denominatorUnits);
+        }
+
+        // Denominator normalization
+        if (denominatorUnit != null) {
+            String d = normalizeDenominatorUnit(denominatorUnit);
+            // Volume denominator: canonical mL (adjust value if original was L)
+            if (d.equals("mL")) {
+                // If original denominator was 'l'/'L', we already canonicalized by name
+                // Adjust if original contained 'l' explicitly (scale down by 1000)
+                if (denominatorUnit.equalsIgnoreCase("l")) {
+                    normalizedValue = normalizedValue.divide(new BigDecimal("1000"), java.math.MathContext.DECIMAL64);
+                }
+                denominatorUnit = "mL";
+            } else {
+                denominatorUnit = d;
+            }
+        }
         
         if (ingredientRxcuis != null && !ingredientRxcuis.isEmpty()) {
-            // Assign parsed strength to first ingredient RXCUI as heuristic for single-ingredient SCDs
-            strengths.put(ingredientRxcuis.get(0), mg);
+            // Assign parsed strength to all ingredient RXCUIs (applies to single-ingredient SCDs and fallback for multi-ingredient)
+            for (String rxcui : ingredientRxcuis) {
+                strengths.put(rxcui, normalizedValue);
+                numeratorUnits.put(rxcui, normalizedNumeratorUnit);
+                if (denominatorUnit != null) {
+                    denominatorUnits.put(rxcui, denominatorUnit);
+                }
+            }
         }
-        return strengths;
+        return new StrengthExtractionResult(strengths, numeratorUnits, denominatorUnits);
+    }
+    
+    /**
+     * Normalizes denominator unit representation for consistent comparison.
+     */
+    private String normalizeDenominatorUnit(String unit) {
+        String l = unit.toLowerCase(Locale.ROOT);
+        // Volume units -> mL
+        if (l.equals("ml") || l.equals("milliliter")) return "mL";
+        if (l.equals("l") || l.equals("liter") || l.equals("litre")) return "mL"; // Will be converted in normalization
+        // Mass units (for mass/mass ratios like MG/MG) -> mg
+        if (l.equals("mg") || l.equals("milligram")) return "mg";
+        if (l.equals("g") || l.equals("gram")) return "mg"; // Will be normalized in ratio calculation
+        // Time units -> keep as-is but normalize variants
+        if (l.equals("hr") || l.equals("hour")) return "h";
+        if (l.equals("day")) return "d";
+        // Area units
+        if (l.equals("cm²") || l.equals("cm2")) return "cm2";
+        // Return as-is if unknown
+        return l;
+    }
+    
+    /**
+     * Extracts strengths from a drug name (simplified parsing).
+     * @deprecated Use extractStrengthsWithDenominators() instead
+     */
+    @Deprecated
+    private Map<String, BigDecimal> extractStrengths(String name, List<String> ingredientRxcuis) {
+        return extractStrengthsWithDenominators(name, ingredientRxcuis).strengths();
     }
 
     /**
@@ -562,31 +737,4 @@ public final class RxNavCandidateProvider implements RxNormProductMatcher.RxNorm
         relatedCache.clear();
     }
 
-    /**
-     * Resolves an ingredient RXCUI by English substance name via RxNav.
-     * Tries approximateTerm first, then picks top candidate RXCUI.
-     */
-    public String resolveIngredientRxcuiByName(String substanceName) {
-        if (substanceName == null || substanceName.isBlank()) return null;
-        try {
-            String encoded = java.net.URLEncoder.encode(substanceName, java.nio.charset.StandardCharsets.UTF_8);
-            String url = RXNAV_BASE_URL + "/approximateTerm?term=" + encoded + "&maxEntries=5&format=json";
-            System.out.println("[RxNav] resolveIngredientRxcuiByName called: substanceName='" + substanceName + "', url=" + url);
-            JsonNode response = makeApiCall(url);
-            if (response.has("approximateGroup") && response.get("approximateGroup").has("candidate")) {
-                JsonNode candidates = response.get("approximateGroup").get("candidate");
-                for (JsonNode c : candidates) {
-                    if (c.has("rxcui")) {
-                        String rxcui = c.get("rxcui").asText();
-                        System.out.println("[RxNav] resolveIngredientRxcuiByName result: substanceName='" + substanceName + "', rxcui=" + rxcui);
-                        return rxcui;
-                    }
-                }
-            }
-            System.out.println("[RxNav] resolveIngredientRxcuiByName result: substanceName='" + substanceName + "', rxcui=null (no candidates)");
-        } catch (Exception e) {
-            System.out.println("[RxNav] resolveIngredientRxcuiByName error: substanceName='" + substanceName + "', error=" + e.getMessage());
-        }
-        return null;
-    }
 }

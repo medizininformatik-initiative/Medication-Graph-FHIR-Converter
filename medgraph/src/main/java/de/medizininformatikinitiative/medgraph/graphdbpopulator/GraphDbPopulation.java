@@ -109,8 +109,18 @@ public class GraphDbPopulation extends NamedProgressableImpl {
 		loaders.add(new DoseFormLoader(session));
 		// Relations between MMI dose forms and EDQM dose forms
 		loaders.add(new MmiEdqmDoseFormConnectionsLoader(session));
+		
 		// EDQM to RxNorm dose form mapping
-		loaders.add(new EdqmRxNormDoseFormMappingLoader(session));
+		// Check if we should use the new RxNorm Darreichungsformen mapping loader
+		boolean useRxNormDarreichungsformenMapping = isRxNormDarreichungsformenMappingEnabled();
+		if (useRxNormDarreichungsformenMapping) {
+			// Use only the new loader DarreichungsformenMapping.csv
+			loaders.add(new RxNormDarreichungsformenMappingLoader(session));
+		} else {
+			// Use the original paper loader with TRAC, RCA, AMEC, ISIC codes from edqm_rxnorm_dose_form_mapping.csv
+			loaders.add(new EdqmRxNormDoseFormMappingLoader(session));
+		}
+		
 		// ATC Hierarchy
 		loaders.add(new AtcLoader(session));
 		// Substance nodes, ASK nodes and CAS nodes and their relations
@@ -164,6 +174,29 @@ public class GraphDbPopulation extends NamedProgressableImpl {
 		loader.setOnSubtaskCompletedListener(() -> setTaskStack(taskName));
 		loader.execute();
 		setProgress(getProgress() + 1);
+	}
+
+	/**
+	 * Checks if the RxNorm Darreichungsformen mapping loader should be used instead of the original loader.
+	 * This can be controlled via:
+	 * - System property: medgraph.useRxNormDarreichungsformenMapping
+	 * - Environment variable: MEDGRAPH_USE_RXNORM_DARREICHUNGSFORMEN_MAPPING
+	 * 
+	 * @return true if the new loader should be used, false otherwise (default)
+	 */
+	private static boolean isRxNormDarreichungsformenMappingEnabled() {
+		// 1) Check system property
+		String prop = System.getProperty("medgraph.useRxNormDarreichungsformenMapping");
+		if (prop != null && !prop.isBlank()) {
+			return Boolean.parseBoolean(prop);
+		}
+		// 2) Check environment variable
+		String env = System.getenv("MEDGRAPH_USE_RXNORM_DARREICHUNGSFORMEN_MAPPING");
+		if (env != null && !env.isBlank()) {
+			return Boolean.parseBoolean(env);
+		}
+		// 3) Default: use original loader
+		return false;
 	}
 
 }

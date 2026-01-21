@@ -12,6 +12,7 @@ import org.neo4j.driver.types.MapAccessorWithDefaultValue;
 
 import java.lang.reflect.Array;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * @author Markus Budeus
@@ -44,13 +45,16 @@ public record GraphProduct(String name, long mmiId, Long companyMmiId, String co
         
 		Medication primary;
 		if (drugs.size() == 1) {
-			primary = drugs.get(0).toMedication();
+			GraphDrug singleDrug = drugs.get(0);
+			primary = singleDrug.toMedication();
             // Try RxNorm match for the single drug
             RxNormProductMatcher matcher = RxNormMatcherSetup.getSharedMatcher();
             if (matcher != null) {
-                RxNormProductMatcher.MatchResult scd = matcher.matchSCD(drugs.get(0));
+                RxNormProductMatcher.MatchResult scd = matcher.matchSCD(singleDrug);
                 if (scd != null) {
                     addRxNormCoding(primary, scd);
+                    // Write match to CSV
+                    writeScdMatchToCsv(scd, singleDrug);
                 }
             }
 		} else {
@@ -72,9 +76,12 @@ public record GraphProduct(String name, long mmiId, Long companyMmiId, String co
             RxNormProductMatcher matcher = RxNormMatcherSetup.getSharedMatcher();
             if (matcher != null) {
                 for (int i = 0; i < drugs.size(); i++) {
-                    RxNormProductMatcher.MatchResult scd = matcher.matchSCD(drugs.get(i));
+                    GraphDrug drug = drugs.get(i);
+                    RxNormProductMatcher.MatchResult scd = matcher.matchSCD(drug);
                     if (scd != null) {
                         addRxNormCoding(meds.get(i + 1), scd); // first is primary
+                        // Write match to CSV
+                        writeScdMatchToCsv(scd, drug);
                     }
                 }
             }
@@ -82,6 +89,45 @@ public record GraphProduct(String name, long mmiId, Long companyMmiId, String co
 		}
 
 		return List.of(primary);
+	}
+    
+    /**
+     * Writes an SCD match result to the CSV file (if the writer is initialized).
+     * Includes a summary of all active ingredients of the given drug in the form:
+     *   "Name (RxCUI), Name2 (RxCUI2), ..."
+     */
+    private void writeScdMatchToCsv(RxNormProductMatcher.MatchResult scd, GraphDrug drug) {
+        try {
+            ScdMatchCsvWriter writer = ScdMatchCsvWriter.getInstance();
+            if (writer.isInitialized()) {
+                String activeIngredients = buildActiveIngredientsSummary(drug);
+                writer.writeMatch(name, mmiId, scd.name, scd.rxcui, scd.score, scd.confidence, activeIngredients);
+            }
+        } catch (Exception e) {
+            System.err.println("[GraphProduct] Error writing SCD match to CSV: " + e.getMessage());
+        }
+    }
+
+	/**
+	 * Builds a comma-separated summary of all active ingredients of a drug
+	 * using the form "Name (RxCUI)". If no RxCUI is known, only the name is used.
+	 */
+	private String buildActiveIngredientsSummary(GraphDrug drug) {
+		if (drug.ingredients() == null || drug.ingredients().isEmpty()) {
+			return "";
+		}
+		return drug.ingredients().stream()
+				.filter(GraphIngredient::isActive)
+				.map(gi -> {
+					String substanceName = gi.getSubstanceName();
+					java.util.List<String> rxcuis = gi.getRxcuiCodes();
+					String rxcui = (rxcuis != null && !rxcuis.isEmpty()) ? rxcuis.get(0) : null;
+					if (rxcui != null && !rxcui.isBlank()) {
+						return substanceName + " (" + rxcui + ")";
+					}
+					return substanceName;
+				})
+				.collect(Collectors.joining(", "));
 	}
 
 	/**

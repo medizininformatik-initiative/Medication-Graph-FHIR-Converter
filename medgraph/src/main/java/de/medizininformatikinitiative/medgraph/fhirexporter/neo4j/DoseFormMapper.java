@@ -8,7 +8,7 @@ import java.util.Map;
 
 /**
  * Maps dose forms to RxNorm-compatible form strings using data loaded into Neo4j
- * from the CSV (edqm_rxnorm_dose_form_mapping.csv).
+ * from the CSV ("DarreichungsformenMapping.csv").
  *
  * This class provides a static API for convenience. You MUST initialize it once
  * with a Neo4jCypherDatabase via {@link #initialize(Neo4jCypherDatabase)} before use.
@@ -47,7 +47,8 @@ public final class DoseFormMapper {
             if (result.hasNext()) {
                 var record = result.next();
                 String rx = record.get("rxnormDoseForm").asString(null);
-                return rx == null || rx.isBlank() ? null : rx;
+                // Normalize to lowercase to match RxNorm's standard format
+                return rx == null || rx.isBlank() ? null : rx.toLowerCase();
             }
             return null;
         

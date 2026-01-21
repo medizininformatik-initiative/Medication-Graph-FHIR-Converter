@@ -39,6 +39,36 @@ public final class RxNormMatcherSetup {
     }
 
     /**
+     * Initializes RxNormProductMatcher with local SQLite-backed providers.
+     *
+     * The SQLite DB path is taken from:
+     * 1) System property "rxnorm.db.path" OR
+     * 2) Environment variable "RXNORM_DB_PATH"
+     * If both are missing, it uses the default project path:
+     *   data/rxnorm/rxnorm.db (relative to project root)
+     */
+    public static void initializeWithLocalProviders(Neo4jCypherDatabase neo4jDatabase) {
+        // Initialize dose form mapper
+        DoseFormMapper.initialize(neo4jDatabase);
+
+        String dbPath = System.getProperty("rxnorm.db.path");
+        if (dbPath == null || dbPath.isBlank()) {
+            String env = System.getenv("RXNORM_DB_PATH");
+            if (env != null && !env.isBlank()) {
+                dbPath = env;
+            } else {
+                dbPath = "data/rxnorm/rxnorm.db";
+            }
+        }
+
+        // Local resolvers/providers
+        RxNormProductMatcher.setRxcuiTermTypeResolver(new LocalRxNormTtyResolver(dbPath));
+        RxNormProductMatcher.setCandidateProvider(new LocalRxNormCandidateProvider(dbPath));
+
+        sharedMatcher = new RxNormProductMatcher();
+    }
+
+    /**
      * Creates a new RxNormProductMatcher instance.
      * 
      * @return A new RxNormProductMatcher instance

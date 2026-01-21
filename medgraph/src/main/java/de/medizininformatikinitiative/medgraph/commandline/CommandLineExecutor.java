@@ -52,6 +52,7 @@ public class CommandLineExecutor {
 
 		addUtility(new HeadlessGraphDbPopulator());
 		addUtility(new HeadlessFhirExporter());
+		addUtility(new TopSubstancesAnalyzerCLI());
 	}
 
 	private static void addUtility(CommandLineUtility utility) {

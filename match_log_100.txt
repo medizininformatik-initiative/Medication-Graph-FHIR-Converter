@@ -1,0 +1,10 @@
+xargs: sysconf(_SC_ARG_MAX) failed
+Exception in thread "main" java.io.FileNotFoundException: /Users/lucy/.gradle/wrapper/dists/gradle-8.7-bin/bhs2wmbdwecv87pi65oeuq5iu/gradle-8.7-bin.zip.lck (Operation not permitted)
+	at java.base/java.io.RandomAccessFile.open0(Native Method)
+	at java.base/java.io.RandomAccessFile.open(RandomAccessFile.java:344)
+	at java.base/java.io.RandomAccessFile.<init>(RandomAccessFile.java:259)
+	at java.base/java.io.RandomAccessFile.<init>(RandomAccessFile.java:213)
+	at org.gradle.wrapper.ExclusiveFileAccessManager.access(ExclusiveFileAccessManager.java:53)
+	at org.gradle.wrapper.Install.createDist(Install.java:68)
+	at org.gradle.wrapper.WrapperExecutor.execute(WrapperExecutor.java:102)
+	at org.gradle.wrapper.GradleWrapperMain.main(GradleWrapperMain.java:66)
