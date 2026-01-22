@@ -23,7 +23,7 @@ import numpy as np
 # --------------------------------------------------
 if len(sys.argv) < 3:
     print("Usage: python visualize_scd_matching_failures.py <proposed_approach.json> <paper_based.json>")
-    print("Example: python visualize_scd_matching_failures.py ../../medgraph/scd_matching_statistics.json ../../medgraph/scd_matching_statistics_paper_mapping.json")
+    print("Example: python visualize_scd_matching_failures.py ../../output/analysis/scd_matching_statistics.json ../../output/analysis/scd_matching_statistics_paper_mapping.json")
     sys.exit(1)
 
 json_file_proposed = sys.argv[1]

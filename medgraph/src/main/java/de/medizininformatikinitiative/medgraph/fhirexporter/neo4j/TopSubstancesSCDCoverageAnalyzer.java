@@ -17,20 +17,22 @@ import static de.medizininformatikinitiative.medgraph.common.db.DatabaseDefiniti
 
 /**
  * Analyzes SCD match coverage for the top 20 most frequently used active substances.
- * 
- * This class:
- * 1. Checks if the top 20 substances exist in Neo4j
- * 2. Finds all drugs containing these substances
- * 3. Checks which drugs have SCD matches
- * 4. Calculates coverage percentage
- * 
+ * <p>
+ * Analysis workflow:
+ * <ol>
+ *   <li>Checks if the top 20 substances exist in Neo4j</li>
+ *   <li>Finds all drugs containing these substances (including variants via substring matching)</li>
+ *   <li>Performs SCD matching for each drug using {@link RxNormProductMatcher}</li>
+ *   <li>Calculates coverage percentage per substance</li>
+ * </ol>
+ * Results can be printed to console and optionally saved to a JSON file.
+ *
  * @author Lucy Strüfing
  */
 public class TopSubstancesSCDCoverageAnalyzer {
     
     /**
      * Top 20 most frequently used active substances (Arzneiwirkstoffe).
-     * 
      */
     private static final List<String> TOP_20_SUBSTANCES = List.of(
         "Ibuprofen",
@@ -58,38 +60,40 @@ public class TopSubstancesSCDCoverageAnalyzer {
     private final Session session;
     private final RxNormProductMatcher matcher;
     
+    /**
+     * Creates a new analyzer instance.
+     *
+     * @param session Neo4j database session
+     * @param matcher RxNorm product matcher for SCD matching
+     */
     public TopSubstancesSCDCoverageAnalyzer(Session session, RxNormProductMatcher matcher) {
         this.session = session;
         this.matcher = matcher;
     }
     
     /**
-     * Runs the complete analysis and prints results.
+     * Runs the complete analysis and prints results to console.
      */
     public void analyze() {
         analyze(null);
     }
     
     /**
-     * Runs the complete analysis and prints results.
-     * @param jsonOutputFile Optional path to JSON output file. If null, no JSON is written.
+     * Runs the complete analysis and prints results to console.
+     * <p>
+     * Optionally saves results to a JSON file if a path is provided.
+     *
+     * @param jsonOutputFile optional path to JSON output file; if null or blank, no JSON is written
      */
     public void analyze(String jsonOutputFile) {
         System.out.println("\n=== Top 20 Substances SCD Coverage Analysis ===\n");
         
-        // Step 1: Check which substances exist in Neo4j
         Map<String, SubstanceInfo> substanceInfo = checkSubstancesInNeo4j();
-        
-        // Step 2: Find all drugs containing these substances
         Map<String, List<DrugInfo>> drugsBySubstance = findDrugsForSubstances(substanceInfo);
-        
-        // Step 3: Check SCD matches for each drug
         Map<String, CoverageResult> coverageResults = checkSCDMatches(drugsBySubstance);
         
-        // Step 4: Print results
         printResults(substanceInfo, coverageResults);
         
-        // Step 5: Save to JSON if requested
         if (jsonOutputFile != null && !jsonOutputFile.isBlank()) {
             try {
                 saveResultsToJson(substanceInfo, coverageResults, jsonOutputFile);
@@ -102,7 +106,11 @@ public class TopSubstancesSCDCoverageAnalyzer {
     
     /**
      * Checks which of the top 20 substances exist in Neo4j.
-     * Returns a map of substance name to SubstanceInfo.
+     * <p>
+     * Uses case-insensitive substring matching to find substances, including variants.
+     * Also collects associated RxCUI codes for each substance.
+     *
+     * @return map from substance name to {@link SubstanceInfo} (contains Neo4j mmiId, name, and RxCUIs)
      */
     private Map<String, SubstanceInfo> checkSubstancesInNeo4j() {
         System.out.println("Step 1: Checking which substances exist in Neo4j...");
@@ -142,10 +150,15 @@ public class TopSubstancesSCDCoverageAnalyzer {
     
     /**
      * Finds all drugs that contain the given substances.
-     * Returns a map of substance name to list of DrugInfo.
-     * 
-     * This method searches for all substances whose name contains the base substance name,
+     * <p>
+     * Searches for all substances whose name contains the base substance name (case-insensitive),
      * including variants like "Pantoprazol natrium-1,5-Wasser" when searching for "Pantoprazol".
+     * Only includes drugs with active ingredients matching the substance.
+     * <p>
+     * For each drug found, loads the complete {@link GraphDrug} object for later SCD matching.
+     *
+     * @param substanceInfo map from substance name to substance information
+     * @return map from substance name to list of {@link DrugInfo} (contains product info and full drug object)
      */
     private Map<String, List<DrugInfo>> findDrugsForSubstances(Map<String, SubstanceInfo> substanceInfo) {
         System.out.println("Step 2: Finding drugs containing these substances...");
@@ -181,7 +194,6 @@ public class TopSubstancesSCDCoverageAnalyzer {
                 String productName = record.get("productName").asString();
                 Long drugId = record.get("drugId").asLong();
                 
-                // Get full drug information for matching
                 GraphDrug drug = loadDrugFromNeo4j(drugId);
                 if (drug != null) {
                     drugs.add(new DrugInfo(productId, productName, drugId, drug));
@@ -199,8 +211,14 @@ public class TopSubstancesSCDCoverageAnalyzer {
     }
     
     /**
-     * Loads a complete GraphDrug from Neo4j by drug ID.
-     * Uses the same query structure as Neo4jProductExporter.
+     * Loads a complete {@link GraphDrug} from Neo4j by drug ID.
+     * <p>
+     * Loads all drug properties including ingredients (with RxCUIs), dose forms (MMI and EDQM),
+     * and drug amount/unit. Uses the same query structure as {@code Neo4jProductExporter}
+     * to ensure consistency.
+     *
+     * @param drugId the Neo4j drug mmiId
+     * @return complete GraphDrug object, or null if drug not found
      */
     private GraphDrug loadDrugFromNeo4j(Long drugId) {
         String query = 
@@ -261,7 +279,13 @@ public class TopSubstancesSCDCoverageAnalyzer {
     }
     
     /**
-     * Checks SCD matches for all drugs and calculates coverage.
+     * Checks SCD matches for all drugs and calculates coverage percentage per substance.
+     * <p>
+     * Uses {@link RxNormProductMatcher#matchSCD(GraphDrug)} to attempt matching for each drug.
+     * Calculates the percentage of successfully matched drugs per substance.
+     *
+     * @param drugsBySubstance map from substance name to list of drugs
+     * @return map from substance name to {@link CoverageResult} (total drugs, matched drugs, percentage)
      */
     private Map<String, CoverageResult> checkSCDMatches(Map<String, List<DrugInfo>> drugsBySubstance) {
         System.out.println("Step 3: Checking SCD matches for drugs...");
@@ -299,7 +323,12 @@ public class TopSubstancesSCDCoverageAnalyzer {
     }
     
     /**
-     * Prints the final analysis results.
+     * Prints the final analysis results to console in a formatted table.
+     * <p>
+     * Displays per-substance coverage statistics and overall summary statistics.
+     *
+     * @param substanceInfo map from substance name to substance information
+     * @param coverageResults map from substance name to coverage results
      */
     private void printResults(Map<String, SubstanceInfo> substanceInfo, 
                               Map<String, CoverageResult> coverageResults) {
@@ -349,20 +378,34 @@ public class TopSubstancesSCDCoverageAnalyzer {
     
     /**
      * Saves the analysis results to a JSON file.
+     * <p>
+     * Creates the output directory if it doesn't exist. Saves per-substance data
+     * and summary statistics in a structured JSON format.
+     *
+     * @param substanceInfo map from substance name to substance information
+     * @param coverageResults map from substance name to coverage results
+     * @param filename path to output JSON file (relative paths are resolved from project root)
+     * @throws IOException if file writing fails
      */
     private void saveResultsToJson(Map<String, SubstanceInfo> substanceInfo,
                                    Map<String, CoverageResult> coverageResults,
                                    String filename) throws IOException {
-        // Ensure directory exists
         Path filePath = Paths.get(filename);
+        
+        // If path is relative, resolve it relative to project root
+        if (!filePath.isAbsolute()) {
+            Path projectRoot = findProjectRoot();
+            if (projectRoot != null) {
+                filePath = projectRoot.resolve(filePath).normalize();
+            }
+        }
+        
         Path parentDir = filePath.getParent();
         if (parentDir != null && !Files.exists(parentDir)) {
             Files.createDirectories(parentDir);
         }
         
         Map<String, Object> jsonData = new LinkedHashMap<>();
-        
-        // Calculate summary statistics
         int totalSubstances = 0;
         int substancesInNeo4j = 0;
         int totalDrugs = 0;
@@ -404,17 +447,60 @@ public class TopSubstancesSCDCoverageAnalyzer {
         ));
         
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
-        try (FileWriter writer = new FileWriter(filename)) {
+        try (FileWriter writer = new FileWriter(filePath.toFile())) {
             gson.toJson(jsonData, writer);
         }
     }
     
-    // Data classes
+    /**
+     * Finds the project root directory by searching for build.gradle.kts or gradlew.
+     *
+     * @return Path to project root, or null if not found
+     */
+    private Path findProjectRoot() {
+        Path current = Paths.get(System.getProperty("user.dir"));
+        Path root = current.getRoot();
+        
+        while (current != null && !current.equals(root)) {
+            Path buildFile = current.resolve("build.gradle.kts");
+            Path gradlew = current.resolve("gradlew");
+            
+            if (Files.exists(buildFile) || Files.exists(gradlew)) {
+                return current;
+            }
+            
+            current = current.getParent();
+        }
+        
+        return null;
+    }
     
+    /**
+     * Information about a substance in Neo4j.
+     *
+     * @param mmiId Neo4j substance mmiId (null if not found)
+     * @param name substance name in Neo4j (or search name if not found)
+     * @param rxcuis list of associated RxCUI codes
+     */
     private record SubstanceInfo(Long mmiId, String name, List<String> rxcuis) {}
     
+    /**
+     * Information about a drug containing a substance.
+     *
+     * @param productId product mmiId
+     * @param productName product name
+     * @param drugId drug mmiId
+     * @param drug complete GraphDrug object for matching
+     */
     private record DrugInfo(Long productId, String productName, Long drugId, GraphDrug drug) {}
     
+    /**
+     * Coverage statistics for a substance.
+     *
+     * @param totalDrugs total number of drugs containing this substance
+     * @param matchedDrugs number of drugs with successful SCD matches
+     * @param percentage coverage percentage (0.0-100.0)
+     */
     private record CoverageResult(int totalDrugs, int matchedDrugs, double percentage) {}
 }
 

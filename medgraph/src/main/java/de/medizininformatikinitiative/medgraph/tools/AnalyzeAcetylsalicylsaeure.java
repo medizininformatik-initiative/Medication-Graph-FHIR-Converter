@@ -19,7 +19,12 @@ public class AnalyzeAcetylsalicylsaeure {
     public static void main(String[] args) {
         String uri = args.length > 0 ? args[0] : "bolt://localhost:7687";
         String user = args.length > 1 ? args[1] : "neo4j";
-        String password = args.length > 2 ? args[2] : "7o7MP~8_)h~0";
+        String password = args.length > 2 ? args[2] : System.getenv().getOrDefault("NEO4J_PASSWORD", "");
+        if (password.isEmpty()) {
+            System.err.println("WARNING: No Neo4j password provided!");
+            System.err.println("Please set NEO4J_PASSWORD environment variable or pass as command line argument.");
+            System.exit(1);
+        }
         
         try (Driver driver = GraphDatabase.driver(uri, AuthTokens.basic(user, password));
              Session session = driver.session()) {

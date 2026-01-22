@@ -3,6 +3,10 @@
 # Script zum Ausführen des Populators mit EdqmRxNormDoseFormMappingLoader
 # Verwendet edqm_rxnorm_dose_form_mapping.csv (paper-basiertes Mapping)
 
+# Wechsle zum Projekt-Root
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+cd "$SCRIPT_DIR/../.."
+
 # WICHTIG: Stelle sicher, dass die Environment Variable NICHT gesetzt ist
 # oder explizit auf false gesetzt wird, um das paper-basierte Mapping zu verwenden
 unset MEDGRAPH_USE_RXNORM_DARREICHUNGSFORMEN_MAPPING
@@ -15,7 +19,14 @@ MMI_DIR="${1:-/Users/lucy/Documents/Universität/Informatik/7.Semester/Bachlorth
 NEO4J_IMPORT_DIR="${2:-/Users/lucy/neo4j/import}"
 DB_URI="${3:-bolt://localhost:7687}"
 DB_USER="${4:-neo4j}"
-DB_PASSWORD="${5:-7o7MP~8_)h~0}"
+DB_PASSWORD="${5:-${NEO4J_PASSWORD:-}}"
+
+# Prüfe, ob Passwort gesetzt ist
+if [ -z "$DB_PASSWORD" ]; then
+    echo "FEHLER: Kein Neo4j-Passwort angegeben!"
+    echo "Bitte setze die Umgebungsvariable NEO4J_PASSWORD oder übergebe das Passwort als fünftes Argument."
+    exit 1
+fi
 
 echo "=== Populator mit EdqmRxNormDoseFormMappingLoader (Paper-basiert) ==="
 echo "  MMI-Verzeichnis: $MMI_DIR"
@@ -27,7 +38,6 @@ echo "  Log-Datei: ~/Desktop/populator_output.txt"
 echo ""
 
 # Führe den Populator aus
-cd "/Users/lucy/Documents/Universität/Informatik/7.Semester/Bachlorthesis/Medication-Graph-FHIR-Converter-1"
 
 /Users/lucy/Library/Java/JavaVirtualMachines/corretto-21.0.5/Contents/Home/bin/java \
   -jar composeApp/build/libs/medgraph-desktop-all.jar \

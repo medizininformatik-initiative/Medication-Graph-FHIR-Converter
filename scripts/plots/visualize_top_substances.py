@@ -20,7 +20,7 @@ import numpy as np
 # --------------------------------------------------
 if len(sys.argv) < 3:
     print("Usage: python visualize_top_substances.py <paper_mapping.json> <proposed_mapping.json>")
-    print("Example: python visualize_top_substances.py ../../medgraph/top_substances_analysis.json ../../medgraph/top_substances_analysis_custom_mapping.json")
+    print("Example: python visualize_top_substances.py ../../output/analysis/top_substances_analysis.json ../../output/analysis/top_substances_analysis_custom_mapping.json")
     sys.exit(1)
 
 json_file_paper = sys.argv[1]
@@ -44,33 +44,60 @@ substances_proposed = data_proposed.get("substances", [])
 summary_paper = data_paper.get("summary", {})
 summary_proposed = data_proposed.get("summary", {})
 
-# Erstelle Dictionaries für schnellen Zugriff auf Substanzen nach Name
+# Mapping von deutschen Namen (aus JSON) zu englischen Namen (für Plot)
+GERMAN_TO_ENGLISH = {
+    "Ibuprofen": "Ibuprofen",
+    "Metamizol-Natrium": "Metamizole sodium",
+    "Pantoprazol": "Pantoprazole",
+    "Levothyroxin-Natrium": "Levothyroxine sodium",
+    "Ramipril": "Ramipril",
+    "Bisoprolol": "Bisoprolol",
+    "Candesartan": "Candesartan",
+    "Amlodipin": "Amlodipine",
+    "Atorvastatin": "Atorvastatin",
+    "Metoprolol": "Metoprolol",
+    "Torasemid": "Torsemide",
+    "Amoxicillin": "Amoxicillin",
+    "Salbutamol": "Albuterol",
+    "Simvastatin": "Simvastatin",
+    "Prednisolon": "Prednisolone",
+    "Metformin": "Metformin",
+    "Diclofenac": "Diclofenac",
+    "Acetylsalicylsäure": "Acetylsalicylic acid",
+    "Colecalciferol": "Cholecaliferol",
+    "Beta-Lactamase-Inhibitoren": "Beta-lactamase inhibitors"
+}
+
+# Erstelle Dictionaries für schnellen Zugriff auf Substanzen nach Name (deutsche Namen)
 substances_dict_paper = {s.get("name", ""): s for s in substances_paper}
 substances_dict_proposed = {s.get("name", ""): s for s in substances_proposed}
 
-# Erwartete Reihenfolge der Top 20 Substanzen nach Rang (muss mit Java-Code übereinstimmen)
-expected_substances = [
+# Erwartete Reihenfolge der Top 20 Substanzen nach Rang
+expected_substances_english = [
     "Ibuprofen",
-    "Metamizol-Natrium",
-    "Pantoprazol",
-    "Levothyroxin-Natrium",
+    "Metamizole sodium",
+    "Pantoprazole",
+    "Levothyroxine sodium",
     "Ramipril",
     "Bisoprolol",
     "Candesartan",
-    "Amlodipin",
+    "Amlodipine",
     "Atorvastatin",
     "Metoprolol",
-    "Torasemid",
+    "Torsemide",
     "Amoxicillin",
-    "Salbutamol",
+    "Albuterol",
     "Simvastatin",
-    "Prednisolon",
+    "Prednisolone",
     "Metformin",
     "Diclofenac",
-    "Acetylsalicylsäure",
-    "Colecalciferol",
-    "Beta-Lactamase-Inhibitoren"
+    "Acetylsalicylic acid",
+    "Cholecaliferol",
+    "Beta-lactamase inhibitors"
 ]
+
+# Erstelle Reverse-Mapping (englisch -> deutsch) für Datenabfrage
+ENGLISH_TO_GERMAN = {v: k for k, v in GERMAN_TO_ENGLISH.items()}
 
 # Farben für die beiden Ansätze basierend auf Coverage
 # Grün: ≥ 70%, Orange: 30% bis < 70%, Rot: < 30%
@@ -103,10 +130,13 @@ def get_color_proposed(coverage):
 
 # Bereite Daten für das Diagramm vor - verwende die Rang-Reihenfolge (NICHT nach Coverage sortieren!)
 substance_data = []
-for rank, name in enumerate(expected_substances, 1):
+for rank, english_name in enumerate(expected_substances_english, 1):
+    # Finde deutschen Namen für diese englische Substanz
+    german_name = ENGLISH_TO_GERMAN.get(english_name, english_name)
+    
     # Paper Mapping Daten
-    if name in substances_dict_paper:
-        substance_paper = substances_dict_paper[name]
+    if german_name in substances_dict_paper:
+        substance_paper = substances_dict_paper[german_name]
         found_in_neo4j_paper = substance_paper.get("foundInNeo4j", False)
         coverage_paper = substance_paper.get("coverage", 0) if found_in_neo4j_paper else 0
         total_paper = substance_paper.get("totalDrugs", 0) if found_in_neo4j_paper else 0
@@ -118,8 +148,8 @@ for rank, name in enumerate(expected_substances, 1):
         matched_paper = 0
     
     # Proposed Mapping Daten
-    if name in substances_dict_proposed:
-        substance_proposed = substances_dict_proposed[name]
+    if german_name in substances_dict_proposed:
+        substance_proposed = substances_dict_proposed[german_name]
         found_in_neo4j_proposed = substance_proposed.get("foundInNeo4j", False)
         coverage_proposed = substance_proposed.get("coverage", 0) if found_in_neo4j_proposed else 0
         total_proposed = substance_proposed.get("totalDrugs", 0) if found_in_neo4j_proposed else 0
@@ -131,7 +161,7 @@ for rank, name in enumerate(expected_substances, 1):
         matched_proposed = 0
     
     substance_data.append({
-        "name": name,
+        "name": english_name,  # Verwende englischen Namen für Plot
         "rank": rank,
         "foundInNeo4j_paper": found_in_neo4j_paper,
         "coverage_paper": coverage_paper,
@@ -221,7 +251,7 @@ for i, (bar_paper_bar, bar_prop, cov_paper, cov_prop, total_paper, total_prop,
 
 # Y-Achse: Substanznamen (in Rang-Reihenfolge)
 # Formatierung für mehrzeilige Labels
-display_names = [name.replace("Beta-Lactamase-Inhibitoren", "Beta-Lactamase-\nInhibitoren") 
+display_names = [name.replace("Beta-lactamase inhibitors", "Beta-lactamase-\ninhibitors") 
                  for name in substance_names]
 ax.set_yticks(y_pos)
 ax.set_yticklabels(display_names, fontsize=12)

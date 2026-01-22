@@ -18,6 +18,8 @@ import java.util.concurrent.ConcurrentHashMap;
  * 
  * Uses RxNav REST API to determine the Term Type (TTY) for a given RXCUI.
  * Includes caching to reduce API calls and improve performance.
+ * 
+ * @author Lucy Strüfing
  */
 public final class RxNavTtyResolver implements RxNormProductMatcher.RxcuiTermTypeResolver {
 
@@ -118,12 +120,5 @@ public final class RxNavTtyResolver implements RxNormProductMatcher.RxcuiTermTyp
      */
     public void clearCache() {
         ttyCache.clear();
-    }
-
-    /**
-     * Gets the current cache size (for monitoring purposes).
-     */
-    public int getCacheSize() {
-        return ttyCache.size();
     }
 }

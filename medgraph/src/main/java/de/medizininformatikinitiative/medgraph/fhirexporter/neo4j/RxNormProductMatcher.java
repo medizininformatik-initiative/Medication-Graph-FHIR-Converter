@@ -11,41 +11,52 @@ import java.util.stream.Collectors;
 
 /**
  * Matches German pharmaceutical products to RxNorm concepts using the propagation approach.
- * 
- * Strategy:
- * 1. Extract active ingredients with RxCUI codes from Substance level
- * 2. Normalize strengths using UCUM
- * 3. Map dose forms to RxNorm-compatible strings
- * 4. Generate SCD/SBD candidates via RxNav API
- * 5. Score and select best matches
+ * <p>
+ * Matching strategy:
+ * <ol>
+ *   <li>Extract active ingredients with RxCUI codes from Substance level</li>
+ *   <li>Normalize strengths using UCUM</li>
+ *   <li>Map dose forms to RxNorm-compatible strings</li>
+ *   <li>Generate SCD candidates via configured provider (local SQLite or API)</li>
+ *   <li>Validate and score candidates, select best match</li>
+ * </ol>
+ *
+ * @author Lucy Strüfing
  */
 public final class RxNormProductMatcher {
 
     private static final String RXNAV_BASE_URL = "https://rxnav.nlm.nih.gov/REST";
-    private static final double STRENGTH_TOLERANCE = 0.1; // 10% tolerance for strength matching
-    private static final double MIN_MATCH_SCORE = 0.9; // Minimum score to accept a match (temporarily relaxed)
+    private static final double STRENGTH_TOLERANCE = 0.1;
+    private static final double MIN_MATCH_SCORE = 0.9;
 
-    // Ucum normalization via static utility methods
-
-    // Optional resolver to determine RxNorm term type (e.g., IN, PIN) for a given RXCUI
     private static RxcuiTermTypeResolver rxcuiTermTypeResolver;
     private static RxNormCandidateProvider candidateProvider;
 
-    // Small cache to reduce repeated lookups for the same RXCUI
     private final Map<String, String> rxcuiToTtyCache = new java.util.concurrent.ConcurrentHashMap<>();
 
+    /**
+     * Creates a new RxNormProductMatcher instance.
+     */
     public RxNormProductMatcher() {}
 
     /**
-     * Allows wiring a resolver which can tell us the RxNorm term type (TTY) for a given RXCUI.
-     * If not provided, selection will fall back to a naive strategy.
+     * Sets the resolver for determining RxNorm term type (TTY) for a given RxCUI.
+     * <p>
+     * If not provided, RxCUI selection will fall back to a naive strategy (first available).
+     *
+     * @param resolver the TTY resolver implementation
      */
     public static void setRxcuiTermTypeResolver(RxcuiTermTypeResolver resolver) {
         rxcuiTermTypeResolver = resolver;
     }
 
     /**
-     * Allows wiring a provider to fetch SCD/SBD candidates (from RxNav or a local dump/DB).
+     * Sets the provider for fetching SCD candidates.
+     * <p>
+     * Can be either a local SQLite-based provider ({@link LocalRxNormCandidateProvider})
+     * or an API-based provider ({@link RxNavCandidateProvider}).
+     *
+     * @param provider the candidate provider implementation
      */
     public static void setCandidateProvider(RxNormCandidateProvider provider) {
         candidateProvider = provider;
@@ -53,11 +64,14 @@ public final class RxNormProductMatcher {
 
     /**
      * Matches a drug to a Semantic Clinical Drug (SCD) concept.
-     * SCD = ingredient(s) + strength(s) + dose form (generic)
+     * <p>
+     * SCD represents: ingredient(s) + strength(s) + dose form (generic, no brand).
+     *
+     * @param drug the drug to match
+     * @return match result if successful, null otherwise
      */
     @Nullable
     public MatchResult matchSCD(@NotNull GraphDrug drug) {
-        // Show only active ingredients
         List<GraphIngredient> activeIngredients = drug.ingredients().stream()
                 .filter(GraphIngredient::isActive)
                 .collect(Collectors.toList());
@@ -100,19 +114,28 @@ public final class RxNormProductMatcher {
 
     /**
      * Matches a drug to a Semantic Branded Drug (SBD) concept.
-     * SBD = SCD + brand/manufacturer name
+     * <p>
+     * SBD represents: SCD + brand/manufacturer name.
+     * <p>
+     * <b>Note: SBD matching is currently not fully functional.</b>
+     * The method attempts to find an SCD match first, then searches for related SBDs.
+     * However, {@link LocalRxNormCandidateProvider#findSbdCandidates(GraphDrug, MatchResult)}
+     * is not implemented and always returns an empty list. Therefore, this method always
+     * falls back to returning the SCD result as SBD (with MatchType.SBD but SCD data)!
+     * <p>
+     *
+     * @param drug the drug to match
+     * @return match result (currently always SCD-based fallback), or null if SCD matching fails
      */
     @Nullable
     public MatchResult matchSBD(@NotNull GraphDrug drug) {
         System.out.println("\n=== [Matcher] Processing SBD for drug ===");
         
-        // First try to get SCD as base
         MatchResult scdResult = matchSCD(drug);
         if (scdResult == null) {
             return null;
         }
 
-        // Use provider if available to find SBDs related to best SCD
         if (candidateProvider != null) {
             List<RxNormCandidate> sbdCandidates = candidateProvider.findSbdCandidates(drug, scdResult);
             if (sbdCandidates != null && !sbdCandidates.isEmpty()) {
@@ -123,7 +146,7 @@ public final class RxNormProductMatcher {
             }
         }
 
-        // Fallback: return SCD result as SBD (neutral transformation)
+        // Fallback: return SCD result as SBD
         return new MatchResult(
                 scdResult.rxcui,
                 scdResult.name,
@@ -135,23 +158,33 @@ public final class RxNormProductMatcher {
     }
 
     /**
-     * Prepares ingredient matches by selecting IN/PIN and normalizing strengths.
+     * Prepares ingredient matches by selecting best RxCUI (IN/PIN) and normalizing strengths.
+     * <p>
+     * Filters for active ingredients only and creates IngredientMatch objects with
+     * normalized UCUM strengths.
+     *
+     * @param ingredients list of graph ingredients to process
+     * @return list of valid ingredient matches
      */
     private List<IngredientMatch> prepareIngredientMatches(@NotNull List<GraphIngredient> ingredients) {
         return ingredients.stream()
-            .filter(ingredient -> ingredient.isActive()) // Added: include just active ingredients! 
+            .filter(GraphIngredient::isActive)
             .map(this::createIngredientMatch)
             .filter(Objects::nonNull)
             .collect(Collectors.toList());
     }
 
     /**
-     * Creates an ingredient match by selecting the best RxCUI (IN vs PIN) and normalizing strength.
-     * If the selected RxCUI has no SCDs, tries alternative RxCUIs from the list.
+     * Creates an ingredient match by selecting the best RxCUI (preferring PIN over IN) and normalizing strength.
+     * <p>
+     * If the selected RxCUI has no SCDs available, tries alternative RxCUIs from the list.
+     * Returns null if no valid RxCUI or UCUM unit is available.
+     *
+     * @param ingredient the graph ingredient to process
+     * @return ingredient match with normalized strength, or null if invalid
      */
     @Nullable
     private IngredientMatch createIngredientMatch(@NotNull GraphIngredient ingredient) {
-        // 1. Select best RxCUI (prefer PIN over IN)
         List<String> rxcuiCodes = ingredient.getRxcuiCodes();
         if (rxcuiCodes == null || rxcuiCodes.isEmpty()) {
             return null;
@@ -162,12 +195,10 @@ public final class RxNormProductMatcher {
             return null;
         }
         
-        // 2. If candidate provider is available, verify that the selected RxCUI has SCDs
-        // If not, try alternative RxCUIs from the list
+        // Verify selected RxCUI has SCDs, try alternatives if not
         if (candidateProvider instanceof LocalRxNormCandidateProvider) {
             LocalRxNormCandidateProvider localProvider = (LocalRxNormCandidateProvider) candidateProvider;
             if (!localProvider.hasScdsForIngredient(selectedRxcui)) {
-                // Try alternative RxCUIs
                 for (String alternativeRxcui : rxcuiCodes) {
                     if (!alternativeRxcui.equals(selectedRxcui) && localProvider.hasScdsForIngredient(alternativeRxcui)) {
                         System.out.println("[Matcher] RxCUI " + selectedRxcui + " has no SCDs, using alternative " + alternativeRxcui);
@@ -178,7 +209,6 @@ public final class RxNormProductMatcher {
             }
         }
 
-        // 3. Normalize strength (guard against missing unit)
         GraphUnit unit = ingredient.getUnit();
         if (unit == null || unit.ucumCs() == null) {
             return null;
@@ -198,7 +228,13 @@ public final class RxNormProductMatcher {
     }
 
     /**
-     * Selects the best RxCUI from available codes (prefer PIN over IN).
+     * Selects the best RxCUI from available codes, preferring PIN over IN.
+     * <p>
+     * Uses the configured TTY resolver to determine term types. Falls back to
+     * the first available RxCUI if TTY information is unavailable.
+     *
+     * @param rxcuiCodes list of RxCUIs to choose from
+     * @return selected RxCUI, or null if list is empty
      */
     @Nullable
     private String selectBestRxcui(@NotNull List<String> rxcuiCodes) {
@@ -206,51 +242,50 @@ public final class RxNormProductMatcher {
             return null;
         }
 
-        // Prefer PIN over IN if we can determine TTY via resolver
         if (rxcuiTermTypeResolver != null) {
-            String pin = null;
             String in = null;
             for (String rxcui : rxcuiCodes) {
                 String tty = rxcuiToTtyCache.computeIfAbsent(rxcui, key -> safeResolveTty(key));
                 if (tty == null) continue;
                 String ttyUpper = tty.toUpperCase(Locale.ROOT);
-                if (pin == null && ttyUpper.equals("PIN")) {
-                    pin = rxcui;
-                    // We can short-circuit if we found a PIN
-                    return pin;
+                if (ttyUpper.equals("PIN")) {
+                    return rxcui;
                 } else if (in == null && ttyUpper.equals("IN")) {
                     in = rxcui;
                 }
             }
-            if (pin != null) return pin;
             if (in != null) return in;
         }
 
-        // Fallback: return first available RXCUI when TTY information is unavailable
         return rxcuiCodes.get(0);
     }
 
     /**
      * Gets the RxNorm-compatible dose form for the drug.
+     * <p>
+     * Maps EDQM dose form to RxNorm via the configured dose form mapper.
+     * Logs a warning if MMI dose form exists but has no EDQM mapping.
+     *
+     * @param drug the drug to get dose form for
+     * @return RxNorm-compatible dose form string, or null if mapping fails
      */
     @Nullable
     private String getRxNormDoseForm(@NotNull GraphDrug drug) {
         String mmiDoseForm = drug.mmiDoseForm();
         GraphEdqmPharmaceuticalDoseForm edqmDoseForm = drug.edqmDoseForm();
         
-        // Check if MMI → EDQM mapping exists in Neo4j
         if (mmiDoseForm != null && edqmDoseForm == null) {
             System.out.println("[Matcher] WARNING: MMI dose form '" + mmiDoseForm + "' has no EDQM mapping");
         }
         
-        // Try EDQM → RxNorm via DB mapping
-        String edqmMapping = DoseFormMapper.mapEdqm(edqmDoseForm);
-        
-        return edqmMapping;
+        return DoseFormMapper.mapEdqm(edqmDoseForm);
     }
     
     /**
-     * Gets the RxNorm-compatible dose form for the drug (without logging).
+     * Gets the RxNorm-compatible dose form for the drug without logging warnings.
+     *
+     * @param drug the drug to get dose form for
+     * @return RxNorm-compatible dose form string, or null if mapping fails
      */
     @Nullable
     private String getRxNormDoseFormSilent(@NotNull GraphDrug drug) {
@@ -259,7 +294,11 @@ public final class RxNormProductMatcher {
     }
 
     /**
-     * Generates SCD candidates
+     * Generates SCD candidates using the configured candidate provider.
+     *
+     * @param ingredients list of ingredient matches
+     * @param doseForm expected dose form
+     * @return list of SCD candidates, empty if provider not configured
      */
     private List<RxNormCandidate> generateSCDCandidates(
             @NotNull List<IngredientMatch> ingredients,
@@ -270,7 +309,17 @@ public final class RxNormProductMatcher {
     }
 
     /**
-     * Scores candidates and selects the best match.
+     * Validates, scores, and selects the best matching candidate.
+     * <p>
+     * Validates candidates on dose form, ingredients, and strengths.
+     * Scores valid candidates and returns the best match if score meets minimum threshold.
+     *
+     * @param candidates list of candidates to evaluate
+     * @param drug the drug to match against
+     * @param matchType the type of match (SCD or SBD)
+     * @param expectedDoseForm expected dose form for validation
+     * @param ingredientMatches expected ingredient matches for validation
+     * @return best match result if score meets threshold, null otherwise
      */
     @Nullable
     private MatchResult selectBestMatch(
@@ -387,11 +436,11 @@ public final class RxNormProductMatcher {
                         matchInfo.append("\n[Matcher]     - ").append(ingredient)
                                 .append(": expected=").append(expected)
                                 .append(" ").append(expectedUnit != null ? expectedUnit : "")
-                                .append(" (aus Neo4j")
-                                .append(expectedUnit != null && expectedUnit.contains("/") ? " - Konzentration" : " - absolute Menge")
+                                .append(" (from Neo4j")
+                                .append(expectedUnit != null && expectedUnit.contains("/") ? " - concentration" : " - absolute amount")
                                 .append("), actual=").append(actual)
                                 .append(" ").append(actualUnit != null ? actualUnit : "")
-                                .append(" (aus RxNorm SCD-Name geparst)")
+                                .append(" (parsed from RxNorm SCD name)")
                                 .append(isExact ? " [EXACT]" : " [TOLERANCE: " + String.format("%.1f", relDiff * 100) + "%]");
                     }
                 }
@@ -402,6 +451,19 @@ public final class RxNormProductMatcher {
         return result;
     }
 
+    /**
+     * Validates a candidate against the expected drug properties.
+     * <p>
+     * Validates dose form, ingredients, and strengths. Handles conversion between
+     * scalar and ratio strengths when necessary (e.g., mg vs mg/mL).
+     *
+     * @param candidate the candidate to validate
+     * @param drug the expected drug
+     * @param details map to store validation details
+     * @param expectedDoseForm expected dose form
+     * @param ingredientMatches expected ingredient matches
+     * @return true if candidate is valid, false otherwise
+     */
     private boolean validateCandidate(RxNormCandidate candidate, GraphDrug drug, Map<String, Object> details,
                                       String expectedDoseForm, List<IngredientMatch> ingredientMatches) {
         // Dose form must match exactly (case-insensitive)
@@ -472,17 +534,17 @@ public final class RxNormProductMatcher {
             // Normalize empty string to null
             String candidateDenominator = (candidateDenominatorRaw != null && candidateDenominatorRaw.isEmpty()) ? null : candidateDenominatorRaw;
             
-            // Handle mismatch between scalar and ratio strengths according to the unit comparison rules (examples):
-            // 1. Neo4j mg, RxNorm mg/ml → Neo4j durch Amount teilen (nur wenn Drug-Unit ein Volumen ist)
-            // 2. Neo4j mg/ml, RxNorm mg → Neo4j mit Amount multiplizieren
-            // 3. Beide gleicher Typ → direkt vergleichen
+            // Handle mismatch between scalar and ratio strengths (detected through Review 1 from Editha Räuscher):
+            // 1. Neo4j absolute (mg), RxNorm concentration (mg/ml) -> divide Neo4j by drug volume
+            // 2. Neo4j concentration (mg/ml), RxNorm absolute (mg) -> multiply Neo4j by drug volume
+            // 3. Both same type → compare directly
             
             boolean neoIsRatio = expectedDenominator != null;
             boolean rxNormIsRatio = candidateDenominator != null;
             
             if (rxNormIsRatio && !neoIsRatio) {
-                // Neo4j ist absolut (mg), RxNorm ist Konzentration (mg/ml, g/L, etc.)
-                // → Teilen durch drugAmount, aber nur wenn Drug-Unit ein Volumen ist (ml, l, etc.)
+                // Neo4j is absolute (mg), RxNorm is concentration (mg/ml, g/L, etc.)
+                // Divide by drug volume, but only if drug unit is a volume (ml, l, etc.)
                 BigDecimal drugVolumeInMl = getDrugVolumeInMl(drug);
                 if (drugVolumeInMl != null && drugVolumeInMl.compareTo(BigDecimal.ZERO) > 0) {
                     // Convert absolute amount to concentration
@@ -504,8 +566,8 @@ public final class RxNormProductMatcher {
                     break;
                 }
             } else if (!rxNormIsRatio && neoIsRatio) {
-                // Neo4j ist Konzentration (mg/ml, g/L, etc.), RxNorm ist absolut (mg)
-                // → Multiplizieren mit drugAmount
+                // Neo4j is concentration (mg/ml, g/L, etc.), RxNorm is absolute (mg)
+                // -> Multiply by drug volume
                 BigDecimal drugVolumeInMl = getDrugVolumeInMl(drug);
                 if (drugVolumeInMl != null && drugVolumeInMl.compareTo(BigDecimal.ZERO) > 0) {
                     // Check if expected denominator is a volume unit
@@ -539,7 +601,7 @@ public final class RxNormProductMatcher {
                     break;
                 }
             }
-            // Sonst: beide gleicher Typ → direkt vergleichen (keine Umrechnung nötig)
+            // Otherwise: both same type -> compare directly (no conversion needed)
             
             // For ratio strengths, denominator units must match
             if (expectedDenominator != null || candidateDenominator != null) {
@@ -814,6 +876,12 @@ public final class RxNormProductMatcher {
     
     /**
      * Makes an API call to RxNav and returns the JSON response.
+     * <p>
+     * Only works when using RxNavCandidateProvider. Returns null if provider
+     * is not available or API call fails.
+     *
+     * @param url the API URL to call
+     * @return JSON response node, or null on failure
      */
     private JsonNode makeApiCall(String url) {
         try {
@@ -891,33 +959,62 @@ public final class RxNormProductMatcher {
         return denominator;
     }
 
+    /**
+     * Checks if actual value is within relative tolerance of expected value.
+     *
+     * @param expected expected value
+     * @param actual actual value
+     * @param relTolerance relative tolerance (e.g., 0.1 for 10%)
+     * @return true if within tolerance
+     */
     private boolean withinTolerance(BigDecimal expected, BigDecimal actual, double relTolerance) {
-        if (expected.signum() == 0) return actual.signum() == 0; // both zero
+        if (expected.signum() == 0) return actual.signum() == 0;
         java.math.BigDecimal diff = actual.subtract(expected).abs();
         java.math.BigDecimal rel = diff.divide(expected.abs(), java.math.MathContext.DECIMAL64);
         return rel.doubleValue() <= relTolerance;
     }
 
+    /**
+     * Computes a match score for a candidate based on validation details.
+     * <p>
+     * Score components:
+     * <ul>
+     *   <li>Dose form match: 0.3</li>
+     *   <li>Ingredients match: 0.3</li>
+     *   <li>Strength match: 0.3</li>
+     *   <li>Exact case-sensitive dose form: 0.1 bonus</li>
+     * </ul>
+     *
+     * @param candidate the candidate to score
+     * @param drug the expected drug
+     * @param details validation details map
+     * @return score between 0.0 and 1.0
+     */
     private double computeScore(RxNormCandidate candidate, GraphDrug drug, Map<String, Object> details) {
         double score = 0.0;
-        // Binary features
         if (Boolean.TRUE.equals(details.get("doseFormMatch"))) score += 0.3;
         if (Boolean.TRUE.equals(details.get("ingredientsMatch"))) score += 0.3;
         if (Boolean.TRUE.equals(details.get("strengthMatch"))) score += 0.3;
 
-        // Minor bonus: exact case-sensitive form name
         String expectedForm = getRxNormDoseForm(drug);
         if (expectedForm != null && expectedForm.equals(candidate.doseForm)) score += 0.1;
 
         return score;
     }
 
-    // Inner classes for data structures
-
+    /**
+     * Type of RxNorm match (SCD or SBD).
+     */
     public enum MatchType {
-        SCD, SBD
+        /** Semantic Clinical Drug (generic) */
+        SCD,
+        /** Semantic Branded Drug (with brand name) */
+        SBD
     }
 
+    /**
+     * Result of a successful RxNorm match.
+     */
     public static class MatchResult {
         public final String rxcui;
         public final String name;
@@ -926,23 +1023,44 @@ public final class RxNormProductMatcher {
         public final double confidence;
         public final Map<String, Object> matchingDetails;
 
+        /**
+         * Creates a match result.
+         *
+         * @param rxcui matched RxCUI
+         * @param name matched RxNorm name
+         * @param type match type (SCD or SBD)
+         * @param score match quality score (0.0-1.0)
+         * @param confidence confidence level (0.0-1.0)
+         * @param matchingDetails detailed matching information
+         */
         public MatchResult(String rxcui, String name, MatchType type, double score, 
                           double confidence, Map<String, Object> matchingDetails) {
             this.rxcui = rxcui;
             this.name = name;
             this.type = type;
-            this.score = score; // Match-Qualität (0.0-1.0)
+            this.score = score;
             this.confidence = confidence;
             this.matchingDetails = matchingDetails;
         }
     }
 
+    /**
+     * Represents an ingredient with its selected RxCUI and normalized strength.
+     */
     public static class IngredientMatch {
         public final String rxcui;
         public final String substanceName;
-        public final NormalizedStrength normalizedStrength; // UCUM-normalisierte Stärke
+        public final NormalizedStrength normalizedStrength;
         public final String originalUnit;
 
+        /**
+         * Creates an ingredient match.
+         *
+         * @param rxcui selected RxCUI (preferring PIN over IN)
+         * @param substanceName substance name
+         * @param normalizedStrength UCUM-normalized strength
+         * @param originalUnit original UCUM unit string
+         */
         public IngredientMatch(String rxcui, String substanceName, 
                               NormalizedStrength normalizedStrength, String originalUnit) {
             this.rxcui = rxcui;
@@ -952,28 +1070,61 @@ public final class RxNormProductMatcher {
         }
     }
 
+    /**
+     * Represents an RxNorm candidate (SCD or SBD) with its properties.
+     * <p>
+     * Contains RxCUI, name, term type, ingredient list, strength mappings,
+     * and dose form. Supports both scalar and ratio strengths via numerator/denominator units.
+     */
     public static class RxNormCandidate {
+        /** RxNorm concept unique identifier */
         public final String rxcui;
+        /** RxNorm concept name */
         public final String name;
-        public final String tty; // Term Type (SCD, SBD, IN etc.)
+        /** Term type (e.g., SCD, SBD, IN, PIN) */
+        public final String tty;
+        /** List of ingredient RxCUIs */
         public final List<String> ingredients;
+        /** Map from ingredient RxCUI to strength value */
         public final Map<String, BigDecimal> strengths;
-        // Numerator unit per ingredient (e.g., "mg", "mmol"); null implies legacy "mg"
+        /** Map from ingredient RxCUI to numerator unit (e.g., "mg", "mmol") */
         public final Map<String, String> numeratorUnits;
-        public final Map<String, String> denominatorUnits; // Maps RxCUI to denominator unit (null for scalar strengths)
+        /** Map from ingredient RxCUI to denominator unit (null for scalar strengths) */
+        public final Map<String, String> denominatorUnits;
+        /** Dose form string */
         public final String doseForm;
 
+        /**
+         * Creates a candidate with scalar strengths only (legacy constructor).
+         * Numerator units default to "mg".
+         */
         public RxNormCandidate(String rxcui, String name, String tty, 
                               List<String> ingredients, Map<String, BigDecimal> strengths, String doseForm) {
             this(rxcui, name, tty, ingredients, strengths, null, null, doseForm);
         }
 
+        /**
+         * Creates a candidate with ratio strengths (denominator units specified).
+         * Numerator units default to "mg".
+         */
         public RxNormCandidate(String rxcui, String name, String tty, 
                               List<String> ingredients, Map<String, BigDecimal> strengths, 
                               Map<String, String> denominatorUnits, String doseForm) {
             this(rxcui, name, tty, ingredients, strengths, null, denominatorUnits, doseForm);
         }
 
+        /**
+         * Creates a candidate with full unit specification.
+         *
+         * @param rxcui RxNorm concept unique identifier
+         * @param name RxNorm concept name
+         * @param tty term type
+         * @param ingredients list of ingredient RxCUIs
+         * @param strengths map from ingredient RxCUI to strength value
+         * @param numeratorUnits map from ingredient RxCUI to numerator unit (null defaults to "mg")
+         * @param denominatorUnits map from ingredient RxCUI to denominator unit (null for scalar)
+         * @param doseForm dose form string
+         */
         public RxNormCandidate(String rxcui, String name, String tty,
                               List<String> ingredients, Map<String, BigDecimal> strengths,
                               Map<String, String> numeratorUnits,
@@ -990,7 +1141,12 @@ public final class RxNormProductMatcher {
     }
 
     /**
-     * Resolves the TTY using the configured resolver, swallowing any exception to keep matching robust.
+     * Safely resolves the TTY using the configured resolver.
+     * <p>
+     * Swallows exceptions to keep matching robust even if resolver fails.
+     *
+     * @param rxcui the RxCUI to resolve
+     * @return term type, or null if unavailable or resolver fails
      */
     private String safeResolveTty(String rxcui) {
         try {
@@ -1001,19 +1157,44 @@ public final class RxNormProductMatcher {
     }
 
     /**
-     * SPI used to obtain the RxNorm Term Type (TTY) for a given RXCUI (e.g., IN, PIN).
-     * Implementations may call RxNav or query a local dump/DB. Should return null if unknown.
+     * Service provider interface for resolving RxNorm Term Type (TTY) for a given RxCUI.
+     * <p>
+     * Implementations may query RxNav API or a local database dump.
+     * Should return null if the TTY cannot be determined.
      */
     public interface RxcuiTermTypeResolver {
+        /**
+         * Resolves the term type for a given RxCUI.
+         *
+         * @param rxcui the RxCUI to resolve
+         * @return term type (e.g., "IN", "PIN", "SCD"), or null if unknown
+         */
         @Nullable String resolveTty(@NotNull String rxcui);
     }
 
     /**
-     * SPI to supply RxNorm candidates from an external source (RxNav or local dump/DB).
+     * Service provider interface for supplying RxNorm candidates.
+     * <p>
+     * Implementations may use RxNav API ({@link RxNavCandidateProvider}) or
+     * a local SQLite database ({@link LocalRxNormCandidateProvider}).
      */
     public interface RxNormCandidateProvider {
+        /**
+         * Finds SCD candidates matching the given ingredients and dose form.
+         *
+         * @param ingredients list of ingredient matches
+         * @param doseForm expected dose form
+         * @return list of SCD candidates (may be empty, never null)
+         */
         @NotNull List<RxNormCandidate> findScdCandidates(@NotNull List<IngredientMatch> ingredients, @NotNull String doseForm);
 
+        /**
+         * Finds SBD candidates based on a successful SCD match.
+         *
+         * @param drug the drug to match
+         * @param scdBaseMatch the base SCD match result
+         * @return list of SBD candidates (may be empty, never null)
+         */
         @NotNull List<RxNormCandidate> findSbdCandidates(@NotNull GraphDrug drug, @NotNull MatchResult scdBaseMatch);
     }
 }

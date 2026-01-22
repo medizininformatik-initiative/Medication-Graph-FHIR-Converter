@@ -81,10 +81,17 @@ public class AnalyzeScdMatchingFailures {
     }
     
     public static void main(String[] args) {
-        String uri = args.length > 0 ? args[0] : "bolt://localhost:7687";
-        String user = args.length > 1 ? args[1] : "neo4j";
-        String password = args.length > 2 ? args[2] : "7o7MP~8_)h~0";
-        String outputFile = args.length > 3 ? args[3] : "scd_matching_statistics.json";
+        // Read from environment variables first, then command line args, then defaults
+        String uri = args.length > 0 ? args[0] : System.getenv().getOrDefault("NEO4J_URI", "bolt://localhost:7687");
+        String user = args.length > 1 ? args[1] : System.getenv().getOrDefault("NEO4J_USER", "neo4j");
+        String password = args.length > 2 ? args[2] : System.getenv().getOrDefault("NEO4J_PASSWORD", "");
+        String outputFile = args.length > 3 ? args[3] : "output/analysis/scd_matching_statistics.json";
+        
+        if (password.isEmpty()) {
+            System.err.println("WARNING: No Neo4j password provided!");
+            System.err.println("Please set NEO4J_PASSWORD environment variable or pass as command line argument.");
+            System.exit(1);
+        }
         
         try (Driver driver = GraphDatabase.driver(uri, AuthTokens.basic(user, password));
              Session session = driver.session()) {
@@ -302,6 +309,15 @@ public class AnalyzeScdMatchingFailures {
     private static void saveStatisticsToJson(MatchingStatistics stats, String filename) throws IOException {
         // Ensure directory exists
         Path filePath = Paths.get(filename);
+        
+        // If path is relative, resolve it relative to project root
+        if (!filePath.isAbsolute()) {
+            Path projectRoot = findProjectRoot();
+            if (projectRoot != null) {
+                filePath = projectRoot.resolve(filePath).normalize();
+            }
+        }
+        
         Path parentDir = filePath.getParent();
         if (parentDir != null && !Files.exists(parentDir)) {
             Files.createDirectories(parentDir);
@@ -340,9 +356,32 @@ public class AnalyzeScdMatchingFailures {
         jsonData.put("validationFailures", validationFailures);
         
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
-        try (FileWriter writer = new FileWriter(filename)) {
+        try (FileWriter writer = new FileWriter(filePath.toFile())) {
             gson.toJson(jsonData, writer);
         }
+    }
+    
+    /**
+     * Finds the project root directory by searching for build.gradle.kts or gradlew.
+     *
+     * @return Path to project root, or null if not found
+     */
+    private static Path findProjectRoot() {
+        Path current = Paths.get(System.getProperty("user.dir"));
+        Path root = current.getRoot();
+        
+        while (current != null && !current.equals(root)) {
+            Path buildFile = current.resolve("build.gradle.kts");
+            Path gradlew = current.resolve("gradlew");
+            
+            if (Files.exists(buildFile) || Files.exists(gradlew)) {
+                return current;
+            }
+            
+            current = current.getParent();
+        }
+        
+        return null;
     }
     
 }

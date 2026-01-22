@@ -10,7 +10,12 @@ public class AnalyzeLevothyroxin {
     public static void main(String[] args) {
         String uri = System.getenv().getOrDefault("NEO4J_URI", "bolt://localhost:7687");
         String user = System.getenv().getOrDefault("NEO4J_USER", "neo4j");
-        String password = System.getenv().getOrDefault("NEO4J_PASSWORD", "7o7MP~8_)h~0");
+        String password = System.getenv("NEO4J_PASSWORD");
+        if (password == null || password.isEmpty()) {
+            System.err.println("WARNING: No Neo4j password provided!");
+            System.err.println("Please set NEO4J_PASSWORD environment variable.");
+            System.exit(1);
+        }
         
         System.out.println("Connecting to Neo4j: " + uri + " as " + user);
         AuthToken token = AuthTokens.basic(user, password);

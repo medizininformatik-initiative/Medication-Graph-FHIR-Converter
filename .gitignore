@@ -6,6 +6,11 @@ output/
 *.log
 logs/
 
+# Environment variables (sensitive data)
+.env
+.env.local
+.env.*.local
+
 # RxNorm database files (too large for git)
 data/rxnorm/*.db
 data/rxnorm/*.db-*

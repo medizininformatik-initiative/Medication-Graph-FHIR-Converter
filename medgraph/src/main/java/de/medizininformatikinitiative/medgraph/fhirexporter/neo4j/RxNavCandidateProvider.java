@@ -17,9 +17,14 @@ import java.util.stream.Collectors;
 
 /**
  * RxNav API-based implementation of RxNormCandidateProvider.
- * 
- * Uses RxNav REST API to find SCD/SBD candidates for German pharmaceutical products.
+ * <p>
+ * Uses the RxNav REST API to find SCD candidates for German pharmaceutical products.
  * Includes caching to reduce API calls and improve performance.
+ * <p>
+ * <b>Note:</b> This is the API-based implementation which is currently not used in production.
+ * The system uses {@link LocalRxNormCandidateProvider} instead, which queries a local SQLite database dump.
+ *
+ * @author Lucy Strüfing
  */
 public final class RxNavCandidateProvider implements RxNormProductMatcher.RxNormCandidateProvider {
 
@@ -31,10 +36,13 @@ public final class RxNavCandidateProvider implements RxNormProductMatcher.RxNorm
     private final HttpClient httpClient;
     private final ObjectMapper objectMapper;
     
-    // Simple in-memory caches to reduce API calls
+    // In-memory caches to reduce API calls
     private final Map<String, String> ttyCache = new ConcurrentHashMap<>();
     private final Map<String, List<RxNormProductMatcher.RxNormCandidate>> relatedCache = new ConcurrentHashMap<>();
 
+    /**
+     * Creates a new RxNav API-based candidate provider.
+     */
     public RxNavCandidateProvider() {
         this.httpClient = HttpClient.newBuilder()
                 .connectTimeout(REQUEST_TIMEOUT)
@@ -42,6 +50,16 @@ public final class RxNavCandidateProvider implements RxNormProductMatcher.RxNorm
         this.objectMapper = new ObjectMapper();
     }
 
+    /**
+     * Finds SCD candidates using the RxNav API.
+     * <p>
+     * Searches for SCDs related to each ingredient RxCUI and filters by dose form.
+     * Uses fuzzy matching for extended/delayed release variants.
+     *
+     * @param ingredients list of ingredient matches with RxCUIs
+     * @param doseForm expected dose form for filtering
+     * @return list of SCD candidates matching the criteria
+     */
     @Override
     @NotNull
     public List<RxNormProductMatcher.RxNormCandidate> findScdCandidates(
@@ -54,44 +72,16 @@ public final class RxNavCandidateProvider implements RxNormProductMatcher.RxNorm
 
         List<RxNormProductMatcher.RxNormCandidate> candidates = new ArrayList<>();
         
-        // Strategy 1: Find SCDs related to each ingredient
+        // Find SCDs related to each ingredient RxCUI
         for (RxNormProductMatcher.IngredientMatch ingredient : ingredients) {
             List<RxNormProductMatcher.RxNormCandidate> relatedCandidates = 
                     findRelatedCandidates(ingredient.rxcui, "SCD");
             candidates.addAll(relatedCandidates);
         }
-        //Debugging
-        System.out.println("RxNav SCD related-candidates count: " + candidates.size());
-        if (!candidates.isEmpty()) {
-            RxNormProductMatcher.RxNormCandidate c = candidates.get(0);
-            System.out.println("First related Rxcui-SCD-candidate: rxcui=" + c.rxcui +
-                    ", tty=" + c.tty + ", doseForm='" + c.doseForm + "'" +
-                    ", ingredients.size=" + (c.ingredients==null?0:c.ingredients.size()) +
-                    ", strengths.size=" + (c.strengths==null?0:c.strengths.size()));
-        }
         
-        // Strategy 2: If no candidates found, try approximate search
-        // COMMENTED OUT: Only search via RxCUI, not by approximate search
-        /*
-        if (candidates.isEmpty()) {
-            String searchQuery = buildSearchQuery(ingredients, doseForm);
-            List<RxNormProductMatcher.RxNormCandidate> searchCandidates = 
-                    findCandidatesBySearch(searchQuery);
-            candidates.addAll(searchCandidates);
-            //Debugging
-            System.out.println("RxNav SCD approx-candidates count: " + searchCandidates.size() +
-                    " (query='" + searchQuery + "')");
-            if (!searchCandidates.isEmpty()) {
-                RxNormProductMatcher.RxNormCandidate c = searchCandidates.get(0);
-                System.out.println("First approx candidate: rxcui=" + c.rxcui +
-                        ", tty=" + c.tty + ", doseForm='" + c.doseForm + "'" +
-                        ", ingredients.size=" + (c.ingredients==null?0:c.ingredients.size()) +
-                        ", strengths.size=" + (c.strengths==null?0:c.strengths.size()));
-            }
-        }
-        */
+        System.out.println("[RxNav] Found " + candidates.size() + " SCD candidates");
         
-        // Compare dose forms: Relaxed filtering: keep candidates with empty/unknown dose form; the matcher validates strictly later
+        // Filter candidates by dose form (relaxed!: keep candidates with unknown dose form)
         System.out.println("[RxNav] Filtering candidates by dose form: expected='" + doseForm + "'");
         List<RxNormProductMatcher.RxNormCandidate> filteredCandidates = candidates.stream()
                 .filter(candidate -> {
@@ -104,7 +94,6 @@ public final class RxNavCandidateProvider implements RxNormProductMatcher.RxNorm
                         String expectedLower = doseForm.toLowerCase();
                         String candidateLower = candidate.doseForm.toLowerCase();
                         
-                        // Check for extended/delayed release compatibility
                         if ((expectedLower.contains("delayed release") && candidateLower.contains("extended release")) ||
                             (expectedLower.contains("extended release") && candidateLower.contains("delayed release")) ||
                             (expectedLower.contains("retard") && candidateLower.contains("extended release")) ||
@@ -122,22 +111,24 @@ public final class RxNavCandidateProvider implements RxNormProductMatcher.RxNorm
                 .distinct()
                 .collect(Collectors.toList());
         
-       
         return filteredCandidates;
     }
 
+    /**
+     * Finds SBD candidates related to an SCD match using the RxNav API.
+     *
+     * @param drug the drug to match (currently not used for filtering)
+     * @param scdBaseMatch the SCD match result to find related SBDs for
+     * @return list of SBD candidates related to the SCD
+     */
     @Override
     @NotNull
     public List<RxNormProductMatcher.RxNormCandidate> findSbdCandidates(
             @NotNull GraphDrug drug, 
             @NotNull RxNormProductMatcher.MatchResult scdBaseMatch) {
         
-        // Find SBDs related to the SCD
         List<RxNormProductMatcher.RxNormCandidate> sbdCandidates = 
                 findRelatedCandidates(scdBaseMatch.rxcui, "SBD");
-        
-        // TODO: Add brand/manufacturer filtering based on drug information
-        // For now, return all SBD candidates related to the SCD
         
         return sbdCandidates.stream()
                 .distinct()
@@ -145,7 +136,12 @@ public final class RxNavCandidateProvider implements RxNormProductMatcher.RxNorm
     }
 
     /**
-     * Finds candidates related to a given RXCUI with specified TTY.
+     * Finds candidates related to a given RxCUI with specified TTY using the RxNav API.
+     * Results are cached to avoid repeated API calls.
+     *
+     * @param rxcui the RxCUI to find related concepts for
+     * @param tty the term type to filter by (e.g., "SCD", "SBD")
+     * @return list of related candidates, empty if none found or error occurs
      */
     private List<RxNormProductMatcher.RxNormCandidate> findRelatedCandidates(String rxcui, String tty) {
         String cacheKey = rxcui + ":" + tty;
@@ -188,88 +184,12 @@ public final class RxNavCandidateProvider implements RxNormProductMatcher.RxNorm
     }
 
     /**
-     * Finds candidates using approximate search.
-     */
-    private List<RxNormProductMatcher.RxNormCandidate> findCandidatesBySearch(String query) {
-        try {
-            String encodedQuery = java.net.URLEncoder.encode(query, "UTF-8");
-            String url = RXNAV_BASE_URL + "/approximateTerm?term=" + encodedQuery + "&maxEntries=20&format=json";
-            System.out.println("[RxNav] findCandidatesBySearch called: query='" + query + "', url=" + url);
-            JsonNode response = makeApiCall(url);
-            
-            List<RxNormProductMatcher.RxNormCandidate> candidates = new ArrayList<>();
-            
-            if (response.has("approximateGroup") && response.get("approximateGroup").has("candidate")) {
-                JsonNode candidatesNode = response.get("approximateGroup").get("candidate");
-                
-                for (JsonNode candidate : candidatesNode) {
-                    if (candidate.has("rxcui")) {
-                        String rxcui = candidate.get("rxcui").asText();
-                        String name = candidate.has("name") ? candidate.get("name").asText() : "";
-                        
-                        // Try to get more details about this candidate
-                        RxNormProductMatcher.RxNormCandidate detailedCandidate = 
-                                getCandidateDetails(rxcui, name);
-                        if (detailedCandidate != null) {
-                            candidates.add(detailedCandidate);
-                        }
-                    }
-                }
-            }
-            
-            System.out.println("[RxNav] findCandidatesBySearch result: query='" + query + "', candidates=" + candidates.size());
-            return candidates;
-            
-        } catch (Exception e) {
-            System.err.println("[RxNav] Error in approximate search for '" + query + "': " + e.getMessage());
-            return Collections.emptyList();
-        }
-    }
-
-    /**
-     * Gets detailed information about a candidate by RXCUI.
-     */
-    private RxNormProductMatcher.RxNormCandidate getCandidateDetails(String rxcui, String name) {
-        try {
-            String url = RXNAV_BASE_URL + "/rxcui/" + rxcui + "/properties?format=json";
-            JsonNode response = makeApiCall(url);
-            
-            if (response.has("properties")) {
-                JsonNode props = response.get("properties");
-                String tty = props.has("tty") ? props.get("tty").asText() : "";
-                String fullName = props.has("name") ? props.get("name").asText() : name;
-                
-                // For SCD/SBD, fetch ingredients from related IN/PIN and extract dose form/strengths from name
-                List<String> ingredients = fetchIngredientRxcuis(rxcui);
-                StrengthExtractionResult strengthData = extractComponentStrengths(rxcui, ingredients);
-                if (strengthData.strengths().isEmpty()) {
-                    // Fallback: parse full SCD name if no component-specific strengths were found
-                    strengthData = extractStrengthsWithDenominators(fullName, ingredients);
-                }
-                Map<String, BigDecimal> strengths = strengthData.strengths();
-                Map<String, String> numeratorUnits = strengthData.numeratorUnits();
-                Map<String, String> denominatorUnits = strengthData.denominatorUnits();
-                
-                // Use structured dose form extraction (SCDF) instead of heuristic parsing
-                String doseForm = extractDoseFormFromSCDF(rxcui);
-                if (doseForm.isEmpty()) {
-                    // Fallback to heuristic parsing if SCDF method fails
-                    doseForm = extractDoseForm(fullName);
-                }
-                
-                return new RxNormProductMatcher.RxNormCandidate(
-                        rxcui, fullName, tty, ingredients, strengths, numeratorUnits, denominatorUnits, doseForm);
-            }
-            
-        } catch (Exception e) {
-            System.err.println("Error getting details for RXCUI " + rxcui + ": " + e.getMessage());
-        }
-        
-        return null;
-    }
-
-    /**
-     * Parses a candidate from a concept node in the API response.
+     * Parses a candidate from a concept node in the RxNav API response.
+     * Extracts RxCUI, name, TTY, ingredients, strengths, and dose form.
+     *
+     * @param concept the JSON concept node from the API response
+     * @param expectedTty the expected term type (for validation)
+     * @return parsed candidate, or null if parsing fails
      */
     private RxNormProductMatcher.RxNormCandidate parseCandidateFromConcept(JsonNode concept, String expectedTty) {
         try {
@@ -308,39 +228,19 @@ public final class RxNavCandidateProvider implements RxNormProductMatcher.RxNorm
         }
     }
 
-    /**
-     * Builds a search query from ingredients and dose form.
-     */
-    private String buildSearchQuery(List<RxNormProductMatcher.IngredientMatch> ingredients, String doseForm) {
-        StringBuilder query = new StringBuilder();
-        
-        for (int i = 0; i < ingredients.size(); i++) {
-            if (i > 0) query.append(" ");
-            query.append(ingredients.get(i).substanceName);
-        }
-        
-        if (doseForm != null && !doseForm.isEmpty()) {
-            query.append(" ").append(doseForm);
-        }
-        
-        return query.toString();
-    }
-
-    /**
-     * Extracts ingredient RXCUIs from a drug name (simplified parsing).
-     */
-    private List<String> extractIngredients(String name) {
-        // Deprecated in favor of fetchIngredientRxcuis via API; keep as fallback (empty)
-        return new ArrayList<>();
-    }
-
     private record StrengthExtractionResult(Map<String, BigDecimal> strengths,
                                             Map<String, String> numeratorUnits,
                                             Map<String, String> denominatorUnits) {}
 
     /**
-     * Tries to extract component-specific strengths via SCDC concepts for a given SCD RXCUI.
-     * Returns maps per ingredient RXCUI. Falls back to empty maps if no components found.
+     * Extracts component-specific strengths via SCDC concepts for a given SCD RxCUI.
+     * <p>
+     * Queries RxNav API for SCDC components and parses strengths from component names.
+     * Returns strength maps per ingredient RxCUI. Falls back to empty maps if no components found.
+     *
+     * @param scdRxcui the SCD RxCUI to extract strengths for
+     * @param ingredientRxcuis list of ingredient RxCUIs to match against
+     * @return strength extraction result with strengths, numerator units, and denominator units
      */
     private StrengthExtractionResult extractComponentStrengths(String scdRxcui, List<String> ingredientRxcuis) {
         Map<String, BigDecimal> strengths = new HashMap<>();
@@ -397,9 +297,15 @@ public final class RxNavCandidateProvider implements RxNormProductMatcher.RxNorm
     }
 
     /**
-     * Extracts strengths from a drug name (simplified parsing).
-     * Supports mass units (mg,g,µg) and molar units (mmol,mol,µmol),
-     * including ratio denominators for volume/time/area.
+     * Extracts strengths from a drug name using heuristic pattern matching.
+     * <p>
+     * Supports mass units (mg, g, µg) and molar units (mmol, mol, µmol),
+     * including ratio denominators for volume/time/area (e.g., mg/mL, mg/h).
+     * Normalizes units to canonical forms (mg, mmol, mL, etc.).
+     *
+     * @param name the drug name to parse
+     * @param ingredientRxcuis list of ingredient RxCUIs to assign strengths to
+     * @return strength extraction result with normalized strengths and units
      */
     private StrengthExtractionResult extractStrengthsWithDenominators(
             String name, List<String> ingredientRxcuis) {
@@ -510,6 +416,10 @@ public final class RxNavCandidateProvider implements RxNormProductMatcher.RxNorm
     
     /**
      * Normalizes denominator unit representation for consistent comparison.
+     * Converts variants (e.g., "ml", "milliliter" → "mL", "hr", "hour" → "h").
+     *
+     * @param unit the unit string to normalize
+     * @return normalized unit string
      */
     private String normalizeDenominatorUnit(String unit) {
         String l = unit.toLowerCase(Locale.ROOT);
@@ -538,8 +448,13 @@ public final class RxNavCandidateProvider implements RxNormProductMatcher.RxNorm
     }
 
     /**
-     * Extracts dose form from SCD using structured RxNav API data (SCD → SCDF).
-     * Uses SCDF → DF relationship to get precise dose form from DF (Dose Form) concept.
+     * Extracts dose form from SCD using structured RxNav API data.
+     * <p>
+     * Traverses the RxNorm hierarchy: SCD → SCDF → DF to get the precise dose form.
+     * This is the preferred method as it uses structured RxNorm relationships.
+     *
+     * @param scdRxcui the SCD RxCUI to extract dose form for
+     * @return normalized dose form string, or empty string if not found
      */
     private String extractDoseFormFromSCDF(String scdRxcui) {
         try {
@@ -587,7 +502,11 @@ public final class RxNavCandidateProvider implements RxNormProductMatcher.RxNorm
     
     /**
      * Extracts dose form from SCDF using DF (Dose Form) relationship.
-     * This is the most precise method:gets dose form as atomic RxNorm concept.
+     * <p>
+     * Gets the dose form as an atomic RxNorm concept, which is the most precise method.
+     *
+     * @param scdfRxcui the SCDF RxCUI to extract dose form for
+     * @return normalized dose form string, or empty string if not found
      */
     private String extractDoseFormFromDF(String scdfRxcui) {
         try {
@@ -631,8 +550,13 @@ public final class RxNavCandidateProvider implements RxNormProductMatcher.RxNorm
     
     
     /**
-     * Fallback: Extracts dose form from drug name (heuristic parsing).
-     * Used when SCDF method fails.
+     * Fallback method: Extracts dose form from drug name using heuristic pattern matching.
+     * <p>
+     * Used when the structured SCDF→DF method fails. Matches common dose form patterns
+     * in the drug name (e.g., "oral tablet", "capsule", "injection").
+     *
+     * @param name the drug name to parse
+     * @return normalized dose form string, or empty string if not found
      */
     private String extractDoseForm(String name) {
         System.out.println("[RxNav] Fallback: Extracting dose form from name: " + name);
@@ -665,7 +589,15 @@ public final class RxNavCandidateProvider implements RxNormProductMatcher.RxNorm
     }
 
     /**
-     * Makes an HTTP API call with retry logic.
+     * Makes an HTTP API call to RxNav with retry logic and rate limit handling.
+     * <p>
+     * Retries up to {@link #MAX_RETRIES} times.
+     * Handles HTTP 429 (rate limit) responses by waiting before retrying.
+     *
+     * @param url the API URL to call
+     * @return parsed JSON response
+     * @throws IOException if the API call fails after all retries
+     * @throws InterruptedException if the thread is interrupted during retry delays
      */
     public JsonNode makeApiCall(String url) throws IOException, InterruptedException {
         HttpRequest request = HttpRequest.newBuilder()
@@ -705,7 +637,10 @@ public final class RxNavCandidateProvider implements RxNormProductMatcher.RxNorm
     }
 
     /**
-     * Fetches ingredient RXCUIs (IN/PIN) for a given SCD/SBD candidate.
+     * Fetches ingredient RxCUIs (IN/PIN) for a given SCD/SBD candidate via RxNav API.
+     *
+     * @param rxcui the SCD/SBD RxCUI to get ingredients for
+     * @return list of ingredient RxCUIs, empty if not found or error occurs
      */
     private List<String> fetchIngredientRxcuis(String rxcui) {
         try {
@@ -730,11 +665,10 @@ public final class RxNavCandidateProvider implements RxNormProductMatcher.RxNorm
     }
 
     /**
-     * Clears the internal caches.
+     * Clears all internal caches (TTY cache and related candidates cache).
      */
     public void clearCache() {
         ttyCache.clear();
         relatedCache.clear();
     }
-
 }

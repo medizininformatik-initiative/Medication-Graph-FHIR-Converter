@@ -17,9 +17,9 @@
 #   ./performance_test_scd_matching.sh "" "" "" 10 "paper_mapping"       # 10 Durchläufe mit Suffix
 #   ./performance_test_scd_matching.sh "" "" "" 5                        # 5 Durchläufe
 
-# Wechsle zum Projekt-Root (wo das Skript liegt)
+# Wechsle zum Projekt-Root
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-cd "$SCRIPT_DIR"
+cd "$SCRIPT_DIR/../.."
 
 # Setze Java 21 für Gradle
 export JAVA_HOME="/Users/lucy/Library/Java/JavaVirtualMachines/corretto-21.0.5/Contents/Home"
@@ -27,22 +27,29 @@ export JAVA_HOME="/Users/lucy/Library/Java/JavaVirtualMachines/corretto-21.0.5/C
 # Parameter mit Standardwerten
 DB_URI="${1:-bolt://localhost:7687}"
 DB_USER="${2:-neo4j}"
-DB_PASSWORD="${3:-7o7MP~8_)h~0}"
+DB_PASSWORD="${3:-${NEO4J_PASSWORD:-}}"
+
+# Prüfe, ob Passwort gesetzt ist
+if [ -z "$DB_PASSWORD" ]; then
+    echo "FEHLER: Kein Neo4j-Passwort angegeben!"
+    echo "Bitte setze die Umgebungsvariable NEO4J_PASSWORD oder übergebe das Passwort als drittes Argument."
+    exit 1
+fi
 ITERATIONS="${4:-10}"
 SUFFIX="${5:-}"
 
-# JSON Output-Datei (relativ zum medgraph Verzeichnis, da Gradle dort läuft)
+# JSON Output-Datei
 if [ -n "$SUFFIX" ]; then
-    JSON_OUTPUT="scd_matching_performance_${SUFFIX}.json"
+    JSON_OUTPUT="output/performance/scd_matching_performance_${SUFFIX}.json"
 else
-    JSON_OUTPUT="scd_matching_performance.json"
+    JSON_OUTPUT="output/performance/scd_matching_performance.json"
 fi
 
 echo "=== Performance-Test: SCD Matching ==="
 echo "  Datenbank URI: $DB_URI"
 echo "  Benutzer: $DB_USER"
 echo "  Anzahl Durchläufe: $ITERATIONS"
-echo "  JSON Output: medgraph/$JSON_OUTPUT"
+echo "  JSON Output: $JSON_OUTPUT"
 if [ -n "$SUFFIX" ]; then
     echo "  Suffix: $SUFFIX"
 fi
@@ -56,7 +63,7 @@ EXIT_CODE=$?
 if [ $EXIT_CODE -eq 0 ]; then
     echo ""
     echo "✓ Performance-Test erfolgreich abgeschlossen!"
-    echo "  Ergebnisse: medgraph/$JSON_OUTPUT"
+    echo "  Ergebnisse: $JSON_OUTPUT"
 else
     echo ""
     echo "✗ Performance-Test fehlgeschlagen (Exit-Code: $EXIT_CODE)"

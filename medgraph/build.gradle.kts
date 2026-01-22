@@ -44,6 +44,8 @@ application {
 
 // Configure run task to pass system properties
 tasks.named<JavaExec>("run") {
+    // Set working directory to project root to ensure output files are saved in the correct location
+    workingDir = project.rootProject.projectDir
     // Pass rxnorm.db.path from gradle property or environment variable
     val dbPath = project.findProperty("rxnorm.db.path") as String?
         ?: System.getenv("RXNORM_DB_PATH")
@@ -77,6 +79,8 @@ tasks.register<JavaExec>("runAnalyzeDoseFormMapping") {
     description = "Runs the AnalyzeDoseFormMapping tool"
     mainClass.set("de.medizininformatikinitiative.medgraph.tools.AnalyzeDoseFormMapping")
     classpath = sourceSets["main"].runtimeClasspath
+    // Set working directory to project root to ensure output files are saved in the correct location
+    workingDir = project.rootProject.projectDir
     // Pass rxnorm.db.path system property
     val dbPath = project.findProperty("rxnorm.db.path") as String?
         ?: System.getenv("RXNORM_DB_PATH")
@@ -90,6 +94,8 @@ tasks.register<JavaExec>("runAnalyzeScdMatchingFailures") {
     description = "Runs the AnalyzeScdMatchingFailures tool"
     mainClass.set("de.medizininformatikinitiative.medgraph.tools.AnalyzeScdMatchingFailures")
     classpath = sourceSets["main"].runtimeClasspath
+    // Set working directory to project root to ensure output files are saved in the correct location
+    workingDir = project.rootProject.projectDir
     // Pass rxnorm.db.path system property
     val dbPath = project.findProperty("rxnorm.db.path") as String?
         ?: System.getenv("RXNORM_DB_PATH")
@@ -102,6 +108,8 @@ tasks.register<JavaExec>("runAnalyzeDrugsWithRxCUIs") {
     description = "Runs the AnalyzeDrugsWithRxCUIs CLI tool"
     mainClass.set("de.medizininformatikinitiative.medgraph.tools.AnalyzeDrugsWithRxCUIs")
     classpath = sourceSets["main"].runtimeClasspath
+    // Set working directory to project root to ensure output files are saved in the correct location
+    workingDir = project.rootProject.projectDir
     standardInput = System.`in`
     args = project.properties["args"]?.toString()?.split(" ") ?: listOf()
     // Pass rxnorm.db.path system property
@@ -116,6 +124,8 @@ tasks.register<JavaExec>("runPerformanceTestSCDMatching") {
     description = "Runs the PerformanceTestSCDMatching tool"
     mainClass.set("de.medizininformatikinitiative.medgraph.tools.PerformanceTestSCDMatching")
     classpath = sourceSets["main"].runtimeClasspath
+    // Set working directory to project root to ensure output files are saved in the correct location
+    workingDir = project.rootProject.projectDir
     standardInput = System.`in`
     args = project.properties["args"]?.toString()?.split(" ") ?: listOf()
     // Pass rxnorm.db.path system property

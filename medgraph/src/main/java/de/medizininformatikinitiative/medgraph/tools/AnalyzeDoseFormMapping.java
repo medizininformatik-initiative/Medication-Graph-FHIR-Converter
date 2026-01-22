@@ -10,6 +10,14 @@ import org.neo4j.driver.Record;
 import org.neo4j.driver.Result;
 import org.neo4j.driver.Session;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
+import java.io.FileWriter;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -31,7 +39,13 @@ public class AnalyzeDoseFormMapping {
     public static void main(String[] args) {
         String uri = args.length > 0 ? args[0] : "bolt://localhost:7687";
         String user = args.length > 1 ? args[1] : "neo4j";
-        String password = args.length > 2 ? args[2] : "7o7MP~8_)h~0";
+        String password = args.length > 2 ? args[2] : System.getenv().getOrDefault("NEO4J_PASSWORD", "");
+        if (password.isEmpty()) {
+            System.err.println("WARNING: No Neo4j password provided!");
+            System.err.println("Please set NEO4J_PASSWORD environment variable or pass as command line argument.");
+            System.exit(1);
+        }
+        String jsonOutputFile = args.length > 3 ? args[3] : null;
         
         try (Driver driver = GraphDatabase.driver(uri, AuthTokens.basic(user, password));
              Session session = driver.session()) {
@@ -70,6 +84,16 @@ public class AnalyzeDoseFormMapping {
             printEdqmDoseFormBreakdown(edqmStats);
             printMappingSuccessFailure(edqmStats);
             printUnmappableEdqmForms(edqmStats);
+            
+            // Speichere JSON, falls gewünscht
+            if (jsonOutputFile != null && !jsonOutputFile.isBlank()) {
+                try {
+                    saveResultsToJson(totalDrugsWithEdqm, totalDrugsWithMapping, coverage, edqmStats, jsonOutputFile);
+                    System.out.println("\nResults saved to: " + jsonOutputFile);
+                } catch (IOException e) {
+                    System.err.println("Error saving JSON: " + e.getMessage());
+                }
+            }
             
         } catch (Exception e) {
             System.err.println("Fehler: " + e.getMessage());
@@ -255,6 +279,175 @@ public class AnalyzeDoseFormMapping {
         }
         
         System.out.println("=".repeat(60));
+    }
+    
+    /**
+     * Speichert die Analyseergebnisse in einer JSON-Datei.
+     * <p>
+     * Wenn der Dateiname ein relativer Pfad ist, wird er relativ zum Projekt-Root aufgelöst
+     * (durch Finden des Verzeichnisses, das build.gradle.kts oder gradlew enthält).
+     *
+     * @param totalDrugsWithEdqm Gesamtanzahl Drugs mit EDQM Dose Form
+     * @param totalDrugsWithMapping Anzahl Drugs mit erfolgreichem RxNorm Mapping
+     * @param coverage Coverage in Prozent
+     * @param edqmStats Statistiken pro EDQM Dose Form
+     * @param filename Pfad zur JSON-Ausgabedatei (relative Pfade werden vom Projekt-Root aufgelöst)
+     * @throws IOException wenn das Schreiben der Datei fehlschlägt
+     */
+    private static void saveResultsToJson(long totalDrugsWithEdqm, long totalDrugsWithMapping,
+                                          double coverage, Map<String, EdqmDoseFormStats> edqmStats,
+                                          String filename) throws IOException {
+        Path filePath = Paths.get(filename);
+        
+        // If path is relative, resolve it relative to project root
+        if (!filePath.isAbsolute()) {
+            Path projectRoot = findProjectRoot();
+            if (projectRoot != null) {
+                filePath = projectRoot.resolve(filePath).normalize();
+            } else {
+                // Fallback: If project root not found, try to resolve from current directory
+                // and go up until we find a directory with "output" subdirectory or build.gradle.kts
+                Path current = Paths.get(System.getProperty("user.dir"));
+                Path root = current.getRoot();
+                
+                while (current != null && !current.equals(root)) {
+                    Path outputDir = current.resolve("output");
+                    Path buildFile = current.resolve("build.gradle.kts");
+                    Path gradlew = current.resolve("gradlew");
+                    
+                    // Check if this looks like the project root
+                    if ((Files.exists(outputDir) && Files.isDirectory(outputDir)) ||
+                        Files.exists(buildFile) || Files.exists(gradlew)) {
+                        filePath = current.resolve(filename).normalize();
+                        break;
+                    }
+                    current = current.getParent();
+                }
+                
+                // If still not found, use current directory
+                if (filePath.equals(Paths.get(filename))) {
+                    filePath = Paths.get(System.getProperty("user.dir")).resolve(filename).normalize();
+                }
+            }
+        }
+        
+        Path parentDir = filePath.getParent();
+        if (parentDir != null && !Files.exists(parentDir)) {
+            Files.createDirectories(parentDir);
+        }
+        
+        Map<String, Object> jsonData = new LinkedHashMap<>();
+        
+        // Summary
+        Map<String, Object> summary = new LinkedHashMap<>();
+        summary.put("totalDrugsWithEdqm", totalDrugsWithEdqm);
+        summary.put("totalDrugsWithMapping", totalDrugsWithMapping);
+        summary.put("coverage", coverage);
+        jsonData.put("summary", summary);
+        
+        // Mapping success/failure
+        long totalEdqmForms = edqmStats.size();
+        long mappedForms = edqmStats.values().stream()
+                .filter(s -> s.mappedDrugs > 0)
+                .count();
+        long unmappedForms = totalEdqmForms - mappedForms;
+        
+        long mappedDrugs = edqmStats.values().stream()
+                .mapToLong(s -> s.mappedDrugs)
+                .sum();
+        long unmappedDrugs = totalDrugsWithEdqm - mappedDrugs;
+        
+        Map<String, Object> mappingSuccess = new LinkedHashMap<>();
+        Map<String, Object> byEdqmForms = new LinkedHashMap<>();
+        byEdqmForms.put("total", totalEdqmForms);
+        byEdqmForms.put("mapped", mappedForms);
+        byEdqmForms.put("unmapped", unmappedForms);
+        byEdqmForms.put("mappedPercentage", (double) mappedForms / totalEdqmForms * 100.0);
+        byEdqmForms.put("unmappedPercentage", (double) unmappedForms / totalEdqmForms * 100.0);
+        
+        Map<String, Object> byDrugs = new LinkedHashMap<>();
+        byDrugs.put("total", totalDrugsWithEdqm);
+        byDrugs.put("mapped", mappedDrugs);
+        byDrugs.put("unmapped", unmappedDrugs);
+        byDrugs.put("mappedPercentage", (double) mappedDrugs / totalDrugsWithEdqm * 100.0);
+        byDrugs.put("unmappedPercentage", (double) unmappedDrugs / totalDrugsWithEdqm * 100.0);
+        
+        mappingSuccess.put("byEdqmForms", byEdqmForms);
+        mappingSuccess.put("byDrugs", byDrugs);
+        jsonData.put("mappingSuccess", mappingSuccess);
+        
+        // EDQM Dose Form statistics
+        List<Map<String, Object>> edqmFormStats = new ArrayList<>();
+        List<EdqmDoseFormStats> sortedStats = edqmStats.values().stream()
+                .sorted((a, b) -> Long.compare(b.totalDrugs, a.totalDrugs))
+                .collect(Collectors.toList());
+        
+        for (EdqmDoseFormStats stats : sortedStats) {
+            Map<String, Object> formData = new LinkedHashMap<>();
+            formData.put("edqmCode", stats.edqmCode);
+            formData.put("edqmName", stats.edqmName);
+            formData.put("totalDrugs", stats.totalDrugs);
+            formData.put("mappedDrugs", stats.mappedDrugs);
+            formData.put("coverage", stats.totalDrugs > 0 
+                    ? (double) stats.mappedDrugs / stats.totalDrugs * 100.0 
+                    : 0.0);
+            edqmFormStats.add(formData);
+        }
+        jsonData.put("edqmDoseForms", edqmFormStats);
+        
+        // Unmappable EDQM Dose Forms
+        List<Map<String, Object>> unmappableForms = new ArrayList<>();
+        List<EdqmDoseFormStats> unmappable = edqmStats.values().stream()
+                .filter(s -> s.mappedDrugs == 0)
+                .sorted((a, b) -> Long.compare(b.totalDrugs, a.totalDrugs))
+                .collect(Collectors.toList());
+        
+        for (EdqmDoseFormStats stats : unmappable) {
+            Map<String, Object> formData = new LinkedHashMap<>();
+            formData.put("edqmCode", stats.edqmCode);
+            formData.put("edqmName", stats.edqmName);
+            formData.put("totalDrugs", stats.totalDrugs);
+            unmappableForms.add(formData);
+        }
+        jsonData.put("unmappableEdqmForms", unmappableForms);
+        
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();
+        try (FileWriter writer = new FileWriter(filePath.toFile())) {
+            gson.toJson(jsonData, writer);
+        }
+    }
+    
+    /**
+     * Findet das Projekt-Root-Verzeichnis durch Suche nach build.gradle.kts oder gradlew.
+     *
+     * @return Pfad zum Projekt-Root oder null, wenn nicht gefunden
+     */
+    private static Path findProjectRoot() {
+        Path current = Paths.get(System.getProperty("user.dir"));
+        Path root = current.getRoot();
+        
+        // Wenn wir bereits im Projekt-Root sind (build.gradle.kts oder gradlew vorhanden)
+        Path buildFile = current.resolve("build.gradle.kts");
+        Path gradlew = current.resolve("gradlew");
+        if (Files.exists(buildFile) || Files.exists(gradlew)) {
+            return current;
+        }
+        
+        // Wenn wir in einem Unterverzeichnis sind (z.B. medgraph/), gehe nach oben
+        while (current != null && !current.equals(root)) {
+            buildFile = current.resolve("build.gradle.kts");
+            gradlew = current.resolve("gradlew");
+            
+            if (Files.exists(buildFile) || Files.exists(gradlew)) {
+                return current;
+            }
+            
+            current = current.getParent();
+        }
+        
+        // Fallback: Wenn nichts gefunden wird, verwende das aktuelle Verzeichnis
+        // und versuche relativ zu diesem zu arbeiten
+        return Paths.get(System.getProperty("user.dir"));
     }
     
     /**

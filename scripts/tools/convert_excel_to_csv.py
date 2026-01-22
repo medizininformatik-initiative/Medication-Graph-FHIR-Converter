@@ -1,12 +1,18 @@
 #!/usr/bin/env python3
 """
-Script to convert EDQM-RX.xlsx to edqm_rxnorm_dose_form_mapping.csv
+Utility script to convert EDQM-RX.xlsx to edqm_rxnorm_dose_form_mapping.csv.
 """
 
 import pandas as pd
 import os
+from pathlib import Path
+import sys
 
 def convert_excel_to_csv():
+    # Navigate to project root (assuming script is in scripts/tools/)
+    script_dir = Path(__file__).parent
+    project_root = script_dir.parent.parent
+    os.chdir(project_root)
    
     excel_path = "medgraph/src/main/resources/EDQM-RX.xlsx"
     csv_path = "medgraph/src/main/resources/edqm_rxnorm_dose_form_mapping.csv"

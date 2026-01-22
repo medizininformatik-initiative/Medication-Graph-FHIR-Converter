@@ -8,14 +8,22 @@ import java.math.RoundingMode;
 import java.util.Locale;
 
 /**
- * Utility to normalize UCUM-based units to canonical scales for matching:
- * - Mass numerator -> mg
- * - Volume denominator -> mL
- * - Scalar amounts become mg
- * - Ratio amounts become mg/mL
+ * Utility to normalize UCUM-based units to canonical scales for strength matching.
+ * <p>
+ * Normalization rules:
+ * <ul>
+ *   <li>Mass units (numerator) → mg</li>
+ *   <li>Volume units (denominator) → mL</li>
+ *   <li>Molar units → mmol</li>
+ *   <li>Scalar amounts → mg</li>
+ *   <li>Ratio amounts → mg/mL (or mmol/mL for molar ratios)</li>
+ * </ul>
+ * <p>
+ * Only a pragmatic subset of UCUM codes is handled. Unknown units are returned as-is
+ * so that the caller can log and track coverage. Used by {@link RxNormProductMatcher}
+ * to normalize drug strengths for comparison with RxNorm SCD candidates.
  *
- * Only a pragmatic subset of UCUM codes is handled here; unknown units are returned as-is
- * so that the caller can log and track coverage.
+ * @author Lucy Strüfing
  */
 public final class UcumNormalizer {
 
@@ -23,28 +31,38 @@ public final class UcumNormalizer {
 
     private UcumNormalizer() {}
 
+    /**
+     * Normalizes a strength value with UCUM unit to canonical form.
+     * <p>
+     * Handles both scalar units (e.g., "mg", "g", "mmol") and ratio units (e.g., "mg/mL", "g/L").
+     * Supports mass, volume, molar, time, and area units. Unknown units are returned unchanged.
+     *
+     * @param from the primary strength value (required)
+     * @param to optional upper bound for range values (null for single values)
+     * @param ucum the UCUM unit string (e.g., "mg", "mg/mL", "mmol/L")
+     * @return normalized strength with canonical units, or original values if unit is unknown
+     */
     public static NormalizedStrength normalize(BigDecimal from, @Nullable BigDecimal to, @Nullable String ucum) {
-        if (from == null || ucum == null) return new NormalizedStrength(from, to, null, null);
+        if (from == null || ucum == null) {
+            return new NormalizedStrength(from, to, null, null);
+        }
 
         String u = ucum.trim();
-
 
         // Ratio units (e.g., mg/mL, g/L, ug/mL, mcg/h)
         int slash = u.indexOf('/');
         if (slash > 0) {
             String num = u.substring(0, slash);
             String den = u.substring(slash + 1);
-            
-  
+
+            // Mass/mass ratios (e.g., mg/mg) -> normalize both to mg
             Factor fn = factorToMg(num);
             Factor fd = factorToMg(den);
             if (fn.known && fd.known) {
-                // For mass/mass ratios, we keep the value as-is (it's already a ratio)
-                // But we normalize both to mg for consistency, so the ratio stays the same
                 return new NormalizedStrength(from, to, "mg", "mg");
             }
-            
-            // Volume denominators (mg/mL, g/L, etc.)
+
+            // Mass/volume ratios (e.g., mg/mL, g/L) -> normalize to mg/mL
             fn = factorToMg(num);
             Factor fdVol = factorToMilliLiter(den);
             if (fn.known && fdVol.known) {
@@ -53,38 +71,37 @@ public final class UcumNormalizer {
                 BigDecimal toN = to != null ? to.multiply(f, MC) : null;
                 return new NormalizedStrength(fromN, toN, "mg", "mL");
             }
-            // Volume denominators with molar numerator (e.g., mol/L, mmol/L, umol/mL)
+
+            // Molar/volume ratios (e.g., mol/L, mmol/L, umol/mL) -> normalize to mmol/mL
             Factor fmmol = factorToMilliMole(num);
-            if (fmmol.known && fd.known) {
-                BigDecimal f = fmmol.multiplier.divide(fd.multiplier, MC);
+            if (fmmol.known && fdVol.known) {
+                BigDecimal f = fmmol.multiplier.divide(fdVol.multiplier, MC);
                 BigDecimal fromN = from.multiply(f, MC);
                 BigDecimal toN = to != null ? to.multiply(f, MC) : null;
-                // Canonical: mmol per mL (aligns with volume canonicalization to mL)
                 return new NormalizedStrength(fromN, toN, "mmol", "mL");
             }
-            // Time denominators (e.g., mcg/h, mg/d): normalize numerator to mg, keep denominator unchanged
-            // Note: We only check if denominator is a time unit, but don't normalize it
+
+            // Mass/time ratios (e.g., mcg/h, mg/d) -> normalize numerator to mg, preserve time unit
             Factor ft = factorToHour(den);
             if (fn.known && ft.known) {
-                // Only normalize the numerator (mass unit), denominator stays as-is
                 BigDecimal fromN = from.multiply(fn.multiplier, MC);
                 BigDecimal toN = to != null ? to.multiply(fn.multiplier, MC) : null;
-                // Preserve the original time unit (h, d, etc.) as denominator
                 return new NormalizedStrength(fromN, toN, "mg", den.toLowerCase(Locale.ROOT));
             }
-            // Area denominators (e.g., mg/cm2): normalize numerator to mg, keep denominator unchanged
+
+            // Mass/area ratios (e.g., mg/cm2) -> normalize numerator to mg, preserve area unit
             Factor fa = factorToCm2(den);
             if (fn.known && fa.known) {
-                // Only normalize the numerator (mass unit), denominator stays as-is
                 BigDecimal fromN = from.multiply(fn.multiplier, MC);
                 BigDecimal toN = to != null ? to.multiply(fn.multiplier, MC) : null;
                 return new NormalizedStrength(fromN, toN, "mg", "cm2");
             }
-            // Unknown ratio -> return as-is to be handled by caller
+
+            // Unknown ratio -> return as-is
             return new NormalizedStrength(from, to, u, null);
         }
 
-        // Scalar mass units -> mg
+        // Scalar mass units -> normalize to mg
         Factor fm = factorToMg(u);
         if (fm.known) {
             BigDecimal fromN = from.multiply(fm.multiplier, MC);
@@ -92,7 +109,7 @@ public final class UcumNormalizer {
             return new NormalizedStrength(fromN, toN, "mg", null);
         }
 
-        // Scalar molar units -> mmol
+        // Scalar molar units -> normalize to mmol
         Factor fmm = factorToMilliMole(u);
         if (fmm.known) {
             BigDecimal fromN = from.multiply(fmm.multiplier, MC);
@@ -100,7 +117,7 @@ public final class UcumNormalizer {
             return new NormalizedStrength(fromN, toN, "mmol", null);
         }
 
-        // Scalar volume units -> mL 
+        // Scalar volume units -> normalize to mL
         Factor fv = factorToMilliLiter(u);
         if (fv.known) {
             BigDecimal fromN = from.multiply(fv.multiplier, MC);
@@ -108,10 +125,18 @@ public final class UcumNormalizer {
             return new NormalizedStrength(fromN, toN, "mL", null);
         }
 
-        // Unknown -> return as-is; 
+        // Unknown unit -> return as-is
         return new NormalizedStrength(from, to, u, null);
     }
 
+    /**
+     * Calculates conversion factor from mass unit to milligrams.
+     * <p>
+     * Supported units: mg, g, kg, ug/µg/mcg, ng
+     *
+     * @param ucum the UCUM mass unit string
+     * @return conversion factor (multiplier to convert to mg), or unknown if unit not recognized
+     */
     private static Factor factorToMg(String ucum) {
         String u = ucum.trim();
         String l = u.toLowerCase(Locale.ROOT);
@@ -123,6 +148,14 @@ public final class UcumNormalizer {
         return Factor.unknown();
     }
 
+    /**
+     * Calculates conversion factor from volume unit to milliliters.
+     * <p>
+     * Supported units: ml, l, ul/µl/microl, nl/nanol, dl/decil
+     *
+     * @param ucum the UCUM volume unit string
+     * @return conversion factor (multiplier to convert to mL), or unknown if unit not recognized
+     */
     private static Factor factorToMilliLiter(String ucum) {
         String u = ucum.trim();
         String l = u.toLowerCase(Locale.ROOT);
@@ -134,6 +167,14 @@ public final class UcumNormalizer {
         return Factor.unknown();
     }
 
+    /**
+     * Calculates conversion factor from time unit to hours.
+     * <p>
+     * Supported units: h/hr/hour, d/day, 24.h/24.hr/24.hour, min/minute, s/sec/second
+     *
+     * @param ucum the UCUM time unit string
+     * @return conversion factor (multiplier to convert to hours), or unknown if unit not recognized
+     */
     private static Factor factorToHour(String ucum) {
         String u = ucum.trim();
         String l = u.toLowerCase(Locale.ROOT);
@@ -145,6 +186,14 @@ public final class UcumNormalizer {
         return Factor.unknown();
     }
 
+    /**
+     * Calculates conversion factor from area unit to cm².
+     * <p>
+     * Supported units: cm2, cm²
+     *
+     * @param ucum the UCUM area unit string
+     * @return conversion factor (always 1.0 for recognized units), or unknown if unit not recognized
+     */
     private static Factor factorToCm2(String ucum) {
         String u = ucum.trim();
         String l = u.toLowerCase(Locale.ROOT);
@@ -153,8 +202,12 @@ public final class UcumNormalizer {
     }
 
     /**
-     * Converts molar units to mmol scaling.
-     * Supported: mol -> 1000, mmol -> 1, umol/µmol -> 0.001, nmol -> 0.000001
+     * Calculates conversion factor from molar unit to millimoles.
+     * <p>
+     * Supported units: mol, mmol, umol/µmol/μmol, nmol
+     *
+     * @param ucum the UCUM molar unit string
+     * @return conversion factor (multiplier to convert to mmol), or unknown if unit not recognized
      */
     private static Factor factorToMilliMole(String ucum) {
         String u = ucum.trim();
@@ -166,11 +219,37 @@ public final class UcumNormalizer {
         return Factor.unknown();
     }
 
+    /**
+     * Represents a unit conversion factor.
+     * <p>
+     * Used internally to track whether a unit is recognized and what multiplier
+     * is needed to convert it to the canonical form.
+     *
+     * @param known true if the unit is recognized and can be converted
+     * @param multiplier the conversion multiplier (multiply original value by this to get canonical value)
+     */
     private record Factor(boolean known, BigDecimal multiplier) {
-        static Factor one() { return new Factor(true, BigDecimal.ONE); }
-        static Factor of(double d) { return new Factor(true, new BigDecimal(d, MC)); }
-        static Factor unknown() { return new Factor(false, BigDecimal.ONE); }
+        /**
+         * Creates a factor with multiplier 1.0 (no conversion needed).
+         */
+        static Factor one() {
+            return new Factor(true, BigDecimal.ONE);
+        }
+
+        /**
+         * Creates a factor with the specified multiplier.
+         *
+         * @param d the conversion multiplier
+         */
+        static Factor of(double d) {
+            return new Factor(true, new BigDecimal(d, MC));
+        }
+
+        /**
+         * Creates an unknown factor (unit not recognized).
+         */
+        static Factor unknown() {
+            return new Factor(false, BigDecimal.ONE);
+        }
     }
 }
-
-

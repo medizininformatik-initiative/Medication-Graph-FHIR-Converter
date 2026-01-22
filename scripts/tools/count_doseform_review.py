@@ -1,7 +1,19 @@
+#!/usr/bin/env python3
+"""
+Utility script to count "ok" entries and mappings in the dose form review CSV.
+"""
+
 import csv
 from pathlib import Path
+import os
+import sys
 
-# Pfad zur Datei anpassen, falls nötig
+# Navigate to project root (assuming script is in scripts/tools/)
+script_dir = Path(__file__).parent
+project_root = script_dir.parent.parent
+os.chdir(project_root)
+
+# Path to the review CSV file
 csv_path = Path("Reviews_Editha_LucyBA - Review2_DoseFormMapping.csv")
 
 ok_count = 0

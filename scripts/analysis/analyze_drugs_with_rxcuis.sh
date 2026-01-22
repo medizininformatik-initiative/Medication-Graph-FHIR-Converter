@@ -18,9 +18,11 @@
 #   ./analyze_drugs_with_rxcuis.sh "" "" "" "paper_mapping"          # Standard-DB, aber mit Suffix "paper_mapping"
 #   ./analyze_drugs_with_rxcuis.sh bolt://localhost:7687 neo4j "pass" "custom"  # Alle Parameter
 
-# Wechsle zum Projekt-Root (wo das Skript liegt)
+# Results for CQ3 Table 4.5 
+
+# Wechsle zum Projekt-Root
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-cd "$SCRIPT_DIR"
+cd "$SCRIPT_DIR/../.."
 
 # Setze Java 21 für Gradle
 export JAVA_HOME="/Users/lucy/Library/Java/JavaVirtualMachines/corretto-21.0.5/Contents/Home"
@@ -28,20 +30,27 @@ export JAVA_HOME="/Users/lucy/Library/Java/JavaVirtualMachines/corretto-21.0.5/C
 # Parameter mit Standardwerten
 DB_URI="${1:-bolt://localhost:7687}"
 DB_USER="${2:-neo4j}"
-DB_PASSWORD="${3:-7o7MP~8_)h~0}"
+DB_PASSWORD="${3:-${NEO4J_PASSWORD:-}}"
+
+# Prüfe, ob Passwort gesetzt ist
+if [ -z "$DB_PASSWORD" ]; then
+    echo "FEHLER: Kein Neo4j-Passwort angegeben!"
+    echo "Bitte setze die Umgebungsvariable NEO4J_PASSWORD oder übergebe das Passwort als drittes Argument."
+    exit 1
+fi
 SUFFIX="${4:-}"
 
-# JSON Output-Datei (relativ zum medgraph Verzeichnis, da Gradle dort läuft)
+# JSON Output-Datei
 if [ -n "$SUFFIX" ]; then
-    JSON_OUTPUT="drugs_with_rxcuis_analysis_${SUFFIX}.json"
+    JSON_OUTPUT="output/analysis/drugs_with_rxcuis_analysis_${SUFFIX}.json"
 else
-    JSON_OUTPUT="drugs_with_rxcuis_analysis.json"
+    JSON_OUTPUT="output/analysis/drugs_with_rxcuis_analysis.json"
 fi
 
 echo "=== Analyse: Drugs mit RxCUIs und SCD Matching ==="
 echo "  Datenbank URI: $DB_URI"
 echo "  Benutzer: $DB_USER"
-echo "  JSON Output: medgraph/$JSON_OUTPUT"
+echo "  JSON Output: $JSON_OUTPUT"
 if [ -n "$SUFFIX" ]; then
     echo "  Suffix: $SUFFIX"
 fi
@@ -54,11 +63,11 @@ EXIT_CODE=$?
 
 if [ $EXIT_CODE -eq 0 ]; then
     echo ""
-    echo "✓ Analyse erfolgreich abgeschlossen!"
-    echo "  Ergebnisse: medgraph/$JSON_OUTPUT"
+    echo "[OK] Analyse erfolgreich abgeschlossen!"
+    echo "  Ergebnisse: $JSON_OUTPUT"
 else
     echo ""
-    echo "✗ Analyse fehlgeschlagen (Exit-Code: $EXIT_CODE)"
+    echo "[FEHLER] Analyse fehlgeschlagen (Exit-Code: $EXIT_CODE)"
     exit $EXIT_CODE
 fi
 

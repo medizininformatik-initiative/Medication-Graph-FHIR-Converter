@@ -20,6 +20,10 @@
 #   ./run_fhir_export.sh /tmp/fhir-out1 bolt://localhost:7687 neo4j "passwort"  # Alle Produkte mit expliziter DB-Verbindung
 #   ./run_fhir_export.sh /tmp/fhir-out1 "" "" "" 100 ~/Desktop/test.txt  # Mit benutzerdefinierter Log-Datei
 
+# Wechsle zum Projekt-Root
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+cd "$SCRIPT_DIR/../.."
+
 # Setze Java 21 für Gradle (der Code wurde mit Java 21 kompiliert)
 export JAVA_HOME="/Users/lucy/Library/Java/JavaVirtualMachines/corretto-21.0.5/Contents/Home"
 

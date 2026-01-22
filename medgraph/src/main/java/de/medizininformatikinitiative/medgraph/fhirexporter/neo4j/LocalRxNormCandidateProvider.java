@@ -10,11 +10,15 @@ import java.util.stream.Collectors;
 
 /**
  * Local SQLite-backed provider for RxNorm candidates.
- * Minimal implementation:
- * - SCD candidates via RXNREL where RELA='has_ingredient' and RXCUI2 in ingredient RXCUIs
- * - SBD candidates omitted (fallback in matcher uses SCD)
- * - Ingredient RXCUI resolve by name (prefer PIN over IN)
- * - PIN/IN compatibility via RELA ('has_precise_ingredient' / 'precise_ingredient_of')
+ * <p>
+ * Provides SCD (Semantic Clinical Drug) candidates by querying a local RxNorm SQLite database dump.
+ * Handles PIN/IN compatibility by resolving Precise Ingredient Names to Ingredient Names via
+ * 'has_form' relationships.
+ * <p>
+ * Note: SBD (Semantic Branded Drug) candidate lookup is not implemented - the method
+ * {@link #findSbdCandidates(GraphDrug, RxNormProductMatcher.MatchResult)} returns an empty list
+ *
+ * @author Lucy Strüfing:)
  */
 public final class LocalRxNormCandidateProvider implements RxNormProductMatcher.RxNormCandidateProvider {
 
@@ -24,6 +28,12 @@ public final class LocalRxNormCandidateProvider implements RxNormProductMatcher.
 	private final Map<String, String> scdToDoseForm = new HashMap<>();
 	private final Map<String, StrengthCacheEntry> scdToStrengths = new HashMap<>();
 
+	/**
+	 * Creates a new provider that connects to the specified RxNorm SQLite database.
+	 *
+	 * @param sqliteDbPath path to the SQLite database file
+	 * @throws RuntimeException if the database connection fails
+	 */
 	public LocalRxNormCandidateProvider(@NotNull String sqliteDbPath) {
 		this.jdbcUrl = "jdbc:sqlite:" + sqliteDbPath;
 		try {
@@ -33,6 +43,15 @@ public final class LocalRxNormCandidateProvider implements RxNormProductMatcher.
 		}
 	}
 
+	/**
+	 * Finds SCD (Semantic Clinical Drug) candidates that match the given ingredients and dose form.
+	 * Resolves PINs to INs, queries the database for matching SCDs, filters by dose form,
+	 * and extracts strengths and ingredients for each candidate.
+	 *
+	 * @param ingredients list of ingredient matches with RxCUIs and normalized strengths
+	 * @param doseForm expected dose form (e.g., "oral tablet", "injection")
+	 * @return list of SCD candidates, empty if none found
+	 */
 	@Override
 	public @NotNull List<RxNormProductMatcher.RxNormCandidate> findScdCandidates(
 			@NotNull List<RxNormProductMatcher.IngredientMatch> ingredients,
@@ -50,26 +69,10 @@ public final class LocalRxNormCandidateProvider implements RxNormProductMatcher.
 		System.out.println("[LocalRxNormCandidateProvider] DEBUG: Searching SCDs for RxCUIs: " + ingredientRxcuis + 
 				" (ingredients: " + ingredients.stream().map(im -> im.substanceName).collect(Collectors.joining(", ")) + ")");
 
-		// Debug/diagnostic counts for SCDCs/SCDs per ingredient have been disabled for performance.
-		// int scdcCount = countScdcsForIngredients(ingredientRxcuis);
-		// System.out.println("[LocalRxNormCandidateProvider] DEBUG: Found " + scdcCount + " SCDCs containing these ingredients");
-		// if (ingredientRxcuis.size() > 1) {
-		//     for (String ingRxcui : ingredientRxcuis) {
-		//         int singleIngScdcCount = countScdcsForIngredients(Collections.singleton(ingRxcui));
-		//         int singleIngScdCount = countScdsForSingleIngredient(ingRxcui);
-		//         System.out.println("[LocalRxNormCandidateProvider] DEBUG:   Ingredient " + ingRxcui + ": " +
-		//                 singleIngScdcCount + " SCDCs, " + singleIngScdCount + " SCDs");
-		//     }
-		// }
-
 		final String placeholders = ingredientRxcuis.stream().map(x -> "?").collect(Collectors.joining(","));
-		// RxNorm hierarchy: IN -> SCDC -> SCD
-		// Find SCDs that contain all expected ingredients (may contain additional ingredients)
-		// The exact match validation (no additional ingredients) is done in RxNormProductMatcher.validateCandidate()
-		// 
-		// PIN/IN handling: PINs don't have direct relationships to SCDCs. We need to:
-		// 1. Convert PINs to INs via 'has_form' relationship
-		// 2. Then find SCDCs for the INs via 'has_ingredient' relationship
+		
+		// Query resolves PINs to INs via 'has_form' relationships, then finds SCDs containing all ingredients.
+		// The RxNorm hierarchy is: IN -> SCDC -> SCD. Exact ingredient matching is validated later.
 		final String sql = """
 				WITH resolved_ingredients AS (
 					-- Direct INs (already ingredient names)
@@ -119,13 +122,9 @@ public final class LocalRxNormCandidateProvider implements RxNormProductMatcher.
 		List<String> scdRxcuis = new ArrayList<>();
 		try (PreparedStatement ps = conn.prepareStatement(sql)) {
 			int idx = 1;
-			// Set parameters for first placeholder (INs)
 			for (String r : ingredientRxcuis) ps.setString(idx++, r);
-			// Set parameters for second placeholder (PINs for has_form conversion)
 			for (String r : ingredientRxcuis) ps.setString(idx++, r);
-			// Set parameters for third placeholder (PINs directly)
 			for (String r : ingredientRxcuis) ps.setString(idx++, r);
-			// Set parameter for HAVING COUNT
 			ps.setInt(idx, ingredientRxcuis.size());
 			try (ResultSet rs = ps.executeQuery()) {
 				while (rs.next()) {
@@ -140,30 +139,16 @@ public final class LocalRxNormCandidateProvider implements RxNormProductMatcher.
 		
 		if (scdRxcuis.isEmpty()) {
 			System.out.println("[LocalRxNormCandidateProvider] DEBUG: No SCD RxCUIs found in RxNorm dump for these ingredients");
-			// Debug output and diagnostic queries for partial matches disabled for performance.
-			// System.out.println("[LocalRxNormCandidateProvider] DEBUG:   - SCDCs found: " + scdcCount);
-			// System.out.println("[LocalRxNormCandidateProvider] DEBUG:   - Required ingredients: " + ingredientRxcuis.size());
-			// if (ingredientRxcuis.size() > 1) {
-			//     int partialMatchCount = countScdsWithPartialIngredients(ingredientRxcuis);
-			//     System.out.println("[LocalRxNormCandidateProvider] DEBUG:   - SCDs with partial matches (some ingredients): " + partialMatchCount);
-			//     if (partialMatchCount > 0) {
-			//         System.out.println("[LocalRxNormCandidateProvider] DEBUG:     -> Problem: No SCD contains ALL " + ingredientRxcuis.size() + " ingredients simultaneously");
-			//     }
-			// }
-
 			return Collections.emptyList();
 		}
 
 		System.out.println("[LocalRxNormCandidateProvider] DEBUG: Found " + scdRxcuis.size() + " SCD RxCUIs");
 
-		// Step 1: Resolve dose forms early and filter out obviously incompatible candidates
+		// Filter candidates by dose form early to reduce processing overhead
 		List<String> filteredScdRxcuis = new ArrayList<>();
 		for (String scd : scdRxcuis) {
 			String candidateDoseForm = resolveDoseFormFromDb(scd);
-			// Keep candidates without known dose form; the matcher will decide later.
-			if (candidateDoseForm == null || candidateDoseForm.isBlank()) {
-				filteredScdRxcuis.add(scd);
-			} else if (doseForm.equalsIgnoreCase(candidateDoseForm)) {
+			if (candidateDoseForm == null || candidateDoseForm.isBlank() || doseForm.equalsIgnoreCase(candidateDoseForm)) {
 				filteredScdRxcuis.add(scd);
 			}
 		}
@@ -173,13 +158,13 @@ public final class LocalRxNormCandidateProvider implements RxNormProductMatcher.
 			return Collections.emptyList();
 		}
 
-		// Batch-fetch properties and ingredients only for remaining SCDs
+		// Batch-fetch properties and ingredients for remaining SCDs
 		Map<String, Properties> propertiesMap = batchGetProperties(filteredScdRxcuis);
 		Map<String, List<String>> ingredientsMap = batchGetIngredientsOfScds(filteredScdRxcuis);
 		System.out.println("[LocalRxNormCandidateProvider] DEBUG: Retrieved properties for " + propertiesMap.size() + 
 				" SCDs, ingredients for " + ingredientsMap.size() + " SCDs");
 
-		// Build candidates with fields: name, tty, ingredients, strengths and units
+		// Build candidate objects with name, TTY, ingredients, strengths, units, and dose form
 		List<RxNormProductMatcher.RxNormCandidate> result = new ArrayList<>();
 		int skippedNoProps = 0;
 		int skippedWrongTty = 0;
@@ -201,16 +186,12 @@ public final class LocalRxNormCandidateProvider implements RxNormProductMatcher.
 			Map<String, String> numeratorUnits = new HashMap<>();
 			Map<String, String> denominatorUnits = new HashMap<>();
 
-			// Prefer component-based strength extraction via SCDC names 
+			// Extract strengths from SCDC component names, fallback to full SCD name parsing
 			fillStrengthsFromComponents(scd, ingList, strengths, numeratorUnits, denominatorUnits);
-			// Fallback: heuristic parsing from the full SCD name if component-based extraction failed.
 			if (strengths.isEmpty()) {
 				fillStrengthsFromName(name, ingList, strengths, numeratorUnits, denominatorUnits);
 			}
 
-			// Derive the RxNorm dose form using local RxNorm relations (SCD → SCDF → DF).
-			// If this DB-based lookup fails, the candidate will have an empty/unknown dose form
-			// and will later be rejected by the matcher during dose-form validation.
 			String candidateDoseForm = resolveDoseFormFromDb(scd);
 
 			result.add(new RxNormProductMatcher.RxNormCandidate(
@@ -232,7 +213,6 @@ public final class LocalRxNormCandidateProvider implements RxNormProductMatcher.
 	
 	/**
 	 * Counts how many SCDCs contain the given ingredient RxCUIs.
-	 * Used for debugging purposes.
 	 */
 	private int countScdcsForIngredients(Set<String> ingredientRxcuis) {
 		if (ingredientRxcuis.isEmpty()) return 0;
@@ -366,14 +346,22 @@ public final class LocalRxNormCandidateProvider implements RxNormProductMatcher.
 		return 0;
 	}
 
+	/**
+	 * Finds SBD (Semantic Branded Drug) candidates for a drug based on an SCD match.
+	 * <p>
+	 * Currently not implemented!
+	 */
 	@Override
 	public @NotNull List<RxNormProductMatcher.RxNormCandidate> findSbdCandidates(
 			@NotNull GraphDrug drug, @NotNull RxNormProductMatcher.MatchResult scdBaseMatch) {
-		// Minimal implementation: return empty. Matcher will fallback to SCD as SBD.
 		return Collections.emptyList();
 	}
 
 
+	/**
+	 * Checks if two RxCUIs are compatible by determining if they resolve to the same IN root.
+	 * Traverses form_of/has_form relationships to find common ingredient roots.
+	 */
 	public boolean areRxcuisCompatible(@NotNull String a, @NotNull String b) {
 		if (a.equals(b)) return true;
 		final String sql = """
@@ -431,12 +419,9 @@ public final class LocalRxNormCandidateProvider implements RxNormProductMatcher.
 
 	/**
 	 * Finds the IN (Ingredient Name) root for a given RxCUI by traversing form_of/has_form relationships.
-	 * Returns null if the root cannot be determined.
-	 * Uses iterative approach (max 5 levels) to avoid recursive SQL complexity.
 	 */
 	@Nullable
 	public String findIngredientRoot(@NotNull String rxcui) {
-		// Check if it's already an IN
 		final String checkIn = """
 				SELECT RXCUI
 				FROM RXNCONSO
@@ -449,7 +434,7 @@ public final class LocalRxNormCandidateProvider implements RxNormProductMatcher.
 			ps.setString(1, rxcui);
 			try (ResultSet rs = ps.executeQuery()) {
 				if (rs.next()) {
-					return rxcui; // Already an IN
+					return rxcui;
 				}
 			}
 		} catch (SQLException e) {
@@ -457,7 +442,7 @@ public final class LocalRxNormCandidateProvider implements RxNormProductMatcher.
 			return null;
 		}
 
-		// Iteratively traverse form_of/has_form relationships (max 5 levels)
+		// Traverse form_of/has_form relationships iteratively (max 5 levels)
 		String current = rxcui;
 		for (int depth = 0; depth < 5; depth++) {
 			final String findNext = """
@@ -487,16 +472,18 @@ public final class LocalRxNormCandidateProvider implements RxNormProductMatcher.
 			}
 		}
 		
-		// If we can't find a root after max depth, return null
 		return null;
 	}
 
+	/**
+	 * Batch-fetches properties (STR, TTY) for multiple RxCUIs.
+	 * Chunks requests to stay within SQLite's parameter limit.
+	 */
 	private @NotNull Map<String, Properties> batchGetProperties(@NotNull Collection<String> rxcuis) {
 		if (rxcuis.isEmpty()) return Collections.emptyMap();
 		Map<String, Properties> map = new HashMap<>();
-		// SQLite has a limit of 999 parameters, so we chunk large batches
 		List<String> list = new ArrayList<>(rxcuis);
-		int chunkSize = 500; // Safe limit well below 999
+		int chunkSize = 500;
 		for (int i = 0; i < list.size(); i += chunkSize) {
 			List<String> chunk = list.subList(i, Math.min(i + chunkSize, list.size()));
 			String placeholders = chunk.stream().map(x -> "?").collect(Collectors.joining(","));
@@ -527,16 +514,18 @@ public final class LocalRxNormCandidateProvider implements RxNormProductMatcher.
 		return map;
 	}
 
+	/**
+	 * Batch-fetches ingredient RxCUIs for multiple SCDs.
+	 * Chunks requests to stay within SQLite's parameter limit.
+	 */
 	private @NotNull Map<String, List<String>> batchGetIngredientsOfScds(@NotNull Collection<String> scdRxcuis) {
 		if (scdRxcuis.isEmpty()) return Collections.emptyMap();
 		Map<String, List<String>> map = new HashMap<>();
-		// SQLite has a limit of 999 parameters, so we chunk large batches
 		List<String> list = new ArrayList<>(scdRxcuis);
-		int chunkSize = 500; // Safe limit well below 999
+		int chunkSize = 500;
 		for (int i = 0; i < list.size(); i += chunkSize) {
 			List<String> chunk = list.subList(i, Math.min(i + chunkSize, list.size()));
 			String placeholders = chunk.stream().map(x -> "?").collect(Collectors.joining(","));
-			// Batch query: Get all ingredients for all SCDs in one query
 			final String sql = """
 					SELECT DISTINCT scdc_rel.RXCUI1 AS scd_rxcui, ing.RXCUI2 AS ing_rxcui
 					FROM RXNREL scdc_rel
@@ -568,6 +557,12 @@ public final class LocalRxNormCandidateProvider implements RxNormProductMatcher.
 		return map;
 	}
 
+	/**
+	 * Fetches basic properties (name/STR and term type/TTY) for a single RxCUI.
+	 *
+	 * @param rxcui the RxCUI to look up
+	 * @return Properties object with STR and TTY, or null if not found
+	 */
 	private @Nullable Properties getProperties(@NotNull String rxcui) {
 		final String sql = """
 				SELECT STR, TTY
@@ -646,9 +641,10 @@ public final class LocalRxNormCandidateProvider implements RxNormProductMatcher.
 		return props != null ? props.getProperty("STR", "unknown") : "unknown";
 	}
 	
+	/**
+	 * Gets ingredient RxCUIs for a single SCD by traversing SCD -> SCDC -> IN hierarchy.
+	 */
 	private @NotNull List<String> getIngredientsOfScd(@NotNull String scdRxcui) {
-		// RxNorm hierarchy: SCD -> SCDC -> IN
-		// Find SCDCs that this SCD constitutes, then find INs that these SCDCs contain
 		final String sql = """
 				SELECT DISTINCT ing.RXCUI2 AS ing_rxcui
 				FROM RXNREL scdc_rel
@@ -675,13 +671,14 @@ public final class LocalRxNormCandidateProvider implements RxNormProductMatcher.
 		return list;
 	}
 
+	/**
+	 * Resolves the dose form for an SCD by traversing SCD -> SCDF -> DF relationships.
+	 * Results are cached to avoid repeated database queries.
+	 */
 	private @org.jetbrains.annotations.Nullable String resolveDoseFormFromDb(@NotNull String scdRxcui) {
-		// Check cache first
 		if (scdToDoseForm.containsKey(scdRxcui)) {
 			return scdToDoseForm.get(scdRxcui);
 		}
-
-		// Step 1: find SCDF RXCUIs related to this SCD
 		final String sqlScdf = """
 				SELECT DISTINCT rel.RXCUI2 AS scdf_rxcui
 				FROM RXNREL rel
@@ -705,10 +702,11 @@ public final class LocalRxNormCandidateProvider implements RxNormProductMatcher.
 			return null;
 		}
 		if (scdfRxcuis.isEmpty()) {
+			scdToDoseForm.put(scdRxcui, null);
 			return null;
 		}
 
-		// Step 2: for each SCDF, find a DF (dose form) concept and return its STR
+		// Find DF (dose form) concept for each SCDF
 		final String sqlDf = """
 				SELECT DISTINCT df_conso.STR AS df_name
 				FROM RXNREL rel
@@ -734,7 +732,6 @@ public final class LocalRxNormCandidateProvider implements RxNormProductMatcher.
 				}
 			} catch (SQLException e) {
 				System.err.println("[LocalRxNormCandidateProvider] SQL error (DF lookup): " + e.getMessage());
-				// try next SCDF
 			}
 		}
 		scdToDoseForm.put(scdRxcui, null);
@@ -743,8 +740,7 @@ public final class LocalRxNormCandidateProvider implements RxNormProductMatcher.
 
 	/**
 	 * Extracts strengths and units for each ingredient by walking the SCD → SCDC → IN
-	 * hierarchy in the local RxNorm dump and parsing the SCDC names.
-	 * Mirrors the conceptual approach of the API-based provider, but uses SQL only.
+	 * hierarchy and parsing SCDC names. Results are cached to avoid repeated parsing.
 	 */
 	private void fillStrengthsFromComponents(
 			@NotNull String scdRxcui,
@@ -754,7 +750,6 @@ public final class LocalRxNormCandidateProvider implements RxNormProductMatcher.
 			@NotNull Map<String, String> denominatorUnits) {
 		if (ingredientRxcuis.isEmpty()) return;
 
-		// Check cache first
 		StrengthCacheEntry cached = scdToStrengths.get(scdRxcui);
 		if (cached != null) {
 			strengths.putAll(cached.strengths());
@@ -764,8 +759,6 @@ public final class LocalRxNormCandidateProvider implements RxNormProductMatcher.
 		}
 
 		java.util.Set<String> ingredientSet = new java.util.HashSet<>(ingredientRxcuis);
-
-		// Step 1: find SCDC components and their ingredient RXCUIs for this SCD
 		final String sql = """
 				SELECT DISTINCT scdc_rel.RXCUI2 AS scdc_rxcui, ing.RXCUI2 AS ing_rxcui
 				FROM RXNREL scdc_rel
@@ -786,7 +779,7 @@ public final class LocalRxNormCandidateProvider implements RxNormProductMatcher.
 				while (rs.next()) {
 					String scdc = rs.getString("scdc_rxcui");
 					String ing = rs.getString("ing_rxcui");
-					if (!ingredientSet.contains(ing)) continue; // ignore components not relevant for our ingredients
+					if (!ingredientSet.contains(ing)) continue;
 					scdcToIngredients
 							.computeIfAbsent(scdc, k -> new ArrayList<>())
 							.add(ing);
@@ -800,7 +793,7 @@ public final class LocalRxNormCandidateProvider implements RxNormProductMatcher.
 			return;
 		}
 
-		// Step 2: for each SCDC, load its name (STR) and parse strengths from that name
+		// Load SCDC names and parse strengths from them
 		final String sqlScdcName = """
 				SELECT STR
 				FROM RXNCONSO
@@ -827,7 +820,6 @@ public final class LocalRxNormCandidateProvider implements RxNormProductMatcher.
 				}
 				if (scdcName == null || scdcName.isBlank()) continue;
 
-				// Re-use the existing name-based parser, but scoped to the ingredients of this SCDC
 				fillStrengthsFromName(scdcName, ingRxcuis, tmpStrengths, tmpNumeratorUnits, tmpDenominatorUnits);
 			}
 		} catch (SQLException e) {
@@ -835,7 +827,6 @@ public final class LocalRxNormCandidateProvider implements RxNormProductMatcher.
 		}
 
 		if (!tmpStrengths.isEmpty()) {
-			// Cache normalized strengths for this SCD
 			scdToStrengths.put(scdRxcui, new StrengthCacheEntry(
 					tmpStrengths, tmpNumeratorUnits, tmpDenominatorUnits
 			));
@@ -845,65 +836,57 @@ public final class LocalRxNormCandidateProvider implements RxNormProductMatcher.
 		}
 	}
 
+	/**
+	 * Parses strength values and units from SCD names using heuristic pattern matching.
+	 * Handles formats like "325 MG", "5 MG/ML", and multi-ingredient names separated by " / ".
+	 */
 	private void fillStrengthsFromName(
 			@NotNull String scdName,
 			@NotNull List<String> ingredientRxcuis,
 			@NotNull Map<String, BigDecimal> strengths,
 			@NotNull Map<String, String> numeratorUnits,
 			@NotNull Map<String, String> denominatorUnits) {
-		// Heuristic parser for SCD names like:
-		// "acetaminophen 325 MG / oxycodone hydrochloride 5 MG Oral Tablet"
-		// "ibuprofen 200 MG Oral Tablet"
-		// "betaxolol 5 MG/ML Ophthalmic Solution"
-		// Multi-ingredient often separated by " / "
-		// FIX: Split by " / " (with spaces) to preserve ratio units like "MG/ML"
-		// But we need to handle both: ingredient separators (" / ") and ratio units ("/")
-		String[] segments = scdName.split("\\s+/\\s+"); // Split by " / " (ingredient separator), not "/" (ratio unit)
+		// Split by " / " to separate ingredients while preserving ratio units like "MG/ML"
+		String[] segments = scdName.split("\\s+/\\s+");
 		Map<String, String> rxcuiToPrefName = getPreferredNames(ingredientRxcuis);
+		
 		for (String rxcui : ingredientRxcuis) {
 			String pref = rxcuiToPrefName.getOrDefault(rxcui, "");
 			if (pref.isEmpty()) continue;
-			// Find segment that mentions the preferred name (case-insensitive)
+			
+			// Find segment containing this ingredient's preferred name
 			String matchedSegment = null;
-			for (int i = 0; i < segments.length; i++) {
-				String seg = segments[i];
+			for (String seg : segments) {
 				if (seg.toLowerCase(Locale.ROOT).contains(pref.toLowerCase(Locale.ROOT))) {
 					matchedSegment = seg;
 					break;
 				}
 			}
 			if (matchedSegment == null && segments.length == 1) {
-				matchedSegment = segments[0]; // single-ingredient fallback
+				matchedSegment = segments[0];
 			}
 			if (matchedSegment == null) continue;
-			// Extract "<number> <unit>" optionally with "/<denomUnit>"
-			// e.g., "325 MG", "5 MG", "1 MG/ML", "100 MG/ML"
-			// FIX: Regex muss "MG/ML" richtig parsen - numerator="MG", denominator="ML"
-			// Lösung: Verwende einen Regex, der explizit zwischen numerator und denominator unterscheidet
-			// Pattern: number + whitespace + unit (stoppt vor Slash) + optional "/" + denominator
-			System.out.println("[DEBUG Parser] SCD name: '" + scdName + "', matchedSegment: '" + matchedSegment + "'");
+			
+			// Extract strength pattern: number + unit [+ "/" + denominator unit]
 			java.util.regex.Pattern pattern = java.util.regex.Pattern
 					.compile("(\\d+(?:[\\.,]\\d+)?)\\s+([A-Za-zµμ]{2,})(?:\\s*/\\s*([A-Za-zµμ]+))?");
 			java.util.regex.Matcher m = pattern.matcher(matchedSegment);
 			boolean found = m.find();
+			
 			if (!found) {
-				// Fallback: try without required whitespace (e.g., "400MG" or "400MG/ML")
-				// Use non-greedy match to stop before slash
+				// Fallback: try without whitespace (e.g., "400MG" or "400MG/ML")
 				pattern = java.util.regex.Pattern
 						.compile("(\\d+(?:[\\.,]\\d+)?)([A-Za-zµμ]{2,}?)(?:/\\s*([A-Za-zµμ]+))?");
 				m = pattern.matcher(matchedSegment);
 				found = m.find();
 			}
+			
 			if (found) {
 				String numStr = m.group(1).replace(',', '.');
 				String unit = m.group(2);
 				String denom = m.group(3);
 				
-				// DEBUG: Log parsing results
-				System.out.println("[DEBUG Parser] matchedSegment='" + matchedSegment + 
-								 "', numStr='" + numStr + "', unit='" + unit + "', denom='" + denom + "'");
-				
-				// FIX: Falls unit trotzdem "/" enthält (z.B. wenn Regex nicht richtig funktioniert hat)
+				// Handle edge case where unit contains "/" despite regex
 				if (unit != null && unit.contains("/")) {
 					int slashIdx = unit.indexOf('/');
 					String actualUnit = unit.substring(0, slashIdx);
@@ -912,10 +895,9 @@ public final class LocalRxNormCandidateProvider implements RxNormProductMatcher.
 					if (denom == null || denom.isEmpty()) {
 						denom = actualDenom;
 					}
-					System.out.println("[DEBUG Parser] Fixed: unit='" + unit + "', denom='" + denom + "'");
 				}
 				
-				// Normalize unit to uppercase for comparison
+				// Normalize units to uppercase
 				if (unit != null && !unit.isEmpty()) {
 					unit = unit.toUpperCase(Locale.ROOT);
 				}
@@ -929,21 +911,21 @@ public final class LocalRxNormCandidateProvider implements RxNormProductMatcher.
 					numeratorUnits.put(rxcui, unit);
 					if (denom != null && !denom.isEmpty()) {
 						denominatorUnits.put(rxcui, denom);
-						System.out.println("[DEBUG Parser] Stored: rxcui=" + rxcui + ", strength=" + val + 
-										 ", numerator=" + unit + ", denominator=" + denom);
-					} else {
-						System.out.println("[DEBUG Parser] Stored: rxcui=" + rxcui + ", strength=" + val + 
-										 ", numerator=" + unit + ", denominator=null");
 					}
 				} catch (NumberFormatException ignore) {
-					// leave empty if parsing fails
+					// Ignore parsing failures
 				}
-			} else {
-				System.out.println("[DEBUG Parser] No match found for segment: '" + matchedSegment + "'");
 			}
 		}
 	}
 
+	/**
+	 * Retrieves the preferred names (STR) from RxNorm for the given RxCUIs.
+	 * Used to match ingredient names in SCD names when parsing strengths.
+	 *
+	 * @param rxcuis collection of RxCUIs to look up
+	 * @return map from RxCUI to preferred name (STR)
+	 */
 	private Map<String, String> getPreferredNames(@NotNull Collection<String> rxcuis) {
 		if (rxcuis.isEmpty()) return Collections.emptyMap();
 		String placeholders = rxcuis.stream().map(x -> "?").collect(Collectors.joining(","));
