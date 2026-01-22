@@ -49,7 +49,7 @@ public class GraphDbPopulatorSupport {
 			"ARCHIVE_COMPANY.CSV",
 			"ARCHIVE_PACKAGE.CSV",
 			"ARCHIVE_PRODUCT.CSV",
-			"ARCHIVE_PRODUCT_MOLECULE.CSV"
+			"ARCHIVE_PRODUCTMOLECULE.CSV"
 	);
 	private static final List<String> REQUIRED_RESOURCE_FILES = List.of(
 			"custom_synonyms.csv",

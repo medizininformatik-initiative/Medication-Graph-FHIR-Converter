@@ -1,0 +1,5 @@
+"ID";"COMPANYID";"SORTNAME";"NAME";"ONMARKETDATE";"OFFMARKETDATE";"DISPENSINGTYPECATALOGID";"DISPENSINGTYPECODE";"PHARMACEUTICAL_FLAG"
+2;1;"";"Superceded Beloc mite";;;;;1
+3001;1;"";"No longer used";;;;;1
+3002;3;"";"H<sub>2</sub>O but <sup>very</sup> expensive";;;;;1
+3003;3;"";"Something which is definitely not a pharmaceutical";;;;;0
