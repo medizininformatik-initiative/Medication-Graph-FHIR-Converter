@@ -115,6 +115,8 @@ gradle-app.setting
 # JDT-specific (Eclipse Java Development Tools)
 .classpath
 
+# Build output directories (all bin directories)
+**/bin/
 /bin/
 .settings/
 

@@ -1,6 +1,6 @@
 # SCD Matching Algorithm - Guide
 
-This guide explains how to run the SCD (Semantic Clinical Drug) Matching Algorithm, starting from cloning the repository.
+The SCD Matching Algorithm is based on the original implementation by Markus Budeus, which we extended and adapted for our use case. This guide explains how to run the SCD Matching Algorithm. 
 
 ## Table of Contents
 
@@ -34,14 +34,26 @@ Before you begin, make sure you have the following installed:
 
 ## Clone Repository and Setup
 
-### 1. Clone Repository
+### 1. Clone Repository and Checkout Branch
 
 ```bash
-git clone https://github.com/your-username/your-repo.git
-cd your-repo
+git clone https://github.com/medizininformatik-initiative/Medication-Graph-FHIR-Converter.git
+git checkout lucy-thesis
 ```
 
-### 2. Understand Project Structure
+### 2. Build the Project
+
+Before running the populate scripts, you need to build the JAR file:
+
+```bash
+./gradlew :composeApp:desktopShadowJar
+```
+
+This creates the `composeApp/build/libs/medgraph-desktop-all.jar` file that is required by the populate scripts.
+
+**Note:** The export script (`run_fhir_export.sh`) uses Gradle directly and will build automatically if needed, so you don't need to rebuild before running it.
+
+### 3. Understand Project Structure
 
 ```
 .
@@ -57,7 +69,7 @@ cd your-repo
 └── data/                       # Data (RxNorm DB, etc.)
 ```
 
-### 3. Check Java Version
+### 4. Check Java Version
 
 ```bash
 # Check your Java version
@@ -122,7 +134,15 @@ export RXNORM_DB_PATH=/path/to/rxnorm.db
 
 Before running the SCD algorithm, the Neo4j database must be populated with the necessary data:
 
-### 1. Insert Dose Form Mappings
+### 1. Build JAR File (if not already done)
+
+The populate scripts require the JAR file. If you haven't built it yet:
+
+```bash
+./gradlew :composeApp:desktopShadowJar
+```
+
+### 2. Insert Dose Form Mappings
 
 The SCD algorithm requires Dose Form Mappings (EDQM → RxNorm). You have two options:
 
@@ -131,12 +151,12 @@ The SCD algorithm requires Dose Form Mappings (EDQM → RxNorm). You have two op
 ./scripts/populate/populate_with_darreichungsformen.sh
 ```
 
-**Option B: Paper-based Mapping**
+**Option B: Literature/Paper-based Mapping**
 ```bash
 ./scripts/populate/populate_with_paper_mapping.sh
 ```
 
-### 2. Test Database Connection
+### 3. Test Database Connection (optional)
 
 ```bash
 # Test the connection (optional)
@@ -301,26 +321,31 @@ python3 visualize_top_substances.py \
 ## Example Workflow (Complete)
 
 ```bash
-# 1. Clone repository
+# 1. Clone repository and checkout branch
 git clone https://github.com/your-username/your-repo.git
 cd your-repo
+git checkout lucy-thesis
 
-# 2. Configure environment variables
+# 2. Build the JAR file (required for populate scripts)
+./gradlew :composeApp:desktopShadowJar
+
+# 3. Configure environment variables
 cp .env.example .env
 nano .env  # Enter your credentials
 export $(grep -v '^#' .env | xargs)
 
-# 3. Prepare database
+# 4. Prepare database (insert dose form mappings)
 ./scripts/populate/populate_with_darreichungsformen.sh
 
-# 4. Run SCD algorithm (FHIR Export)
+# 5. Run SCD algorithm (FHIR Export)
+# Note: This uses Gradle directly and will build automatically if needed
 ./scripts/export/run_fhir_export.sh
 
-# 5. Run analyses
+# 6. Run analyses
 ./scripts/analysis/analyze_scd_matching_failures.sh "" "" "" "proposed_mapping"
 ./scripts/analysis/analyze_top_substances.sh "" "" "" "proposed_mapping"
 
-# 6. View results
+# 7. View results
 ls -lh output/analysis/
 ```
 
