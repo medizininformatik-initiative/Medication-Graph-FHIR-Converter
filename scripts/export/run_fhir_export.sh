@@ -11,7 +11,7 @@
 #   database-user     - Neo4j Benutzername (optional, verwendet Standard-Konfiguration wenn nicht angegeben)
 #   database-password - Neo4j Passwort (optional, verwendet Standard-Konfiguration wenn nicht angegeben)
 #   limit-products    - Maximale Anzahl zu exportierender Produkte (optional, wenn nicht angegeben: ALLE Produkte)
-#   log-file          - Name der Log-Datei (optional, Standard: ~/Desktop/match.txt)
+#   log-file          - Name der Log-Datei (optional, Standard: ./logs/match.txt)
 #
 # Beispiele:
 #   ./run_fhir_export.sh                                    # Alle Produkte, Standard-Datenbankverbindung
@@ -39,7 +39,7 @@ LOG_FILE_PARAM="${6:-}"
 if [ -n "$LOG_FILE_PARAM" ]; then
     LOG_FILE="$LOG_FILE_PARAM"
 else
-    LOG_FILE="${HOME}/Desktop/match.txt"
+    LOG_FILE="./logs/match.txt"
 fi
 
 echo "Starte FHIR-Export mit Matching-Algorithmus..."
@@ -80,6 +80,7 @@ GRADLE_CMD="$GRADLE_CMD\""
 
 # Führe den Export aus und leite Ausgabe in Log-Datei um
 echo "Führe Export aus..."
+mkdir -p "$(dirname "$LOG_FILE")"
 eval $GRADLE_CMD > "$LOG_FILE" 2>&1
 
 EXIT_CODE=$?

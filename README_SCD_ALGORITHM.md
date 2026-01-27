@@ -88,14 +88,11 @@ export JAVA_HOME=/path/to/java21
 Create a `.env` file in the project root:
 
 ```bash
-# Copy the example file
-cp .env.example .env
-
-# Edit .env and enter your Neo4j credentials
+touch .env
 nano .env  # or another editor
 ```
 
-**Contents of `.env` file:**
+**Minimal contents of `.env` file:**
 
 ```bash
 NEO4J_URI=bolt://localhost:7687
@@ -125,7 +122,7 @@ export NEO4J_PASSWORD='your_password'
 If you use a local RxNorm SQLite database:
 
 ```bash
-export RXNORM_DB_PATH=/path/to/rxnorm.db
+export RXNORM_DB_PATH=/absolute/path/to/rxnorm.db
 ```
 
 ---
@@ -144,7 +141,7 @@ The populate scripts require the JAR file. If you haven't built it yet:
 
 ### 2. Insert Dose Form Mappings
 
-The SCD algorithm requires Dose Form Mappings (EDQM → RxNorm). You have two options:
+The SCD algorithm requires Dose Form Mappings (EDQM → RxNorm). You have two options (it takes few minutes):
 
 **Option A: Proposed Mapping (recommended)**
 ```bash
@@ -169,7 +166,7 @@ neo4j-admin dbms info  # If Neo4j is installed locally
 
 ### Main Export with SCD Matching
 
-The SCD algorithm is automatically executed during the FHIR export:
+The SCD algorithm is automatically executed during the FHIR export (this will also take few minutes):
 
 ```bash
 ./scripts/export/run_fhir_export.sh
@@ -184,7 +181,7 @@ The SCD algorithm is automatically executed during the FHIR export:
   "neo4j" \                          # Neo4j User (optional)
   "your_password" \                  # Neo4j Password (optional)
   1000 \                              # Limit: number of products (optional)
-  "logs/fhir_export.log"             # Log file (optional)
+  "logs/fhir_export.log"             # Log file (optional, default: ./logs/match.txt)
 ```
 
 **With Environment Variables (recommended):**
@@ -330,7 +327,7 @@ git checkout lucy-thesis
 ./gradlew :composeApp:desktopShadowJar
 
 # 3. Configure environment variables
-cp .env.example .env
+touch .env
 nano .env  # Enter your credentials
 export $(grep -v '^#' .env | xargs)
 
