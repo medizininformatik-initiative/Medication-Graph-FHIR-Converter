@@ -38,7 +38,7 @@ public class ArchiveProductMoleculeLoader extends CsvLoader {
 		executeQuery(withLoadStatement(
 				"CREATE (i:" + MMI_INGREDIENT_LABEL + ":" + INGREDIENT_LABEL + ":Temp {" +
 						"productId: " + row(PRODUCT_ID) +
-						", substanceId: + " + row(MOLECULE_ID) +
+						", substanceId: " + row(MOLECULE_ID) +
 						", isActive: (" + row(MOLECULE_TYPE_CODE) + " = 'A')" +
 						", massFrom: " + row(MASS_FROM) +
 						", massTo: " + row(MASS_TO) +
@@ -55,41 +55,41 @@ public class ArchiveProductMoleculeLoader extends CsvLoader {
 				"MATCH (p:" + PRODUCT_LABEL + " {" + ARCHIVED_ATTR + ": true }) " + // Can only connect to archived products.
 				withRowLimit("WITH i, p " +
 						"CREATE (i)-[:" + TEMP_INGREDIENT_PRODUCT_RELATIONSHIP + " { " +
-						"amount: " + row(COUNT) +
-						", amountUnit: " + row(COUNT_UNIT_CODE) +
-						" })->(p)"
+						"amount: i.baseCount, " +
+						"amountUnit: i.amountUnit" +
+						" }]->(p)"
 				)
 		);
 
 		startSubtask("Removing orphans");
 		executeQuery("MATCH (i:" + MMI_INGREDIENT_LABEL + ":Temp) " +
-				"WHERE NOT EXISTS (i)-[:" + TEMP_INGREDIENT_PRODUCT_RELATIONSHIP + "]->(:" + PRODUCT_LABEL + ") " +
+				"WHERE NOT (i)-[:" + TEMP_INGREDIENT_PRODUCT_RELATIONSHIP + "]->(:" + PRODUCT_LABEL + ") " +
 				withRowLimit("WITH i DELETE i"));
 
 		startSubtask("Connecting to substance nodes");
-		executeQuery(withRowLimit(
+		executeQuery(
 				"MATCH (i:" + MMI_INGREDIENT_LABEL + ":Temp) " +
 						"MATCH (s:" + SUBSTANCE_LABEL + " {mmiId: i.substanceId}) " +
 						withRowLimit("WITH i, s " +
 								"CREATE (i)-[:" + INGREDIENT_IS_SUBSTANCE_LABEL + "]->(s)")
-		));
+		);
 
 		startSubtask("Removing orphans");
 		executeQuery("MATCH (i:" + MMI_INGREDIENT_LABEL + ":Temp) " +
-				"WHERE NOT EXISTS (i)-[:" + INGREDIENT_IS_SUBSTANCE_LABEL + "]->(:" + SUBSTANCE_LABEL + ") " +
+				"WHERE NOT (i)-[:" + INGREDIENT_IS_SUBSTANCE_LABEL + "]->(:" + SUBSTANCE_LABEL + ") " +
 				withRowLimit("WITH i DETACH DELETE i"));
 
 		startSubtask("Connecting to unit nodes");
-		executeQuery(withRowLimit(
+		executeQuery(
 				"MATCH (i:" + MMI_INGREDIENT_LABEL + ":Temp) " +
 						"MATCH (u:" + UNIT_LABEL + " {mmiCode: i.unitCode}) " +
 						withRowLimit("WITH i, u " +
 								"CREATE (i)-[:" + INGREDIENT_HAS_UNIT_LABEL + "]->(u)")
-		));
+		);
 
 		startSubtask("Removing orphans");
 		executeQuery("MATCH (i:" + MMI_INGREDIENT_LABEL + ":Temp) " +
-				"WHERE NOT EXISTS (i)-[:" + INGREDIENT_HAS_UNIT_LABEL + "]->(:" + UNIT_LABEL + ") " +
+				"WHERE NOT (i)-[:" + INGREDIENT_HAS_UNIT_LABEL + "]->(:" + UNIT_LABEL + ") " +
 				withRowLimit("WITH i DETACH DELETE i"));
 
 		startSubtask("Creating virtual drug nodes");
@@ -123,12 +123,12 @@ public class ArchiveProductMoleculeLoader extends CsvLoader {
 						"CREATE (d)-[:" + DRUG_CONTAINS_INGREDIENT_LABEL + "]->(i)", 1500));
 
 		startSubtask("Removing temporary product-ingredient relationships");
-		executeQuery("MATCH [r:"+TEMP_INGREDIENT_PRODUCT_RELATIONSHIP+"] " +
+		executeQuery("MATCH ()-[r:" + TEMP_INGREDIENT_PRODUCT_RELATIONSHIP + "]->() " +
 				withRowLimit("WITH r DELETE r"));
 
 		startSubtask("Connecting virtual drug nodes to unit nodes");
 		executeQuery("MATCH (d:" + DRUG_LABEL + ": Temp) " +
-				"MATCH (u:" + UNIT_LABEL + " {mmiCode: i.amountUnit} " +
+				"MATCH (u:" + UNIT_LABEL + " {mmiCode: d.amountUnit}) " +
 				withRowLimit("WITH d, u " +
 						"CREATE (d)-[:" + DRUG_HAS_UNIT_LABEL + "]->(u)"));
 
