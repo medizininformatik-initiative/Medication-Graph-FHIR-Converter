@@ -27,10 +27,10 @@ import static org.junit.jupiter.api.Assertions.*;
  * Runs the whole migration on a set of sample files.
  */
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-@Disabled("This test wipes the target database. Also it needs to copy files to the Neo4j import directory " +
-		"which is likely different if you have a different OS than mine and also write privileges are required. " +
-		"Sadly, a platform-independent solution is tricky. I have not yet seen a way to inject the test files " +
-		"into the Neo4j harness in a different way.")
+//@Disabled("This test wipes the target database. Also it needs to copy files to the Neo4j import directory " +
+//		"which is likely different if you have a different OS than mine and also write privileges are required. " +
+//		"Sadly, a platform-independent solution is tricky. I have not yet seen a way to inject the test files " +
+//		"into the Neo4j harness in a different way.")
 public class IntegrationTest {
 
 	private DatabaseConnection connection;
@@ -55,7 +55,7 @@ public class IntegrationTest {
 
 		DI.get(GraphDbPopulationFactory.class).prepareDatabasePopulation(
 				  Path.of("src", "test", "resources", "sample"),
-				  Path.of("/var", "lib", "neo4j", "import"),
+				  Path.of("/usr", "local", "neo4j", "import"),
 				  Path.of("src", "test", "resources", "sample", "amice_stoffbez_synthetic.csv")
 		  )
 		  .executeDatabasePopulation(connection);

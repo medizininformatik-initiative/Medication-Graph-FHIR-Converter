@@ -30,19 +30,20 @@ public class ArchivePackageLoader extends CsvLoader {
 	@Override
 	protected void executeLoad() {
 		// We noticed that different packages always have a different PZN, so we assume this is the case
+		// Also, a non-archived package with the same MMI id wins
 
 		startSubtask("Loading CSV file");
 		executeQuery(withLoadStatement(
-				"CREATE (p:" + DatabaseDefinitions.PACKAGE_LABEL + ":Temp {" +
-						"mmiId: " + intRow(MMI_ID) + ", " +
-						"productId: " + intRow(PRODUCT_ID) + ", " +
-						"pzn: " + nullIfBlank(row(PZN)) + ", " +
-						"name: " + nullIfBlank(row(NAME)) + ", " +
-						"onMarketDate: " + nullIfBlank(row(ON_MARKET_DATE)) + ", " +
-						"offMarketDate: " + row(OFF_MARKET_DATE) + ", " +
-						"pznSuccessor: " + nullIfBlank(row(PZN_SUCCESSOR)) + ", " +
-						ARCHIVED_ATTR + ": true" +
-						"})"
+				"MERGE (p:"+DatabaseDefinitions.PACKAGE_LABEL+" { mmiId: "+intRow(MMI_ID)+"}) " +
+						"ON CREATE SET " +
+						"p:Temp, " +
+						"p.productId = " + intRow(PRODUCT_ID) + ", " +
+						"p.pzn = " + nullIfBlank(row(PZN)) + ", " +
+						"p.name = " + nullIfBlank(row(NAME)) + ", " +
+						"p.onMarketDate = " + nullIfBlank(row(ON_MARKET_DATE)) + ", " +
+						"p.offMarketDate = " + row(OFF_MARKET_DATE) + ", " +
+						"p.pznSuccessor = " + nullIfBlank(row(PZN_SUCCESSOR)) + ", " +
+						"p."+ARCHIVED_ATTR + " = true"
 		));
 
 		startSubtask(

@@ -1,8 +1,6 @@
 package de.medizininformatikinitiative.medgraph;
 
-import de.medizininformatikinitiative.medgraph.fhirexporter.ExportFilenameGenerator;
 import de.medizininformatikinitiative.medgraph.fhirexporter.FhirExportSource;
-import de.medizininformatikinitiative.medgraph.fhirexporter.FileFhirExportSink;
 import org.hl7.fhir.r4.model.DomainResource;
 import org.hl7.fhir.r4.model.Medication;
 import org.hl7.fhir.r4.model.Organization;
@@ -11,14 +9,11 @@ import org.junit.jupiter.api.BeforeEach;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
-
-import static org.mockito.ArgumentMatchers.notNull;
 
 /**
  * @author Markus Budeus
