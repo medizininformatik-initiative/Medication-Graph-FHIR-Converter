@@ -32,15 +32,15 @@ public class ArchiveProductLoader extends CsvLoader {
 				"WITH "+ROW_IDENTIFIER+" WHERE " + row(PHARMACEUTICAL_FLAG) + " = '1'"+
 				" MERGE (d:" + DatabaseDefinitions.PRODUCT_LABEL + " { mmiId: "+intRow(ID)+ " })" +
 						// Add names but remove HTML <sub> and <sup> tags. No other HTML tags seem to exist in the names.
-						" ON CREATE SET name: replace(replace(replace(replace(" + row(NAME) +", '<sub>', ''), '</sub>', ''), '<sup>', ''), '</sup>', '')" +
-						" SET " + ARCHIVED_ATTR + ": true, companyId: "+row(COMPANY_ID)
+						" ON CREATE SET d.name = replace(replace(replace(replace(" + row(NAME) +", '<sub>', ''), '</sub>', ''), '<sup>', ''), '</sup>', '')" +
+						" SET d." + ARCHIVED_ATTR + " = true, d.companyId = "+row(COMPANY_ID)
 		));
 
 		startSubtask("Connecting to company nodes");
 		executeQuery("MATCH (p:"+PRODUCT_LABEL+" {"+ARCHIVED_ATTR+": true}) " +
 				"MATCH (c:" +COMPANY_LABEL+" {mmiId: p.companyId}) "+
 				withRowLimit("WITH p, c " +
-						"CREATE (c)-["+MANUFACTURES_LABEL+"]->(p)"));
+						"CREATE (c)-[:"+MANUFACTURES_LABEL+"]->(p)"));
 
 		startSubtask("Cleaning up");
 		executeQuery("MATCH (p:"+PRODUCT_LABEL+" {"+ARCHIVED_ATTR+": true}) " +

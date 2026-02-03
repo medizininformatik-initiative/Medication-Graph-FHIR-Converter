@@ -28,8 +28,8 @@ public class ArchiveCompanyLoader extends CsvLoader {
 		executeQuery(withLoadStatement(
 				"MERGE (c:" + COMPANY_LABEL +
 						" { mmiId: " + intRow(ID) + "})" +
-						" ON CREATE SET name: " + nullIfBlank(row(NAME)) +
-						" SET " + ARCHIVED_ATTR + ": true"
+						" ON CREATE SET c.name = " + nullIfBlank(row(NAME)) +
+						" , c." + ARCHIVED_ATTR + " = true"
 		));
 	}
 }

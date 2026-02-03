@@ -44,7 +44,7 @@ public class ArchiveProductMoleculeLoader extends CsvLoader {
 						", massTo: " + row(MASS_TO) +
 						", unitCode: " + row(UNIT_CODE) +
 						", baseCount: " + row(COUNT) +
-						", countUnitCode" + row(COUNT_UNIT_CODE) +
+						", amountUnit: " + row(COUNT_UNIT_CODE) +
 						", " + ARCHIVED_ATTR + ": true })"
 		));
 

@@ -3,8 +3,6 @@ package de.medizininformatikinitiative.medgraph.graphdbpopulator.loaders;
 import de.medizininformatikinitiative.medgraph.common.db.DatabaseDefinitions;
 import org.neo4j.driver.Session;
 
-import java.io.IOException;
-
 /**
  * This class creates the Product nodes in the database using the PRODUCT table from the MMI Pharmindex.
  *
@@ -26,7 +24,7 @@ public class ProductLoader extends CsvLoader {
 		);
 		executeQuery(withLoadStatement(
 				"CREATE (d:" + DatabaseDefinitions.PRODUCT_LABEL + " {name: " + row(NAME) + ", mmiId: " + intRow(
-						ID) + ", "+ARCHIVED_LABEL+": false })"
+						ID) + ", "+DatabaseDefinitions.ARCHIVED_ATTR+": false })"
 		));
 	}
 }
