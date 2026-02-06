@@ -50,7 +50,8 @@ public class PackageLoader extends CsvLoader {
 						"amountText: " + nullIfBlank(row(AMOUNT_TEXT)) + ", " +
 						"amount: " + nullIfBlank(row(AMOUNT)) + ", " +
 						"amountFactor1: " + intRow(AMOUNT_F1) + ", " +
-						"amountFactor2: " + intRow(AMOUNT_F2) +
+						"amountFactor2: " + intRow(AMOUNT_F2) + ", " +
+						DatabaseDefinitions.ARCHIVED_ATTR + ": false " +
 						"})"
 		));
 

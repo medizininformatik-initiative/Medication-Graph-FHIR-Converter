@@ -13,8 +13,6 @@ import static de.medizininformatikinitiative.medgraph.common.db.DatabaseDefiniti
  */
 public class ArchiveProductLoader extends CsvLoader {
 
-	// TODO Test
-
 	private static final String ID = "ID";
 	private static final String NAME = "NAME";
 	private static final String COMPANY_ID = "COMPANYID";
@@ -32,8 +30,9 @@ public class ArchiveProductLoader extends CsvLoader {
 				"WITH "+ROW_IDENTIFIER+" WHERE " + row(PHARMACEUTICAL_FLAG) + " = '1'"+
 				" MERGE (d:" + DatabaseDefinitions.PRODUCT_LABEL + " { mmiId: "+intRow(ID)+ " })" +
 						// Add names but remove HTML <sub> and <sup> tags. No other HTML tags seem to exist in the names.
-						" ON CREATE SET d.name = replace(replace(replace(replace(" + row(NAME) +", '<sub>', ''), '</sub>', ''), '<sup>', ''), '</sup>', '')" +
-						" SET d." + ARCHIVED_ATTR + " = true, d.companyId = "+row(COMPANY_ID)
+						" ON CREATE SET " +
+						"d.name = replace(replace(replace(replace(" + row(NAME) +", '<sub>', ''), '</sub>', ''), '<sup>', ''), '</sup>', '')," +
+						"d." + ARCHIVED_ATTR + " = true, d.companyId = "+intRow(COMPANY_ID)
 		));
 
 		startSubtask("Connecting to company nodes");
