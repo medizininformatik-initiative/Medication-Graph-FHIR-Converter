@@ -43,6 +43,7 @@ public class IngredientLoader extends CsvLoader {
 						", isActive: (" + row(MOLECULE_TYPE_CODE) + " = '" + ACTIVE_INGREDIENT_TYPE_CODE + "')" +
 						", substanceId: " + intRow(MOLECULE_ID) +
 						", unitCode: " + row(MOLECULE_UNIT_CODE) +
+						", " + ARCHIVED_ATTR + ": false " +
 						"}) "
 		));
 

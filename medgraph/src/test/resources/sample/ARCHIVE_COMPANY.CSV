@@ -1,3 +1,3 @@
 "ID";"NAME"
-0;XX;XX;"Conflict";"Company Whose Id Conflicts With a Non-Archived Company"
-3;XX;XX;"Old Rusty Parts";"Old Rusty Parts Inc."
+0;"Company Whose Id Conflicts With a Non-Archived Company"
+3;"Old Rusty Parts Inc."

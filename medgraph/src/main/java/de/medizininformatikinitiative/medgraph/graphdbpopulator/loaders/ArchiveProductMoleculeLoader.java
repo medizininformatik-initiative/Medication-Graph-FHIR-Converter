@@ -14,13 +14,10 @@ import static de.medizininformatikinitiative.medgraph.common.db.DatabaseDefiniti
  */
 public class ArchiveProductMoleculeLoader extends CsvLoader {
 
-	// TODO Test
-	// TODO Test case where MMI ID is overloaded
-
 	private static final String TEMP_INGREDIENT_PRODUCT_RELATIONSHIP = "TEMP_ARCHIVE_INGREDIENT_ASSIGNED_TO";
 
-	private static final String PRODUCT_ID = "PRODUCT_ID";
-	private static final String MOLECULE_ID = "MOLECULE_ID";
+	private static final String PRODUCT_ID = "PRODUCTID";
+	private static final String MOLECULE_ID = "MOLECULEID";
 	private static final String MOLECULE_TYPE_CODE = "MOLECULETYPECODE"; // 'A' for active.
 	private static final String MASS_FROM = "MASSFROM";
 	private static final String MASS_TO = "MASSTO";
@@ -37,8 +34,8 @@ public class ArchiveProductMoleculeLoader extends CsvLoader {
 		startSubtask("Loading archived ingredients");
 		executeQuery(withLoadStatement(
 				"CREATE (i:" + MMI_INGREDIENT_LABEL + ":" + INGREDIENT_LABEL + ":Temp {" +
-						"productId: " + row(PRODUCT_ID) +
-						", substanceId: " + row(MOLECULE_ID) +
+						"productId: " + intRow(PRODUCT_ID) +
+						", substanceId: " + intRow(MOLECULE_ID) +
 						", isActive: (" + row(MOLECULE_TYPE_CODE) + " = 'A')" +
 						", massFrom: " + row(MASS_FROM) +
 						", massTo: " + row(MASS_TO) +
@@ -52,7 +49,7 @@ public class ArchiveProductMoleculeLoader extends CsvLoader {
 		// drug nodes later.
 		startSubtask("Connecting to product nodes");
 		executeQuery("MATCH (i:" + MMI_INGREDIENT_LABEL + ":Temp) " +
-				"MATCH (p:" + PRODUCT_LABEL + " {" + ARCHIVED_ATTR + ": true }) " + // Can only connect to archived products.
+				"MATCH (p:" + PRODUCT_LABEL + " {" + ARCHIVED_ATTR + ": true, mmiId: i.productId }) " + // Can only connect to archived products.
 				withRowLimit("WITH i, p " +
 						"CREATE (i)-[:" + TEMP_INGREDIENT_PRODUCT_RELATIONSHIP + " { " +
 						"amount: i.baseCount, " +
@@ -109,7 +106,6 @@ public class ArchiveProductMoleculeLoader extends CsvLoader {
 		// | 4          | 10        | G                    |
 		// In this case, substances 1 and two are assigned to one virtual drug node, which gets "10ml" as assigned amount.
 		// Substances 3 and 4 each get their own virtual drug node.
-		// TODO Test this actually works as intended
 		executeQuery("MATCH (i:" + MMI_INGREDIENT_LABEL + ":Temp)" +
 				"-[r:" + TEMP_INGREDIENT_PRODUCT_RELATIONSHIP + "]->" +
 				"(p:" + PRODUCT_LABEL + ") " +

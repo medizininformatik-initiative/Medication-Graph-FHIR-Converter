@@ -13,8 +13,6 @@ import static de.medizininformatikinitiative.medgraph.common.db.DatabaseDefiniti
  */
 public class ArchivePackageLoader extends CsvLoader {
 
-	// TODO Test case where MMI ID is overloaded
-
 	private static final String MMI_ID = "ID";
 	private static final String PRODUCT_ID = "PRODUCTID";
 	private static final String PZN = "PZN";
@@ -50,7 +48,7 @@ public class ArchivePackageLoader extends CsvLoader {
 				"Connecting " + DatabaseDefinitions.PACKAGE_LABEL + " to " + DatabaseDefinitions.PRODUCT_LABEL + " nodes");
 		executeQuery(
 				"MATCH (p:" + DatabaseDefinitions.PACKAGE_LABEL + ":Temp) " +
-						"MATCH (i:" + DatabaseDefinitions.PRODUCT_LABEL + " {mmiId: p.productId, "+ ARCHIVED_ATTR+": true}) " +
+						"MATCH (i:" + DatabaseDefinitions.PRODUCT_LABEL + " {mmiId: p.productId}) " +
 						withRowLimit(
 								"WITH p, i CREATE (p)-[:" + DatabaseDefinitions.PACKAGE_BELONGS_TO_PRODUCT_LABEL + "]->(i) "));
 
@@ -78,22 +76,18 @@ public class ArchivePackageLoader extends CsvLoader {
 		executeQuery(
 				"MATCH (p:" + DatabaseDefinitions.PACKAGE_LABEL + ":Temp) WHERE NOT p.pzn IS NULL " +
 						withRowLimit(
-								"WITH p CREATE (c:" + DatabaseDefinitions.PZN_LABEL + ":" + DatabaseDefinitions.CODE_LABEL + ":Temp {" +
-										"code: p.pzn, " +
-										"pznSuccessor: p.pznSuccessor" +
+								"WITH p CREATE (c:" + DatabaseDefinitions.PZN_LABEL + ":" + DatabaseDefinitions.CODE_LABEL + " {" +
+										"code: p.pzn " +
 										"}) " +
 										"CREATE (c)-[:" + DatabaseDefinitions.CODE_REFERENCE_RELATIONSHIP_NAME + "]->(p)")
 		);
 
 		startSubtask("Interconnecting Package nodes");
-		// We connect indirectly by querying the PZN nodes, because those have indexes on them and are thus queried
-		// much faster.
-		// Connect successors
 		executeQuery(
-				"MATCH (p1:" + DatabaseDefinitions.PZN_LABEL + ":Temp)-[:" + DatabaseDefinitions.CODE_REFERENCE_RELATIONSHIP_NAME + "]->(pk1:" + DatabaseDefinitions.PACKAGE_LABEL + ":Temp) " +
-						"MATCH (p2:" + DatabaseDefinitions.PZN_LABEL + " {code: p1.pznSuccessor})-[:" + DatabaseDefinitions.CODE_REFERENCE_RELATIONSHIP_NAME + "]->(pk2:" + DatabaseDefinitions.PACKAGE_LABEL + ") " +
+				"MATCH (p1:" + DatabaseDefinitions.PZN_LABEL + ")-[:" + DatabaseDefinitions.CODE_REFERENCE_RELATIONSHIP_NAME + "]->(pk1:" + DatabaseDefinitions.PACKAGE_LABEL + ":Temp) " +
+						"MATCH (p2:" + DatabaseDefinitions.PZN_LABEL + " {code: pk1.pznSuccessor})-[:" + DatabaseDefinitions.CODE_REFERENCE_RELATIONSHIP_NAME + "]->(pk2:" + DatabaseDefinitions.PACKAGE_LABEL + ") " +
 						withRowLimit(
-								"WITH p1, p2 CREATE (pk1)-[:" + DatabaseDefinitions.PACKAGE_HAS_SUCCESSOR_LABEL + "]->(pk2)")
+								"WITH pk1, pk2 CREATE (pk1)-[:" + DatabaseDefinitions.PACKAGE_HAS_SUCCESSOR_LABEL + "]->(pk2)")
 		);
 
 		startSubtask("Cleaning up");
@@ -101,8 +95,5 @@ public class ArchivePackageLoader extends CsvLoader {
 		executeQuery(
 				"MATCH (p:" + DatabaseDefinitions.PACKAGE_LABEL + ":Temp) " +
 						withRowLimit("WITH p REMOVE p:Temp, p.productId, p.pzn, p.pznSuccessor"));
-		executeQuery(
-				"MATCH (p:" + DatabaseDefinitions.PZN_LABEL + ":Temp) " +
-						withRowLimit("WITH p REMOVE p:Temp, p.pznSuccessor"));
 	}
 }

@@ -16,6 +16,7 @@ import java.io.InputStreamReader;
 import java.nio.file.Path;
 import java.time.LocalDate;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import static de.medizininformatikinitiative.medgraph.common.EDQM.BASIC_DOSE_FORM;
@@ -27,17 +28,16 @@ import static org.junit.jupiter.api.Assertions.*;
  * Runs the whole migration on a set of sample files.
  */
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-//@Disabled("This test wipes the target database. Also it needs to copy files to the Neo4j import directory " +
-//		"which is likely different if you have a different OS than mine and also write privileges are required. " +
-//		"Sadly, a platform-independent solution is tricky. I have not yet seen a way to inject the test files " +
-//		"into the Neo4j harness in a different way.")
-public class IntegrationTest {
+@Disabled("This test wipes the target database. Also it needs to copy files to the Neo4j import directory " +
+		"which is likely different if you have a different OS than mine and also write privileges are required. " +
+		"Sadly, a platform-independent solution is tricky. I have not yet seen a way to inject the test files " +
+		"into the Neo4j harness in a different way.")
+public abstract class IntegrationTest {
 
-	private DatabaseConnection connection;
-	private Session session;
+	protected DatabaseConnection connection;
+	protected Session session;
 
-	@BeforeAll
-	public void integrationTestSetup() throws IOException {
+	protected void integrationTestSetup(boolean includeArchive) throws IOException {
 		// The integration test must run against a "real" Neo4j environment!
 		// The connection mechanism below only works if you have locally saved connection information (happens when you
 		// connect via the regular application UI once.) Otherwise you must provide the connection information via
@@ -55,10 +55,10 @@ public class IntegrationTest {
 
 		DI.get(GraphDbPopulationFactory.class).prepareDatabasePopulation(
 				  Path.of("src", "test", "resources", "sample"),
-				  Path.of("/usr", "local", "neo4j", "import"),
+				  Path.of("/var", "lib", "neo4j", "import"),
 				  Path.of("src", "test", "resources", "sample", "amice_stoffbez_synthetic.csv")
 		  )
-		  .executeDatabasePopulation(connection);
+		  .executeDatabasePopulation(connection, includeArchive);
 	}
 
 	@AfterAll
@@ -90,6 +90,7 @@ public class IntegrationTest {
 						"(d:" + DRUG_LABEL + ")-[c2:" + DRUG_CONTAINS_INGREDIENT_LABEL + "]->" +
 						"(i:" + MMI_INGREDIENT_LABEL + ")-[c3:" + INGREDIENT_IS_SUBSTANCE_LABEL + "]->" +
 						"(s:" + SUBSTANCE_LABEL + " {name: 'Midazolamhydrochlorid'}) " +
+						"WHERE NOT p.archived " +
 						"RETURN s, p.name, i.massFrom"
 		);
 
@@ -107,7 +108,9 @@ public class IntegrationTest {
 	@Test
 	public void manufacturerConnected() {
 		Result result = session.run(
-				"MATCH (m:" + COMPANY_LABEL + ")-[r:" + MANUFACTURES_LABEL + "]-(p:" + PRODUCT_LABEL + ") RETURN p.mmiId, m.mmiId"
+				"MATCH (m:" + COMPANY_LABEL + ")-[r:" + MANUFACTURES_LABEL + "]-(p:" + PRODUCT_LABEL + ")" +
+						"WHERE NOT p.archived " +
+						"RETURN p.mmiId, m.mmiId"
 		);
 
 		int[] manufacturerMmiId = new int[]{-1, -1, -1}; // Index is the product mmi id, value the manufacturer id
@@ -267,7 +270,8 @@ public class IntegrationTest {
 	@Test
 	public void packageInfo() {
 		Result result = session.run(
-				"MATCH (p:" + PRODUCT_LABEL + " {mmiId: 0})<-[:" + PACKAGE_BELONGS_TO_PRODUCT_LABEL + "]-(pk:" + PACKAGE_LABEL + ")--(pz:" + PZN_LABEL + ")" +
+				"MATCH (p:" + PRODUCT_LABEL + " {mmiId: 0})<-[:" + PACKAGE_BELONGS_TO_PRODUCT_LABEL + "]-" +
+						"(pk:" + PACKAGE_LABEL + "{mmiId: 0})--(pz:" + PZN_LABEL + ")" +
 						"RETURN pk.onMarketDate, pz.code "
 		);
 
@@ -389,6 +393,20 @@ public class IntegrationTest {
 		assertFalse(result.hasNext());
 	}
 
+	@Test
+	public void noCodeNodesWithoutCodingSystem() {
+		Result result = session.run("MATCH (c:" + CODE_LABEL + ")" +
+				"WHERE NOT (c)-[:" + BELONGS_TO_CODING_SYSTEM_LABEL + "]->(:" + CODING_SYSTEM_LABEL + ")" +
+				" RETURN c");
+		assertFalse(result.hasNext());
+	}
+
+	@Test
+	public void noTemporaryNodes() {
+		Result result = session.run("MATCH (a:Temp) RETURN a");
+		assertFalse(result.hasNext());
+	}
+
 	private void checkProductMatchesIngredient(Record record) {
 		String name = record.get(1).asString();
 		if (name.equals("Dormicum V 5 mg/5 ml")) {
@@ -416,6 +434,255 @@ public class IntegrationTest {
 		}
 		lines--; // Remove header line
 		return Math.max(0, lines);
+	}
+
+}
+
+class WithoutArchiveIntegrationTest extends IntegrationTest {
+
+	@BeforeAll
+	public void integrationTestSetup() throws IOException {
+		super.integrationTestSetup(false);
+	}
+
+	@Test
+	public void noArchivedCompanies() {
+		Result result = session.run("MATCH (a:" + COMPANY_LABEL + " {" + ARCHIVED_ATTR + ": true}) RETURN a");
+		assertFalse(result.hasNext());
+	}
+
+	@Test
+	public void noArchivedProducts() {
+		Result result = session.run("MATCH (a:" + PRODUCT_LABEL + " {" + ARCHIVED_ATTR + ": true}) RETURN a");
+		assertFalse(result.hasNext());
+	}
+
+	@Test
+	public void noArchivedPackages() {
+		Result result = session.run("MATCH (a:" + PACKAGE_LABEL + " {" + ARCHIVED_ATTR + ": true}) RETURN a");
+		assertFalse(result.hasNext());
+	}
+
+	@Test
+	public void noArchivedDrugs() {
+		Result result = session.run("MATCH (a:" + DRUG_LABEL + " {" + VIRTUAL_DRUG_ATTR + ": true}) RETURN a");
+		assertFalse(result.hasNext());
+	}
+
+	@Test
+	public void noArchivedIngredients() {
+		Result result = session.run("MATCH (a:" + INGREDIENT_LABEL + " {" + ARCHIVED_ATTR + ": true}) RETURN a");
+		assertFalse(result.hasNext());
+	}
+
+}
+
+class WithArchiveIntegrationTest extends IntegrationTest {
+
+	@BeforeAll
+	public void integrationTestSetup() throws IOException {
+		super.integrationTestSetup(true);
+	}
+
+	@Test
+	void supercededBelocMiteDoesNotExist() {
+		Result result = session.run("MATCH (a:" + PRODUCT_LABEL + " {mmiId: 2}) RETURN a.name");
+		assertTrue(result.hasNext());
+
+		// The non-archived version takes priority.
+		assertEquals("Beloc mite", result.next().get(0).asString());
+		assertFalse(result.hasNext());
+	}
+
+
+	@Test
+	void supercededBelocMiteDidNotOverrideCompanyLink() {
+		Result result = session.run(
+				"MATCH (a:" + PRODUCT_LABEL + " {mmiId: 2})<-[:" + MANUFACTURES_LABEL + "]-(c:" + COMPANY_LABEL + ") RETURN c.mmiId");
+		assertTrue(result.hasNext());
+
+		// The non-archived version takes priority.
+		assertEquals(0, result.next().get(0).asInt());
+		assertFalse(result.hasNext());
+	}
+
+	@Test
+	void plainName() {
+		Result result = session.run("MATCH (a:" + PRODUCT_LABEL + " {mmiId: 3002}) RETURN a.name, a.archived");
+		assertTrue(result.hasNext());
+
+		Record record = result.next();
+		assertEquals("H2O but very expensive", record.get(0).asString());
+		assertTrue(record.get(1).asBoolean());
+		assertFalse(result.hasNext());
+	}
+
+	@Test
+	void pharmaceuticalFlagChecked() {
+		// This product has a PHARMACEUTICAL_FLAG=0 and thus should not be loaded.
+		Result result = session.run("MATCH (p:" + PRODUCT_LABEL + " {mmiId: 3003}) RETURN p");
+		assertFalse(result.hasNext());
+	}
+
+	@Test
+	void companyLinkToExistingCompany() {
+		Result result = session.run(
+				"MATCH (p:" + PRODUCT_LABEL + " {mmiId: 3001})<-[:" + MANUFACTURES_LABEL + "]-(c:" + COMPANY_LABEL + ") RETURN c.mmiId");
+		assertTrue(result.hasNext());
+		assertEquals(1, result.next().get(0).asInt());
+		assertFalse(result.hasNext());
+	}
+
+	@Test
+	void companyLinkToArchivedCompany() {
+		Result result = session.run(
+				"MATCH (p:" + PRODUCT_LABEL + " {mmiId: 3002})<-[:" + MANUFACTURES_LABEL + "]-(c:" + COMPANY_LABEL + " {" + ARCHIVED_ATTR + ": true}) RETURN c.mmiId");
+		assertTrue(result.hasNext());
+		assertEquals(3, result.next().get(0).asInt());
+		assertFalse(result.hasNext());
+	}
+
+	@Test
+	void archivedDrugsAndIngredients1() {
+		Result result = session.run("MATCH (p:" + PRODUCT_LABEL + " {mmiId: 3001})" +
+				"-[:" + PRODUCT_CONTAINS_DRUG_LABEL + "]->(d:" + DRUG_LABEL + ")" +
+				"-[:" + DRUG_CONTAINS_INGREDIENT_LABEL + "]->(i:" + INGREDIENT_LABEL + ")" +
+				"-[:" + INGREDIENT_IS_SUBSTANCE_LABEL + "]->(s:" + SUBSTANCE_LABEL + ") " +
+				"MATCH (i)-[:" + INGREDIENT_HAS_UNIT_LABEL + "]->(u:" + UNIT_LABEL + ") " +
+				"MATCH (d)-[:" + DRUG_HAS_UNIT_LABEL + "]->(du:" + UNIT_LABEL + ") " +
+				"RETURN id(d) as drugId, d.amount as drugAmount, d." + VIRTUAL_DRUG_ATTR + " as virtual, " +
+				"i.massFrom as massFrom, i.massTo as massTo, i.isActive as active," +
+				"s.mmiId as substanceId, u.ucumCs as unit, du.ucumCs as drugUnit");
+
+		List<Record> records = List.of(result.next(), result.next(), result.next());
+		assertFalse(result.hasNext());
+
+		Record d1 = records.stream().filter(r -> r.get("substanceId").asInt() == 3).findFirst().orElseThrow();
+		Record d2 = records.stream().filter(r -> r.get("substanceId").asInt() == 1).findFirst().orElseThrow();
+		Record d3 = records.stream().filter(r -> r.get("substanceId").asInt() == 4).findFirst().orElseThrow();
+
+		records.forEach(d -> {
+			assertTrue(d.get("virtual").asBoolean());
+		});
+
+		assertTrue(d1.get("active").asBoolean());
+		assertTrue(d2.get("active").asBoolean());
+		assertFalse(d3.get("active").asBoolean());
+
+		// Ingredient 1 and 2 report the same drug amounts (5 ml), so they must be the same drug node
+		assertEquals(d1.get("drugId"), d2.get("drugId"));
+		// Ingredient 3 has a different drug amount (10 ml), so it must have a different drug node
+		assertNotEquals(d1.get("drugId"), d3.get("drugId"));
+
+		assertEquals("5", d1.get("drugAmount").asString());
+		assertEquals("ml", d1.get("drugUnit").asString());
+		assertEquals("10", d3.get("drugAmount").asString());
+		assertEquals("ml", d1.get("drugUnit").asString());
+
+		assertEquals("50", d1.get("massFrom").asString());
+		assertEquals("60", d1.get("massTo").asString());
+		assertEquals("mg", d1.get("unit").asString());
+		assertEquals("5", d2.get("massFrom").asString());
+		assertTrue(d2.get("massTo").isNull());
+		assertEquals("mg", d2.get("unit").asString());
+		assertEquals("10", d3.get("massFrom").asString());
+		assertTrue(d3.get("massTo").isNull());
+		assertEquals("ml", d3.get("unit").asString());
+	}
+
+	@Test
+	void archivedIngredientInfoNotApplied() {
+		Result result = session.run("MATCH (p:" + PRODUCT_LABEL + " {mmiId: 2})" +
+				"-[:" + PRODUCT_CONTAINS_DRUG_LABEL + "]->(d:" + DRUG_LABEL + ")" +
+				"-[:" + DRUG_CONTAINS_INGREDIENT_LABEL + "]->(i:" + INGREDIENT_LABEL + ")" +
+				"-[:" + INGREDIENT_IS_SUBSTANCE_LABEL + "]->(s:" + SUBSTANCE_LABEL + " {mmiId: 1}) " +
+				"RETURN p");
+		assertFalse(result.hasNext());
+	}
+
+	@Test
+	void archivedPackages() {
+		Result result = session.run("MATCH (p:" + PRODUCT_LABEL + ")-[:" + PACKAGE_BELONGS_TO_PRODUCT_LABEL + "]-" +
+				"(pk:" + PACKAGE_LABEL + " {" + ARCHIVED_ATTR + ": true})" +
+				"<-[:" + CODE_REFERENCE_RELATIONSHIP_NAME + "]-(c:" + PZN_LABEL + ") " +
+				"RETURN p.mmiId, pk.mmiId, pk.name, pk.onMarketDate, pk.offMarketDate, c.code");
+
+		List<Record> results = List.of(
+				result.next(),
+				result.next(),
+				result.next());
+		assertFalse(result.hasNext());
+
+		Record p1 = results.stream().filter(r -> r.get(1).asInt() == 3001).findAny().orElseThrow();
+		Record p2 = results.stream().filter(r -> r.get(1).asInt() == 3002).findAny().orElseThrow();
+		Record p3 = results.stream().filter(r -> r.get(1).asInt() == 3003).findAny().orElseThrow();
+
+		assertEquals(0, p1.get(0).asInt());
+		assertEquals("Old Dormicum 15 mg/3 ml", p1.get(2).asString());
+		assertEquals(LocalDate.of(2020, 3, 18), p1.get(3).asLocalDate());
+		assertEquals(LocalDate.of(2022, 1, 12), p1.get(4).asLocalDate());
+		assertEquals("51464", p1.get(5).asString());
+
+		assertEquals(3002, p2.get(0).asInt());
+		assertEquals("Very expensive water", p2.get(2).asString());
+		assertEquals(LocalDate.of(2000, 1, 1), p2.get(3).asLocalDate());
+		assertEquals(LocalDate.of(2010, 1, 1), p2.get(4).asLocalDate());
+		assertEquals("31843", p2.get(5).asString());
+
+		assertEquals(3002, p3.get(0).asInt());
+		assertEquals("Very expensive water", p3.get(2).asString());
+		assertEquals(LocalDate.of(2010, 1, 1), p3.get(3).asLocalDate());
+		assertEquals(LocalDate.of(2022, 8, 17), p3.get(4).asLocalDate());
+		assertEquals("31844", p3.get(5).asString());
+	}
+
+	@Test
+	void packageInterconnection1() {
+		Result result = session.run("MATCH (p:" + PACKAGE_LABEL + " {mmiId: 3001})" +
+				"-[:" + PACKAGE_HAS_SUCCESSOR_LABEL + "]->(p2:" + PACKAGE_LABEL + ") " +
+				"RETURN p2.mmiId");
+		assertTrue(result.hasNext());
+		assertEquals(0, result.next().get(0).asInt());
+		assertFalse(result.hasNext());
+	}
+
+	@Test
+	void packageInterconnection2() {
+		Result result = session.run("MATCH (p:" + PACKAGE_LABEL + " {mmiId: 3002})" +
+				"-[:" + PACKAGE_HAS_SUCCESSOR_LABEL + "]->(p2:" + PACKAGE_LABEL + ") " +
+				"RETURN p2.mmiId");
+		assertTrue(result.hasNext());
+		assertEquals(3003, result.next().get(0).asInt());
+		assertFalse(result.hasNext());
+	}
+
+	@Test
+	void packageInterconnection3() {
+		Result result = session.run("MATCH (p:" + PACKAGE_LABEL + " {mmiId: 3003})" +
+				"-[:" + PACKAGE_HAS_SUCCESSOR_LABEL + "]->(p2:" + PACKAGE_LABEL + ") " +
+				"RETURN p2.mmiId");
+		assertFalse(result.hasNext());
+	}
+
+	@Test
+	void supercededCompany() {
+		Result result = session.run("MATCH (c:" + COMPANY_LABEL + " {mmiId: 0}) RETURN c.name, c." + ARCHIVED_ATTR);
+		assertTrue(result.hasNext());
+		Record r = result.next();
+		assertEquals("Sample Company Inc.", r.get(0).asString());
+		assertTrue(r.get(1).isNull());
+		assertFalse(result.hasNext());
+	}
+
+	@Test
+	void archivedCompany() {
+		Result result = session.run(
+				"MATCH (c:" + COMPANY_LABEL + " {mmiId: 3}) RETURN c.name, c.shortName, c." + ARCHIVED_ATTR);
+		assertTrue(result.hasNext());
+		Record r = result.next();
+		assertEquals("Old Rusty Parts Inc.", r.get(0).asString());
+		assertTrue(r.get(2).asBoolean());
+		assertFalse(result.hasNext());
 	}
 
 }
