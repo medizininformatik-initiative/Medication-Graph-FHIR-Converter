@@ -56,7 +56,7 @@ public record Drug(@Nullable String doseForm, @Nullable EdqmPharmaceuticalDoseFo
 
 		if (amount != null && amount.getUnit() != null)
 			stringBuilder.append(amount).append(" ");
-		stringBuilder.append(doseForm);
+		stringBuilder.append(doseForm != null ? doseForm : "[Applikationsform unbekannt]");
 		if (edqmDoseForm != null) {
 			stringBuilder.append(" (").append(edqmDoseForm).append(")");
 		}

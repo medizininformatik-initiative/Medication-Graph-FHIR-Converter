@@ -543,7 +543,7 @@ class WithArchiveIntegrationTest extends IntegrationTest {
 	}
 
 	@Test
-	void archivedDrugsAndIngredients1() {
+	void archivedDrugsAndIngredients() {
 		Result result = session.run("MATCH (p:" + PRODUCT_LABEL + " {mmiId: 3001})" +
 				"-[:" + PRODUCT_CONTAINS_DRUG_LABEL + "]->(d:" + DRUG_LABEL + ")" +
 				"-[:" + DRUG_CONTAINS_INGREDIENT_LABEL + "]->(i:" + INGREDIENT_LABEL + ")" +
