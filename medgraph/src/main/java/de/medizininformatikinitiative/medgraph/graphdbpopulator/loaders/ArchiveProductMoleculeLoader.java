@@ -18,6 +18,7 @@ public class ArchiveProductMoleculeLoader extends CsvLoader {
 
 	private static final String PRODUCT_ID = "PRODUCTID";
 	private static final String MOLECULE_ID = "MOLECULEID";
+	// TODO We may need to consider the equivalence code!
 	private static final String MOLECULE_TYPE_CODE = "MOLECULETYPECODE"; // 'A' for active.
 	private static final String MASS_FROM = "MASSFROM";
 	private static final String MASS_TO = "MASSTO";
@@ -114,6 +115,7 @@ public class ArchiveProductMoleculeLoader extends CsvLoader {
 						+ VIRTUAL_DRUG_ATTR + ": true, " +
 						"amount: r.amount" +
 						", amountUnit: r.amountUnit" +
+						", product: p.mmiId"+
 						" }) " +
 						"MERGE (p)-[:" + PRODUCT_CONTAINS_DRUG_LABEL + "]->(d)" +
 						"CREATE (d)-[:" + DRUG_CONTAINS_INGREDIENT_LABEL + "]->(i)", 1500));
@@ -130,7 +132,7 @@ public class ArchiveProductMoleculeLoader extends CsvLoader {
 
 		startSubtask("Cleaning up");
 		executeQuery("MATCH (d:" + DRUG_LABEL + ":Temp) " +
-				withRowLimit("WITH d REMOVE d:Temp, d.amontUnit"));
+				withRowLimit("WITH d REMOVE d:Temp, d.amontUnit, d.product"));
 		executeQuery("MATCH (i:" + MMI_INGREDIENT_LABEL + ":Temp) " +
 				withRowLimit("WITH i REMOVE i:Temp, i.productId, i.substanceId, i.unitCode"));
 	}
