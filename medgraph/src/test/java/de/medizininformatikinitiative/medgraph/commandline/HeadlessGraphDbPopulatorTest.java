@@ -11,6 +11,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 
@@ -87,6 +88,33 @@ public class HeadlessGraphDbPopulatorTest extends UnitTest {
 				List.of("This", "is", "n\0t fine")).code);
 	}
 
+
+	@ParameterizedTest
+	@ValueSource(strings = { "include-archive", "yes", "true"})
+	void archiveLoadingEnabled(String archiveLoadingKeyword) throws IOException {
+		sut.invoke(commandLine, List.of("1", "2", "3", archiveLoadingKeyword));
+		verify(population).executeDatabasePopulation(notNull(), eq(true));
+	}
+
+	@Test
+	void archiveLoadingEnabled2() throws IOException {
+		sut.invoke(commandLine, List.of("1", "2", "include-archive"));
+		verify(population).executeDatabasePopulation(notNull(), eq(true));
+	}
+
+	@Test
+	void archiveLoadingDisabled() throws IOException {
+		sut.invoke(commandLine, List.of("1", "2", "3"));
+		verify(population).executeDatabasePopulation(notNull(), eq(false));
+	}
+
+	@Test
+	void archiveLoadingEnabled3() throws IOException {
+		sut.invoke(commandLine, List.of("1", "2", "", "include-archive"));
+		verify(factory).prepareDatabasePopulation(notNull(), notNull(), isNull());
+		verify(population).executeDatabasePopulation(notNull(), eq(true));
+	}
+
 	@ParameterizedTest
 	@EnumSource
 	void neo4jUnreachable(ConnectionFailureReason failureReason) throws DatabaseConnectionException {
@@ -97,17 +125,17 @@ public class HeadlessGraphDbPopulatorTest extends UnitTest {
 		ExitStatus exitStatus = sut.invoke(commandLine, List.of("A", "2", "5"));
 
 		switch (failureReason) {
-			case INVALID_CONNECTION_STRING -> assertEquals(exitStatus, ExitStatus.INVALID_DB_CONNECTION_STRING);
-			case SERVICE_UNAVAILABLE -> assertEquals(exitStatus, ExitStatus.NEO4J_SERVICE_UNAVAILABLE);
-			case AUTHENTICATION_FAILED -> assertEquals(exitStatus, ExitStatus.NEO4J_AUTHENTICATION_FAILED);
-			case INTERNAL_ERROR -> assertEquals(exitStatus, ExitStatus.internalError(cause));
+			case INVALID_CONNECTION_STRING -> assertEquals(ExitStatus.INVALID_DB_CONNECTION_STRING, exitStatus);
+			case SERVICE_UNAVAILABLE -> assertEquals(ExitStatus.NEO4J_SERVICE_UNAVAILABLE, exitStatus);
+			case AUTHENTICATION_FAILED -> assertEquals(ExitStatus.NEO4J_AUTHENTICATION_FAILED, exitStatus);
+			case INTERNAL_ERROR -> assertEquals(ExitStatus.internalError(cause), exitStatus);
 		}
 	}
 
 	@Test
 	void accessDenied() throws IOException {
 		AccessDeniedException accessDeniedException = new AccessDeniedException("Access denied! LOL!");
-		doThrow(accessDeniedException).when(population).executeDatabasePopulation(notNull());
+		doThrow(accessDeniedException).when(population).executeDatabasePopulation(notNull(), anyBoolean());
 
 		assertEquals(ExitStatus.accessDenied(accessDeniedException), sut.invoke(commandLine, List.of("1", "2", "3")));
 	}
@@ -115,7 +143,7 @@ public class HeadlessGraphDbPopulatorTest extends UnitTest {
 	@Test
 	void randomIOException() throws IOException {
 		IOException ioOutOfOrder = new IOException("Yeah no I'm not motivated today.");
-		doThrow(ioOutOfOrder).when(population).executeDatabasePopulation(notNull());
+		doThrow(ioOutOfOrder).when(population).executeDatabasePopulation(notNull(), anyBoolean());
 
 		assertEquals(ExitStatus.ioException(ioOutOfOrder), sut.invoke(commandLine, List.of("1", "2", "3")));
 	}
