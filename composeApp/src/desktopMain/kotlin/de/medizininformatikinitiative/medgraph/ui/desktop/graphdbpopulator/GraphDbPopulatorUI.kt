@@ -3,10 +3,12 @@ package de.medizininformatikinitiative.medgraph.ui.desktop.graphdbpopulator
 import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.ClickableText
+import androidx.compose.material.Checkbox
 import androidx.compose.material.Divider
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.text.SpanStyle
@@ -72,7 +74,7 @@ fun GraphDbPopulatorUI(viewModel: GraphDbPopulatorScreenModel, modifier: Modifie
         ) {
             annotatedNeo4jDesc
                 .getStringAnnotations("neo4jpath", it, it)
-                .firstOrNull()?.let { stringAnnotation ->
+                .firstOrNull()?.let { _ ->
                     viewModel.neo4jImportDirectory = StringRes.graph_db_populator_neo4j_import_dir_path
                 }
         }
@@ -99,6 +101,17 @@ fun GraphDbPopulatorUI(viewModel: GraphDbPopulatorScreenModel, modifier: Modifie
                     uriHandler.openUri(stringAnnotation.item)
                 }
         }
+
+        Row(
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Checkbox(viewModel.includeArchive, { viewModel.includeArchive = it })
+            Text(StringRes.graph_db_populator_load_archive)
+        }
+        Text(StringRes.graph_db_populator_load_archive_hint, style = MaterialTheme.typography.body2,
+            modifier = Modifier.padding(horizontal = 8.dp))
+
+        Spacer(modifier = Modifier.height(8.dp))
 
         Text(StringRes.graph_db_populator_wipe_warning, color = MaterialTheme.localColors.strongFailure)
 

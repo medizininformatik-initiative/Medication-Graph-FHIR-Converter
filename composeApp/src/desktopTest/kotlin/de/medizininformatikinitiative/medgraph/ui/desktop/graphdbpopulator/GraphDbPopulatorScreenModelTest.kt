@@ -4,9 +4,12 @@ import de.medizininformatikinitiative.medgraph.graphdbpopulator.GraphDbPopulatio
 import de.medizininformatikinitiative.medgraph.UnitTest
 import de.medizininformatikinitiative.medgraph.graphdbpopulator.GraphDbPopulationFactory
 import kotlinx.coroutines.runBlocking
+import org.jetbrains.compose.resources.vectorResource
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.ValueSource
 import org.mockito.Mock
 import org.mockito.Mockito.*
 import java.nio.file.Path
@@ -41,6 +44,7 @@ class GraphDbPopulatorScreenModelTest : UnitTest() {
         assertNull(sut.errorMessage)
         assertFalse(sut.executionComplete)
         assertFalse(sut.executionUnderway)
+        assertTrue(sut.includeArchive)
         assertNull(sut.executionTaskState.progressable)
     }
 
@@ -63,11 +67,11 @@ class GraphDbPopulatorScreenModelTest : UnitTest() {
         val completedStateGoneAgain = AtomicBoolean(false)
         val newTaskAssigned = AtomicBoolean(false)
 
-        doAnswer({ req ->
+        doAnswer({ _ ->
             completedStateGoneAgain.set(!sut.executionComplete)
             newTaskAssigned.set(sut.executionTaskState.progressable == otherTask)
             return@doAnswer null
-        }).`when`(otherTask).executeDatabasePopulation(any())
+        }).`when`(otherTask).executeDatabasePopulation(any(), anyBoolean())
 
         runSut()
 
@@ -77,7 +81,7 @@ class GraphDbPopulatorScreenModelTest : UnitTest() {
 
     @Test
     fun executionFails() {
-        doThrow(RuntimeException("This went terribly wrong!")).`when`(graphDbPopulation).executeDatabasePopulation(any())
+        doThrow(RuntimeException("This went terribly wrong!")).`when`(graphDbPopulation).executeDatabasePopulation(any(), anyBoolean())
 
         runSut()
 
@@ -118,6 +122,14 @@ class GraphDbPopulatorScreenModelTest : UnitTest() {
             Path.of(sut.neo4jImportDirectory),
             null,
         )
+    }
+
+    @ParameterizedTest
+    @ValueSource(booleans = booleanArrayOf(true, false))
+    fun archiveLoading(loadArchive: Boolean) {
+        sut.includeArchive = loadArchive
+        runSut()
+        verify(graphDbPopulation).executeDatabasePopulation(any(), eq(loadArchive));
     }
 
     private fun runSut() {

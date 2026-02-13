@@ -193,6 +193,15 @@ class StringRes {
         val pipeline_merge_last_path = ">>"
 
         @JvmStatic
+        val graph_db_populator_load_archive = "Include archive files"
+
+        @JvmStatic
+        val graph_db_populator_load_archive_hint = "If this is enabled, the archived information in the MMI Pharmindex " +
+                "(ARCHIVE_COMPANY, ARCHIVE_PACKAGE, ARCHIVE_PRODUCT and ARCHIVE_PRODUCTMOLECULE) is also loaded in the graph. " +
+                "This also affects the FHIR export, causing FHIR resources to also be generated for products that have been " +
+                "permanently withdrawn from the market without a replacement."
+
+        @JvmStatic
         val graph_db_populator_wipe_warning =
             "Warning: Running the import completely overwrites the database you are currently connected to!"
 

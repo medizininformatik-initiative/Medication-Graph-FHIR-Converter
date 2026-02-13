@@ -55,11 +55,6 @@ public class GraphDbPopulation extends NamedProgressableImpl {
 		this.amiceFilePath = amiceFilePath;
 	}
 
-	@Deprecated
-	public void executeDatabasePopulation(DatabaseConnection connection) throws IOException {
-		executeDatabasePopulation(connection, true);
-	}
-
 	public void executeDatabasePopulation(DatabaseConnection connection, boolean includeArchive) throws IOException {
 		setTaskStack("Preparing data import");
 		setProgress(0);
