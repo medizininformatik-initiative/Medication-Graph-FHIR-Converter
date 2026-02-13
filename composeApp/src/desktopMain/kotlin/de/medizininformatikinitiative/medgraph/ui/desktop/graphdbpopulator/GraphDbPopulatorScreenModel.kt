@@ -45,6 +45,11 @@ class GraphDbPopulatorScreenModel(
     var amiceStoffBezFile by mutableStateOf("")
 
     /**
+     * Switch that controls whether the MMI Pharmindex archive files shall be included in the population.
+     */
+    var includeArchive by mutableStateOf(true)
+
+    /**
      * The current error message to display.
      */
     var errorMessage by mutableStateOf<String?>(null)
@@ -112,7 +117,7 @@ class GraphDbPopulatorScreenModel(
         this.executionTaskState.bind(population)
 
         try {
-            population.executeDatabasePopulation(connectionService.createConnection());
+            population.executeDatabasePopulation(connectionService.createConnection(), includeArchive);
         } catch (e: IllegalArgumentException) {
             errorMessage = e.message
             return
