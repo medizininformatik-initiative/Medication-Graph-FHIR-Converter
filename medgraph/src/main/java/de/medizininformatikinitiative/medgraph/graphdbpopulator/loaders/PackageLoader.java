@@ -98,7 +98,7 @@ public class PackageLoader extends CsvLoader {
 				"MATCH (p1:" + DatabaseDefinitions.PZN_LABEL + ")-[:" + DatabaseDefinitions.CODE_REFERENCE_RELATIONSHIP_NAME + "]->(pk1:" + DatabaseDefinitions.PACKAGE_LABEL + ") " +
 						"MATCH (p2:" + DatabaseDefinitions.PZN_LABEL + " {code: p1.pznSuccessor})-[:" + DatabaseDefinitions.CODE_REFERENCE_RELATIONSHIP_NAME + "]->(pk2:" + DatabaseDefinitions.PACKAGE_LABEL + ") " +
 						withRowLimit(
-								"WITH p1, p2 CREATE (pk1)-[:" + DatabaseDefinitions.PACKAGE_HAS_SUCCESSOR_LABEL + "]->(pk2)")
+								"WITH pk1, pk2 CREATE (pk1)-[:" + DatabaseDefinitions.PACKAGE_HAS_SUCCESSOR_LABEL + "]->(pk2)")
 		);
 
 		// Connect originals
@@ -106,7 +106,7 @@ public class PackageLoader extends CsvLoader {
 				"MATCH (p1:" + DatabaseDefinitions.PZN_LABEL + ")-[:" + DatabaseDefinitions.CODE_REFERENCE_RELATIONSHIP_NAME + "]->(pk1:" + DatabaseDefinitions.PACKAGE_LABEL + ") " +
 						"MATCH (p2:" + DatabaseDefinitions.PZN_LABEL + " {code: p1.pznOriginal})-[:" + DatabaseDefinitions.CODE_REFERENCE_RELATIONSHIP_NAME + "]->(pk2:" + DatabaseDefinitions.PACKAGE_LABEL + ") " +
 						withRowLimit(
-								"WITH p1, p2 CREATE (pk1)-[:" + DatabaseDefinitions.PACKAGE_IS_ORIGINALLY + "]->(pk2)")
+								"WITH pk1, pk2 CREATE (pk1)-[:" + DatabaseDefinitions.PACKAGE_IS_ORIGINALLY + "]->(pk2)")
 		);
 
 		startSubtask("Cleaning up");
