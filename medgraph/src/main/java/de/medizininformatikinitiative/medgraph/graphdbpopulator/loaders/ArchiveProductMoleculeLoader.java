@@ -3,6 +3,7 @@ package de.medizininformatikinitiative.medgraph.graphdbpopulator.loaders;
 import org.neo4j.driver.Session;
 
 import static de.medizininformatikinitiative.medgraph.common.db.DatabaseDefinitions.*;
+import static de.medizininformatikinitiative.medgraph.graphdbpopulator.loaders.IngredientLoader.getAcceptableIngredientTypeCodesAsCypherTuple;
 
 /**
  * This class creates the archived ingredient nodes in the database using the ARCHIVE_PRODUCT_MOLECULE table from the
@@ -18,7 +19,6 @@ public class ArchiveProductMoleculeLoader extends CsvLoader {
 
 	private static final String PRODUCT_ID = "PRODUCTID";
 	private static final String MOLECULE_ID = "MOLECULEID";
-	// TODO We may need to consider the equivalence code!
 	private static final String MOLECULE_TYPE_CODE = "MOLECULETYPECODE"; // 'A' for active.
 	private static final String MASS_FROM = "MASSFROM";
 	private static final String MASS_TO = "MASSTO";
@@ -34,7 +34,8 @@ public class ArchiveProductMoleculeLoader extends CsvLoader {
 	protected void executeLoad() {
 		startSubtask("Loading archived ingredients");
 		executeQuery(withLoadStatement(
-				"CREATE (i:" + MMI_INGREDIENT_LABEL + ":" + INGREDIENT_LABEL + ":Temp {" +
+				"WITH "+ROW_IDENTIFIER +" WHERE "+row(MOLECULE_TYPE_CODE) + " IN "+getAcceptableIngredientTypeCodesAsCypherTuple() +
+				" CREATE (i:" + MMI_INGREDIENT_LABEL + ":" + INGREDIENT_LABEL + ":Temp {" +
 						"productId: " + intRow(PRODUCT_ID) +
 						", substanceId: " + intRow(MOLECULE_ID) +
 						", isActive: (" + row(MOLECULE_TYPE_CODE) + " = 'A')" +
