@@ -24,6 +24,8 @@ public class IngredientLoader extends CsvLoader {
 
 	private static final String ACTIVE_INGREDIENT_TYPE_CODE = "A";
 
+	// TODO Exclude ingredients with unacceptable molecule type code
+
 	public IngredientLoader(Session session) {
 		super("COMPOSITIONELEMENT.CSV", session);
 	}
