@@ -55,7 +55,8 @@ public abstract class IntegrationTest {
 
 		DI.get(GraphDbPopulationFactory.class).prepareDatabasePopulation(
 				  Path.of("src", "test", "resources", "sample"),
-				  Path.of("/var", "lib", "neo4j", "import"),
+//				  Path.of("/var", "lib", "neo4j", "import"),
+				  Path.of("/usr", "local", "neo4j", "import"),
 				  Path.of("src", "test", "resources", "sample", "amice_stoffbez_synthetic.csv")
 		  )
 		  .executeDatabasePopulation(connection, includeArchive);
@@ -265,6 +266,23 @@ public abstract class IntegrationTest {
 			}
 		}
 		assertFalse(result.hasNext());
+	}
+
+	@Test
+	public void belocMiteExcludedIngredients() {
+		Result result = session.run(
+				"MATCH (p:" + PRODUCT_LABEL + " {name: 'Beloc mite'})-->(d:" + DRUG_LABEL + ")" +
+						"-->(i:" + MMI_INGREDIENT_LABEL + ")-->(s:" + SUBSTANCE_LABEL + ") " +
+						"MATCH (i)-->(u:" + UNIT_LABEL + ") " +
+						"RETURN s.name, i.massFrom, u.mmiName, i.isActive"
+		);
+
+		assertTrue(result.hasNext());
+		Record record = result.next();
+		// The other two ingredients carry an unacceptable type code and must thus be excluded. So just 1 match.
+		assertFalse(result.hasNext());
+		assertEquals("Metoprololtartrat (Ph.Eur.)", record.get(0).asString());
+		assertTrue(record.get(3).asBoolean());
 	}
 
 	@Test
@@ -555,6 +573,7 @@ class WithArchiveIntegrationTest extends IntegrationTest {
 				"s.mmiId as substanceId, u.ucumCs as unit, du.ucumCs as drugUnit");
 
 		List<Record> records = List.of(result.next(), result.next(), result.next());
+		// If below fails, it's likely the ingredient marked as "equivalence" has not been excluded.
 		assertFalse(result.hasNext());
 
 		Record d1 = records.stream().filter(r -> r.get("substanceId").asInt() == 3).findFirst().orElseThrow();

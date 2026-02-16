@@ -2,6 +2,8 @@ package de.medizininformatikinitiative.medgraph.graphdbpopulator.loaders;
 
 import org.neo4j.driver.Session;
 
+import java.util.List;
+
 import static de.medizininformatikinitiative.medgraph.common.db.DatabaseDefinitions.*;
 
 /**
@@ -23,11 +25,19 @@ public class IngredientLoader extends CsvLoader {
 	private static final String MOLECULE_TYPE_CODE = "MOLECULETYPECODE";
 
 	private static final String ACTIVE_INGREDIENT_TYPE_CODE = "A";
-
-	// TODO Exclude ingredients with unacceptable molecule type code
+	private static final List<String> ACCCEPTABLE_INGREDIENT_TYPE_CODES = List.of("A", "C", "I", "N", "O", "X");
 
 	public IngredientLoader(Session session) {
 		super("COMPOSITIONELEMENT.CSV", session);
+	}
+
+	public static String getAcceptableIngredientTypeCodesAsCypherTuple() {
+		return "[" + ACCCEPTABLE_INGREDIENT_TYPE_CODES.
+				stream()
+				.map(s -> "'" + s + "'")
+				.reduce((s1, s2) -> s1 + ", " + s2)
+				.orElseThrow()
+				+ "]";
 	}
 
 	@Override
@@ -38,7 +48,8 @@ public class IngredientLoader extends CsvLoader {
 
 		startSubtask("Loading nodes");
 		executeQuery(withLoadStatement(
-				"CREATE (i:" + MMI_INGREDIENT_LABEL + ":" + INGREDIENT_LABEL +
+				"WITH "+ROW_IDENTIFIER +" WHERE "+row(MOLECULE_TYPE_CODE) + " IN "+getAcceptableIngredientTypeCodesAsCypherTuple() +
+				" CREATE (i:" + MMI_INGREDIENT_LABEL + ":" + INGREDIENT_LABEL +
 						" {mmiId: " + intRow(ID) +
 						", massFrom: " + row(MASS_FROM) +
 						", massTo: " + row(MASS_TO) +
