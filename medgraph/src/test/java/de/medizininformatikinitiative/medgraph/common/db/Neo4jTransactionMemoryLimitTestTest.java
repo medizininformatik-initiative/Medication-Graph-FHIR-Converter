@@ -30,7 +30,7 @@ public class Neo4jTransactionMemoryLimitTestTest extends UnitTest {
 
 	@Test
 	void gibSizeLimit() {
-		assertTrue(sut.checkSizeLimit("3GiB").isEmpty());
+		assertTrue(sut.checkSizeLimit("4GiB").isEmpty());
 	}
 
 	@Test
@@ -40,16 +40,16 @@ public class Neo4jTransactionMemoryLimitTestTest extends UnitTest {
 
 	@Test
 	void exactLimit1() {
-		assertTrue(sut.checkSizeLimit("2048MiB").isEmpty());
+		assertTrue(sut.checkSizeLimit("3072MiB").isEmpty());
 	}
 	@Test
 	void exactLimit2() {
-		assertTrue(sut.checkSizeLimit("2GiB").isEmpty());
+		assertTrue(sut.checkSizeLimit("3GiB").isEmpty());
 	}
 
 	@Test
 	void tooLow1() {
-		assertTrue(sut.checkSizeLimit("2047MiB").orElse("").contains("below the recommended limit"));
+		assertTrue(sut.checkSizeLimit("3071MiB").orElse("").contains("below the recommended limit"));
 	}
 
 	@Test
