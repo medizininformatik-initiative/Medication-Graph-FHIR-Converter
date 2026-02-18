@@ -28,7 +28,7 @@ public class Neo4jTransactionMemoryLimitTest {
 	private static final long GiB = MiB << 10;
 
 	private static final String TRANSACTION_SIZE_SETTING = "dbms.memory.transaction.total.max";
-	private static final long RECOMMENDED_TRANSACTION_SIZE_MEBIBYTES = 2048L;
+	private static final long RECOMMENDED_TRANSACTION_SIZE_MEBIBYTES = 3072L;
 
 	private static final String WARNING_UNKNOWN_LIMIT = "Could not determine the Neo4j transaction size limit. " +
 			"It might be set either too low (recommended value: " + RECOMMENDED_TRANSACTION_SIZE_MEBIBYTES + " MiB), in which case queries can fail.";
