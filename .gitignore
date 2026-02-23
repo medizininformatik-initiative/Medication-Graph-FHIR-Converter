@@ -5,6 +5,7 @@
 output/
 *.log
 logs/
+medgraph/src/main/resources/Athena_*
 
 # Environment variables (sensitive data)
 .env

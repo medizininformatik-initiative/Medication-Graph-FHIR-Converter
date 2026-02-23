@@ -159,6 +159,11 @@ public class GraphDbPopulation extends NamedProgressableImpl {
 		loaders.add(new EdqmStandardTermsTranslationsLoader(session));
 		// Custom dose form synonyms
 		loaders.add(new EdqmStandardTermsCustomSynonymsLoader(session));
+
+		// Athena stuff for RxNorm Matching
+		loaders.add(new AthenaConceptLoader(session));
+		loaders.add(new AthenaRelationshipLoader(session));
+
 		// Coding System Nodes and connections to it
 		loaders.add(new CodingSystemNodeCreator(session));
 		// Synonyms from other nodes

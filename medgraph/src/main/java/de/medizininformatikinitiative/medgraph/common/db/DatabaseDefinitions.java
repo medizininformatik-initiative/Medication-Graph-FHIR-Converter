@@ -10,6 +10,7 @@ public class DatabaseDefinitions {
 	public static final String CODING_SYSTEM_LABEL = "CodingSystem";
 	public static final String BELONGS_TO_CODING_SYSTEM_LABEL = "BELONGS_TO";
 	public static final String CODE_LABEL = "Code";
+	public static final String ATHENA_LABEL = "Athena";
 	public static final String CODE_REFERENCE_RELATIONSHIP_NAME = "REFERENCES";
 	public static final String SUBSTANCE_LABEL = "Substance";
 	public static final String PRODUCT_LABEL = "Product";
@@ -20,6 +21,10 @@ public class DatabaseDefinitions {
 	public static final String CAS_LABEL = "CAS";
 	public static final String INN_LABEL = "INN";
 	public static final String RXCUI_LABEL = "RXCUI";
+	public static final String RXNORM_SCD_LABEL = "RxSCD";
+	public static final String RXNORM_CDF_LABEL = "RxCDF";
+	public static final String RXNORM_IS_A_LABEL = "RXNORM_IS_A";
+	public static final String RXNORM_CORRESPONDS_TO_ATC_LABEL = "RXNORM_ATC";
 	public static final String UNII_LABEL = "UNII";
 	public static final String ATC_LABEL = "ATC";
 	public static final String ATC_HAS_PARENT_LABEL = "HAS_PARENT";

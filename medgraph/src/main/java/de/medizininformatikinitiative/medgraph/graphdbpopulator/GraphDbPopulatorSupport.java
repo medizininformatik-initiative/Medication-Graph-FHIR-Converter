@@ -54,7 +54,11 @@ public class GraphDbPopulatorSupport {
 			"DarreichungsformenMapping.csv",
 			"NOTICE.txt",
 	};
-	private static final Path[] OPTIONAL_FILES = new Path[]{
+	private static final String[] OPTIONAL_RESOURCE_FILES = new String[] {
+			"Athena_CONCEPT.csv",
+			"Athena_CONCEPT_RELATIONSHIP.csv",
+	};
+	private static final Path[] OPTIONAL_DELETE_ONLY_FILES = new Path[]{
 			AmiceStoffBezLoader.RAW_DATA_FILE_PATH,
 	};
 
@@ -171,6 +175,14 @@ public class GraphDbPopulatorSupport {
 				copyCsvAndStripComments(stream, targetPath);
 			}
 		}
+		for (String resource : OPTIONAL_RESOURCE_FILES) {
+			InputStream inputStream = GraphDbPopulatorSupport.class.getResourceAsStream("/" + resource);
+			if (inputStream == null) continue;
+			try (inputStream) {
+				Path targetPath = target.resolve(resource);
+				copyCsvAndStripComments(inputStream, targetPath);
+			}
+		}
 	}
 
 	/**
@@ -190,7 +202,13 @@ public class GraphDbPopulatorSupport {
 			Files.delete(neo4jImportPath.resolve(filename));
 		}
 
-		for (Path path : OPTIONAL_FILES) {
+		for (String filename : OPTIONAL_RESOURCE_FILES) {
+			try {
+				Files.delete(neo4jImportPath.resolve(filename));
+			} catch (NoSuchFileException ignored) {
+			}
+		}
+		for (Path path : OPTIONAL_DELETE_ONLY_FILES) {
 			try {
 				Files.delete(neo4jImportPath.resolve(path));
 			} catch (NoSuchFileException ignored) {
