@@ -34,7 +34,8 @@ public class IngredientCorrespondenceLoader extends CsvLoader {
 						+ ", moleculeId: " + intRow(CORRESPONDING_MOLECULE_ID)
 						+ ", unitCode: " + row(MOLECULE_UNIT_CODE)
 						+ ", massFrom: " + row(MASS_FROM)
-						+ ", massTo: " + row(MASS_TO) + "}) "
+						+ ", massTo: " + row(MASS_TO)
+						+ ", source: 'COMPOSITIONELEMENTEQUI' }) "
 		));
 
 

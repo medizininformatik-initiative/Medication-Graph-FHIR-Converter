@@ -15,6 +15,11 @@ public class DatabaseDefinitions {
 	public static final String PRODUCT_LABEL = "Product";
 	public static final String INGREDIENT_LABEL = "Ingredient";
 	public static final String MMI_INGREDIENT_LABEL = "MmiIngredient";
+	/**
+	 * Only temporarily used when legacy ingredient correspondences are loaded. Assigned to all Ingredient nodes
+	 * which have the role "R" ("CORRESPONDING") in the MMI Pharmindex.
+	 */
+	public static final String MMI_CORRESPONDING_INGREDIENT_LABEL = "MmiCorrespondingIngredient";
 	public static final String DRUG_LABEL = "Drug";
 	public static final String ASK_LABEL = "ASK";
 	public static final String CAS_LABEL = "CAS";

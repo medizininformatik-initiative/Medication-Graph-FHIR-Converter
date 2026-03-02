@@ -93,20 +93,26 @@ public class PackageLoader extends CsvLoader {
 		startSubtask("Interconnecting Package nodes");
 		// We connect indirectly by querying the PZN nodes, because those have indexes on them and are thus queried
 		// much faster.
-		// Connect successors
+		// But, something shady is happening. In some cases, the query planner decides to not use that index and
+		// then the query takes forever. So we include a USING INDEX to force its hand.
+		// TODO The planner still does not obey.
 		executeQuery(
 				"MATCH (p1:" + DatabaseDefinitions.PZN_LABEL + ")-[:" + DatabaseDefinitions.CODE_REFERENCE_RELATIONSHIP_NAME + "]->(pk1:" + DatabaseDefinitions.PACKAGE_LABEL + ") " +
-						"MATCH (p2:" + DatabaseDefinitions.PZN_LABEL + " {code: p1.pznSuccessor})-[:" + DatabaseDefinitions.CODE_REFERENCE_RELATIONSHIP_NAME + "]->(pk2:" + DatabaseDefinitions.PACKAGE_LABEL + ") " +
-						withRowLimit(
-								"WITH pk1, pk2 CREATE (pk1)-[:" + DatabaseDefinitions.PACKAGE_HAS_SUCCESSOR_LABEL + "]->(pk2)")
+						"WHERE p1.pznSuccessor IS NOT NULL " +
+						"MATCH (p2:" + DatabaseDefinitions.PZN_LABEL + ")-[:" + DatabaseDefinitions.CODE_REFERENCE_RELATIONSHIP_NAME + "]->(pk2:" + DatabaseDefinitions.PACKAGE_LABEL + ") " +
+						"USING INDEX p2:PZN(code) " +
+						"WHERE p2.code = p1.pznSuccessor " +
+						"CREATE (pk1)-[:" + DatabaseDefinitions.PACKAGE_HAS_SUCCESSOR_LABEL + "]->(pk2)"
 		);
 
 		// Connect originals
 		executeQuery(
 				"MATCH (p1:" + DatabaseDefinitions.PZN_LABEL + ")-[:" + DatabaseDefinitions.CODE_REFERENCE_RELATIONSHIP_NAME + "]->(pk1:" + DatabaseDefinitions.PACKAGE_LABEL + ") " +
-						"MATCH (p2:" + DatabaseDefinitions.PZN_LABEL + " {code: p1.pznOriginal})-[:" + DatabaseDefinitions.CODE_REFERENCE_RELATIONSHIP_NAME + "]->(pk2:" + DatabaseDefinitions.PACKAGE_LABEL + ") " +
-						withRowLimit(
-								"WITH pk1, pk2 CREATE (pk1)-[:" + DatabaseDefinitions.PACKAGE_IS_ORIGINALLY + "]->(pk2)")
+						"WHERE p1.pznSuccessor IS NOT NULL " +
+						"MATCH (p2:" + DatabaseDefinitions.PZN_LABEL + ")-[:" + DatabaseDefinitions.CODE_REFERENCE_RELATIONSHIP_NAME + "]->(pk2:" + DatabaseDefinitions.PACKAGE_LABEL + ") " +
+						"USING INDEX p2:PZN(code) " +
+						"WHERE p2.code = p1.pznSuccessor " +
+						"CREATE (pk1)-[:" + DatabaseDefinitions.PACKAGE_IS_ORIGINALLY + "]->(pk2)"
 		);
 
 		startSubtask("Cleaning up");

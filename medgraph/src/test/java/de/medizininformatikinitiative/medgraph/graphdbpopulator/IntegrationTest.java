@@ -30,6 +30,8 @@ import static org.junit.jupiter.api.Assertions.*;
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public abstract class IntegrationTest {
 
+	// TODO Check Midazolam Legacy Correspondence. Resource files already include that.
+
 	protected DatabaseConnection connection;
 	protected Session session;
 
@@ -51,8 +53,8 @@ public abstract class IntegrationTest {
 
 		DI.get(GraphDbPopulationFactory.class).prepareDatabasePopulation(
 				  Path.of("src", "test", "resources", "sample"),
-				  Path.of("/var", "lib", "neo4j", "import"),
-//				  Path.of("/usr", "local", "neo4j", "import"),
+//				  Path.of("/var", "lib", "neo4j", "import"),
+				  Path.of("/usr", "local", "neo4j", "import"),
 				  Path.of("src", "test", "resources", "sample", "amice_stoffbez_synthetic.csv")
 		  )
 		  .executeDatabasePopulation(connection, includeArchive);
@@ -452,10 +454,10 @@ public abstract class IntegrationTest {
 
 }
 
-@Disabled("This test wipes the target database. Also it needs to copy files to the Neo4j import directory " +
-		"which is likely different if you have a different OS than mine and also write privileges are required. " +
-		"Sadly, a platform-independent solution is tricky. I have not yet seen a way to inject the test files " +
-		"into the Neo4j harness in a different way.")
+//@Disabled("This test wipes the target database. Also it needs to copy files to the Neo4j import directory " +
+//		"which is likely different if you have a different OS than mine and also write privileges are required. " +
+//		"Sadly, a platform-independent solution is tricky. I have not yet seen a way to inject the test files " +
+//		"into the Neo4j harness in a different way.")
 class WithoutArchiveIntegrationTest extends IntegrationTest {
 
 	@BeforeAll
