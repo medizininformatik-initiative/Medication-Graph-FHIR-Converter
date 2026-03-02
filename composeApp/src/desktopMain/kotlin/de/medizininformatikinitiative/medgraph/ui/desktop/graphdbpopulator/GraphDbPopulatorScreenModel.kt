@@ -70,6 +70,14 @@ class GraphDbPopulatorScreenModel(
     var executionComplete by mutableStateOf(false)
         private set
 
+    init {
+        val prefs = GraphDbPopulationPrefs.INSTANCE
+        mmiPharmindexDirectory = prefs.mmiPharmindexDataLocation
+        neo4jImportDirectory = prefs.neo4jImportDir
+        amiceStoffBezFile = prefs.amiceFilePath
+        includeArchive = prefs.includeArchive
+    }
+
     /**
      * Runs the graph db population if not already underway.
      *
@@ -112,6 +120,10 @@ class GraphDbPopulatorScreenModel(
         val mmiPharmindexPath: Path = Path.of(mmiPharmindexDirectory)
         val neo4jImportPath: Path = Path.of(neo4jImportDirectory)
         val amiceFilePath: Path? = if (amiceStoffBezFile.isEmpty()) null else Path.of(amiceStoffBezFile)
+        val includeArchive: Boolean = this.includeArchive
+
+        val prefs = GraphDbPopulationPrefs.INSTANCE
+        prefs.update(mmiPharmindexDirectory, neo4jImportDirectory, amiceStoffBezFile, includeArchive)
 
         val population = graphDbPopulationFactory.prepareDatabasePopulation(mmiPharmindexPath, neo4jImportPath, amiceFilePath)
         this.executionTaskState.bind(population)

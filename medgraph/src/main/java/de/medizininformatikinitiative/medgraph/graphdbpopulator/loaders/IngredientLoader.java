@@ -25,10 +25,14 @@ public class IngredientLoader extends CsvLoader {
 	private static final String MOLECULE_TYPE_CODE = "MOLECULETYPECODE";
 
 	private static final String ACTIVE_INGREDIENT_TYPE_CODE = "A";
+	private static final String CORRESPONDING_INGREDIENT_TYPE_CODE = "R";
 	private static final List<String> ACCCEPTABLE_INGREDIENT_TYPE_CODES = List.of("A", "C", "I", "N", "O", "X");
 
-	public IngredientLoader(Session session) {
+	private final boolean loadCorrespondingIngredients;
+
+	public IngredientLoader(Session session, boolean loadCorrespondingIngredients) {
 		super("COMPOSITIONELEMENT.CSV", session);
+		this.loadCorrespondingIngredients = loadCorrespondingIngredients;
 	}
 
 	public static String getAcceptableIngredientTypeCodesAsCypherTuple() {
@@ -48,8 +52,9 @@ public class IngredientLoader extends CsvLoader {
 
 		startSubtask("Loading nodes");
 		executeQuery(withLoadStatement(
-				"WITH "+ROW_IDENTIFIER +" WHERE "+row(MOLECULE_TYPE_CODE) + " IN "+getAcceptableIngredientTypeCodesAsCypherTuple() +
-				" CREATE (i:" + MMI_INGREDIENT_LABEL + ":" + INGREDIENT_LABEL +
+				"WITH " + ROW_IDENTIFIER + " WHERE " + row(
+						MOLECULE_TYPE_CODE) + " IN " + getAcceptableIngredientTypeCodesAsCypherTuple() +
+						" CREATE (i:" + MMI_INGREDIENT_LABEL + ":" + INGREDIENT_LABEL +
 						" {mmiId: " + intRow(ID) +
 						", massFrom: " + row(MASS_FROM) +
 						", massTo: " + row(MASS_TO) +
@@ -59,6 +64,20 @@ public class IngredientLoader extends CsvLoader {
 						", " + ARCHIVED_ATTR + ": false " +
 						"}) "
 		));
+
+		if (loadCorrespondingIngredients) {
+			executeQuery(withLoadStatement(
+					"WITH " + ROW_IDENTIFIER + " WHERE " + row(
+							MOLECULE_TYPE_CODE) + " = '" + CORRESPONDING_INGREDIENT_TYPE_CODE + "'" +
+							" CREATE (i:" + MMI_CORRESPONDING_INGREDIENT_LABEL + ":" + MMI_INGREDIENT_LABEL + ":" + INGREDIENT_LABEL +
+							" {mmiId: " + row(ID) +
+							", massFrom: " + row(MASS_FROM) +
+							", massTo: " + row(MASS_TO) +
+							", substanceId: " + intRow(MOLECULE_ID) +
+							", unitCode: " + row(MOLECULE_UNIT_CODE) +
+							"}) "
+			));
+		}
 
 		startSubtask("Connecting to substance nodes");
 		executeQuery("MATCH (i:" + MMI_INGREDIENT_LABEL + ") " +

@@ -105,11 +105,17 @@ fun GraphDbPopulatorUI(viewModel: GraphDbPopulatorScreenModel, modifier: Modifie
         Row(
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Checkbox(viewModel.includeArchive, { viewModel.includeArchive = it })
+            Checkbox(
+                viewModel.includeArchive,
+                { viewModel.includeArchive = it },
+                enabled = !viewModel.executionUnderway
+            )
             Text(StringRes.graph_db_populator_load_archive)
         }
-        Text(StringRes.graph_db_populator_load_archive_hint, style = MaterialTheme.typography.body2,
-            modifier = Modifier.padding(horizontal = 8.dp))
+        Text(
+            StringRes.graph_db_populator_load_archive_hint, style = MaterialTheme.typography.body2,
+            modifier = Modifier.padding(horizontal = 8.dp)
+        )
 
         Spacer(modifier = Modifier.height(8.dp))
 
