@@ -70,7 +70,7 @@ public class IngredientLoader extends CsvLoader {
 					"WITH " + ROW_IDENTIFIER + " WHERE " + row(
 							MOLECULE_TYPE_CODE) + " = '" + CORRESPONDING_INGREDIENT_TYPE_CODE + "'" +
 							" CREATE (i:" + MMI_CORRESPONDING_INGREDIENT_LABEL + ":" + MMI_INGREDIENT_LABEL + ":" + INGREDIENT_LABEL +
-							" {mmiId: " + row(ID) +
+							" {mmiId: " + intRow(ID) +
 							", massFrom: " + row(MASS_FROM) +
 							", massTo: " + row(MASS_TO) +
 							", substanceId: " + intRow(MOLECULE_ID) +

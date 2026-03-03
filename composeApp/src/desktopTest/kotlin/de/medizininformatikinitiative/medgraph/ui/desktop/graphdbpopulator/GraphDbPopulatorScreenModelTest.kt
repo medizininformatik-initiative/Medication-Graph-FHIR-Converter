@@ -44,8 +44,13 @@ class GraphDbPopulatorScreenModelTest : UnitTest() {
         assertNull(sut.errorMessage)
         assertFalse(sut.executionComplete)
         assertFalse(sut.executionUnderway)
-        assertTrue(sut.includeArchive)
         assertNull(sut.executionTaskState.progressable)
+
+        val prefs = GraphDbPopulationPrefs.INSTANCE
+        assertEquals(sut.mmiPharmindexDirectory, prefs.mmiPharmindexDataLocation)
+        assertEquals(sut.neo4jImportDirectory, prefs.neo4jImportDir)
+        assertEquals(sut.amiceStoffBezFile, prefs.amiceFilePath)
+        assertEquals(sut.includeArchive, prefs.includeArchive)
     }
 
     @Test
