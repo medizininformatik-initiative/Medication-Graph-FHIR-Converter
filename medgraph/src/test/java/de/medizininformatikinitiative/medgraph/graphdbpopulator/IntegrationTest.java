@@ -30,8 +30,6 @@ import static org.junit.jupiter.api.Assertions.*;
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public abstract class IntegrationTest {
 
-	// TODO Check Midazolam Legacy Correspondence. Resource files already include that.
-
 	protected DatabaseConnection connection;
 	protected Session session;
 
@@ -53,8 +51,8 @@ public abstract class IntegrationTest {
 
 		DI.get(GraphDbPopulationFactory.class).prepareDatabasePopulation(
 				  Path.of("src", "test", "resources", "sample"),
-//				  Path.of("/var", "lib", "neo4j", "import"),
-				  Path.of("/usr", "local", "neo4j", "import"),
+				  Path.of("/var", "lib", "neo4j", "import"),
+//				  Path.of("/usr", "local", "neo4j", "import"),
 				  Path.of("src", "test", "resources", "sample", "amice_stoffbez_synthetic.csv")
 		  )
 		  .executeDatabasePopulation(connection, includeArchive);
@@ -102,6 +100,26 @@ public abstract class IntegrationTest {
 
 		checkProductMatchesIngredient(r1);
 		checkProductMatchesIngredient(r2);
+	}
+
+	@Test
+	public void legacyMidazolamEquivalence() {
+		Result result = session.run(
+				"MATCH (i:" + MMI_INGREDIENT_LABEL + "{ mmiId: 2 })" +
+						"-[:" + INGREDIENT_CORRESPONDS_TO_LABEL + "]->" +
+						"(ci:" + INGREDIENT_LABEL + " {massFrom: '6.32'})" +
+						"-[:" + INGREDIENT_IS_SUBSTANCE_LABEL + "]->" +
+						"(s:"+ SUBSTANCE_LABEL + ")" +
+						" MATCH (ci)-[:" +INGREDIENT_HAS_UNIT_LABEL+"]->(u:"+UNIT_LABEL+")" +
+						" RETURN ci.massFrom, s.name, u.name"
+		);
+
+		assertTrue(result.hasNext());
+		Record record = result.next();
+		assertFalse(result.hasNext());
+
+		assertEquals("Midazolam hydrochlorid-1-Wasser", record.get(1).asString());
+		assertEquals("mg", record.get(2).asString());
 	}
 
 	@Test
@@ -454,10 +472,10 @@ public abstract class IntegrationTest {
 
 }
 
-//@Disabled("This test wipes the target database. Also it needs to copy files to the Neo4j import directory " +
-//		"which is likely different if you have a different OS than mine and also write privileges are required. " +
-//		"Sadly, a platform-independent solution is tricky. I have not yet seen a way to inject the test files " +
-//		"into the Neo4j harness in a different way.")
+@Disabled("This test wipes the target database. Also it needs to copy files to the Neo4j import directory " +
+		"which is likely different if you have a different OS than mine and also write privileges are required. " +
+		"Sadly, a platform-independent solution is tricky. I have not yet seen a way to inject the test files " +
+		"into the Neo4j harness in a different way.")
 class WithoutArchiveIntegrationTest extends IntegrationTest {
 
 	@BeforeAll

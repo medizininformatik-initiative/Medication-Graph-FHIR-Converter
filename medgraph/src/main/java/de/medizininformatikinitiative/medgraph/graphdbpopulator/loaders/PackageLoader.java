@@ -94,8 +94,8 @@ public class PackageLoader extends CsvLoader {
 		// We connect indirectly by querying the PZN nodes, because those have indexes on them and are thus queried
 		// much faster.
 		// But, something shady is happening. In some cases, the query planner decides to not use that index and
-		// then the query takes forever. So we include a USING INDEX to force its hand.
-		// TODO The planner still does not obey.
+		// then the query takes forever. So we include a USING INDEX to try and force its hand.
+		// Sometimes, the planner still does not obey though.
 		executeQuery(
 				"MATCH (p1:" + DatabaseDefinitions.PZN_LABEL + ")-[:" + DatabaseDefinitions.CODE_REFERENCE_RELATIONSHIP_NAME + "]->(pk1:" + DatabaseDefinitions.PACKAGE_LABEL + ") " +
 						"WHERE p1.pznSuccessor IS NOT NULL " +

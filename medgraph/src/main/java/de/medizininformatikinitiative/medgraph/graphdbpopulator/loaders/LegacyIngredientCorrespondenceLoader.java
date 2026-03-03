@@ -18,8 +18,6 @@ import static de.medizininformatikinitiative.medgraph.common.db.DatabaseDefiniti
  */
 public class LegacyIngredientCorrespondenceLoader extends Loader {
 
-	// TODO Test
-
 	private final Logger logger = LogManager.getLogger(LegacyIngredientCorrespondenceLoader.class);
 
 	public LegacyIngredientCorrespondenceLoader(Session session) {
@@ -28,7 +26,7 @@ public class LegacyIngredientCorrespondenceLoader extends Loader {
 
 	@Override
 	protected void executeLoad() {
-		startSubtask("Deleting all umbiguous legacy ingredient correspondences");
+		startSubtask("Deleting all ambiguous legacy ingredient correspondences");
 		// If a legacy corresponding ingredient, meaning an ingredient marked with the "CORRESPONDING" role
 		// is connected to a drug that has multiple active ingredients, it is unclear which ingredient it
 		// corresponds to. Thus, we drop those.
@@ -57,7 +55,7 @@ public class LegacyIngredientCorrespondenceLoader extends Loader {
 								"c:" + MMI_INGREDIENT_LABEL + ", " +
 								"c.mmiId" +
 								" SET c.source = 'COMPOSITIONELEMENT'" +
-								" CREATE (i)-[:" + INGREDIENT_CORRESPONDS_TO_LABEL + "]->(c)" +
+								" MERGE (i)-[:" + INGREDIENT_CORRESPONDS_TO_LABEL + "]->(c)" +
 								" DELETE r")
 		);
 
