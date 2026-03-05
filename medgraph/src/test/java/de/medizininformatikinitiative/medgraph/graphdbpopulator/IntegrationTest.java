@@ -103,26 +103,6 @@ public abstract class IntegrationTest {
 	}
 
 	@Test
-	public void legacyMidazolamEquivalence() {
-		Result result = session.run(
-				"MATCH (i:" + MMI_INGREDIENT_LABEL + "{ mmiId: 2 })" +
-						"-[:" + INGREDIENT_CORRESPONDS_TO_LABEL + "]->" +
-						"(ci:" + INGREDIENT_LABEL + " {massFrom: '6.32'})" +
-						"-[:" + INGREDIENT_IS_SUBSTANCE_LABEL + "]->" +
-						"(s:"+ SUBSTANCE_LABEL + ")" +
-						" MATCH (ci)-[:" +INGREDIENT_HAS_UNIT_LABEL+"]->(u:"+UNIT_LABEL+")" +
-						" RETURN ci.massFrom, s.name, u.name"
-		);
-
-		assertTrue(result.hasNext());
-		Record record = result.next();
-		assertFalse(result.hasNext());
-
-		assertEquals("Midazolam hydrochlorid-1-Wasser", record.get(1).asString());
-		assertEquals("mg", record.get(2).asString());
-	}
-
-	@Test
 	public void manufacturerConnected() {
 		Result result = session.run(
 				"MATCH (m:" + COMPANY_LABEL + ")-[r:" + MANUFACTURES_LABEL + "]-(p:" + PRODUCT_LABEL + ")" +

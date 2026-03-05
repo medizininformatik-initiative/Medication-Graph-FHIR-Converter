@@ -141,7 +141,7 @@ public class GraphDbPopulation extends NamedProgressableImpl {
 		// Drug nodes and relations to Product nodes
 		loaders.add(new DrugLoader(session));
 		// Ingredient nodes and relations to Substance nodes
-		loaders.add(new IngredientLoader(session, true));
+		loaders.add(new IngredientLoader(session));
 		// Relations between Ingredient nodes and Drug nodes
 		loaders.add(new DrugIngredientConnectionLoader(session));
 		// Relations between Drug nodes and ATC nodes
@@ -156,8 +156,6 @@ public class GraphDbPopulation extends NamedProgressableImpl {
 		}
 		// Corresponding ingredients and their amounts
 		loaders.add(new IngredientCorrespondenceLoader(session));
-		// Legacy Ingredient Correspondences
-		loaders.add(new LegacyIngredientCorrespondenceLoader(session));
 		// Custom synonyms
 		loaders.add(new CustomSynonymLoader(session));
 		// Dose form translations
