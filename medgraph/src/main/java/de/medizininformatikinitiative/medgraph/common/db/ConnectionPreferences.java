@@ -72,7 +72,7 @@ public class ConnectionPreferences implements ConnectionPreferencesWriter {
 	/**
 	 * Returns the stored password or null if none is stored.
 	 */
-	char @Nullable [] getPassword() {
+	public char @Nullable [] getPassword() {
 		byte[] password = node.getByteArray(PASSWORD_KEY, null);
 		if (password == null) return null;
 		return fromByteArray(password);

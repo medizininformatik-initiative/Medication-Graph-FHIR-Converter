@@ -87,7 +87,7 @@ public class ConnectionConfiguration {
 	 * connection is attempted with the empty string as password.
 	 */
 	@NotNull
-	DatabaseConnection createConnection() {
+	public DatabaseConnection createConnection() {
 		return new DatabaseConnection(uri, user, password != null ? password : new char[0]);
 	}
 

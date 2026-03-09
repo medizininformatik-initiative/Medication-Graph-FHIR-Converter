@@ -37,5 +37,6 @@ dependencyResolutionManagement {
 
 include(":composeApp")
 include("medgraph")
-include("tools")
+include("rxnorm-matcher")
 include("testFixtures")
+include("tools")
