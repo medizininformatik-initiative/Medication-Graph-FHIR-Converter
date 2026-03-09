@@ -1,0 +1,597 @@
+EDQM Dose Form,RxNorm Mapping
+Concentrate for oral suspension,
+"Oral drops, solution",Oral Solution
+"Oral drops, suspension",Oral Suspension
+"Oral drops, emulsion",
+Oral liquid,
+Oral solution,Oral Solution
+Oral suspension,Oral Suspension
+Oral emulsion,
+Oral gel,Oral Gel
+Oral paste,Oral Paste
+Powder for oral solution,Powder for Oral Solution
+Powder for oral suspension,Powder for Oral Suspension
+Granules for oral solution,Granules for Oral Solution
+Granules for oral suspension,Granules for Oral Suspension
+Lyophilisate for suspension,
+Syrup,
+Powder for syrup,
+Granules for syrup,
+Soluble tablet,
+Dispersible tablet,Tablet for Oral Suspension
+Dispersible tablets for dose dispenser,Tablet for Oral Suspension
+Herbal tea,
+Oral powder,Oral Powder
+Instant herbal tea,
+Effervescent powder,Powder for Oral Solution
+Granules,Oral Granules
+Effervescent granules,
+Gastro-resistant granules,Delayed Release Oral Granules
+Prolonged-release granules,Oral Granules
+Modified-release granules,Delayed Release Oral Granules
+Cachet,Oral Wafer
+"Capsule, hard",Oral Capsule
+"Capsule, soft",Oral Capsule
+"Gastro-resistant capsule, hard",Delayed Release Oral Capsule
+"Gastro-resistant capsule, soft",Delayed Release Oral Capsule
+"Chewable capsule, soft",Oral Capsule
+"Prolonged-release capsule, hard",Oral Capsule
+"Prolonged-release capsule, soft",Oral Capsule
+"Modified-release capsule, hard",Delayed Release Oral Capsule
+"Modified-release capsule, soft",Delayed Release Oral Capsule
+Tablet,Oral Tablet
+Coated tablet,Oral Tablet
+Film-coated tablet,Oral Tablet
+Effervescent tablet,Effervescent Oral Tablet
+Orodispersible tablet,Disintegrating Oral Tablet
+Oral lyophilisate,Disintegrating Oral Tablet
+Gastro-resistant tablet,Delayed Release Oral Capsule
+Prolonged-release tablet,Extended Release Oral Tablet
+Modified-release tablet,Delayed Release Oral Tablet
+Chewable tablet,Chewable Tablet
+Medicated chewing-gum,Chewing Gum
+Oral gum,Chewing Gum
+Pill,Oral Tablet
+Pillules,Oral Pellet
+Continuous-release intraruminal device,
+Pulsatile-release intraruminal device,
+Lick block,
+Premix for medicated feeding stuff,
+Medicated pellets,Oral Pellet
+Orodispersible film,
+Gargle,Mouthwash
+Concentrate for gargle,Mouthwash
+"Gargle, powder for solution",Mouthwash
+"Gargle, tablet for solution",Mouthwash
+Oromucosal solution,Mucous Membrane Topical Solution
+Oromucosal suspension,Mucous Membrane Topical Solution
+Oromucosal drops,Mucous Membrane Topical Solution
+Oromucosal spray,Oral Spray
+"Oromucosal spray, emulsion",Oral Spray
+"Oromucosal spray, solution",Oral Spray
+"Oromucosal spray, suspension",Oral Spray
+Sublingual spray,Oral Spray
+"Sublingual spray, emulsion",Oral Spray
+"Sublingual spray, solution",Oral Spray
+"Sublingual spray, suspension",Oral Spray
+Mouthwash,Mouthwash
+"Mouthwash, tablet for solution",Mouthwash
+Gingival solution,Mouthwash
+Oromucosal gel,Oral Gel
+Oromucosal paste,Oral Paste
+Oromucosal ointment,Oral Ointment
+Oromucosal cream,Oral Cream
+Buccal film,Buccal Film
+Gingival gel,Oral Gel
+Gingival paste,Oral Paste
+Oromucosal capsule,Oral Capsule
+Sublingual film,Sublingual Film
+Sublingual tablet,Sublingual Tablet
+Muco-adhesive buccal tablet,Sustained Release Buccal Tablet
+Buccal tablet,Buccal Tablet
+Lozenge,Oral Lozenge
+Compressed lozenge,Oral Lozenge
+Pastille,Disintegrating Oral Tablet
+Periodontal powder,Oral Powder
+Dental cement,Cement
+Dental gel,Oral Gel
+Dental stick,
+Dental insert,
+Dental powder,Oral Powder
+Dental solution,Mouthwash
+Dental suspension,Mouthwash
+Dental emulsion,Mouthwash
+Toothpaste,Toothpaste
+Periodontal gel,Oral Gel
+Periodontal insert,
+Powder for dental cement,
+Solution for dental cement,
+Bath additive,
+Cream,Topical Cream
+Gel,Topical Gel
+Ointment,Topical Ointment
+Cutaneous paste,Paste
+Medicated plaster,Medicated Tape
+Cutaneous foam,Topical Foam
+Shampoo,Medicated Shampoo
+"Cutaneous spray, solution",Topical Spray
+"Cutaneous spray, suspension",Topical Spray
+"Cutaneous spray, powder",Powder Spray
+Cutaneous liquid,Topical Solution
+Cutaneous solution,Topical Solution
+Concentrate for cutaneous solution,Topical Solution
+Powder for cutaneous solution,
+Cutaneous suspension,Topical Suspension
+Cutaneous emulsion,
+Cutaneous powder,Topical Powder
+Cutaneous patch,Medicated Patch
+Solution for iontophoresis,
+Powder for solution for iontophoresis,
+Transdermal patch,Medicated Patch
+Collodion,
+Medicated nail lacquer,
+Nail solution,
+Poultice,
+Cutaneous stick,
+Cutaneous sponge,
+Impregnated dressing,Medicated Pad
+Collar,
+Medicated collar,
+Medicated pendant,
+Ear tag,
+Dip solution,
+Dip suspension,
+Dip emulsion,
+Concentrate for dip solution,
+Concentrate for dip suspension,
+Concentrate for dip emulsion,
+Powder for dip solution,
+Concentrate for solution for fish treatment,
+Powder for suspension for fish treatment,
+Pour-on solution,
+Pour-on suspension,
+Pour-on emulsion,
+Scalp solution,
+Scrub,
+Spot-on solution,
+Spot-on suspension,
+Spot-on emulsion,
+Teat dip solution,
+Teat dip suspension,
+Teat dip emulsion,
+Teat spray solution,
+Transdermal gel,Topical Gel
+Transdermal solution,Topical Solution
+"Transdermal spray, solution",Topical Spray
+Transdermal system,Transdermal System
+Solution for skin-prick test,Mucous Membrane Topical Solution
+Solution for skin-scratch test,Topical Solution
+Plaster for provocation test,
+Concentrate for solution for intraocular irrigation,
+Eye cream,Ophthalmic Cream
+Eye gel,Ophthalmic Gel
+Eye ointment,Ophthalmic Ointment
+"Eye drops, solution",Ophthalmic Solution
+"Eye drops, emulsion",
+"Eye drops, suspension",Ophthalmic Suspension
+"Eye drops, solvent for reconstitution",
+"Eye drops, prolonged-release",Ophthalmic Solution
+Eye lotion,Ophthalmic Solution
+"Eye lotion, solvent for reconstitution",
+Ophthalmic insert,
+Ophthalmic strip,
+Ear cream,Otic Cream
+Ear gel,Otic Gel
+Ear ointment,Otic Ointment
+"Ear drops, solution",Otic Solution
+"Ear drops, suspension",Otic Suspension
+"Ear drops, emulsion",
+Ear powder,Topical Powder
+"Ear spray, solution",Otic Solution
+"Ear spray, suspension",Otic Suspension
+"Ear spray, emulsion",
+"Ear wash, solution",Otic Solution
+"Ear wash, emulsion",
+Ear tampon,
+Ear stick,
+Nasal cream,Nasal Cream
+Nasal gel,Nasal Gel
+Nasal ointment,Nasal Ointment
+"Nasal drops, solution",Nasal Solution
+"Nasal drops, suspension",Nasal Suspension
+"Nasal drops, emulsion",
+Nasal powder,Nasal Powder
+"Nasal spray, solution",Nasal Spray
+"Nasal spray, suspension",Nasal Spray
+"Nasal spray, emulsion",Nasal Spray
+Nasal wash,Irrigation Solution
+Nasal stick,
+Intravaginal ring,
+Vaginal cream,Vaginal Cream
+Vaginal gel,Vaginal Gel
+Vaginal ointment,Vaginal Ointment
+Vaginal foam,Vaginal Foam
+Vaginal solution,
+Vaginal suspension,
+Vaginal emulsion,
+Tablet for vaginal solution,
+Pessary,Vaginal Insert
+"Vaginal capsule, hard",Vaginal Insert
+"Vaginal capsule, soft",Vaginal Insert
+Vaginal tablet,Vaginal Insert
+Effervescent vaginal tablet,Vaginal Insert
+Medicated vaginal tampon,Vaginal Insert
+Vaginal delivery system,Vaginal System
+Vaginal sponge,
+Rectal cream,Rectal Cream
+Rectal gel,Rectal Gel
+Rectal ointment,Rectal Ointment
+Rectal foam,Rectal Foam
+Rectal solution,Rectal Solution
+Rectal suspension,Rectal Suspension
+Rectal emulsion,
+Concentrate for rectal solution,
+Powder for rectal solution,
+Powder for rectal suspension,
+Tablet for rectal solution,
+Tablet for rectal suspension,
+Suppository,Rectal Suppository
+Rectal capsule,Rectal Suppository
+Rectal tampon,Rectal Suppository
+Aerosol,Inhalation Spray
+Nebuliser solution,Inhalation Solution
+Nebuliser suspension,Inhalation Suspension
+Powder for nebuliser suspension,
+Powder for nebuliser solution,
+Nebuliser emulsion,
+"Pressurised inhalation, solution",Inhalation Solution
+"Pressurised inhalation, suspension",Inhalation Suspension
+"Pressurised inhalation, emulsion",
+Inhalation powder,Inhalation Powder
+"Inhalation powder, hard capsule",Dry Powder Inhaler
+"Inhalation powder, pre-dispensed",Dry Powder Inhaler
+"Inhalation vapour, powder",
+"Inhalation vapour, capsule",
+"Inhalation vapour, solution",Inhalation Solution
+"Inhalation vapour, tablet",
+"Inhalation vapour, ointment",
+"Inhalation vapour, liquid",
+Inhalation gas,Gas for Inhalation
+Solution for injection,Injectable Solution
+Suspension for injection,Injectable Suspension
+Emulsion for injection,
+Gel for injection,
+Powder for solution for injection,Injectable Solution
+Powder for suspension for injection,Injectable Suspension
+Powder for prolonged-release suspension for injection,
+Prolonged-release suspension for injection,Injectable Suspension
+Concentrate for solution for injection,
+Solution for cardioplegia,
+Solution for infusion,Injectable Solution
+Emulsion for infusion,
+Powder for dispersion for infusion,Injectable Suspension
+Powder for solution for infusion,Injectable Solution
+Concentrate for solution for infusion,Injectable Solution
+Lyophilisate for solution for infusion,Injectable Solution
+Solvent for parenteral use,
+Lyophilisate for solution for injection,Injectable Solution
+Lyophilisate for suspension for injection,Injectable Suspension
+Implant,Drug Implant
+Implantation tablet,
+Implantation chain,
+Implantation matrix,
+Implantation suspension,
+Kit for implant,
+Solution for peritoneal dialysis,
+Solution for haemofiltration,
+Solution for haemodiafiltration,
+Solution for haemodialysis,
+Concentrate for solution for haemodialysis,
+Solution for intravesical use,Intravesical Solution
+Bladder irrigation,Irrigation Solution
+Intravesical solution,Intravesical Solution
+Powder for bladder irrigation,Irrigation Solution
+Urethral gel,Urethral Gel
+Urethral stick,Urethral Suppository
+"Endotracheopulmonary instillation, solution",
+"Endotracheopulmonary instillation, powder for solution",
+"Endotracheopulmonary instillation, suspension",Intratracheal Suspension
+Endocervical gel,
+Intramammary solution,
+Intramammary suspension,
+Intramammary emulsion,
+Intramammary ointment,
+Teat stick,
+Intrauterine delivery system,Intrauterine System
+Intrauterine solution,
+Intrauterine suspension,
+Intrauterine emulsion,
+Intrauterine tablet,
+Intrauterine capsule,
+Bee-hive strip,
+Bee-hive gel,
+Bee smoke paper,
+Bee smoke stick,
+Nebulisation solution,
+Absorbable coated sponge,
+Denture lacquer,
+Anticoagulant and preservative solution for blood,
+Solution for blood fraction modification,
+Wound stick,
+Radiopharmaceutical precursor,
+Radionuclide generator,
+Kit for radiopharmaceutical preparation,
+Gastroenteral solution,
+Dispersion,
+Frozen solution for sealant,
+Gastroenteral suspension,
+Gastroenteral emulsion,
+Intraperitoneal solution,Intraperitoneal Solution
+Solution for organ preservation,
+Irrigation solution,Irrigation Solution
+Stomach irrigation,Irrigation Solution
+Sealant,
+Sealant matrix,
+Sealant powder,
+Solution for perfusion of organs,
+Impregnated pad,
+Impregnated plug,
+Living tissue equivalent,
+Lyophilisate for oculonasal suspension,
+Medicated sponge,
+Intestinal gel,
+Medicated thread,
+Solution for provocation test,
+"Medicinal gas, compressed",Gas for Inhalation
+"Medicinal gas, cryogenic",Gas for Inhalation
+"Medicinal gas, liquefied",Gas for Inhalation
+Concentrate for concentrate for solution for infusion,
+Concentrate for nebuliser solution,Inhalation Solution
+Concentrate for oromucosal solution,Mucous Membrane Topical Solution
+Concentrate for suspension for injection,Injectable Suspension
+Dispersion for concentrate for dispersion for infusion,
+"Ear drops, powder for suspension",
+Effervescent granules for oral suspension,
+Emulsion for emulsion for injection,
+"Endotracheopulmonary instillation, powder for suspension",
+"Eye drops, powder for solution",
+"Eye drops, powder for suspension",
+Gas for dispersion for infusion,
+Gas for dispersion for injection,
+Gel for gel,Topical Gel
+Granules for rectal suspension,Rectal Suspension
+Laryngopharyngeal solution,
+"Laryngopharyngeal spray, solution",
+Matrix for implantation matrix,
+"Nasal drops, lyophilisate for suspension",Nasal Suspension
+"Nasal drops, powder for solution",Powder for Nasal Solution
+Powder for gel,Topical Gel
+Powder for dental gel,
+Powder for dispersion for injection,Injectable Suspension
+Powder for endocervical gel,
+Powder for endosinusial solution,Powder for Nasal Solution
+Powder for gingival gel,
+Powder for implantation matrix,
+Powder for implantation paste,
+Powder for intraocular instillation solution,Ophthalmic Irrigation Solution
+Powder for sealant,
+Powder for solution for skin-prick test,
+Solution for solution for injection,
+Solution for spray,
+Solvent for...,
+Suspension for emulsion for injection,
+Suspension for oral suspension,
+Suspension for spray,
+Suspension for suspension for injection,
+Powder for emulsion for injection,
+Endosinusial solution,Nasal Solution
+Epilesional solution,
+Implantation paste,
+Intraocular instillation solution,Ophthalmic Irrigation Solution
+Intravesical suspension,Intravesical Suspension
+Coated granules,Oral Granules
+Solution for suspension for injection,
+Granules for suspension for injection,
+Dispersion for injection/infusion,Injectable Suspension
+Gas for dispersion for injection/infusion,
+Solution for injection/skin-prick test,Injectable Solution
+Powder for solution for injection/skin-prick test,
+Solution for bee-hive strip,
+Solution for use in drinking water/milk,
+Powder for solution for fish treatment,
+Caplet,
+Solution for solution for infusion,
+Intramammary gel,
+Tablet for cutaneous solution,
+Lyophilisate for oral suspension,
+Prolonged-release solution for injection,Injectable Solution
+Urethral emulsion,
+Bee-hive solution,
+Powder for bee-hive solution,
+Solution for bee-hive solution,
+Bee-hive dispersion,
+"Oral spray, suspension",
+"Concentrate for concentrate for oral spray, suspension",
+Oculonasal suspension,
+"Lyophilisate for oral spray, suspension",
+Emulsion for suspension for injection,
+"Nasal spray, lyophilisate for suspension",
+Lyophilisate for oculonasal suspension/use in drinking water,
+Powder for bee-hive dispersion,
+Solution for bee-hive dispersion,
+Transdermal ointment,Topical Ointment
+Sublingual powder,Sublingual Powder
+Oral herbal material,
+Solution for cardioplegia/organ preservation,
+Powder for vaginal solution,
+Intrauterine gel,
+Medicinal leech,
+Lyophilisate for emulsion for injection,
+Tablet with sensor,Oral Tablet
+Urethral ointment,
+Medicinal larvae,
+Prolonged-release dispersion for injection,Injectable Suspension
+Sublingual lyophilisate,
+extended,
+Nebuliser dispersion,
+Gastro-resistant oral suspension,Oral Suspension
+Prolonged-release oral suspension,Extended Release Suspension
+Modified-release oral suspension,Extended Release Suspension
+Gastro-resistant powder for oral suspension,
+Concentrate for dispersion for injection,
+Cutaneous/oromucosal solution,Topical Solution
+Oromucosal pouch,
+Impregnated cutaneous swab,
+Prolonged-release pessary,Vaginal Insert
+Oromucosal film,Oral Film
+Concentrate for emulsion for injection,
+Film-coated granules,Oral Granules
+Effervescent tablet for oculonasal suspension,
+"Eye drops, prolonged-release solution",Ophthalmic Solution
+Concentrate for cutaneous emulsion,
+Granules for use in drinking water/milk,
+"Mucosal spray, solution",Mucosal Spray
+Suspension for gel,
+"Oromucosal drops, emulsion",
+"Oromucosal drops, solution",Mucous Membrane Topical Solution
+"Oromucosal drops, suspension",Oral Suspension
+Bee-hive powder,
+Prolonged-release chewable tablet,Extended Release Oral Tablet
+Powder for prolonged-release oral suspension,Powder for Oral Suspension
+Granules for gastro-resistant oral suspension,Granules for Oral Suspension
+Powder for gastro-resistant oral suspension,Powder for Oral Suspension
+Granules for modified-release oral suspension,Granules for Oral Suspension
+Granules for prolonged-release oral suspension,Granules for Oral Suspension
+Powder for solution for provocation test,
+Implantation gel,
+Dispersion for implantation gel,
+Solution for implantation gel,
+Intracameral implant,
+Intravitreal implant,
+"Oral suspension, bait",
+Sublingual solution,
+Granules in capsule for opening,Oral Granules
+Oral powder in capsule for opening,Oral Powder
+Intravesical delivery system,
+Intramammary foam,
+Concentrate for intravesical solution/solution for injection,
+Pouch,
+Chewable/dispersible tablet,
+"Concentrate for cutaneous spray, emulsion",Topical Spray
+Concentrate for dispersion for infusion,
+Concentrate for emulsion for infusion,
+Concentrate for intravesical solution,
+Concentrate for oral solution,Oral Solution
+Concentrate for oral/rectal solution,
+Concentrate for peritoneal dialysis solution,
+Concentrate for solution for intravesical use,Intravesical Solution
+Concentrate for solution for peritoneal dialysis,
+Concentrate for spray emulsion,
+Concentrate for suspension for infusion,
+Cutaneous and nasal ointment,
+Cutaneous/ear drops suspension,
+Cutaneous/nasal ointment,
+Cutaneous/oromucosal/oral solution,
+Cutaneous/oromucosal spray,
+Cutaneous solution/concentrate for oromucosal solution,
+"Cutaneous spray, emulsion",Topical Spray
+"Cutaneous spray, ointment",Topical Spray
+Dental paste,Paste
+Dispersion for infusion,Injectable Suspension
+"Ear/eye drops, solution",
+"Ear/eye drops, suspension",
+Ear/eye ointment,
+"Ear/eye/nasal drops, solution",
+"Ear/eye/nose drops, solution",
+"Ear/nasal drops, suspension",
+Effervescent buccal tablet,
+Emulsion for injection/infusion,
+"Endosinusial wash, suspension",Irrigation Solution
+Film coated gastro-resistant tablet,
+Gargle/mouthwash,Mouthwash
+Gargle/nasal wash,Irrigation Solution
+Gastro-resistant coated tablet,Delayed Release Oral Tablet
+Gastro-resistant granules for oral suspension,
+Gastro-resistant prolonged-release tablet,Delayed Release Oral Tablet
+Granules for oral and rectal suspension,
+"Granules for oral drops, solution",Granules for Oral Solution
+Granules for oral/rectal suspension,Granules for Oral Suspension
+Granules for use in drinking water,
+Granules for vaginal solution,
+Hard capsule with gastro-resistant pellets,
+Inhalation impregnated pad,
+"Inhalation powder, tablet",Dry Powder Inhaler
+"Inhalation vapour, effervescent tablet",
+"Inhalation vapour, emulsion",
+"Inhalation vapour, impregnated pad",
+"Inhalation vapour, impregnated plug",
+Intrauterine foam,
+Intravesical solution/solution for injection,Injectable Solution
+Liquefied gas for dental use,
+Lyophilisate for use in drinking water,
+Modified-release film-coated tablet,Delayed Release Oral Tablet
+Modified-release granules for oral suspension,Granules for Oral Suspension
+"Mouthwash, powder for solution",Mouthwash
+Muco-adhesive buccal prolonged-release tablet,
+Nasal/oromucosal solution,Nasal Solution
+"Nasal/oromucosal spray, solution",Nasal Spray
+Nasal spray and oromucosal solution,Nasal Spray
+"Nasal spray, powder for solution",Nasal Spray
+"Nasal spray, solution/oromucosal solution",Nasal Spray
+"Oral drops, granules for solution",Granules for Oral Solution
+"Oral drops, liquid",
+Oral/rectal solution,Oral Solution
+Oral/rectal suspension,Oral Suspension
+Oral solution/concentrate for nebuliser solution,
+Oromucosal patch,
+Oromucosal/laryngopharyngeal solution,Oral Solution
+Oromucosal/laryngopharyngeal solution/spray,Oral Spray
+"Oromucosal/laryngopharyngeal solution/spray, solution",Oral Spray
+Powder for concentrate for solution for infusion,
+Powder for concentrate for dispersion for infusion,
+Powder for concentrate for haemodialysis solution,
+Powder for concentrate for intravesical suspension,
+Powder for concentrate for solution for haemodialysis,
+Powder for concentrate for solution for injection/infusion,
+Powder for dental solution,
+Powder for epilesional solution,
+Powder for implantation suspension,
+Powder for intravesical solution,Intravesical Solution
+Powder for intravesical solution/solution for injection,
+Powder for intravesical suspension,Intravesical Suspension
+Powder for mouth wash,Mouthwash
+Powder for nebuliser solution/solution for injection/infusion,
+Powder for oral/rectal suspension,Powder for Oral Suspension
+Powder for solution for injection or infusion,Injectable Solution
+Powder for solution for injection/infusion,Injectable Solution
+Powder for solution for intravesical use,
+Powder for solution for nasal spray,Nasal Spray
+Powder for solution/suspension for injection,
+Powder for use in drinking water/milk,
+Prolonged-release film-coated tablet,
+Prolonged-release granules for oral suspension,Granules for Oral Suspension
+"Radiopharmaceutical precursor, solution",
+Solution for haemodialysis/haemofiltration,
+Solution for infusion and oral solution,
+Solution for injection/concentrate for solution for infusion,
+Solution for injection for euthanasia,
+Solution for injection/infusion,Injectable Solution
+Solution for injection/infusion/rectal use,
+Solution for intraperitoneal use,
+Solution for use in drinking water,
+Solution for sealant,
+Solvent for nasal use,
+Suspension for infusion,Injectable Suspension
+Suspension for use in drinking water,
+Tablet for oral suspension,Tablet for Oral Suspension
+Teat dip/spray solution,
+Oral suspension for use in drinking water,
+Powder for use in drinking water,
+Powder for solution for intraocular irrigation,Ophthalmic Irrigation Solution
+Solution for intraocular irrigation,Ophthalmic Irrigation Solution
+Solvent for solution for intraocular irrigation,
+Solvent for solution for infusion,
+Dispersion for injection,Injectable Suspension
+Concentrate for solution for injection/infusion,Injectable Solution
+Inhalation solution,Inhalation Solution
+"Oral drops, powder for suspension",Powder for Oral Suspension

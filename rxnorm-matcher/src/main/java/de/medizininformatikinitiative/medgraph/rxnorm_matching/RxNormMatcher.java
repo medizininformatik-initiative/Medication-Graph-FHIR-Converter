@@ -70,8 +70,8 @@ public class RxNormMatcher {
 			List<MatchResult> results = MatchingExecutor.matchAll(drugs, false);
 			System.out.println("Done (" + (System.currentTimeMillis() - time) + "ms)");
 			printGlobalStatistics(results);
-			matchingToCsv(results);
-			printResultsWithMultipleMatches(results);
+//			matchingToCsv(results);
+//			printResultsWithMultipleMatches(results);
 		}
 
 	}
@@ -99,7 +99,7 @@ public class RxNormMatcher {
 	}
 
 	private static void matchingToCsv(List<MatchResult> results) {
-		Path outPath = Path.of("medgraph/src/main/resources/rxnorm-mapping.csv");
+		Path outPath = Path.of("medgraph/src/main/resources/rxnorm_mapping.csv");
 		try (BufferedWriter writer = Files.newBufferedWriter(outPath)) {
 			writer.write("MMI_DRUG_ID;SCD_RXCUI");
 			for (MatchResult result: results) {
