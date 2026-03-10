@@ -60,7 +60,7 @@ public class RxNormMatchingDrugLoader {
 						SimpleActiveIngredient.RXCUI_CODES + ":cisRxcui" +
 						"} ELSE null END) AS corresponding " +
 						"OPTIONAL MATCH (rx:" + RXCUI_LABEL + ")-[:" + CODE_REFERENCE_RELATIONSHIP_NAME + "]->(s) " +
-						"WITH i, s, iu, corresponding, collect(DISTINCT rx.code) AS rxCodes "+
+						"WITH i, s, iu, corresponding, collect(DISTINCT rx.code) AS rxCodes " +
 						"RETURN collect(CASE WHEN s IS NOT NULL THEN {" +
 						SimpleActiveIngredient.SUBSTANCE_MMI_ID + ":s.mmiId," +
 						SimpleActiveIngredient.SUBSTANCE_NAME + ":s.name," +
@@ -74,6 +74,7 @@ public class RxNormMatchingDrugLoader {
 						"OPTIONAL MATCH (d)-[:" + DRUG_HAS_UNIT_LABEL + "]->(du:" + UNIT_LABEL + ") " +
 						"RETURN p.name AS " + Drug.PRODUCT_NAME + "," +
 						"p.mmiId AS " + Drug.PRODUCT_MMI_ID + "," +
+						"d.mmiId AS " + Drug.DRUG_MMI_ID + ", " +
 						"ingredients AS " + Drug.INGREDIENTS + ", " +
 						"df.mmiName AS " + Drug.MMI_DOSE_FORM + ", " +
 						"edqmDoseForm AS " + Drug.EDQM_DOSE_FORM + ", " +

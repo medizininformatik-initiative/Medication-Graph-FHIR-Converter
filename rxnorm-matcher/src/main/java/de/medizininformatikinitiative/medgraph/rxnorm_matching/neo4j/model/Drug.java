@@ -2,6 +2,7 @@ package de.medizininformatikinitiative.medgraph.rxnorm_matching.neo4j.model;
 
 import de.medizininformatikinitiative.medgraph.fhirexporter.neo4j.*;
 import org.jetbrains.annotations.NotNull;
+import org.neo4j.driver.Value;
 import org.neo4j.driver.types.MapAccessorWithDefaultValue;
 
 import java.math.BigDecimal;
@@ -15,6 +16,7 @@ import java.util.List;
 public record Drug(
 		Long productMmiId,
 		String productName,
+		Long mmiId,
 		List<ActiveIngredient> activeIngredients,
 		String mmiDoseForm,
 		GraphEdqmPharmaceuticalDoseForm edqmDoseForm,
@@ -22,6 +24,7 @@ public record Drug(
 		GraphUnit unit
 ) {
 
+	public static final String DRUG_MMI_ID = "drugId";
 	public static final String PRODUCT_MMI_ID = "productId";
 	public static final String PRODUCT_NAME = "productName";
 	public static final String INGREDIENTS = "ingredients";
@@ -34,6 +37,7 @@ public record Drug(
 		this(
 				value.get(PRODUCT_MMI_ID).asLong(),
 				value.get(PRODUCT_NAME).asString(),
+				value.get(DRUG_MMI_ID).asLong(),
 				value.get(INGREDIENTS).asList(ActiveIngredient::new),
 				value.get(MMI_DOSE_FORM, (String) null),
 				GraphEdqmPharmaceuticalDoseForm.from(value.get(EDQM_DOSE_FORM)),

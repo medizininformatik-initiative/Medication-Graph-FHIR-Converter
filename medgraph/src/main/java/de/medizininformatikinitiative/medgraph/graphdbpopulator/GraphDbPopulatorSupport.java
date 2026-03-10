@@ -51,7 +51,7 @@ public class GraphDbPopulatorSupport {
 			"ARCHIVE_PRODUCT.CSV",
 			"ARCHIVE_PRODUCTMOLECULE.CSV"
 	);
-	private static final List<String> REQUIRED_RESOURCE_FILES = List.of(
+	private static final String[] REQUIRED_RESOURCE_FILES = new String[]{
 			"custom_synonyms.csv",
 			"dose_form_mapping.csv",
 			"gsrs_matches.csv",
@@ -59,9 +59,14 @@ public class GraphDbPopulatorSupport {
 			"pdf_relations.csv",
 			"edqm_translations.csv",
 			"dose_form_synonyms.csv",
-			"NOTICE.txt"
-	);
-	private static final Path[] OPTIONAL_FILES = new Path[]{
+			"NOTICE.txt",
+	};
+	private static final String[] OPTIONAL_RESOURCE_FILES = new String[] {
+			"Athena_CONCEPT.csv",
+			"Athena_CONCEPT_RELATIONSHIP.csv",
+			"rxnorm_mapping.csv"
+	};
+	private static final Path[] OPTIONAL_DELETE_ONLY_FILES = new Path[]{
 			AmiceStoffBezLoader.RAW_DATA_FILE_PATH,
 	};
 
@@ -80,40 +85,13 @@ public class GraphDbPopulatorSupport {
 	 *                                  the mmiPharmindexDirectoryPath, also if the neo4jImportDirectoryPath does not
 	 *                                  point to a directory
 	 */
-	@Deprecated
-	void copyKnowledgeGraphSourceDataToNeo4jImportDirectory(
-			Path mmiPharmindexDirectoryPath,
-			Path amiceDataFilePath,
-			Path neo4jImportDirectoryPath)
-	throws IOException {
-		copyKnowledgeGraphSourceDataToNeo4jImportDirectory(
-				mmiPharmindexDirectoryPath,
-				amiceDataFilePath,
-				neo4jImportDirectoryPath,
-				true
-		);
-	}
-
-	/**
-	 * Attempts to copy the required MMI Pharmindex files from the given path as well as the resource files packaged
-	 * with this application to the Neo4j import directory, as specified by the second argument.
-	 *
-	 * @param mmiPharmindexDirectoryPath the path where the MMI Pharmindex data is stored
-	 * @param amiceDataFilePath          the path where the AMIce Stoffbezeichnungen Rohdaten file is at, may be null
-	 * @param neo4jImportDirectoryPath   the Neo4j import directory path
-	 * @param includeArchive             if true, the MMI Pharmindex archive files are included in the load
-	 * @throws IOException              if a file operation failed
-	 * @throws IllegalArgumentException if no directory exists at the mmiPharmindexDirectoryPath, it points to something
-	 *                                  that is not a directory or not all required MMI Pharmindex files are present in
-	 *                                  the mmiPharmindexDirectoryPath, also if the neo4jImportDirectoryPath does not
-	 *                                  point to a directory
-	 */
 	void copyKnowledgeGraphSourceDataToNeo4jImportDirectory(
 			Path mmiPharmindexDirectoryPath,
 			Path amiceDataFilePath,
 			Path neo4jImportDirectoryPath,
 			boolean includeArchive)
 	throws IOException {
+
 		List<String> requiredFiles;
 		if (includeArchive) {
 			requiredFiles = new ArrayList<>();
@@ -221,6 +199,14 @@ public class GraphDbPopulatorSupport {
 				copyCsvAndStripComments(stream, targetPath);
 			}
 		}
+		for (String resource : OPTIONAL_RESOURCE_FILES) {
+			InputStream inputStream = GraphDbPopulatorSupport.class.getResourceAsStream("/" + resource);
+			if (inputStream == null) continue;
+			try (inputStream) {
+				Path targetPath = target.resolve(resource);
+				copyCsvAndStripComments(inputStream, targetPath);
+			}
+		}
 	}
 
 	/**
@@ -236,17 +222,17 @@ public class GraphDbPopulatorSupport {
 			Files.delete(mmiTargetDir.resolve(filename));
 		}
 
-		for (String filename: REQUIRED_MMI_FILES_ARCHIVE_ONLY) {
-			try {
-				Files.delete(mmiTargetDir.resolve(filename));
-			} catch (NoSuchFileException ignored) {}
-		}
-
 		for (String filename : REQUIRED_RESOURCE_FILES) {
 			Files.delete(neo4jImportPath.resolve(filename));
 		}
 
-		for (Path path : OPTIONAL_FILES) {
+		for (String filename : OPTIONAL_RESOURCE_FILES) {
+			try {
+				Files.delete(neo4jImportPath.resolve(filename));
+			} catch (NoSuchFileException ignored) {
+			}
+		}
+		for (Path path : OPTIONAL_DELETE_ONLY_FILES) {
 			try {
 				Files.delete(neo4jImportPath.resolve(path));
 			} catch (NoSuchFileException ignored) {
@@ -324,7 +310,7 @@ public class GraphDbPopulatorSupport {
 						// This is a quoted column value and we encounter a double quote.
 						// This is only valid if the encountered double quote is the "closing" quote,
 						// meaning the separator or the end of line comes next
-						int next = i + 1;
+						int next = i+1;
 						if (next >= lineLength || line.charAt(next) == separator) {
 							quoted = false;
 						} else {
