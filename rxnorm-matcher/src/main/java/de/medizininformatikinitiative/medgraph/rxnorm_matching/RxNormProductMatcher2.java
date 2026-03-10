@@ -4,20 +4,24 @@ import de.medizininformatikinitiative.medgraph.common.logging.Level;
 import de.medizininformatikinitiative.medgraph.common.logging.LogManager;
 import de.medizininformatikinitiative.medgraph.common.logging.Logger;
 import de.medizininformatikinitiative.medgraph.fhirexporter.neo4j.GraphEdqmPharmaceuticalDoseForm;
-import de.medizininformatikinitiative.medgraph.rxnorm_matching.model.*;
+import de.medizininformatikinitiative.medgraph.rxnorm_matching.db.RxNormDatabase;
+import de.medizininformatikinitiative.medgraph.rxnorm_matching.model.DetailedRxNormSCD;
+import de.medizininformatikinitiative.medgraph.rxnorm_matching.model.RxNormIngredient;
+import de.medizininformatikinitiative.medgraph.rxnorm_matching.model.RxNormSCDC;
+import de.medizininformatikinitiative.medgraph.rxnorm_matching.model.RxNormSCDCWithIngredients;
 import de.medizininformatikinitiative.medgraph.rxnorm_matching.neo4j.model.ActiveIngredient;
 import de.medizininformatikinitiative.medgraph.rxnorm_matching.neo4j.model.Drug;
 import de.medizininformatikinitiative.medgraph.rxnorm_matching.neo4j.model.SimpleActiveIngredient;
-import de.medizininformatikinitiative.medgraph.rxnorm_matching.strengths.NormalizedStrength;
-import de.medizininformatikinitiative.medgraph.rxnorm_matching.strengths.UcumNormalizer;
-import de.medizininformatikinitiative.medgraph.rxnorm_matching.db.RxNormDatabase;
 import de.medizininformatikinitiative.medgraph.rxnorm_matching.strengths.Amount;
+import de.medizininformatikinitiative.medgraph.rxnorm_matching.strengths.NormalizedStrength;
 import de.medizininformatikinitiative.medgraph.rxnorm_matching.strengths.Strength;
+import de.medizininformatikinitiative.medgraph.rxnorm_matching.strengths.UcumNormalizer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.math.BigDecimal;
 import java.util.*;
+import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 
 /**
@@ -29,7 +33,7 @@ public class RxNormProductMatcher2 {
 
 	private final Logger logger = LogManager.getLogger(RxNormProductMatcher2.class);
 
-	// We allow a 5% threshold for strength differences
+	// We allow a 1% threshold for strength differences
 	private static final BigDecimal STRENGTH_DELTA = new BigDecimal("0.01");
 
 	private final RxNormDatabase database;
@@ -46,33 +50,51 @@ public class RxNormProductMatcher2 {
 	/**
 	 * Attempts to find an SCD match for the given {@link Drug}. Returns a {@link MatchResult} containing matched SCDs
 	 * and counts of {@link ValidationResult} or an {@link EarlyMatchingFailure} indicating why this drug cannot be
-	 * matched
+	 * matched.
 	 */
 	public MatchResult matchSCD(Drug drug) {
+		return matchSCD(drug, MatchResult::new);
+	}
+
+	/**
+	 * Attempts to find an SCD match for the given {@link Drug}. Returns a {@link MatchResult} containing matched SCDs
+	 * and counts of {@link ValidationResult} or an {@link EarlyMatchingFailure} indicating why this drug cannot be
+	 * matched. Additionally reports all considered candidates and the reasons for their rejection.
+	 */
+	public ExtendedMatchResult matchSCDWithDetailedInfo(Drug drug) {
+		return matchSCD(drug, ExtendedMatchResult::new);
+	}
+
+	/**
+	 * Attempts to find an SCD match for the given {@link Drug}. Returns a {@link MatchResult} containing matched SCDs
+	 * and counts of {@link ValidationResult} or an {@link EarlyMatchingFailure} indicating why this drug cannot be
+	 * matched
+	 */
+	private <T extends MatchResult> T matchSCD(Drug drug, BiFunction<Drug, EarlyMatchingFailure, T> resultBuilder) {
 		// Perform early abort if dose form not matchable
 
 		long t0 = System.currentTimeMillis();
 		if (drug.edqmDoseForm() == null) {
-			return new MatchResult(drug, EarlyMatchingFailure.NO_EDQM_DOSE_FORM);
+			return resultBuilder.apply(drug, EarlyMatchingFailure.NO_EDQM_DOSE_FORM);
 		}
 		if (doseFormMapper.getRxNormDoseForm(drug.edqmDoseForm().getName()) == null) {
-			return new MatchResult(drug, EarlyMatchingFailure.NO_RXNORM_DOSE_FORM);
+			return resultBuilder.apply(drug, EarlyMatchingFailure.NO_RXNORM_DOSE_FORM);
 		}
 
 
 		if (drug.activeIngredients().isEmpty()) {
-			return new MatchResult(drug, EarlyMatchingFailure.NO_ACTIVE_INGREDIENT);
+			return resultBuilder.apply(drug, EarlyMatchingFailure.NO_ACTIVE_INGREDIENT);
 		}
 		Set<String> ingredientRxCUIs = getActiveIngredientRxCUIs(drug);
 		if (ingredientRxCUIs.isEmpty()) {
-			return new MatchResult(drug, EarlyMatchingFailure.NO_RXCUI);
+			return resultBuilder.apply(drug, EarlyMatchingFailure.NO_RXCUI);
 		}
 
 		long t1 = System.currentTimeMillis();
 
 		Set<String> scdCandidateRxCodes = database.getSCDRxCUIsForIngredientRxCUIs(ingredientRxCUIs);
 		if (scdCandidateRxCodes.isEmpty()) {
-			return new MatchResult(drug, EarlyMatchingFailure.NO_SCD_CANDIDATE);
+			return resultBuilder.apply(drug, EarlyMatchingFailure.NO_SCD_CANDIDATE);
 		}
 
 		long t2 = System.currentTimeMillis();
@@ -81,15 +103,12 @@ public class RxNormProductMatcher2 {
 
 		long t3 = System.currentTimeMillis();
 
+		T result = resultBuilder.apply(drug, null);
+
 		// Validate all candidates and collect results
-		Map<ValidationResult, Integer> validationResultCounts = new HashMap<>();
-		List<DetailedRxNormSCD> matches = new ArrayList<>();
 		for (DetailedRxNormSCD candidate : scdCandidates) {
-			ValidationResult result = validateCandidate(drug, candidate);
-			validationResultCounts.compute(result, (k, v) -> v == null ? 1 : v + 1);
-			if (result == ValidationResult.SUCCESS) {
-				matches.add(candidate);
-			}
+			ValidationResult vr = validateCandidate(drug, candidate);
+			result.recordValidation(candidate, vr);
 		}
 
 		long t4 = System.currentTimeMillis();
@@ -110,7 +129,7 @@ public class RxNormProductMatcher2 {
 			System.out.println("Validation time: " + (t4 - t3) + "ms");
 //			System.out.println("Match filtering time: " + (t5 - t4) + "ms");
 		}
-		return new MatchResult(drug, matches, validationResultCounts);
+		return result;
 	}
 
 	/**
@@ -400,16 +419,16 @@ public class RxNormProductMatcher2 {
 		@NotNull
 		private final Map<ValidationResult, Integer> validationResultCounts = new HashMap<>();
 
-		MatchResult(Drug drug, List<DetailedRxNormSCD> matches, Map<ValidationResult, Integer> validationResultCounts) {
-			this.drug = drug;
-			this.matches.addAll(matches);
-			this.validationResultCounts.putAll(validationResultCounts);
-			earlyMatchingFailure = null;
-		}
-
-		MatchResult(Drug drug, @NotNull EarlyMatchingFailure earlyMatchingFailure) {
+		MatchResult(Drug drug, @Nullable EarlyMatchingFailure earlyMatchingFailure) {
 			this.drug = drug;
 			this.earlyMatchingFailure = earlyMatchingFailure;
+		}
+
+		protected void recordValidation(DetailedRxNormSCD candidate, ValidationResult validationResult) {
+			if (validationResult == ValidationResult.SUCCESS) {
+				matches.add(candidate);
+			}
+			validationResultCounts.compute(validationResult, (k, v) -> v == null ? 1 : v + 1);
 		}
 
 		int getNumberOfValidationResults(ValidationResult type) {
@@ -455,6 +474,25 @@ public class RxNormProductMatcher2 {
 			return builder.toString();
 		}
 
+	}
+
+	public static class ExtendedMatchResult extends MatchResult {
+
+		private final Map<DetailedRxNormSCD, ValidationResult> candidateResults = new HashMap<>();
+
+		ExtendedMatchResult(Drug drug, @Nullable EarlyMatchingFailure earlyMatchingFailure) {
+			super(drug, earlyMatchingFailure);
+		}
+
+		@Override
+		protected void recordValidation(DetailedRxNormSCD candidate, ValidationResult validationResult) {
+			super.recordValidation(candidate, validationResult);
+			candidateResults.put(candidate, validationResult);
+		}
+
+		public Map<DetailedRxNormSCD, ValidationResult> getCandidateResults() {
+			return candidateResults;
+		}
 	}
 
 	/**

@@ -79,7 +79,8 @@ public class RxNormMatchingDrugLoader {
 						"df.mmiName AS " + Drug.MMI_DOSE_FORM + ", " +
 						"edqmDoseForm AS " + Drug.EDQM_DOSE_FORM + ", " +
 						"d.amount AS " + Drug.AMOUNT + ", " +
-						"du AS " + Drug.UNIT;
+						"du AS " + Drug.UNIT + " " +
+						"ORDER BY p.mmiId"; // Order for reproducibility
 
 //		System.out.println(query);
 

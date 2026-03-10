@@ -12,6 +12,6 @@ public interface DoseFormMapper {
 	 * name.
 	 */
 	@Nullable
-	String getRxNormDoseForm(String edqmDoseFormId);
+	String getRxNormDoseForm(String edqmDoseFormName);
 
 }
