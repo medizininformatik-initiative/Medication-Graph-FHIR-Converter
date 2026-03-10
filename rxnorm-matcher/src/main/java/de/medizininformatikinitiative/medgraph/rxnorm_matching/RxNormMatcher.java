@@ -101,10 +101,10 @@ public class RxNormMatcher {
 	private static void matchingToCsv(List<MatchResult> results) {
 		Path outPath = Path.of("medgraph/src/main/resources/rxnorm_mapping.csv");
 		try (BufferedWriter writer = Files.newBufferedWriter(outPath)) {
-			writer.write("MMI_DRUG_ID;SCD_RXCUI");
+			writer.write("MMI_DRUG_ID;SCD_RXCUI\n");
 			for (MatchResult result: results) {
 				for (DetailedRxNormSCD match: result.getMatches()) {
-					writer.write(result.getDrug().productMmiId().toString());
+					writer.write(result.getDrug().mmiId().toString());
 					writer.write(';');
 					writer.write(match.getRxcui());
 					writer.write('\n');
