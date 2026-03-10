@@ -53,4 +53,19 @@ public class ActiveIngredient extends SimpleActiveIngredient {
 		}
 		return result.toString();
 	}
+
+	public String toStringWithCorrespondences() {
+		if (correspondingIngredients.isEmpty()) return toString();
+
+		StringBuilder result = new StringBuilder(toString());
+		result.append(" [");
+		for (SimpleActiveIngredient corresponding: correspondingIngredients) {
+			result.append(corresponding.toString());
+			result.append(" | ");
+		}
+		result.delete(result.length() - 3, result.length());
+		result.append(']');
+		return result.toString();
+	}
+
 }

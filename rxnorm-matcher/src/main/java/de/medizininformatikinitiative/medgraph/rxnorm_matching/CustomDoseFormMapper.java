@@ -20,8 +20,8 @@ public class CustomDoseFormMapper implements DoseFormMapper {
 	private final Map<String, String> doseFormMap = readDoseFormMapFromResources();
 
 	@Override
-	public @Nullable String getRxNormDoseForm(String edqmDoseForm) {
-		return doseFormMap.get(edqmDoseForm);
+	public @Nullable String getRxNormDoseForm(String edqmDoseFormName) {
+		return doseFormMap.get(edqmDoseFormName);
 	}
 
 	private Map<String, String> readDoseFormMapFromResources() {

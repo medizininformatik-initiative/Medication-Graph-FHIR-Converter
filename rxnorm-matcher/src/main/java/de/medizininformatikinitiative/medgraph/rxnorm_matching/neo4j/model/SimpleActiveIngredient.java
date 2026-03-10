@@ -83,6 +83,7 @@ public class SimpleActiveIngredient {
 
 	@Override
 	public String toString() {
+		if (massFrom == null) return substanceName;
 		return AmountRange.ofNullableUpperEnd(massFrom, massTo,
 				Unit.parse(unit != null ? unit.name() : "")) + " " + substanceName;
 	}
