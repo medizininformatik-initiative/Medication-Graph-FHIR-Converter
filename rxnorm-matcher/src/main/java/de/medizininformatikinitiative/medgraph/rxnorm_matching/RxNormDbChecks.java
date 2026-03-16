@@ -7,18 +7,26 @@ import java.sql.SQLException;
 import static de.medizininformatikinitiative.medgraph.rxnorm_matching.RxNormMatcher.getRxNormDbCon;
 
 /**
+ * Class which you can use to create indices on the RxNorm SQLite DB which significantly help the RxNorm matching.
+ *
  * @author Markus Budeus
  */
 public class RxNormDbChecks {
 
-
 	public static void main(String[] args) throws SQLException {
 		Connection con = getRxNormDbCon();
-//		con.createStatement().execute("CREATE INDEX MYINDEX_RXNCONSO_SAB_TTY_RXCUI ON RXNCONSO(SAB, TTY, RXCUI)");
-//		con.createStatement().execute("CREATE INDEX MYINDEX_RXNREL_RXCUI2_RELA ON RXNREL(RXCUI2, RELA)");
-//		con.createStatement().execute("CREATE INDEX MYINDEX_RXNREL_RXCUI1_RELA ON RXNREL(RXCUI1, RELA)");
-//		con.createStatement().execute("ANALYZE");
+		con.createStatement().execute("CREATE INDEX MYINDEX_RXNCONSO_SAB_TTY_RXCUI ON RXNCONSO(SAB, TTY, RXCUI)");
+		con.createStatement().execute("CREATE INDEX MYINDEX_RXNREL_RXCUI2_RELA ON RXNREL(RXCUI2, RELA)");
+		con.createStatement().execute("CREATE INDEX MYINDEX_RXNREL_RXCUI1_RELA ON RXNREL(RXCUI1, RELA)");
+		con.createStatement().execute("ANALYZE");
 
+		printIndices(con);
+		printQueryPlan(con);
+
+		con.close();
+	}
+
+	private static void printIndices(Connection con) throws SQLException {
 		ResultSet resultSet = con.createStatement().executeQuery("""
 				SELECT name, tbl_name, sql
 				FROM sqlite_master
@@ -30,8 +38,10 @@ public class RxNormDbChecks {
 			}
 			System.out.println();
 		}
+	}
 
-		resultSet = con.createStatement().executeQuery("""
+	private static void printQueryPlan(Connection con) throws SQLException {
+		ResultSet resultSet = con.createStatement().executeQuery("""
 				EXPLAIN QUERY PLAN SELECT scd.RXCUI AS scd, scd.STR as scdName, scd_df.RXCUI1 AS df, scd_scdc.RXCUI1 AS scdc, ing.RXCUI AS ing
 				FROM RXNCONSO scd
 				JOIN RXNREL scd_df ON (scd_df.RXCUI2 = scd.RXCUI AND scd_df.RELA = 'has_dose_form')
