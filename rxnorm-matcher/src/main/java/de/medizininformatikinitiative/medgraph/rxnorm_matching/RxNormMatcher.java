@@ -4,8 +4,6 @@ import de.medizininformatikinitiative.medgraph.DI;
 import de.medizininformatikinitiative.medgraph.common.db.ConnectionConfiguration;
 import de.medizininformatikinitiative.medgraph.common.db.ConnectionPreferences;
 import de.medizininformatikinitiative.medgraph.common.db.DatabaseConnection;
-import de.medizininformatikinitiative.medgraph.common.logging.LogManager;
-import de.medizininformatikinitiative.medgraph.common.logging.Logger;
 import de.medizininformatikinitiative.medgraph.rxnorm_matching.RxNormProductMatcher2.ExtendedMatchResult;
 import de.medizininformatikinitiative.medgraph.rxnorm_matching.RxNormProductMatcher2.ValidationResult;
 import de.medizininformatikinitiative.medgraph.rxnorm_matching.model.DetailedRxNormSCD;
@@ -22,7 +20,6 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.*;
-import java.util.concurrent.ExecutionException;
 
 import static de.medizininformatikinitiative.medgraph.rxnorm_matching.RxNormProductMatcher2.EarlyMatchingFailure;
 import static de.medizininformatikinitiative.medgraph.rxnorm_matching.RxNormProductMatcher2.MatchResult;
@@ -32,9 +29,7 @@ import static de.medizininformatikinitiative.medgraph.rxnorm_matching.RxNormProd
  */
 public class RxNormMatcher {
 
-	private static final Logger logger = LogManager.getLogger(RxNormMatcher.class);
-
-	public static void main(String[] args) throws ExecutionException, InterruptedException {
+	public static void main(String[] args) throws InterruptedException {
 		ConnectionPreferences preferences = DI.get(ConnectionPreferences.class);
 
 		String uri = args.length > 0 ? args[0] : preferences.getConnectionUri();
@@ -63,19 +58,19 @@ public class RxNormMatcher {
 			long time = System.currentTimeMillis();
 
 			List<Drug> drugs = drugLoader
-					.loadDrugs(null)//List.of(1425163)) // Here we can put a product ID filter
+					.loadDrugs(null)//List.of(543417)) // Here we can put a product ID filter
 //					.skip(25000)
-//							.limit(10000)
+//					.limit(10000)
 					.toList();
 
-			List<ExtendedMatchResult> results = MatchingExecutor.matchAllExtended(drugs, false);
+			List<MatchResult> results = MatchingExecutor.matchAll(drugs, false);
 			System.out.println("Done (" + (System.currentTimeMillis() - time) + "ms)");
 			printGlobalStatistics(results);
 //			matchingToCsv(results);
 //			printResultsWithMultipleMatches(results);
 //			selectAndExportMatchesForReview(results, Path.of("review.csv"));
-			selectAndExportCandidateMismatchesForReview(results, new CustomDoseFormMapper(),
-					Path.of("mismatch_review.csv"));
+//			selectAndExportCandidateMismatchesForReview(results, new CustomDoseFormMapper(),
+//					Path.of("mismatch_review.csv"));
 		}
 
 	}
@@ -109,9 +104,9 @@ public class RxNormMatcher {
 			for (MatchResult result : results) {
 				for (DetailedRxNormSCD match : result.getMatches()) {
 					writer.write(result.getDrug().mmiId().toString());
-					writer.write(';');
+					writer.write(';' );
 					writer.write(match.getRxcui());
-					writer.write('\n');
+					writer.write('\n' );
 				}
 			}
 		} catch (IOException e) {
@@ -140,44 +135,44 @@ public class RxNormMatcher {
 			for (int i = 0; i < 200 && i < matches.size(); i++) {
 				MatchResult result = matches.get(i);
 				writer.write(result.getDrug().mmiId().toString());
-				writer.write(';');
+				writer.write(';' );
 				writer.write(result.getDrug().productMmiId().toString());
-				writer.write(';');
+				writer.write(';' );
 				writer.write(result.getDrug().productName());
-				writer.write(';');
+				writer.write(';' );
 				if (result.getDrug().amount() != null) {
 					writer.write(result.getDrug().amount().toString());
 					if (result.getDrug().getUnitName() != null) {
-						writer.write(' ');
+						writer.write(' ' );
 						writer.write(result.getDrug().getUnitName());
 					}
 				}
-				writer.write(';');
-				writer.write('"');
+				writer.write(';' );
+				writer.write('"' );
 				List<ActiveIngredient> ingredients = result.getDrug().activeIngredients();
 				for (int j = 0; j < ingredients.size(); j++) {
 					ActiveIngredient ingredient = ingredients.get(j);
 					writer.write(ingredient.toStringWithCorrespondences());
 					if (j < ingredients.size() - 1) {
-						writer.write('\n');
+						writer.write('\n' );
 					}
 				}
-				writer.write('"');
-				writer.write(';');
-				writer.write('"');
+				writer.write('"' );
+				writer.write(';' );
+				writer.write('"' );
 				List<DetailedRxNormSCD> resultMatches = result.getMatches();
 				for (int j = 0; j < resultMatches.size(); j++) {
 					DetailedRxNormSCD match = resultMatches.get(j);
 					writer.write(match.getName());
 					writer.write(" [");
 					writer.write(match.getRxcui());
-					writer.write(']');
+					writer.write(']' );
 					if (j < resultMatches.size()) {
-						writer.write('\n');
+						writer.write('\n' );
 					}
 				}
-				writer.write('"');
-				writer.write('\n');
+				writer.write('"' );
+				writer.write('\n' );
 			}
 		} catch (IOException e) {
 			throw new RuntimeException(e);
@@ -202,34 +197,34 @@ public class RxNormMatcher {
 				ExtendedMatchResult result = matches.get(i);
 				Drug drug = result.getDrug();
 				writer.write(drug.mmiId().toString());
-				writer.write(';');
+				writer.write(';' );
 				writer.write(drug.productMmiId().toString());
-				writer.write(';');
+				writer.write(';' );
 				if (drug.amount() != null) {
 					writer.write(drug.amount().toString());
 					if (drug.getUnitName() != null) {
-						writer.write(' ');
+						writer.write(' ' );
 						writer.write(drug.getUnitName());
 					}
 				}
-				writer.write(';');
+				writer.write(';' );
 				writer.write(drug.productName());
-				writer.write(';');
-				writer.write('"');
+				writer.write(';' );
+				writer.write('"' );
 				List<ActiveIngredient> ingredients = drug.activeIngredients();
 				for (int j = 0; j < ingredients.size(); j++) {
 					ActiveIngredient ingredient = ingredients.get(j);
 					writer.write(ingredient.toStringWithCorrespondences());
 					if (j < ingredients.size() - 1) {
-						writer.write('\n');
+						writer.write('\n' );
 					}
 				}
-				writer.write('"');
-				writer.write(';');
+				writer.write('"' );
+				writer.write(';' );
 				String rxNormDf = doseFormMapper.getRxNormDoseForm(drug.edqmDoseForm().getName());
 				writer.write(rxNormDf == null ? "" : rxNormDf);
-				writer.write(';');
-				writer.write('"');
+				writer.write(';' );
+				writer.write('"' );
 				Set<Map.Entry<DetailedRxNormSCD, ValidationResult>> candidateResultSet = result.getCandidateResults()
 				                                                                               .entrySet();
 				List<Map.Entry<DetailedRxNormSCD, ValidationResult>> candidateResults = new ArrayList<>(
@@ -244,13 +239,13 @@ public class RxNormMatcher {
 					writer.write(match.getName());
 					writer.write(" [");
 					writer.write(match.getRxcui());
-					writer.write(']');
+					writer.write(']' );
 					if (j < candidateResults.size()) {
-						writer.write('\n');
+						writer.write('\n' );
 					}
 				}
-				writer.write('"');
-				writer.write('\n');
+				writer.write('"' );
+				writer.write('\n' );
 			}
 		} catch (IOException e) {
 			throw new RuntimeException(e);
