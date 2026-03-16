@@ -1,0 +1,39 @@
+# This CITATION.cff file was generated with cffinit.
+# Visit https://bit.ly/cffinit to generate yours today!
+
+cff-version: 1.2.0
+title: Medication-Graph-FHIR-Converter
+message: >-
+  This is the specific version of the repository of the 2026
+  paper "Mapping MMI Pharmindex Items to RxNorm Semantic
+  Clinical Drugs - An Evaluation Study"
+type: software
+authors:
+  - given-names: Markus
+    family-names: Budeus
+    email: markus.budeus@tum.de
+    affiliation: TUM University Hospital
+    orcid: 'https://orcid.org/0009-0007-3347-974X'
+  - given-names: Lucy
+    family-names: Strüfing
+repository-code: >-
+  https://github.com/medizininformatik-initiative/Medication-Graph-FHIR-Converter/tree/paper-2026-rxnorm-matching
+abstract: >-
+  This application loads the MMI Pharmindex files into a
+  Neo4j knowledge graph and exports them as FHIR resources
+  compliant with the MMI Core Data Set.
+
+  This specific version is modified to enable matching drugs
+  in the knowledge graph to RxNorm Semantic Clinical Drugs
+  and to validate the generated matches using RxNorm-ATC
+  mappings from Athena.
+keywords:
+  - Medical Informatics Initiative Germany
+  - Medication
+  - RxNorm
+  - FHIR
+  - MMI Pharmindex
+  - Neo4j
+license: MIT
+commit: a1971541bf413ed26176e72241cd505103f31f7f
+date-released: '2026-03-16'
