@@ -31,10 +31,10 @@ public abstract class CsvLoader extends Loader {
 	private final Path path;
 
 	/**
-	 * Loader referencing the CSV file with the given name inside the MMI PharmIndex dataset.
+	 * Loader referencing the CSV file with the given name inside the MMI Pharmindex dataset.
 	 */
-	public CsvLoader(String filename, Session session) {
-		this(MMI_PHARMINDEX_IMPORT_DIR.resolve(filename), session);
+	public CsvLoader(String mmiFilename, Session session) {
+		this(MMI_PHARMINDEX_IMPORT_DIR.resolve(mmiFilename), session);
 	}
 
 	/**
