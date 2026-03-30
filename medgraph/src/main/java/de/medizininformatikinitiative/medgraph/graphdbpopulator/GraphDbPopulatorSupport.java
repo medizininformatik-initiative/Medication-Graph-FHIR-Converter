@@ -52,13 +52,14 @@ public class GraphDbPopulatorSupport {
 			"ARCHIVE_PRODUCTMOLECULE.CSV"
 	);
 	private static final List<String> REQUIRED_RESOURCE_FILES = List.of(
+			"COMPOSITIONELEMENTEQUI_extensions.csv",
 			"custom_synonyms.csv",
 			"dose_form_mapping.csv",
-			"gsrs_matches.csv",
-			"edqm_objects.csv",
-			"pdf_relations.csv",
-			"edqm_translations.csv",
 			"dose_form_synonyms.csv",
+			"edqm_objects.csv",
+			"edqm_translations.csv",
+			"gsrs_matches.csv",
+			"pdf_relations.csv",
 			"NOTICE.txt"
 	);
 	private static final Path[] OPTIONAL_FILES = new Path[]{

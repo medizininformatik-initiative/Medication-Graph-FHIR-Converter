@@ -2,6 +2,8 @@ package de.medizininformatikinitiative.medgraph.graphdbpopulator.loaders;
 
 import org.neo4j.driver.Session;
 
+import java.nio.file.Path;
+
 import static de.medizininformatikinitiative.medgraph.common.db.DatabaseDefinitions.*;
 
 /**
@@ -22,6 +24,10 @@ public class IngredientCorrespondenceLoader extends CsvLoader {
 
 	public IngredientCorrespondenceLoader(Session session) {
 		super("COMPOSITIONELEMENTEQUI.CSV", session);
+	}
+
+	protected IngredientCorrespondenceLoader(Path path, Session session) {
+		super(path, session);
 	}
 
 	@Override

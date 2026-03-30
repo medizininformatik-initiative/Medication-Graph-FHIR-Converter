@@ -156,6 +156,7 @@ public class GraphDbPopulation extends NamedProgressableImpl {
 		}
 		// Corresponding ingredients and their amounts
 		loaders.add(new IngredientCorrespondenceLoader(session));
+		loaders.add(new IngredientCorrespondenceExtensionsLoader(session)); // Including our own detected equivalences.
 		// Custom synonyms
 		loaders.add(new CustomSynonymLoader(session));
 		// Dose form translations
